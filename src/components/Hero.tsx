@@ -61,18 +61,17 @@ const Hero = () => {
       <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold gradient-text">
-            Crie seu <span className='text-white'>ChatBot de IA</span> agora!<br />&nbsp;
+            Seu <span className='text-white'>ChatBot de IA</span> em 3 minutos!<br />&nbsp;
 
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-             lets you execute agentic workflows on remote browsers that never get blocked. 
-            Infinitely scalable, headless or headful, and powered by the world's most reliable proxy network.
+          <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+             Chatbot de IA + Homepage profissional
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button className="hero-button bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-6 rounded-full text-lg flex items-center gap-2">
-              <span>Comece agora </span>
+            <Button className="hero-button bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-6 rounded-full text-lg flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+              <span>Faça o plano gratuito!</span>
               <ArrowRight className="h-5 w-5" />
             </Button>
           </div>

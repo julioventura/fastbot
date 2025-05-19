@@ -5,53 +5,34 @@ import { Check } from 'lucide-react';
 
 const pricingPlans = [
 	{
-		name: 'Starter',
-		price: '$49',
-		description: 'Perfect for small projects and individual developers',
+		name: 'Gratuito',
+		price: '0',
+		description: 'Perfeito para o uso ocasional',
 		features: [
 			'10,000 browser sessions per month',
 			'Basic AI assistance',
 			'Standard support',
 			'1 team member',
-			'Basic analytics',
 		],
-		isPopular: false,
+		isPopular: true,
 		buttonText: 'Start for free',
 		buttonVariant: 'outline' as const,
 	},
 	{
-		name: 'Professional',
-		price: '$199',
-		description: 'Ideal for growing teams and businesses',
+		name: 'Plus',
+		price: 'R$ 100',
+		description: 'Uso profissional intenso',
 		features: [
 			'50,000 browser sessions per month',
 			'Advanced AI assistance',
 			'Priority support',
 			'5 team members',
-			'Advanced analytics',
-			'Custom IP rotation',
 		],
-		isPopular: true,
+		isPopular: false,
 		buttonText: 'Start for free',
 		buttonVariant: 'default' as const,
 	},
-	{
-		name: 'Enterprise',
-		price: 'Custom',
-		description: 'For large-scale operations and custom needs',
-		features: [
-			'Unlimited browser sessions',
-			'Premium AI assistance',
-			'24/7 dedicated support',
-			'Unlimited team members',
-			'Enterprise analytics',
-			'Custom solutions',
-			'SLA guarantees',
-		],
-		isPopular: false,
-		buttonText: 'Contact sales',
-		buttonVariant: 'outline' as const,
-	},
+
 ];
 
 const Pricing = () => {
@@ -161,19 +142,19 @@ const Pricing = () => {
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-20 max-w-6xl mx-auto">
 					{pricingPlans.map((plan, index) => (
 						<Card
 							key={index}
 							className={`p-8 relative bg-[#0a1629]/50 backdrop-blur-sm ${
 								plan.isPopular
 									? 'border-2 border-brightblue-500 shadow-xl'
-									: 'border border-[#2a4980]/50 shadow-md'
+									: 'border border-brightblue-600 shadow-md'
 							}`}
 						>
 							{plan.isPopular && (
 								<div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brightblue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-									Most Popular
+									Uso ocasional
 								</div>
 							)}
 							<div className="text-center mb-6">
@@ -202,8 +183,8 @@ const Pricing = () => {
 								variant={plan.buttonVariant}
 								className={`w-full ${
 									plan.isPopular
-										? 'bg-brightblue-500 hover:bg-brightblue-600'
-										: ''
+										? 'bg-brightblue-600 hover:bg-brightblue-600 text-white hover:text-yellow-400'
+										: ' hover:bg-brightblue-600 hover:text-yellow-400'
 								}`}
 							>
 								{plan.buttonText}
