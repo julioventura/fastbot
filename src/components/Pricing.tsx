@@ -122,18 +122,31 @@ const Pricing = () => {
 				</svg>
 			</div>
 
-			{/* Grid overlay pattern */}
+			{/* Grid overlay pattern - Fixed implementation */}
 			<div className="absolute inset-0 z-0 opacity-20">
-				<div className="w-full h-full grid grid-cols-12 grid-rows-12">
-					{Array.from({ length: 13 }).map((_, rowIndex) => (
-						<div key={`row-${rowIndex}`}>
-							{Array.from({ length: 13 }).map((_, colIndex) => (
-								<div
-									key={`${rowIndex}-${colIndex}`}
-									className="border-t border-l border-[#2a4980]/30"
-								></div>
-							))}
-						</div>
+				<div
+					className="h-full w-full grid"
+					style={{
+						gridTemplateRows: 'repeat(20, 1fr)',
+						gridTemplateColumns: 'repeat(20, 1fr)',
+					}}
+				>
+					{/* Horizontal lines */}
+					{Array.from({ length: 21 }).map((_, index) => (
+						<div
+							key={`h-${index}`}
+							className="absolute left-0 right-0 border-t border-[#4f9bff]/30"
+							style={{ top: `${(index * 100) / 20}%` }}
+						/>
+					))}
+
+					{/* Vertical lines */}
+					{Array.from({ length: 21 }).map((_, index) => (
+						<div
+							key={`v-${index}`}
+							className="absolute top-0 bottom-0 border-l border-[#4f9bff]/30"
+							style={{ left: `${(index * 100) / 20}%` }}
+						/>
 					))}
 				</div>
 			</div>
