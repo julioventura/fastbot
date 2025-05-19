@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,18 +27,33 @@ interface ProfileFormProps {
 }
 
 const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
-  const [name, setName] = useState(userData.name);
-  const [email, setEmail] = useState(userData.email);
-  const [whatsapp, setWhatsapp] = useState(userData.whatsapp);
-  const [isStudent, setIsStudent] = useState(userData.isStudent);
-  const [isProfessor, setIsProfessor] = useState(userData.isProfessor);
-  const [profession, setProfession] = useState(userData.profession);
-  const [gender, setGender] = useState(userData.gender);
-  const [birthDate, setBirthDate] = useState(userData.birthDate);
-  const [city, setCity] = useState(userData.city);
-  const [state, setState] = useState(userData.state);
+  const [name, setName] = useState(userData.name || "");
+  const [email, setEmail] = useState(userData.email || "");
+  const [whatsapp, setWhatsapp] = useState(userData.whatsapp || "");
+  const [isStudent, setIsStudent] = useState(userData.isStudent || false);
+  const [isProfessor, setIsProfessor] = useState(userData.isProfessor || false);
+  const [profession, setProfession] = useState(userData.profession || "");
+  const [gender, setGender] = useState(userData.gender || "");
+  const [birthDate, setBirthDate] = useState(userData.birthDate || "");
+  const [city, setCity] = useState(userData.city || "");
+  const [state, setState] = useState(userData.state || "");
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+
+  // Update form state when userData changes
+  useEffect(() => {
+    console.log("userData in ProfileForm:", userData);
+    setName(userData.name || "");
+    setEmail(userData.email || "");
+    setWhatsapp(userData.whatsapp || "");
+    setIsStudent(userData.isStudent || false);
+    setIsProfessor(userData.isProfessor || false);
+    setProfession(userData.profession || "");
+    setGender(userData.gender || "");
+    setBirthDate(userData.birthDate || "");
+    setCity(userData.city || "");
+    setState(userData.state || "");
+  }, [userData]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -27,6 +27,7 @@ const Account = () => {
   });
   const [createdAt, setCreatedAt] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,6 +39,7 @@ const Account = () => {
       
       // Tenta obter dados do perfil se existir
       const fetchProfile = async () => {
+        setIsProfileLoading(true);
         try {
           console.log("Fetching profile for user ID:", user.id);
           const { data, error } = await supabase
@@ -67,6 +69,8 @@ const Account = () => {
           }
         } catch (error) {
           console.error("Erro ao buscar perfil:", error);
+        } finally {
+          setIsProfileLoading(false);
         }
       };
       
@@ -118,7 +122,11 @@ const Account = () => {
                 <CardDescription className="text-gray-300">Atualize suas informações pessoais</CardDescription>
               </CardHeader>
               <CardContent>
-                {user && (
+                {isProfileLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="w-8 h-8 border-4 border-t-[#4f9bff] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : user && (
                   <ProfileForm 
                     userId={user.id}
                     userData={profileData}
