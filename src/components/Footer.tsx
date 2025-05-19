@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const Footer = () => {
@@ -32,19 +31,19 @@ const Footer = () => {
       <div className="absolute inset-0 z-0 opacity-20">
         <div className="w-full h-full grid grid-cols-12 grid-rows-12">
           {Array.from({ length: 13 }).map((_, rowIndex) => (
-            <React.Fragment key={`row-${rowIndex}`}>
+            <div key={`row-${rowIndex}`}>
               {Array.from({ length: 13 }).map((_, colIndex) => (
                 <div key={`${rowIndex}-${colIndex}`} className="border-t border-l border-[#2a4980]/30"></div>
               ))}
-            </React.Fragment>
+            </div>
           ))}
         </div>
       </div>
       
-      <div className="section-container py-12 relative z-10">
+      <div className="section-container py-12 relative z-10" id="footer-section">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-1">
-            <span className="font-bold text-2xl text-brightblue-500">BrightData</span>
+            <span className="font-bold text-2xl text-brightblue-500">FastBot</span>
             <p className="mt-4 text-gray-300">
               Empowering AI agents with reliable browser automation
             </p>
@@ -83,7 +82,7 @@ const Footer = () => {
         
         <div className="border-t border-[#2a4980]/30 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} BrightData. All rights reserved.
+            © {new Date().getFullYear()} FastBot. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-brightblue-500">

@@ -8,7 +8,7 @@ const Header = () => {
       <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
         <div className="flex items-center">
           <a href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-2xl text-brightblue-500">BrightData</span>
+            <span className="font-bold text-2xl text-brightblue-500">FastBot</span>
           </a>
         </div>
         

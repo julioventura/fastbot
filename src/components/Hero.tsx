@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -34,16 +33,16 @@ const Hero = () => {
       <div className="absolute inset-0 z-0 opacity-20">
         <div className="w-full h-full grid grid-cols-12 grid-rows-12">
           {Array.from({ length: 13 }).map((_, rowIndex) => (
-            <React.Fragment key={`row-${rowIndex}`}>
+            <div key={`row-${rowIndex}`} data-lov-id="some-value">
               {Array.from({ length: 13 }).map((_, colIndex) => (
                 <div key={`${rowIndex}-${colIndex}`} className="border-t border-l border-[#2a4980]/30"></div>
               ))}
-            </React.Fragment>
+            </div>
           ))}
         </div>
       </div>
       
-      <div className="section-container relative z-10 pt-16 pb-20">
+      <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">
             Browser Infrastructure for AI Agents
@@ -59,12 +58,9 @@ const Hero = () => {
               <span>Try Now</span>
               <ArrowRight className="h-5 w-5" />
             </Button>
-            <Button variant="outline" className="hero-button border-white text-white hover:bg-white/10 px-8 py-6 rounded-full text-lg">
-              Contact us
-            </Button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-24 text-center text-white">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-24 text-center text-white" data-lov-id="hero-benefits">
             <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
