@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
 import SignUpForm from "@/components/auth/SignUpForm";
 import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
-import BackgroundDecoration from "@/components/account/BackgroundDecoration";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -27,12 +26,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] border-[#2a4980]/50 bg-[#0a1629]/80 backdrop-blur-sm text-white overflow-hidden relative">
-        {/* Background decorations */}
-        <BackgroundDecoration />
-        
-        <DialogHeader className="relative z-10">
-          <DialogTitle className="text-center text-xl font-bold text-white">
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="text-center text-xl font-bold">
             {activeTab === "login"
               ? "Acesse sua conta"
               : activeTab === "signup"
@@ -44,34 +40,19 @@ const AuthModal: React.FC<AuthModalProps> = ({
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          className="w-full relative z-10"
+          className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-3 bg-[#0a1629]/60 border border-[#2a4980]/30">
-            <TabsTrigger 
-              value="login" 
-              className="data-[state=active]:bg-[#0766FF]/20 data-[state=active]:text-white text-gray-300"
-            >
-              Login
-            </TabsTrigger>
-            <TabsTrigger 
-              value="signup" 
-              className="data-[state=active]:bg-[#0766FF]/20 data-[state=active]:text-white text-gray-300"
-            >
-              Cadastro
-            </TabsTrigger>
-            <TabsTrigger 
-              value="reset" 
-              className="data-[state=active]:bg-[#0766FF]/20 data-[state=active]:text-white text-gray-300"
-            >
-              Recuperar
-            </TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="signup">Cadastro</TabsTrigger>
+            <TabsTrigger value="reset">Recuperar</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="login" className="relative z-10">
+          <TabsContent value="login">
             <LoginForm onSuccess={() => onOpenChange(false)} />
           </TabsContent>
 
-          <TabsContent value="signup" className="relative z-10">
+          <TabsContent value="signup">
             <SignUpForm
               onSuccess={() => {
                 setActiveTab("login");
@@ -79,7 +60,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             />
           </TabsContent>
 
-          <TabsContent value="reset" className="relative z-10">
+          <TabsContent value="reset">
             <ResetPasswordForm
               onSuccess={() => {
                 setActiveTab("login");
