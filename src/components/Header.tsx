@@ -1,5 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import AuthModal from '@/components/auth/AuthModal';
+import { useAuth } from '@/lib/auth/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { User } from 'lucide-react';
 
 // Custom hook to track scroll direction
 const useScrollDirection = () => {
@@ -30,6 +40,12 @@ const useScrollDirection = () => {
 
 const Header = () => {
   const scrollDirection = useScrollDirection();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  
+  const handleSignOut = async () => {
+    await signOut();
+  };
   
   return (
     <header 
@@ -68,19 +84,49 @@ const Header = () => {
         </nav>
         
         <div className="flex items-center space-x-4">
-          <Button 
-            variant="outline" 
-            className="hidden md:inline-flex border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
-          >
-            Log In
-          </Button>
-          <Button 
-            className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
-          >
-            Start Free
-          </Button>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Minha conta
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleSignOut}>
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button 
+                variant="outline" 
+                className="hidden md:inline-flex border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
+                onClick={() => setIsAuthModalOpen(true)}
+              >
+                Entrar
+              </Button>
+              <Button 
+                className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
+                onClick={() => {
+                  setIsAuthModalOpen(true);
+                }}
+              >
+                Cadastre-se
+              </Button>
+            </>
+          )}
         </div>
       </div>
+      
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onOpenChange={setIsAuthModalOpen}
+      />
     </header>
   );
 };
