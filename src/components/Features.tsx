@@ -204,8 +204,10 @@ const Features = () => {
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
 						<span className="text-[#4f9bff]">Recursos</span> Poderosos
 					</h2>
-					<p className="text-xl gradient-text max-w-3xl mx-auto">
-						Deixe a <span className="text-white">Inteligência Artificial</span> trabalhar pra você.
+					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
+					 Deixe a 
+					 <span className="text-white text-2xl font-bold"> Inteligência Artificial </span>
+					 trabalhar pra você.
 					</p>
 				</div>
 

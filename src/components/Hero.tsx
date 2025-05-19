@@ -61,7 +61,7 @@ const Hero = () => {
       <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold gradient-text">
-            Seu <span className='text-white'>ChatBot de IA</span> em 3 minutos!<br />&nbsp;
+            Seu <span className='text-white'>ChatBot de IA</span> em <br /> <span className='text-4xl md:text-6xl'>3 minutos!</span> <br />&nbsp;
 
           </h1>
 
@@ -71,7 +71,7 @@ const Hero = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button className="hero-button bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-6 rounded-full text-lg flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
-              <span>Faça o plano gratuito!</span>
+              <span>Use nosso Plano Gratuito e comece já!</span>
               <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
