@@ -157,7 +157,7 @@ const Features = () => {
 					xmlns="http://www.w3.org/2000/svg"
 					preserveAspectRatio="none"
 				>
-					<g opacity="0.4" filter="url(#filter0_f_101_3)">
+					<g opacity="0.6" filter="url(#filter0_f_101_3)">
 						<circle cx="1079" cy="540" r="359" fill="#0063F7" />
 					</g>
 					<g opacity="0.3" filter="url(#filter1_f_101_3)">
@@ -211,14 +211,14 @@ const Features = () => {
 			</div>
 
 			{/* Grid overlay pattern */}
-			<div className="absolute inset-0 z-0 opacity-20">
+			<div className="absolute inset-0 z-0 opacity-80">
 				<div className="w-full h-full grid grid-cols-12 grid-rows-12">
 					{Array.from({ length: 13 }).map((_, rowIndex) => (
 						<div key={`row-${rowIndex}`}>
 							{Array.from({ length: 13 }).map((_, colIndex) => (
 								<div
 									key={`${rowIndex}-${colIndex}`}
-									className="border-t border-l border-[#2a4980]/30"
+									className="border-t border-l border-[#0e1f3b]"
 								></div>
 							))}
 						</div>
@@ -240,20 +240,19 @@ const Features = () => {
 					</p>
 				</div>
 
+				{/* Focusing on just the feature cards section */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 					{features.map((feature, index) => (
-						<Card
+						<div
 							key={index}
-							className="feature-card bg-[#0a1629]/50 backdrop-blur-sm border border-[#2a4980]/50"
+							className="border border-black rounded-lg shadow-xl p-6 bg-gray-800/30"
 						>
-							<div className="flex flex-col p-6">
-								<div className="mb-4">{feature.icon}</div>
-								<h3 className="text-xl font-semibold mb-2 text-white">
-									{feature.title}
-								</h3>
-								<p className="text-gray-300">{feature.description}</p>
-							</div>
-						</Card>
+							<div className="mb-4">{feature.icon}</div>
+							<h3 className="text-xl font-semibold mb-2 text-primary">
+								{feature.title}
+							</h3>
+							<p className="text-gray-200">{feature.description}</p>
+						</div>
 					))}
 				</div>
 			</div>

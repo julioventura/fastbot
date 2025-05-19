@@ -45,11 +45,11 @@ const Hero = () => {
       <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">
-            Browser Infrastructure for AI Agents
+            Crie seu ChatBot de IA agora!
           </h1>
           
           <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Agent Browser lets you execute agentic workflows on remote browsers that never get blocked. 
+             lets you execute agentic workflows on remote browsers that never get blocked. 
             Infinitely scalable, headless or headful, and powered by the world's most reliable proxy network.
           </p>
           
