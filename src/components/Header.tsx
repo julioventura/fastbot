@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { Link } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 // Custom hook to track scroll direction
 const useScrollDirection = () => {
@@ -42,6 +44,44 @@ const Header = () => {
   const scrollDirection = useScrollDirection();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const [userName, setUserName] = useState("");
+  
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (user) {
+        try {
+          const { data } = await supabase
+            .from('profiles')
+            .select('name')
+            .eq('user_id', user.id)
+            .single();
+          
+          if (data && data.name) {
+            setUserName(data.name);
+          } else {
+            // Usa o email como fallback se não tiver nome
+            const emailName = user.email?.split('@')[0] || "";
+            setUserName(emailName);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar nome do usuário:", error);
+          // Usa o email como fallback se houver erro
+          const emailName = user.email?.split('@')[0] || "";
+          setUserName(emailName);
+        }
+      } else {
+        setUserName("");
+      }
+    };
+    
+    fetchUserName();
+  }, [user]);
+  
+  // Função para truncar o nome se for maior que 10 caracteres
+  const truncateName = (name: string) => {
+    if (name.length <= 10) return name;
+    return name.substring(0, 10) + "...";
+  };
   
   const handleSignOut = async () => {
     await signOut();
@@ -92,10 +132,13 @@ const Header = () => {
                   className="border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
                 >
                   <User className="mr-2 h-4 w-4" />
-                  Minha conta
+                  {truncateName(userName)}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/account">Minha conta</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
                   Sair
                 </DropdownMenuItem>
