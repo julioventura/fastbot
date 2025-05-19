@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, Lock, Phone, CalendarIcon, MapPin, Building, Briefcase, UserPlus, GraduationCap } from "lucide-react";
+import { User, Mail, Lock, Phone, CalendarIcon, MapPin, Building, Briefcase, UserPlus, GraduationCap, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import { format } from "date-fns";
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
@@ -25,6 +25,8 @@ const Account = () => {
   const [birthDate, setBirthDate] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [createdAt, setCreatedAt] = useState<string | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -56,6 +58,8 @@ const Account = () => {
             setBirthDate(data.birth_date || "");
             setCity(data.city || "");
             setState(data.state || "");
+            setCreatedAt(data.created_at || null);
+            setUpdatedAt(data.updated_at || null);
           }
         } catch (error) {
           console.error("Erro ao buscar perfil:", error);
@@ -65,6 +69,18 @@ const Account = () => {
       fetchProfile();
     }
   }, [user, loading, navigate]);
+
+  // Função para formatar datas no padrão solicitado
+  const formatDateTime = (dateString: string | null) => {
+    if (!dateString) return "-";
+    try {
+      const date = new Date(dateString);
+      return format(date, "dd-MM-yyyy (HH:mm)");
+    } catch (error) {
+      console.error("Erro ao formatar data:", error);
+      return dateString;
+    }
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -450,6 +466,35 @@ const Account = () => {
           </div>
           
           <div>
+            {/* Card para exibir timestamps */}
+            <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white mb-8">
+              <CardHeader>
+                <CardTitle className="text-white">Informações do Perfil</CardTitle>
+                <CardDescription className="text-gray-300">Detalhes da criação do seu perfil</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-gray-300">
+                    <Clock size={16} className="text-[#4f9bff]" />
+                    <span className="text-sm">Criado em</span>
+                  </div>
+                  <div className="px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded text-gray-300">
+                    {formatDateTime(createdAt)}
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-gray-300">
+                    <Clock size={16} className="text-[#4f9bff]" />
+                    <span className="text-sm">Atualizado em</span>
+                  </div>
+                  <div className="px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded text-gray-300">
+                    {formatDateTime(updatedAt)}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
             <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white">
               <CardHeader>
                 <CardTitle className="text-white">Segurança</CardTitle>
