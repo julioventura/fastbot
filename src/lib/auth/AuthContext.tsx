@@ -9,11 +9,11 @@ type AuthContextType = {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{
     error: Error | null;
-    data: Session | null;
+    data: { session: Session | null } | null;
   }>;
   signUp: (email: string, password: string) => Promise<{
     error: Error | null;
-    data: Session | null;
+    data: { session: Session | null } | null;
   }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{
@@ -56,7 +56,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       email,
       password,
     });
-    return result;
+    
+    return {
+      error: result.error,
+      data: result.error ? null : { session: result.data.session }
+    };
   };
 
   const signUp = async (email: string, password: string) => {
@@ -64,7 +68,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       email,
       password,
     });
-    return result;
+    
+    return {
+      error: result.error,
+      data: result.error ? null : { session: result.data.session }
+    };
   };
 
   const signOut = async () => {

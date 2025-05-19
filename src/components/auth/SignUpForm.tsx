@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,7 +52,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
     setIsLoading(true);
     
     try {
-      const { error, data } = await signUp(email, password);
+      const { error } = await signUp(email, password);
       
       if (error) {
         toast({
