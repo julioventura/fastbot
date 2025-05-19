@@ -45,6 +45,7 @@ const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, signOut } = useAuth();
   const [userName, setUserName] = useState("");
+  const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   
   useEffect(() => {
     const fetchUserName = async () => {
@@ -85,6 +86,11 @@ const Header = () => {
   
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const handleOpenAuth = (defaultTab: "login" | "signup") => {
+    setActiveTab(defaultTab);
+    setIsAuthModalOpen(true);
   };
   
   return (
@@ -149,15 +155,13 @@ const Header = () => {
               <Button 
                 variant="outline" 
                 className="hidden md:inline-flex border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
-                onClick={() => setIsAuthModalOpen(true)}
+                onClick={() => handleOpenAuth("login")}
               >
                 Entrar
               </Button>
               <Button 
                 className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
-                onClick={() => {
-                  setIsAuthModalOpen(true);
-                }}
+                onClick={() => handleOpenAuth("signup")}
               >
                 Cadastre-se
               </Button>
@@ -169,6 +173,7 @@ const Header = () => {
       <AuthModal 
         isOpen={isAuthModalOpen}
         onOpenChange={setIsAuthModalOpen}
+        defaultTab={activeTab}
       />
     </header>
   );
