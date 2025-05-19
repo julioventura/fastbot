@@ -9,25 +9,17 @@ const useScrollDirection = () => {
   useEffect(() => {
     const updateScrollDirection = () => {
       const scrollY = window.pageYOffset;
-      
-      // Determine direction based on comparison with last scroll position
       const direction = scrollY > lastScrollY ? "down" : "up";
       
-      // Only update state if direction changed and we've scrolled a bit
       if (direction !== scrollDirection && 
           (scrollY - lastScrollY > 10 || scrollY - lastScrollY < -10) && 
           scrollY > 20) {
         setScrollDirection(direction);
       }
-      
-      // Update last scroll position
       setLastScrollY(scrollY);
     };
     
-    // Add scroll event listener with passive option for better performance
     window.addEventListener("scroll", updateScrollDirection, { passive: true });
-    
-    // Clean up
     return () => {
       window.removeEventListener("scroll", updateScrollDirection);
     };
@@ -43,25 +35,46 @@ const Header = () => {
     <header 
       className={`sticky transition-transform duration-300 ease-in-out ${
         scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
-      } top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100`}
+      } top-0 z-50 bg-gradient-to-r from-[#0a1629] to-[#0e2d5e] backdrop-blur-md border-b border-[#2a4980]/40 shadow-lg shadow-[#0063F7]/10`}
+      style={{ backgroundColor: '#000' }} // Fallback for any transparency or gaps
     >
-      <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
+      {/* Glowing wireframe grid overlay */}
+      <div className="absolute inset-0 z-0 opacity-10">
+        <div className="w-full h-full grid grid-cols-12">
+          {Array.from({ length: 12 }).map((_, index) => (
+            <div key={index} className="border-l border-[#4f9bff]/30"></div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="container relative z-10 mx-auto px-4 flex items-center justify-between h-16 md:h-20">
         <div className="flex items-center">
-          <a href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-2xl text-brightblue-500">FastBot</span>
+          <a href="/" className="flex items-center space-x-2 group">
+            <span className="font-bold text-2xl text-white drop-shadow-[0_0_15px_rgba(0,99,247,0.5)] group-hover:text-[#4f9bff] transition-colors">
+              FastBot
+            </span>
           </a>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-sm font-medium text-gray-600 hover:text-brightblue-500 transition-colors">Features</a>
-          <a href="#solutions" className="text-sm font-medium text-gray-600 hover:text-brightblue-500 transition-colors">Solutions</a>
-          <a href="#pricing" className="text-sm font-medium text-gray-600 hover:text-brightblue-500 transition-colors">Pricing</a>
-          <a href="#docs" className="text-sm font-medium text-gray-600 hover:text-brightblue-500 transition-colors">Docs</a>
+          <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Features</a>
+          <a href="#solutions" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Solutions</a>
+          <a href="#pricing" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Pricing</a>
+          <a href="#docs" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Docs</a>
         </nav>
         
         <div className="flex items-center space-x-4">
-          <Button variant="outline" className="hidden md:inline-flex">Log In</Button>
-          <Button className="bg-brightblue-500 hover:bg-brightblue-600">Start Free</Button>
+          <Button 
+            variant="outline" 
+            className="hidden md:inline-flex border-[#4f9bff]/60 text-white hover:bg-[#4f9bff]/10 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.3)]"
+          >
+            Log In
+          </Button>
+          <Button 
+            className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
+          >
+            Start Free
+          </Button>
         </div>
       </div>
     </header>
