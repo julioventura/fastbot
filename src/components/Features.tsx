@@ -7,9 +7,9 @@ const features = [
 		description:
 			'Inicie navegadores de agentes com uma única chamada de API. Nossa tecnologia de navegador vem com IA embutida que entende o conteúdo, extrai dados e ajuda a navegar de forma eficiente.',
 		icon: (
-			<div className="w-12 h-12 rounded-full bg-brightblue-100 flex items-center justify-center">
+			<div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
 				<svg
-					className="w-6 h-6 text-brightblue-500"
+					className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -31,9 +31,9 @@ const features = [
 		description:
 			'Seu chatbot é a porta de entrada do seu site. DÚVIDAS? FAQ? PREÇOS? COMO CONFIGURAR? Pergunte ao CHATBOT!',
 		icon: (
-			<div className="w-12 h-12 rounded-full bg-brightpurple-100 flex items-center justify-center">
+			<div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
 				<svg
-					className="w-6 h-6 text-brightpurple-500"
+					className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -55,9 +55,9 @@ const features = [
 		description:
 			'Nosso navegador entende o conteúdo, significado e objetos em páginas da web, permitindo que seus agentes de IA naveguem e extraiam dados facilmente.',
 		icon: (
-			<div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center">
+			<div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
 				<svg
-					className="w-6 h-6 text-teal-600"
+					className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -79,9 +79,9 @@ const features = [
 		description:
 			'Comece em minutos com nossos SDKs abrangentes para Node.js, Python e mais. APIs intuitivas tornam a integração simples e rápida.',
 		icon: (
-			<div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center">
+			<div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
 				<svg
-					className="w-6 h-6 text-teal-600"
+					className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"
@@ -205,9 +205,9 @@ const Features = () => {
 						<span className="text-[#4f9bff]">Recursos</span> Poderosos
 					</h2>
 					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-					 Deixe a 
-					 <span className="text-white text-2xl font-bold"> Inteligência Artificial </span>
-					 trabalhar pra você.
+					 Deixe a
+						<span className="text-white text-2xl font-bold"> Inteligência Artificial </span>
+						trabalhar pra você.
 					</p>
 				</div>
 

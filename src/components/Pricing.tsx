@@ -5,12 +5,11 @@ import { Check } from 'lucide-react';
 
 const pricingPlans = [
 	{
-		name: 'Gratuito',
-		price: '0',
-		description: 'Perfeito para uso ocasional e projetos pessoais. Ideal para quem está começando a explorar o potencial dos chatbots de IA.',
+		name: 'Uso Gratuito',
+		price: 'R$ 0',
+		description: 'É só usar',
 		features: [
 			'100 sessões de chatbot por mês',
-			'Chatbot inteligente de IA',
 			'Mensagens de texto',
 			'Template básico de chatbot',
 		],
@@ -19,16 +18,13 @@ const pricingPlans = [
 		buttonVariant: 'default' as const,
 	},
 	{
-		name: 'Créditos',
+		name: 'Pacote de Créditos',
 		price: 'R$ 100',
-		description: '6 meses de validade.',
+		description: '6 meses de validade',
 		features: [
-			'50.000 sessões de chatbot por mês',
-			'Assistência avançada de IA com GPT-4',
-			'Suporte prioritário com até 4h de resposta',
-			'Personalização avançada e integração com APIs',
-			'Análise detalhada de conversas e métricas',
-			'Templates avançados',
+			'500 sessões de chatbot',
+			'Mensagens de texto, voz e imagem',
+			'Templates personalizados e ajustáveis',
 		],
 		isPopular: false,
 		buttonText: 'Comece já!',
@@ -149,8 +145,8 @@ const Pricing = () => {
 						<Card
 							key={index}
 							className={`p-8 relative bg-[#0a1629]/50 backdrop-blur-sm ${plan.isPopular
-									? 'border-2 border-brightblue-500 shadow-xl'
-									: 'border border-brightblue-600 shadow-md'
+								? 'border-2 border-brightblue-500 shadow-xl'
+								: 'border border-brightblue-600 shadow-md'
 								}`}
 						>
 							{plan.isPopular && (
@@ -170,10 +166,10 @@ const Pricing = () => {
 								<div className="flex items-center justify-center text-white">
 									<span className="text-4xl font-bold">{plan.price}</span>
 									{plan.price !== 'Custom' && (
-										<span className="text-gray-400 ml-2">/1.000 créditos</span>
+										<span className="text-gray-400 ml-2"> </span>
 									)}
 								</div>
-								<p className="text-gray-300 mt-2">{plan.description}</p>
+								<p className="text-yellow-300 mt-2">{plan.description}</p>
 							</div>
 
 							<div className="space-y-4 mb-8">
@@ -188,8 +184,8 @@ const Pricing = () => {
 							<Button
 								variant={plan.buttonVariant}
 								className={`w-full border-brightblue-600 hover:text-lg text-white ${plan.isPopular
-										? 'bg-brightblue-400'
-										: 'bg-brightblue-600'
+									? 'bg-brightblue-400'
+									: 'bg-brightblue-400'
 									}`}
 							>
 								{plan.buttonText}

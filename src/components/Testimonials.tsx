@@ -3,19 +3,19 @@ import { Card } from '@/components/ui/card';
 
 const testimonials = [
 	{
-		quote: 'O Agent Browser da Bright Data transformou nossos fluxos de trabalho de IA. Aumentamos nossa eficiência de automação em 300%.',
-		author: 'Sarah Johnson',
-		role: 'CTO, TechFusion AI',
+		quote: 'O chatbot da FastBot transformou minha comunicação com os alunos. Consigo responder dúvidas frequentes 24h por dia, mesmo fora do horário de aula, e economizo cerca de 15 horas semanais em atendimentos repetitivos.',
+		author: 'Prof. Carlos Mendes',
+    	role: 'Professor de Endodontia, FOP-PE',
 	},
 	{
-		quote: 'A confiabilidade da infraestrutura da Bright Data nos permite escalar nossa automação na web sem nos preocupar com bloqueios de IP ou CAPTCHAs.',
-		author: 'Michael Chen',
-		role: 'Lead Engineer, DataCraft',
+		quote: 'Implementamos o FastBot na recepção virtual da clínica e o resultado foi impressionante! Reduzimos as faltas em 40% com lembretes automáticos e nossos pacientes adoram poder agendar consultas e tirar dúvidas a qualquer momento.',
+		author: 'Dra. Juliana Costa',
+		role: 'Cirurgiã-Dentista, Clínica Oral Care',
 	},
 	{
-		quote: 'Conseguimos lançar nosso produto de agente de IA em semanas, em vez de meses, graças às APIs fáceis de usar da Bright Data e à sua documentação robusta.',
-		author: 'Alex Rivera',
-		role: 'Product Manager, AgentWorks',
+		quote: 'Como coordenadora pedagógica, precisava de uma solução para atender pais, alunos e professores simultaneamente. O FastBot nos permitiu automatizar 70% das consultas administrativas e melhorou significativamente a satisfação da comunidade escolar.',
+		author: 'Profa. Mariana Alves',
+		role: 'Coordenadora Pedagógica, Escola Nova Geração',
 	},
 ];
 
@@ -78,10 +78,10 @@ const Testimonials = () => {
 			<div className="section-container relative z-10" id="testimonials-section">
 				<div className="text-center mb-16">
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-						<span className="text-[#4f9bff]">O que dizem</span> nossos clientes
+						<span className="text-[#4f9bff]">O que falam de nossos</span> chatbots
 					</h2>
-					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-						Junte-se a milhares de empresas que usam o FastBot para criar automações poderosas com IA.
+					<p className="text-2xl text-gray-300 max-w-3xl mx-auto">
+						Depoimentos de quem já usa.
 					</p>
 				</div>
 
@@ -94,10 +94,10 @@ const Testimonials = () => {
 										<path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
 									</svg>
 								</div>
-								<p className="text-gray-200 mb-6 flex-grow">{testimonial.quote}</p>
+								<p className="text-gray-400 text-lg mb-6 flex-grow">{testimonial.quote}</p>
 								<div>
-									<p className="font-bold text-white">{testimonial.author}</p>
-									<p className="text-sm text-gray-400">{testimonial.role}</p>
+									<p className="font-bold gradient-text">{testimonial.author}</p>
+									<p className="text-sm gradient-text">{testimonial.role}</p>
 								</div>
 							</div>
 						</Card>

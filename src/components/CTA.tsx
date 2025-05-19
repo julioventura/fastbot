@@ -13,7 +13,7 @@ export default function CTA() {
               Pronto em <span className="text-[#4f9bff]">3 minutos!</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Junte-se a milhares de empresas que usam o FastBot para criar automações poderosas baseadas em IA.
+              Nosso chatbot coloca a sua vida profissional em outro patamar!
             </p>
             <div className="mt-8">
               <Button 
