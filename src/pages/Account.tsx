@@ -39,11 +39,15 @@ const Account = () => {
       // Tenta obter dados do perfil se existir
       const fetchProfile = async () => {
         try {
+          console.log("Fetching profile for user ID:", user.id);
           const { data, error } = await supabase
             .from("profiles")
             .select("*")
             .eq("user_id", user.id)
             .single();
+          
+          console.log("Profile data:", data);
+          console.log("Profile error:", error);
           
           if (data && !error) {
             setProfileData({
