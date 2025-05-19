@@ -28,7 +28,7 @@ const Hero = () => {
           </defs>
         </svg>
       </div>
-      
+
       {/* Grid overlay pattern */}
       <div className="absolute inset-0 z-0 opacity-20">
         <div
@@ -57,25 +57,25 @@ const Hero = () => {
           ))}
         </div>
       </div>
-      
+
       <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold gradient-text">
             Seu <span className='text-white'>ChatBot de IA</span> em 3 minutos!<br />&nbsp;
 
           </h1>
-          
+
           <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-             Chatbot de IA + Homepage profissional
+            Chatbot de IA + Homepage profissional
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button className="hero-button bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-6 rounded-full text-lg flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
               <span>Faça o plano gratuito!</span>
               <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-24 text-center text-white" data-lov-id="hero-benefits">
             <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
               <div className="flex justify-center mb-4">
@@ -88,7 +88,7 @@ const Hero = () => {
               <p className="text-xl font-bold">150 M+ actions</p>
               <p className="text-sm opacity-70">performed daily</p>
             </div>
-            
+
             <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
@@ -100,8 +100,8 @@ const Hero = () => {
               <p className="text-xl font-bold">1M+ concurrent</p>
               <p className="text-sm opacity-70">sessions</p>
             </div>
-            
-           
+
+
             <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
@@ -113,7 +113,7 @@ const Hero = () => {
               <p className="text-xl font-bold">3M+ domains</p>
               <p className="text-sm opacity-70">unlocked</p>
             </div>
-            
+
           </div>
         </div>
       </div>

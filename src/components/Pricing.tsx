@@ -7,29 +7,31 @@ const pricingPlans = [
 	{
 		name: 'Gratuito',
 		price: '0',
-		description: 'Perfeito para o uso ocasional',
+		description: 'Perfeito para uso ocasional e projetos pessoais. Ideal para quem está começando a explorar o potencial dos chatbots de IA.',
 		features: [
-			'10,000 browser sessions per month',
-			'Basic AI assistance',
-			'Standard support',
-			'1 team member',
+			'100 sessões de chatbot por mês',
+			'Chatbot inteligente de IA',
+			'Mensagens de texto',
+			'Template básico de chatbot',
 		],
 		isPopular: true,
-		buttonText: 'Start for free',
-		buttonVariant: 'outline' as const,
+		buttonText: 'Comece já!',
+		buttonVariant: 'default' as const,
 	},
 	{
-		name: 'Plus',
+		name: 'Créditos',
 		price: 'R$ 100',
-		description: 'Uso profissional intenso',
+		description: '6 meses de validade.',
 		features: [
-			'50,000 browser sessions per month',
-			'Advanced AI assistance',
-			'Priority support',
-			'5 team members',
+			'50.000 sessões de chatbot por mês',
+			'Assistência avançada de IA com GPT-4',
+			'Suporte prioritário com até 4h de resposta',
+			'Personalização avançada e integração com APIs',
+			'Análise detalhada de conversas e métricas',
+			'Templates avançados',
 		],
 		isPopular: false,
-		buttonText: 'Start for free',
+		buttonText: 'Comece já!',
 		buttonVariant: 'default' as const,
 	},
 
@@ -135,10 +137,10 @@ const Pricing = () => {
 			<div className="section-container relative z-10" id="pricing-section">
 				<div className="text-center mb-16">
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-						<span>Simple, Transparent Pricing</span>
+						<span>Use grátis!</span>
 					</h2>
 					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-						Choose the plan that fits your needs. All plans include a free trial.
+						Se precisar, compre créditos na medida da sua necessidade.
 					</p>
 				</div>
 
@@ -153,12 +155,12 @@ const Pricing = () => {
 						>
 							{plan.isPopular && (
 								<div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brightblue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-									Uso normal
+									Pra usar desde já
 								</div>
 							)}
 							{plan.isPopular || (
 								<div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brightblue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-									Uso intenso
+									Pra quando precisar
 								</div>
 							)}
 							<div className="text-center mb-6">
@@ -168,7 +170,7 @@ const Pricing = () => {
 								<div className="flex items-center justify-center text-white">
 									<span className="text-4xl font-bold">{plan.price}</span>
 									{plan.price !== 'Custom' && (
-										<span className="text-gray-400 ml-2">/month</span>
+										<span className="text-gray-400 ml-2">/1.000 créditos</span>
 									)}
 								</div>
 								<p className="text-gray-300 mt-2">{plan.description}</p>
@@ -185,9 +187,9 @@ const Pricing = () => {
 
 							<Button
 								variant={plan.buttonVariant}
-								className={`w-full ${plan.isPopular
-										? 'bg-brightblue-600 hover:bg-brightblue-600 text-white hover:text-yellow-400'
-										: ' hover:bg-brightblue-600 hover:text-yellow-400'
+								className={`w-full border-brightblue-600 hover:text-lg text-white ${plan.isPopular
+										? 'bg-brightblue-400'
+										: 'bg-brightblue-600'
 									}`}
 							>
 								{plan.buttonText}

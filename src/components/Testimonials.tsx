@@ -3,19 +3,19 @@ import { Card } from '@/components/ui/card';
 
 const testimonials = [
 	{
-		quote: "Bright Data's Agent Browser has been a game-changer for our AI workflows. We've improved our automation efficiency by 300%.",
-		author: "Sarah Johnson",
-		role: "CTO, TechFusion AI",
+		quote: 'O Agent Browser da Bright Data transformou nossos fluxos de trabalho de IA. Aumentamos nossa eficiência de automação em 300%.',
+		author: 'Sarah Johnson',
+		role: 'CTO, TechFusion AI',
 	},
 	{
-		quote: "The reliability of Bright Data's infrastructure lets us scale our web automation without worrying about IP blocks or CAPTCHAs.",
-		author: "Michael Chen",
-		role: "Lead Engineer, DataCraft",
+		quote: 'A confiabilidade da infraestrutura da Bright Data nos permite escalar nossa automação na web sem nos preocupar com bloqueios de IP ou CAPTCHAs.',
+		author: 'Michael Chen',
+		role: 'Lead Engineer, DataCraft',
 	},
 	{
-		quote: "We were able to launch our AI agent product in weeks instead of months thanks to Bright Data's easy-to-use APIs and robust documentation.",
-		author: "Alex Rivera",
-		role: "Product Manager, AgentWorks",
+		quote: 'Conseguimos lançar nosso produto de agente de IA em semanas, em vez de meses, graças às APIs fáceis de usar da Bright Data e à sua documentação robusta.',
+		author: 'Alex Rivera',
+		role: 'Product Manager, AgentWorks',
 	},
 ];
 
@@ -78,10 +78,10 @@ const Testimonials = () => {
 			<div className="section-container relative z-10" id="testimonials-section">
 				<div className="text-center mb-16">
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-						<span>What Our Customers Say</span>
+						<span className="text-[#4f9bff]">O que dizem</span> nossos clientes
 					</h2>
 					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-						Join thousands of companies using Bright Data to power their AI agents
+						Junte-se a milhares de empresas que usam o FastBot para criar automações poderosas com IA.
 					</p>
 				</div>
 

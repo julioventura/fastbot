@@ -8,20 +8,20 @@ export default function CTA() {
     <section className="relative py-16 md:py-24 bg-gradient-to-br from-[#0a1629] to-[#0e2d5e]">
       <div className="section-container relative z-10" id="cta-section">
         <div className="max-w-4xl mx-auto text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold gradient-text">
-            Pronto em 3 minutos!
-          </h1>
-          <br />&nbsp;<br />
-          <p className="text-xl opacity-90 mb-10 max-w-2xl mx-auto">
-            Join thousands of companies using Bright Data to build powerful AI-driven web automation
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-6 rounded-full text-lg flex items-center gap-2">
-              <span>Comece já</span>
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
+              Pronto em <span className="text-[#4f9bff]">3 minutos!</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Junte-se a milhares de empresas que usam o FastBot para criar automações poderosas baseadas em IA.
+            </p>
+            <div className="mt-8">
+              <Button 
+                className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white px-8 py-6 text-lg rounded-lg drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
+              >
+                Comece já
+              </Button>
+            </div>
           </div>
         </div>
       </div>
