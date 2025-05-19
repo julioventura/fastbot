@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
@@ -84,7 +83,47 @@ const Header = () => {
   };
   
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      // Tente limpar o estado do cliente primeiro, independentemente da resposta do servidor
+      // Isso garante que limpamos a sessão local mesmo que o servidor rejeite a solicitação
+      
+      // 1. Limpar quaisquer tokens remanescentes do Supabase no localStorage
+      for (const key of Object.keys(localStorage)) {
+        if (key.startsWith('sb-') || key.includes('supabase')) {
+          localStorage.removeItem(key);
+        }
+      }
+      
+      // 2. Use o signOut do contexto de autenticação, se disponível (deve limpar o estado do contexto)
+      if (typeof signOut === 'function') {
+        try {
+          await signOut();
+        } catch (contextError) {
+          console.log("Erro no signOut do contexto, continuando a limpeza:", contextError);
+        }
+      }
+      
+      // 3. Agora tente o signout do Supabase (pode falhar com 403, mas já limpamos)
+      try {
+        await supabase.auth.signOut();
+      } catch (supabaseError) {
+        console.log("Erro no signOut do Supabase (esperado se a sessão for inválida):", supabaseError);
+      }
+      
+      // 4. Redefinir o estado local do componente
+      setUserName("");
+      
+      // 5. Forçar um recarregamento completo para garantir que todo o estado seja limpo
+      window.location.href = '/';
+      
+    } catch (error) {
+      console.error("Erro durante o processo de saída:", error);
+      
+      // Mesmo em caso de erro fatal, tente forçar um estado limpo
+      setUserName("");
+      localStorage.clear(); // Limpeza mais agressiva
+      window.location.href = '/';
+    }
   };
   
   return (
@@ -139,7 +178,10 @@ const Header = () => {
                 <DropdownMenuItem asChild>
                   <Link to="/account">Minha conta</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSignOut}>
+                <DropdownMenuItem onSelect={(e) => {
+                  e.preventDefault(); // Prevent default to avoid immediate closing
+                  handleSignOut();
+                }}>
                   Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
