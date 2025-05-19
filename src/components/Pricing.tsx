@@ -146,15 +146,19 @@ const Pricing = () => {
 					{pricingPlans.map((plan, index) => (
 						<Card
 							key={index}
-							className={`p-8 relative bg-[#0a1629]/50 backdrop-blur-sm ${
-								plan.isPopular
+							className={`p-8 relative bg-[#0a1629]/50 backdrop-blur-sm ${plan.isPopular
 									? 'border-2 border-brightblue-500 shadow-xl'
 									: 'border border-brightblue-600 shadow-md'
-							}`}
+								}`}
 						>
 							{plan.isPopular && (
 								<div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brightblue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-									Uso ocasional
+									Uso normal
+								</div>
+							)}
+							{plan.isPopular || (
+								<div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brightblue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+									Uso intenso
 								</div>
 							)}
 							<div className="text-center mb-6">
@@ -181,11 +185,10 @@ const Pricing = () => {
 
 							<Button
 								variant={plan.buttonVariant}
-								className={`w-full ${
-									plan.isPopular
+								className={`w-full ${plan.isPopular
 										? 'bg-brightblue-600 hover:bg-brightblue-600 text-white hover:text-yellow-400'
 										: ' hover:bg-brightblue-600 hover:text-yellow-400'
-								}`}
+									}`}
 							>
 								{plan.buttonText}
 							</Button>
