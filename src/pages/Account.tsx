@@ -7,13 +7,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, Phone, CalendarIcon, MapPin, Building, Briefcase, UserPlus, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [isStudent, setIsStudent] = useState(false);
+  const [isProfessor, setIsProfessor] = useState(false);
+  const [profession, setProfession] = useState("");
+  const [gender, setGender] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -31,12 +42,20 @@ const Account = () => {
         try {
           const { data, error } = await supabase
             .from("profiles")
-            .select("name")
+            .select("*")
             .eq("user_id", user.id)
             .single();
           
           if (data && !error) {
             setName(data.name || "");
+            setWhatsapp(data.whatsapp || "");
+            setIsStudent(data.is_student || false);
+            setIsProfessor(data.is_professor || false);
+            setProfession(data.profession || "");
+            setGender(data.gender || "");
+            setBirthDate(data.birth_date || "");
+            setCity(data.city || "");
+            setState(data.state || "");
           }
         } catch (error) {
           console.error("Erro ao buscar perfil:", error);
@@ -62,11 +81,23 @@ const Account = () => {
         .eq("user_id", user.id)
         .single();
       
+      const profileData = {
+        name,
+        whatsapp,
+        is_student: isStudent,
+        is_professor: isProfessor,
+        profession,
+        gender,
+        birth_date: birthDate,
+        city,
+        state
+      };
+      
       if (existingProfile) {
         // Atualiza perfil existente
         const { error } = await supabase
           .from("profiles")
-          .update({ name })
+          .update(profileData)
           .eq("user_id", user.id);
         
         if (error) throw error;
@@ -74,7 +105,7 @@ const Account = () => {
         // Cria novo perfil
         const { error } = await supabase
           .from("profiles")
-          .insert([{ user_id: user.id, name }]);
+          .insert([{ user_id: user.id, ...profileData }]);
         
         if (error) throw error;
       }
@@ -229,6 +260,7 @@ const Account = () => {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
+                  {/* Nome */}
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-gray-300">Nome</Label>
                     <div className="relative">
@@ -243,6 +275,7 @@ const Account = () => {
                     </div>
                   </div>
                   
+                  {/* Email */}
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-gray-300">Email</Label>
                     <div className="relative">
@@ -256,6 +289,146 @@ const Account = () => {
                       />
                     </div>
                     <p className="text-sm text-gray-400">O email não pode ser alterado.</p>
+                  </div>
+                  
+                  {/* WhatsApp */}
+                  <div className="space-y-2">
+                    <Label htmlFor="whatsapp" className="text-gray-300">WhatsApp</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+                      <Input
+                        id="whatsapp"
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        placeholder="Seu número de WhatsApp"
+                        className="pl-8 bg-[#0a1629]/80 border-[#2a4980]/50 text-white placeholder:text-gray-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Profissão */}
+                  <div className="space-y-2">
+                    <Label htmlFor="profession" className="text-gray-300">Profissão</Label>
+                    <div className="relative">
+                      <Briefcase className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+                      <Input
+                        id="profession"
+                        value={profession}
+                        onChange={(e) => setProfession(e.target.value)}
+                        placeholder="Sua profissão"
+                        className="pl-8 bg-[#0a1629]/80 border-[#2a4980]/50 text-white placeholder:text-gray-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Sexo */}
+                  <div className="space-y-2">
+                    <Label className="text-gray-300">Sexo</Label>
+                    <RadioGroup value={gender} onValueChange={setGender} className="flex space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem 
+                          id="masculino" 
+                          value="masculino" 
+                          className="border-[#4f9bff] text-[#4f9bff]" 
+                        />
+                        <Label htmlFor="masculino" className="text-gray-300">Masculino</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem 
+                          id="feminino" 
+                          value="feminino" 
+                          className="border-[#4f9bff] text-[#4f9bff]" 
+                        />
+                        <Label htmlFor="feminino" className="text-gray-300">Feminino</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem 
+                          id="outro" 
+                          value="outro" 
+                          className="border-[#4f9bff] text-[#4f9bff]" 
+                        />
+                        <Label htmlFor="outro" className="text-gray-300">Outro</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  
+                  {/* Data de Nascimento */}
+                  <div className="space-y-2">
+                    <Label htmlFor="birth_date" className="text-gray-300">Nascimento</Label>
+                    <div className="relative">
+                      <CalendarIcon className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+                      <Input
+                        id="birth_date"
+                        type="date"
+                        value={birthDate}
+                        onChange={(e) => setBirthDate(e.target.value)}
+                        className="pl-8 bg-[#0a1629]/80 border-[#2a4980]/50 text-white placeholder:text-gray-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Cidade e Estado */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="city" className="text-gray-300">Cidade</Label>
+                      <div className="relative">
+                        <MapPin className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+                        <Input
+                          id="city"
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="Sua cidade"
+                          className="pl-8 bg-[#0a1629]/80 border-[#2a4980]/50 text-white placeholder:text-gray-500"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="state" className="text-gray-300">Estado</Label>
+                      <div className="relative">
+                        <Building className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+                        <Input
+                          id="state"
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
+                          placeholder="Seu estado"
+                          className="pl-8 bg-[#0a1629]/80 border-[#2a4980]/50 text-white placeholder:text-gray-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Checkbox para Estudante e Professor */}
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="is_student" 
+                        checked={isStudent} 
+                        onCheckedChange={(checked) => setIsStudent(checked as boolean)}
+                        className="border-[#4f9bff] data-[state=checked]:bg-[#4f9bff]"
+                      />
+                      <div className="grid gap-1.5 leading-none">
+                        <Label htmlFor="is_student" className="text-gray-300 flex items-center space-x-2">
+                          <GraduationCap className="h-4 w-4 text-[#4f9bff]" />
+                          <span>Estudante</span>
+                        </Label>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="is_professor" 
+                        checked={isProfessor} 
+                        onCheckedChange={(checked) => setIsProfessor(checked as boolean)}
+                        className="border-[#4f9bff] data-[state=checked]:bg-[#4f9bff]"
+                      />
+                      <div className="grid gap-1.5 leading-none">
+                        <Label htmlFor="is_professor" className="text-gray-300 flex items-center space-x-2">
+                          <UserPlus className="h-4 w-4 text-[#4f9bff]" />
+                          <span>Professor</span>
+                        </Label>
+                      </div>
+                    </div>
                   </div>
                   
                   <Button 
