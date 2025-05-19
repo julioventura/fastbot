@@ -50,7 +50,11 @@ const Header = () => {
       <div className="container relative z-10 mx-auto px-4 flex items-center justify-between h-16 md:h-20">
         <div className="flex items-center">
           <a href="/" className="flex items-center space-x-2 group">
-            <span className="font-bold text-2xl text-white drop-shadow-[0_0_15px_rgba(0,99,247,0.5)] group-hover:text-[#4f9bff] transition-colors">
+            <span className="font-bold text-2xl text-white 
+              [text-shadow:0_0_8px_#4f9bff,0_0_20px_rgba(0,99,247,0.8)]
+              group-hover:text-[#4f9bff] 
+              group-hover:[text-shadow:0_0_12px_#4f9bff,0_0_25px_rgba(0,99,247,0.9)]
+              transition-all duration-300">
               FastBot
             </span>
           </a>
@@ -66,7 +70,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <Button 
             variant="outline" 
-            className="hidden md:inline-flex border-[#4f9bff]/60 text-white hover:bg-[#4f9bff]/10 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.3)]"
+            className="hidden md:inline-flex border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
           >
             Log In
           </Button>

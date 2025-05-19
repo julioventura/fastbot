@@ -44,8 +44,9 @@ const Hero = () => {
       
       <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight">
-            Crie seu ChatBot de IA agora!
+          <h1 className="text-4xl md:text-6xl font-bold gradient-text">
+            Crie seu <span className='text-white'>ChatBot de IA</span> agora!<br />&nbsp;
+
           </h1>
           
           <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
@@ -55,12 +56,12 @@ const Hero = () => {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button className="hero-button bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-6 rounded-full text-lg flex items-center gap-2">
-              <span>Try Now</span>
+              <span>Comece agora </span>
               <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-24 text-center text-white" data-lov-id="hero-benefits">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-24 text-center text-white" data-lov-id="hero-benefits">
             <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
@@ -69,7 +70,7 @@ const Hero = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-xl font-bold">150M+ actions</p>
+              <p className="text-xl font-bold">150 M+ actions</p>
               <p className="text-sm opacity-70">performed daily</p>
             </div>
             
@@ -85,19 +86,7 @@ const Hero = () => {
               <p className="text-sm opacity-70">sessions</p>
             </div>
             
-            <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xl font-bold">150M+ IPs in 195</p>
-              <p className="text-sm opacity-70">countries</p>
-            </div>
-            
+           
             <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
@@ -110,17 +99,6 @@ const Hero = () => {
               <p className="text-sm opacity-70">unlocked</p>
             </div>
             
-            <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xl font-bold">2.5PB+ collected</p>
-              <p className="text-sm opacity-70">daily</p>
-            </div>
           </div>
         </div>
       </div>
