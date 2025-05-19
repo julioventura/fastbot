@@ -74,6 +74,21 @@ const Account = () => {
     setIsSaving(true);
     
     try {
+      // Prepara os dados do perfil com os tipos corretos conforme a tabela
+      const profileData = {
+        name,
+        whatsapp,
+        is_student: isStudent, // boolean
+        is_professor: isProfessor, // boolean
+        profession,
+        gender,
+        birth_date: birthDate || null, // data ou null
+        city,
+        state
+      };
+
+      console.log("Dados a serem salvos:", profileData);
+      
       // Verifica se o perfil existe
       const { data: existingProfile } = await supabase
         .from("profiles")
@@ -81,33 +96,24 @@ const Account = () => {
         .eq("user_id", user.id)
         .single();
       
-      const profileData = {
-        name,
-        whatsapp,
-        is_student: isStudent,
-        is_professor: isProfessor,
-        profession,
-        gender,
-        birth_date: birthDate,
-        city,
-        state
-      };
+      let result;
       
       if (existingProfile) {
         // Atualiza perfil existente
-        const { error } = await supabase
+        result = await supabase
           .from("profiles")
           .update(profileData)
           .eq("user_id", user.id);
-        
-        if (error) throw error;
       } else {
         // Cria novo perfil
-        const { error } = await supabase
+        result = await supabase
           .from("profiles")
           .insert([{ user_id: user.id, ...profileData }]);
-        
-        if (error) throw error;
+      }
+      
+      if (result.error) {
+        console.error("Erro ao salvar perfil:", result.error);
+        throw result.error;
       }
       
       toast({
@@ -119,7 +125,7 @@ const Account = () => {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Não foi possível atualizar seu perfil.",
+        description: "Não foi possível atualizar seu perfil. Por favor, tente novamente.",
       });
     } finally {
       setIsSaving(false);
@@ -404,7 +410,7 @@ const Account = () => {
                       <Checkbox 
                         id="is_student" 
                         checked={isStudent} 
-                        onCheckedChange={(checked) => setIsStudent(checked as boolean)}
+                        onCheckedChange={(checked) => setIsStudent(checked === true)}
                         className="border-[#4f9bff] data-[state=checked]:bg-[#4f9bff]"
                       />
                       <div className="grid gap-1.5 leading-none">
@@ -419,7 +425,7 @@ const Account = () => {
                       <Checkbox 
                         id="is_professor" 
                         checked={isProfessor} 
-                        onCheckedChange={(checked) => setIsProfessor(checked as boolean)}
+                        onCheckedChange={(checked) => setIsProfessor(checked === true)}
                         className="border-[#4f9bff] data-[state=checked]:bg-[#4f9bff]"
                       />
                       <div className="grid gap-1.5 leading-none">
