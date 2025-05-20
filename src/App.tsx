@@ -10,6 +10,7 @@ import Account from "./pages/Account";
 import Header from "@/components/Header";
 import PricingPage from "./pages/PricingPage";
 import FeaturesPage from "./pages/FeaturesPage";
+import MyChatbotPage from "./pages/MyChatbotPage"; // Nova importação
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/account" element={<Account />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/my-chatbot" element={<MyChatbotPage />} /> {/* Nova rota */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

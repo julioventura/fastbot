@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom'; // Certifique-se que NavLink está importado se for usar para active states
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User } from 'lucide-react';
+import { User, LogOut } from 'lucide-react'; // Certifique-se que LogOut está importado
 import { supabase } from '@/integrations/supabase/client';
 
 // Custom hook to track scroll direction
@@ -76,10 +76,64 @@ const Header = () => {
     fetchUserName();
   }, [user]);
 
-  // Função para truncar o nome se for maior que 10 caracteres
-  const firstLetter = (name: string) => {
-    if (name.length <= 10) return name;
-    return name.substring(0, 10) + "...";
+  // Função para truncar o nome mantendo palavras iniciais inteiras que caibam no limite
+  const truncate = (name: string): string => {
+    const limit = 15; // Limite máximo de caracteres para a parte do texto
+
+    if (!name) {
+      return ""; // Retorna string vazia se o nome for nulo ou indefinido
+    }
+
+    const trimmedName = name.trim(); // Remove espaços extras no início e fim
+
+    // Se o nome ajustado (sem espaços extras) já é curto o suficiente, retorna ele
+    if (trimmedName.length <= limit) {
+      return trimmedName;
+    }
+
+    // O nome é mais longo que o limite, então "..." provavelmente será necessário.
+    const words = trimmedName.split(/\s+/); // Divide o nome em palavras, tratando múltiplos espaços
+
+    // Caso especial: se não houver palavras após o trim (improvável se trimmedName não for vazio)
+    if (words.length === 0) {
+      return "";
+    }
+
+    // Caso especial: a primeira palavra sozinha já é muito longa
+    if (words[0].length > limit) {
+      // Trunca a primeira palavra para caber com "..."
+      const cutLength = limit - 3; // Deixa espaço para "..."
+      if (cutLength < 1) {
+        // Se não há espaço nem para um caractere + "...", apenas corta o nome original no limite
+        return trimmedName.substring(0, limit);
+      }
+      return words[0].substring(0, cutLength) + "...";
+    }
+
+    let textPart = "";
+    for (const word of words) {
+      const potentialTextPart = textPart + (textPart ? " " : "") + word;
+      if (potentialTextPart.length <= limit) {
+        textPart = potentialTextPart; // Adiciona a palavra se ainda couber
+      } else {
+        // Adicionar esta palavra excederia o limite.
+        // `textPart` já contém a maior string de palavras inteiras que cabe.
+        break;
+      }
+    }
+
+    // Reconstrói o nome completo normalizado para comparação
+    const normalizedFullName = words.join(" ");
+
+    if (textPart.length < normalizedFullName.length) {
+      // Se `textPart` é mais curto que o nome completo normalizado,
+      // significa que nem todas as palavras couberam. Adiciona "...".
+      return textPart;
+    } else {
+      // `textPart` é o nome completo normalizado e já sabemos que `textPart.length <= limit`.
+      // Isso significa que o conteúdo inteiro cabe dentro do limite.
+      return textPart;
+    }
   };
 
   const handleSignOut = async () => {
@@ -156,29 +210,43 @@ const Header = () => {
           </div>
 
           <nav className="hidden md:flex items-center space-x-8">
-
-            <Link
+            {/* <NavLink
               to="/"
-              className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all"
+              className={({ isActive }) => `text-sm font-medium ${isActive ? "text-white drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
             >
               Início
-            </Link>
+            </NavLink> */}
 
-            {/* Novo link para a página de Recursos */}
-            <Link
-              to="/features"
-              className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all"
-            >
-              Recursos
-            </Link>
 
-            {/* Link atualizado para a página de Preços */}
-            <Link
-              to="/pricing"
-              className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all"
-            >
-              Preços
-            </Link>
+            {!user && ( // Mostrar apenas se o usuário NÃO estiver logado
+              <NavLink
+                to="/features"
+                className={({ isActive }) => `text-sm font-medium ${isActive ? "text-white drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+              >
+                Recursos
+              </NavLink>
+            )}
+
+
+            {!user && ( // Mostrar apenas se o usuário NÃO estiver logado
+              <NavLink
+                to="/pricing"
+                className={({ isActive }) => `text-sm font-medium ${isActive ? "text-white drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+              >
+                Preços
+              </NavLink>
+            )}
+
+
+            {user && ( // Mostrar apenas se o usuário estiver logado
+              <NavLink
+                to="/my-chatbot"
+                className={({ isActive }) => `text-sm font-medium ${isActive ? "text-white drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+              >
+                Meu Chatbot
+              </NavLink>
+            )}
+
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -187,31 +255,45 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
+                    className="border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-blue-400 hover:border-[#4f9bff]  transition-all px-3 py-2 rounded-md"
                   >
                     <User className="mr-2 h-4 w-4" />
-                    Minha conta
+                    {/* Usando userName do estado para exibir o nome truncado ou o email */}
+                    <span className="hidden sm:inline">{truncate(userName)}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="bg-[#0a1629] border-2 border-[#4f9bff] shadow-lg rounded-lg p-1"
+                  className="w-56 bg-[#0a1629] border-2 border-[#2a4980]/80 shadow-xl rounded-lg p-1 backdrop-blur-sm" // Ajustado border e adicionado backdrop-blur
                 >
                   <DropdownMenuItem
-                    className="rounded-md px-4 py-2 text-white font-medium bg-transparent hover:bg-[#2563eb]/80 hover:text-white focus:bg-[#2563eb] focus:text-white transition-colors"
+                    className="cursor-pointer rounded-md px-3 py-2 text-gray-200 hover:!bg-[#2a4980]/70 hover:!text-white focus:!bg-[#2a4980]/70 focus:!text-white transition-colors flex items-center"
                     asChild
                   >
-                    <Link to="/account">Minha conta</Link>
+                    <Link to="/account">
+                      <User className="mr-2 h-4 w-4" />
+                      Minha Conta
+                    </Link>
                   </DropdownMenuItem>
+
                   <DropdownMenuItem
-                    className="rounded-md px-4 py-2 text-white font-medium bg-transparent hover:bg-[#2563eb]/80 hover:text-white focus:bg-[#2563eb] focus:text-white transition-colors"
-                    onSelect={(e) => {
-                      e.preventDefault();
-                      handleSignOut();
-                    }}
+                    className="cursor-pointer rounded-md px-3 py-2 text-gray-200 hover:!bg-[#2a4980]/70 hover:!text-white focus:!bg-[#2a4980]/70 focus:!text-white transition-colors flex items-center"
+                    asChild
                   >
+                    <Link to="/my-chatbot">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4 lucide lucide-bot"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>
+                      Meu Chatbot
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="cursor-pointer rounded-md px-3 py-2 text-red-400 hover:!bg-[#2a4980]/70 hover:!text-red-300 focus:!bg-[#2a4980]/70 focus:!text-red-300 transition-colors flex items-center"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
                     Sair
                   </DropdownMenuItem>
+
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -234,20 +316,8 @@ const Header = () => {
               </>
             )}
 
-            {user && (
-              <div
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-[#3b82f6] border-2 border-[#4f9bff] shadow-[0_0_10px_rgba(79,155,255,0.3)] ml-2"
-                title={userName}
-              >
-                <span className="text-white font-bold text-lg select-none">
-                  {firstLetter(userName)[0]?.toUpperCase()}
-                </span>
-              </div>
-            )}
 
           </div>
-
-
         </div>
 
         <AuthModal
