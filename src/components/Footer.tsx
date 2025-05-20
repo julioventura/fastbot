@@ -41,48 +41,17 @@ const Footer = () => {
       </div>
       
       <div className="section-container py-12 relative z-10" id="footer-section">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-1">
             <span className="font-bold text-2xl text-brightblue-500">FastBot</span>
-            <p className="mt-4 text-gray-300">
-              Empowering AI agents with reliable browser automation
-            </p>
           </div>
           
-          <div>
-            <h3 className="font-semibold text-lg mb-4 text-white">Product</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Agent Browser</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Web Automation</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">IP Infrastructure</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Pricing</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold text-lg mb-4 text-white">Resources</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Documentation</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">API Reference</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Blog</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Case Studies</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold text-lg mb-4 text-white">Company</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">About Us</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Careers</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Contact</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-brightblue-500">Legal</a></li>
-            </ul>
-          </div>
-        </div>
+
+        </div> */}
         
-        <div className="border-t border-[#2a4980]/30 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} FastBot. All rights reserved.
+           <span className="font-bold text-2xl text-brightblue-500">FastBot</span> 
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-brightblue-500">
