@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] flex items-center justify-center">
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-screen flex items-center justify-center">
       {/* SVG Glow Effect */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <svg className="w-full h-full opacity-60" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
