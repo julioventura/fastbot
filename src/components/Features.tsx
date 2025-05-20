@@ -73,30 +73,6 @@ const features = [
 			</div>
 		),
 	},
-
-	{
-		title: 'Developer Friendly',
-		description:
-			'Comece em minutos com nossos SDKs abrangentes para Node.js, Python e mais. APIs intuitivas tornam a integração simples e rápida.',
-		icon: (
-			<div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
-				<svg
-					className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						strokeWidth={2}
-						d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-					/>
-				</svg>
-			</div>
-		),
-	},
 ];
 
 const Features = () => {
@@ -208,7 +184,7 @@ const Features = () => {
 				</div>
 
 				{/* Focusing on just the feature cards section */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+				<div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8">
 					{features.map((feature, index) => (
 						<div
 							key={index}
