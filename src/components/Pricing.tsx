@@ -13,7 +13,7 @@ const pricingPlans = [
             'Mensagens de texto',
         ],
         isPopular: true,
-        buttonText: 'Comece já!',
+        buttonText: 'COMECE JÁ !',
         buttonVariant: 'default' as const,
     },
     {
@@ -25,7 +25,7 @@ const pricingPlans = [
             'Mensagens de texto e áudio',
         ],
         isPopular: false,
-        buttonText: 'Comece já!',
+        buttonText: 'COMECE JÁ !',
         buttonVariant: 'default' as const,
     },
     {
@@ -37,7 +37,7 @@ const pricingPlans = [
             'Validade de um ano',
         ],
         isPopular: false,
-        buttonText: 'Comece já!',
+        buttonText: 'COMECE JÁ !',
         buttonVariant: 'default' as const,
     },
 ];
@@ -156,8 +156,8 @@ const Pricing = () => {
                                 }`}
                         >
                             {plan.isPopular && (
-                                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#4f9bff] text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
-                                    Pra usar desde já
+                                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
+                                    COMECE JÁ !
                                 </div>
                             )}
 
@@ -187,7 +187,7 @@ const Pricing = () => {
                                 variant={plan.buttonVariant}
                                 className={`w-full mt-auto text-white font-semibold py-3 text-base md:text-lg
                   ${plan.isPopular
-                                        ? 'bg-[#4f9bff] hover:bg-[#3b82f6] drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]'
+                                        ? 'bg-blue-600 hover:bg-[#3b82f6] drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]'
                                         : 'bg-[#2a4980]/80 hover:bg-[#375da0] border border-[#4f9bff]/50 hover:border-[#4f9bff]'
                                     } transition-all duration-300 ease-in-out transform hover:scale-105`}
                             >
