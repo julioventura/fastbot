@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Account from "./pages/Account";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import PricingPage from "./pages/PricingPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import MyChatbotPage from "./pages/MyChatbotPage"; // Nova importação
@@ -31,6 +32,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>

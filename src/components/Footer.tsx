@@ -49,10 +49,8 @@ const Footer = () => {
 
         </div> */}
         
-        <div className="mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
-           <span className="font-bold text-2xl text-brightblue-500">FastBot</span> 
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <span className="text-gray-400 text-sm"><span className=" text-brightblue-500 font-bold text-2xl">FastBot</span> </span>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-brightblue-500">
               <span className="sr-only">Twitter</span>

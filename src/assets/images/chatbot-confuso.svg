@@ -1,0 +1,23 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="70" width="140" height="100" rx="20" fill="#2A4980" stroke="#4F9BFF" stroke-width="4"/>
+  
+  {/* Olhos */}
+  <circle cx="75" cy="110" r="10" fill="#FFFFFF"/>
+  <circle cx="125" cy="110" r="10" fill="#FFFFFF"/>
+  
+  {/* Pupilas (um pouco desalinhadas para confusão) */}
+  <circle cx="72" cy="112" r="4" fill="#0A1629"/>
+  <circle cx="128" cy="108" r="4" fill="#0A1629"/>
+  
+  {/* Boca (linha ondulada para expressar dúvida/confusão) */}
+  <path d="M70 145 Q85 135, 100 145 T130 145" stroke="#4F9BFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  {/* Antena */}
+  <line x1="100" y1="70" x2="100" y2="50" stroke="#4F9BFF" stroke-width="4"/>
+  <circle cx="100" cy="45" r="7" fill="#4F9BFF" stroke="#0A1629" stroke-width="2"/>
+  
+  {/* Linhas de "pensamento" ou "confusão" acima da cabeça */}
+  <path d="M60 40 Q70 30, 80 40" stroke="#4F9BFF" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M50 55 Q60 45, 70 55" stroke="#4F9BFF" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+</svg>
