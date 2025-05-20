@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 // Export the component directly
 export default function CTA() {
   return (
-    <section className="relative py-16 md:py-24 bg-gradient-to-br from-[#0a1629] to-[#0e2d5e]">
+    <section className="relative py-5 md:py-16 bg-gradient-to-br from-[#0a1629] to-[#0e2d5e]">
       <div className="section-container relative z-10" id="cta-section">
         <div className="max-w-4xl mx-auto text-center text-white">
           <div className="text-center mb-12">

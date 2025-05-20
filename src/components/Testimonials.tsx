@@ -21,7 +21,7 @@ const testimonials = [
 
 const Testimonials = () => {
 	return (
-		<section className="relative py-16 md:py-24 bg-gradient-to-b from-[#082756] to-[#0a1629]">
+		<section className="relative py-5 md:py-0 bg-gradient-to-b from-[#082756] to-[#0a1629]">
 			{/* SVG Glow Effect */}
 			<div className="absolute inset-0 z-0 overflow-hidden">
 				<svg className="w-full h-full opacity-60" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">

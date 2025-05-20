@@ -49,7 +49,7 @@ const Pricing = () => {
 	return (
 		<section
 			id="pricing"
-			className="relative py-16 md:py-24 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
+			className="relative py-5 md:py-0 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
 		>
 			{/* SVG Glow Effect */}
 			<div className="absolute inset-0 z-0 overflow-hidden">
@@ -145,7 +145,7 @@ const Pricing = () => {
 			<div className="section-container relative z-10" id="pricing-section">
 				<div className="text-center mb-16">
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-						<span className='gradient-text'>Gratuito, mensal ou créditos...</span> <span> na sua medida!</span>
+						<span className='gradient-text'>Gratuito, mensal ou créditos...</span> <br /><span>na sua medida!</span>
 					</h2>
 				</div>
 

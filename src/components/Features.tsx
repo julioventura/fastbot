@@ -103,7 +103,7 @@ const Features = () => {
 	return (
 		<section
 			id="features"
-			className="relative py-16 md:py-24 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
+			className="relative py-5 md:py-0 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
 		>
 			{/* SVG Glow Effect */}
 			<div className="absolute inset-0 z-0 overflow-hidden">
