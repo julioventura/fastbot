@@ -77,7 +77,7 @@ const Header = () => {
   }, [user]);
   
   // Função para truncar o nome se for maior que 10 caracteres
-  const truncateName = (name: string) => {
+  const firstLetter = (name: string) => {
     if (name.length <= 10) return name;
     return name.substring(0, 10) + "...";
   };
@@ -156,10 +156,8 @@ const Header = () => {
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Features</a>
-          <a href="#solutions" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Solutions</a>
-          <a href="#pricing" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Pricing</a>
-          <a href="#docs" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Docs</a>
+          <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Seu Chatbot</a>
+          <a href="#pricing" className="text-sm font-medium text-gray-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all">Preços</a>
         </nav>
         
         <div className="flex items-center space-x-4">
@@ -171,17 +169,26 @@ const Header = () => {
                   className="border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
                 >
                   <User className="mr-2 h-4 w-4" />
-                  {truncateName(userName)}
+                  Minha conta
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
+              <DropdownMenuContent
+                align="end"
+                className="bg-[#0a1629] border-2 border-[#4f9bff] shadow-lg rounded-lg p-1"
+              >
+                <DropdownMenuItem
+                  className="rounded-md px-4 py-2 text-white font-medium bg-transparent hover:bg-[#2563eb]/80 hover:text-white focus:bg-[#2563eb] focus:text-white transition-colors"
+                  asChild
+                >
                   <Link to="/account">Minha conta</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={(e) => {
-                  e.preventDefault(); // Prevent default to avoid immediate closing
-                  handleSignOut();
-                }}>
+                <DropdownMenuItem
+                  className="rounded-md px-4 py-2 text-white font-medium bg-transparent hover:bg-[#2563eb]/80 hover:text-white focus:bg-[#2563eb] focus:text-white transition-colors"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleSignOut();
+                  }}
+                >
                   Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -205,7 +212,21 @@ const Header = () => {
               </Button>
             </>
           )}
+          
+          {user && (
+            <div
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-[#3b82f6] border-2 border-[#4f9bff] shadow-[0_0_10px_rgba(79,155,255,0.3)] ml-2"
+              title={userName}
+            >
+              <span className="text-white font-bold text-lg select-none">
+                {firstLetter(userName)[0]?.toUpperCase()}
+              </span>
+            </div>
+          )}
+
         </div>
+
+
       </div>
       
       <AuthModal 
