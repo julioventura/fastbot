@@ -5,12 +5,15 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client"; // Certifique-se de importar o supabase
 
 interface SignUpFormProps {
   onSuccess: () => void;
 }
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
+  const [name, setName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,8 +24,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !password || !confirmPassword) {
+
+    if (!name || !email || !password || !confirmPassword || !whatsapp) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -30,7 +33,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
       });
       return;
     }
-    
+
     if (password !== confirmPassword) {
       toast({
         variant: "destructive",
@@ -39,7 +42,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
       });
       return;
     }
-    
+
     if (password.length < 6) {
       toast({
         variant: "destructive",
@@ -48,12 +51,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
-      const { error } = await signUp(email, password);
-      
+      const { data, error } = await signUp(email, password);
+
       if (error) {
         toast({
           variant: "destructive",
@@ -62,12 +65,24 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
         });
         return;
       }
-      
+
+      // Criação do perfil no Supabase
+      if (data?.user?.id) {
+        await supabase.from("profiles").insert([
+          {
+            user_id: data.user.id,
+            name,
+            whatsapp,
+            email,
+          },
+        ]);
+      }
+
       toast({
         title: "Conta criada com sucesso!",
         description: "Verifique seu email para confirmar sua conta",
       });
-      
+
       onSuccess();
     } catch (error) {
       toast({
@@ -82,6 +97,33 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-4">
+      {/* Nome */}
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome</Label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="Seu nome"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="pl-8 !bg-[#101c36] !focus:bg-[#101c36] !active:bg-[#101c36] !disabled:bg-[#101c36] border-[#2a4980]/50 text-white placeholder:text-gray-400"
+          disabled={isLoading}
+        />
+      </div>
+      {/* WhatsApp */}
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp">WhatsApp</Label>
+        <Input
+          id="whatsapp"
+          type="text"
+          placeholder="Seu WhatsApp"
+          value={whatsapp}
+          onChange={(e) => setWhatsapp(e.target.value)}
+          className="pl-8 bg-[#101c36] border-[#2a4980]/50 text-white placeholder:text-gray-400"
+          disabled={isLoading}
+        />
+      </div>
+      {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <div className="relative">
@@ -92,12 +134,13 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
             placeholder="seu@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="pl-8"
+            className="pl-8 !bg-[#101c36] !focus:bg-[#101c36] !active:bg-[#101c36] !disabled:bg-[#101c36] border-[#2a4980]/50 text-white placeholder:text-gray-400"
             disabled={isLoading}
           />
         </div>
       </div>
-      
+
+      {/* Senha */}
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
         <div className="relative">
@@ -108,7 +151,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-8 pr-10"
+            className="pl-8 pr-10 !bg-[#101c36] !focus:bg-[#101c36] !active:bg-[#101c36] !disabled:bg-[#101c36] border-[#2a4980]/50 text-white placeholder:text-gray-400"
             disabled={isLoading}
           />
           <Button
@@ -129,7 +172,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
           </Button>
         </div>
       </div>
-      
+
+      {/* Confirme a senha */}
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">Confirme a senha</Label>
         <div className="relative">
@@ -140,12 +184,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
             placeholder="••••••••"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="pl-8"
+            className="pl-8 !bg-[#101c36] !focus:bg-[#101c36] !active:bg-[#101c36] !disabled:bg-[#101c36] border-[#2a4980]/50 text-white placeholder:text-gray-400"
             disabled={isLoading}
           />
         </div>
       </div>
-      
+
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? "Criando conta..." : "Criar conta"}
       </Button>
