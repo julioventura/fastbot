@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-[80vh]">
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-screen flex items-center justify-center">
       {/* SVG Glow Effect */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <svg className="w-full h-full opacity-60" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -61,7 +61,9 @@ const Hero = () => {
       <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold gradient-text">
-            Seu <span className='text-white'>ChatBot de IA</span> em <br /> <span className='text-4xl md:text-6xl'>3 minutos!</span> <br />&nbsp;
+            Seu<br />
+            <span className='text-white'>ChatBot de IA</span><br />
+            <span className='text-4xl md:text-6xl gradient-text'>em 3 minutos!</span> <br />&nbsp;
 
           </h1>
 
@@ -76,45 +78,7 @@ const Hero = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-24 text-center text-white" data-lov-id="hero-benefits">
-            <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xl font-bold">150 M+ actions</p>
-              <p className="text-sm opacity-70">performed daily</p>
-            </div>
-
-            <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xl font-bold">1M+ concurrent</p>
-              <p className="text-sm opacity-70">sessions</p>
-            </div>
-
-
-            <div className="border border-[#2a4980]/50 rounded-lg p-6 bg-[#0a1629]/50 backdrop-blur-sm">
-              <div className="flex justify-center mb-4">
-                <div className="w-12 h-12 rounded-lg bg-[#0a1629] border border-[#2a4980]/50 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="text-xl font-bold">3M+ domains</p>
-              <p className="text-sm opacity-70">unlocked</p>
-            </div>
-
-          </div>
+  
         </div>
       </div>
     </section>

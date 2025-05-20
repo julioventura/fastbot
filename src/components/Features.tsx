@@ -204,11 +204,7 @@ const Features = () => {
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
 						<span className="text-[#4f9bff]">Recursos</span> Poderosos
 					</h2>
-					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-					 Deixe a
-						<span className="text-white text-2xl font-bold"> Inteligência Artificial </span>
-						trabalhar pra você.
-					</p>
+
 				</div>
 
 				{/* Focusing on just the feature cards section */}
@@ -216,10 +212,10 @@ const Features = () => {
 					{features.map((feature, index) => (
 						<div
 							key={index}
-							className="border border-black rounded-lg shadow-xl p-6 bg-gray-800/40"
+							className="border border-black rounded-lg shadow-xl p-6 bg-gray-900/50"
 						>
 							<div className="mb-4">{feature.icon}</div>
-							<h3 className="text-xl font-semibold mb-2 text-primary">
+							<h3 className="text-xl font-semibold mb-2 text-blue-500">
 								{feature.title}
 							</h3>
 							<p className="text-gray-200">{feature.description}</p>

@@ -5,26 +5,38 @@ import { Check } from 'lucide-react';
 
 const pricingPlans = [
 	{
-		name: 'Uso Gratuito',
+		name: 'Plano Gratuito',
 		price: 'R$ 0',
-		description: 'É só usar',
+		description: ' ',
 		features: [
-			'100 sessões de chatbot por mês',
+			'100 créditos por mês',
 			'Mensagens de texto',
-			'Template básico de chatbot',
 		],
 		isPopular: true,
 		buttonText: 'Comece já!',
 		buttonVariant: 'default' as const,
 	},
+
 	{
-		name: 'Pacote de Créditos',
-		price: 'R$ 100',
-		description: '6 meses de validade',
+		name: 'Plano Mensal',
+		price: 'R$ 50',
+		description: ' ',
 		features: [
-			'500 sessões de chatbot',
-			'Mensagens de texto, voz e imagem',
-			'Templates personalizados e ajustáveis',
+			'500 créditos por mês',
+			'Mensagens de texto e áudio',
+		],
+		isPopular: false,
+		buttonText: 'Comece já!',
+		buttonVariant: 'default' as const,
+	},
+
+	{
+		name: 'Créditos',
+		price: 'R$ 10',
+		description: ' ',
+		features: [
+			'100 créditos avulsos',
+			'Validade de um ano',
 		],
 		isPopular: false,
 		buttonText: 'Comece já!',
@@ -133,14 +145,11 @@ const Pricing = () => {
 			<div className="section-container relative z-10" id="pricing-section">
 				<div className="text-center mb-16">
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-						<span>Use grátis!</span>
+						<span className='gradient-text'>Gratuito, mensal ou créditos...</span> <span> na sua medida!</span>
 					</h2>
-					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-						Se precisar, compre créditos na medida da sua necessidade.
-					</p>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-20 max-w-6xl mx-auto">
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-20 max-w-6xl mx-auto">
 					{pricingPlans.map((plan, index) => (
 						<Card
 							key={index}
@@ -154,11 +163,7 @@ const Pricing = () => {
 									Pra usar desde já
 								</div>
 							)}
-							{plan.isPopular || (
-								<div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brightblue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-									Pra quando precisar
-								</div>
-							)}
+
 							<div className="text-center mb-6">
 								<h3 className="text-2xl font-bold mb-2 text-white">
 									{plan.name}

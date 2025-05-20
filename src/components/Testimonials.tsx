@@ -80,9 +80,7 @@ const Testimonials = () => {
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
 						<span className="text-[#4f9bff]">O que falam de nossos</span> chatbots
 					</h2>
-					<p className="text-2xl text-gray-300 max-w-3xl mx-auto">
-						Depoimentos de quem já usa.
-					</p>
+
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
