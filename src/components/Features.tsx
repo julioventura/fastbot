@@ -1,5 +1,4 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
 
 const features = [
 	{
@@ -79,7 +78,7 @@ const Features = () => {
 	return (
 		<section
 			id="features"
-			className="relative py-5 pb-0 md:py-0 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
+			className="relative min-h-screen flex items-center justify-center py-16 md:py-24 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
 		>
 			{/* SVG Glow Effect */}
 			<div className="absolute inset-0 z-0 overflow-hidden">
@@ -176,11 +175,10 @@ const Features = () => {
 				data-lov-id="features-section"
 				className="section-container relative z-10"
 			>
-				<div className="text-center mb-16">
+				<div className="text-center mb-12 md:mb-16">
 					<h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
 						<span className="text-[#4f9bff]">Recursos</span> Poderosos
 					</h2>
-
 				</div>
 
 				{/* Focusing on just the feature cards section */}
