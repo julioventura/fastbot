@@ -31,7 +31,7 @@ const pricingPlans = [
 	},
 
 	{
-		name: 'Créditos',
+		name: 'Pacote de Créditos',
 		price: 'R$ 10',
 		description: ' ',
 		features: [
