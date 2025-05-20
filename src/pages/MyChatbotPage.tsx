@@ -194,14 +194,7 @@ const MyChatbotPage: React.FC = () => {
                      {renderViewData("Mensagem de Sistema (Prompt do Chatbot)", chatbotData.system_message)}
                   </div>
                 </div>
-                <div className="flex justify-end mt-8">
-                    <Button 
-                      onClick={() => setActiveTab("edit")}
-                      className="bg-transparent hover:bg-[#3b82f6]/20 border border-[#3b82f6] text-[#60a5fa] px-6 py-2 text-base rounded-md transition-all"
-                    >
-                      Editar Informações
-                    </Button>
-                </div>
+
               </CardContent>
             </Card>
           </TabsContent>
