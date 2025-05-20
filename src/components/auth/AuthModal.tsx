@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription, // Import DialogDescription
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
@@ -57,6 +58,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
               ? "Criar nova conta"
               : "Recuperar senha"}
           </DialogTitle>
+          <DialogDescription className="text-center text-sm text-gray-300 mt-2">
+            Acesse sua conta ou crie uma nova para continuar.
+          </DialogDescription>
         </DialogHeader>
 
         <Tabs

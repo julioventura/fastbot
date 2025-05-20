@@ -21,7 +21,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast({
         variant: "destructive",
@@ -30,12 +30,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const { error } = await signIn(email, password);
-      
+
       if (error) {
         toast({
           variant: "destructive",
@@ -44,12 +44,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         });
         return;
       }
-      
+
       toast({
         title: "Bem-vindo de volta!",
         description: "Login realizado com sucesso",
+        duration: 3000, // Adicione esta linha (3000ms = 3 segundos)
       });
-      
+
       onSuccess();
     } catch (error) {
       toast({
@@ -79,7 +80,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           />
         </div>
       </div>
-      
+
       <div className="space-y-2">
         <Label htmlFor="password">Senha</Label>
         <div className="relative">
@@ -111,7 +112,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           </Button>
         </div>
       </div>
-      
+
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? "Entrando..." : "Entrar"}
       </Button>
