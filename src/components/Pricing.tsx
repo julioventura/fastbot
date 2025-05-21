@@ -1,28 +1,55 @@
+// Componente: Pricing
+// Funcionalidade:
+// Este componente renderiza a seção de "Preços" da página inicial.
+// Ele exibe diferentes planos de assinatura ou pacotes, cada um com um nome,
+// preço, descrição, lista de recursos e um botão de chamada para ação.
+// Um dos planos pode ser destacado como "popular".
+// A seção possui efeitos visuais de fundo, como um brilho SVG animado e um padrão de grade.
+//
+// Funções e Constantes Principais:
+// - pricingPlans (const): Array de objetos, onde cada objeto representa um plano de preços.
+//   - Cada objeto contém:
+//     - name (string): O nome do plano.
+//     - price (string): O preço do plano (formatado como string).
+//     - description (string): Uma breve descrição do plano.
+//     - features (array de strings): Uma lista dos recursos incluídos no plano.
+//     - isPopular (boolean): Indica se o plano deve ser destacado como popular.
+//     - buttonText (string): O texto do botão de chamada para ação.
+//     - buttonVariant ('default' | 'outline' | ...): A variante do botão (do Shadcn UI).
+// - Pricing (Componente): Componente funcional React que renderiza a estrutura da seção de preços.
+//   - Mapeia o array 'pricingPlans' para renderizar um card para cada plano.
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Check } from 'lucide-react';
 
+
+// Constante pricingPlans
+// Array contendo os dados de cada plano de preços a ser exibido.
+// Cada objeto no array define as características de um plano.
 const pricingPlans = [
     {
         name: 'Plano Gratuito',
         price: 'R$ 0',
-        description: ' ',
+        description: 'Ideal para experimentar e para uso pessoal com baixo volume.', // Descrição adicionada
         features: [
             '100 créditos por mês',
             'Mensagens de texto',
+            'Use créditos para adicionar áudio e imagem se precisar',
         ],
-        isPopular: true,
+        isPopular: true, // Destaca este plano como o mais popular.
         buttonText: 'COMECE JÁ !',
-        buttonVariant: 'default' as const,
+        buttonVariant: 'default' as const, // Tipo específico para a variante do botão.
     },
     {
         name: 'Plano Mensal',
         price: 'R$ 50',
-        description: ' ',
+        description: 'Perfeito para profissionais e pequenas empresas que buscam mais recursos.', // Descrição adicionada
         features: [
             '500 créditos por mês',
-            'Mensagens de texto e áudio',
+            'Mensagens de áudio',
+            'Visão e criação de imagens',
         ],
         isPopular: false,
         buttonText: 'COMECE JÁ !',
@@ -31,24 +58,33 @@ const pricingPlans = [
     {
         name: 'Pacote de Créditos',
         price: 'R$ 10',
-        description: ' ',
+        description: 'Adicione créditos extras conforme sua necessidade, sem compromisso mensal.', // Descrição adicionada
         features: [
             '100 créditos avulsos',
             'Validade de um ano',
+            'Utilize em qualquer plano',
+            'Flexibilidade total',
         ],
         isPopular: false,
-        buttonText: 'COMECE JÁ !',
-        buttonVariant: 'default' as const,
+        buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado
+        buttonVariant: 'outline' as const, // Variante do botão ajustada para diferenciar
     },
 ];
 
+
+// Componente Pricing
+// Define a estrutura e o layout da seção de preços da aplicação.
 const Pricing = () => {
     return (
+        // Elemento <section> principal com ID para navegação e estilos de fundo.
+        // 'relative' é usado para posicionar os elementos SVG de decoração absoluta dentro dele.
+        // 'min-h-screen' garante que a seção ocupe pelo menos a altura total da tela.
         <section
             id="pricing"
-            className="relative min-h-screen flex items-center justify-center py-16 md:py-24 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]" // Modificado aqui
+            className="relative min-h-screen flex items-center justify-center py-16 md:py-24 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
         >
-            {/* SVG Glow Effect */}
+            {/* Efeito de Brilho SVG (Decorativo) */}
+            {/* Este div contém um SVG que cria um efeito de brilho de fundo. */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                 <svg
                     className="w-full h-full opacity-60"
@@ -57,15 +93,17 @@ const Pricing = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     preserveAspectRatio="none"
                 >
-                    <g opacity="0.4" filter="url(#filter0_f_101_3)">
+                    {/* Grupos de elementos SVG para o brilho, com filtros aplicados. */}
+                    {/* IDs dos filtros são únicos para este componente para evitar conflitos. */}
+                    <g opacity="0.4" filter="url(#filter0_f_pricing)">
                         <circle cx="1079" cy="540" r="359" fill="#0063F7" />
                     </g>
-                    <g opacity="0.3" filter="url(#filter1_f_101_3)">
+                    <g opacity="0.3" filter="url(#filter1_f_pricing)">
                         <circle cx="541" cy="540" r="359" fill="#8B2CF5" />
                     </g>
                     <defs>
                         <filter
-                            id="filter0_f_101_3"
+                            id="filter0_f_pricing" // ID único para o filtro
                             x="520"
                             y="-19"
                             width="1118"
@@ -82,11 +120,11 @@ const Pricing = () => {
                             />
                             <feGaussianBlur
                                 stdDeviation="100"
-                                result="effect1_foregroundBlur_101_3"
+                                result="effect1_foregroundBlur_pricing" // Resultado único
                             />
                         </filter>
                         <filter
-                            id="filter1_f_101_3"
+                            id="filter1_f_pricing" // ID único para o filtro
                             x="-18"
                             y="-19"
                             width="1118"
@@ -103,14 +141,15 @@ const Pricing = () => {
                             />
                             <feGaussianBlur
                                 stdDeviation="100"
-                                result="effect1_foregroundBlur_101_3"
+                                result="effect1_foregroundBlur_pricing" // Resultado único
                             />
                         </filter>
                     </defs>
                 </svg>
             </div>
 
-            {/* Grid overlay pattern - Fixed implementation */}
+            {/* Padrão de Grade Sobreposto (Decorativo) */}
+            {/* Este div cria um padrão de grade sutil sobre o fundo. */}
             <div className="absolute inset-0 z-0 opacity-20">
                 <div
                     className="h-full w-full grid"
@@ -119,19 +158,19 @@ const Pricing = () => {
                         gridTemplateColumns: 'repeat(20, 1fr)',
                     }}
                 >
-                    {/* Horizontal lines */}
+                    {/* Linhas Horizontais da Grade */}
                     {Array.from({ length: 21 }).map((_, index) => (
                         <div
-                            key={`h-${index}`}
+                            key={`h-pricing-${index}`} // Chave única para elementos da grade.
                             className="absolute left-0 right-0 border-t border-[#4f9bff]/30"
                             style={{ top: `${(index * 100) / 20}%` }}
                         />
                     ))}
 
-                    {/* Vertical lines */}
+                    {/* Linhas Verticais da Grade */}
                     {Array.from({ length: 21 }).map((_, index) => (
                         <div
-                            key={`v-${index}`}
+                            key={`v-pricing-${index}`} // Chave única para elementos da grade.
                             className="absolute top-0 bottom-0 border-l border-[#4f9bff]/30"
                             style={{ left: `${(index * 100) / 20}%` }}
                         />
@@ -139,42 +178,55 @@ const Pricing = () => {
                 </div>
             </div>
 
-            <div className="section-container relative z-10" id="pricing-section"> {/* O padding vertical foi movido para a section pai */}
-                <div className="text-center mb-12 md:mb-16"> {/* Ajustado margin-bottom */}
+            {/* Contêiner do Conteúdo Principal da Seção de Preços */}
+            {/* 'relative z-10' garante que este conteúdo fique acima dos elementos decorativos. */}
+            <div className="section-container relative z-10" id="pricing-section">
+                {/* Título da Seção */}
+                <div className="text-center mb-12 md:mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
                         <span className='gradient-text'>Gratuito, mensal ou créditos...</span> <br /><span>na sua medida!</span>
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto"> {/* Ajustado gap */}
+                {/* Grade de Cards de Planos de Preços */}
+                {/* Layout responsivo: 1 coluna em telas pequenas, 3 colunas em médias e grandes. */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
+                    {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
                     {pricingPlans.map((plan, index) => (
                         <Card
-                            key={index}
+                            key={index} // Chave única para cada card.
+                            // Classes condicionais para destacar o plano popular.
                             className={`p-6 md:p-8 relative bg-[#0a1629]/60 backdrop-blur-md flex flex-col ${plan.isPopular
-                                ? 'border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]' // Estilo popular destacado
+                                ? 'border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]'
                                 : 'border border-[#2a4980]/70 shadow-lg'
                                 }`}
                         >
+                            {/* Badge "Popular" (ou texto customizado) para o plano destacado. */}
                             {plan.isPopular && (
                                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
-                                    COMECE JÁ !
+                                    MAIS POPULAR
                                 </div>
                             )}
 
-                            <div className="text-center mb-6 pt-4"> {/* Adicionado pt-4 para espaço do badge popular */}
+                            {/* Cabeçalho do Card (Nome do Plano, Preço, Descrição) */}
+                            <div className="text-center mb-6 pt-4"> {/* pt-4 para dar espaço ao badge "Popular" */}
                                 <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">
                                     {plan.name}
                                 </h3>
                                 <div className="flex items-baseline justify-center text-white">
                                     <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
+                                    {/* Exibe "/mês" condicionalmente, se não for plano gratuito ou pacote de créditos. */}
                                     {plan.price !== 'Custom' && plan.name !== 'Plano Gratuito' && plan.name !== 'Pacote de Créditos' && (
                                         <span className="text-gray-400 ml-1 text-sm">/mês</span>
                                     )}
                                 </div>
-                                <p className="text-sm text-gray-300 mt-2 h-10">{plan.description}</p> {/* Altura fixa para alinhar */}
+                                {/* Descrição do plano com altura fixa para alinhamento visual entre cards. */}
+                                <p className="text-sm text-gray-300 mt-2 h-10">{plan.description}</p>
                             </div>
 
-                            <div className="space-y-3 mb-8 flex-grow"> {/* flex-grow para empurrar o botão para baixo */}
+                            {/* Lista de Recursos do Plano */}
+                            {/* 'flex-grow' permite que esta seção expanda e empurre o botão para baixo. */}
+                            <div className="space-y-3 mb-8 flex-grow">
                                 {plan.features.map((feature, i) => (
                                     <div key={i} className="flex items-start">
                                         <Check className="h-5 w-5 text-[#4f9bff] mr-2 mt-0.5 flex-shrink-0" />
@@ -183,12 +235,17 @@ const Pricing = () => {
                                 ))}
                             </div>
 
+                            {/* Botão de Chamada para Ação do Plano */}
+                            {/* 'mt-auto' ajuda a alinhar o botão na parte inferior do card quando os conteúdos têm alturas diferentes. */}
                             <Button
                                 variant={plan.buttonVariant}
+                                // Classes condicionais para estilizar o botão do plano popular de forma diferente.
                                 className={`w-full mt-auto text-white font-semibold py-3 text-base md:text-lg
-                  ${plan.isPopular
+                                  ${plan.isPopular
                                         ? 'bg-blue-600 hover:bg-[#3b82f6] drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]'
-                                        : 'bg-[#2a4980]/80 hover:bg-[#375da0] border border-[#4f9bff]/50 hover:border-[#4f9bff]'
+                                        : plan.buttonVariant === 'outline' 
+                                            ? 'bg-transparent border-2 border-[#4f9bff] hover:bg-[#4f9bff]/20 text-[#4f9bff] hover:text-white' // Estilo para botão outline
+                                            : 'bg-[#2a4980]/80 hover:bg-[#375da0] border border-[#4f9bff]/50 hover:border-[#4f9bff]' // Estilo para botão default não popular
                                     } transition-all duration-300 ease-in-out transform hover:scale-105`}
                             >
                                 {plan.buttonText}

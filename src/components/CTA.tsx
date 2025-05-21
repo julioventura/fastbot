@@ -1,23 +1,49 @@
+// Componente: CTA (Call to Action)
+// Funcionalidade:
+// Este componente renderiza a seção de "Chamada para Ação" da página.
+// Ele exibe um título chamativo, uma breve descrição e um botão principal
+// para incentivar o usuário a iniciar o uso do serviço.
+// A seção possui um efeito visual de fundo com um padrão de grade.
+//
+// Funções e Constantes Principais:
+// - CTA (Componente): Componente funcional React que renderiza a estrutura da seção de CTA.
+//   - Não possui funções ou constantes complexas internas, sendo primariamente JSX para layout e estilo.
+//   - Utiliza o componente Button e o ícone ArrowRight (atualmente comentado no código original).
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+// import { ArrowRight } from 'lucide-react'; // Ícone ArrowRight importado mas não utilizado no JSX atual.
 
-// Export the component directly
+
+// Componente CTA
+// Define a estrutura e o layout da seção de Chamada para Ação.
 export default function CTA() {
   return (
+    // Elemento <section> principal com estilos de fundo e posicionamento relativo.
+    // 'relative' é usado para posicionar o padrão de grade absoluto dentro dele.
     <section className="relative py-5 md:py-16 bg-gradient-to-br from-[#0a1629] to-[#0e2d5e]">
+      
+      {/* Contêiner do Conteúdo Principal da Seção CTA */}
+      {/* 'relative z-10' garante que este conteúdo fique acima do padrão de grade. */}
       <div className="section-container relative z-10" id="cta-section">
+        {/* Contêiner para centralizar o texto e limitar a largura máxima. */}
         <div className="max-w-4xl mx-auto text-center text-white">
+          {/* Bloco de texto principal da CTA. */}
           <div className="text-center mb-12">
+            {/* Título da CTA */}
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
               Pronto em <span className="text-[#4f9bff]">3 minutos!</span>
             </h2>
+            {/* Descrição/Subtítulo da CTA */}
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Nosso chatbot coloca a sua vida profissional em outro patamar!
             </p>
+            {/* Botão de Chamada para Ação */}
             <div className="mt-8">
               <Button 
                 className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white px-8 py-6 text-lg rounded-lg drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
+                // O ícone ArrowRight poderia ser adicionado aqui se desejado.
+                // Exemplo: <ArrowRight className="ml-2 h-5 w-5" />
               >
                 Comece já
               </Button>
@@ -26,30 +52,34 @@ export default function CTA() {
         </div>
       </div>
 
-      {/* Grid overlay pattern */}
+      {/* Padrão de Grade Sobreposto (Decorativo) */}
+      {/* Este div cria um padrão de grade sutil sobre o fundo. */}
+      {/* 'absolute inset-0 z-0 opacity-20' posiciona a grade para preencher a seção e ficar atrás do conteúdo. */}
       <div className="absolute inset-0 z-0 opacity-20">
         <div
           className="h-full w-full grid"
           style={{
-            gridTemplateRows: 'repeat(20, 1fr)',
-            gridTemplateColumns: 'repeat(20, 1fr)',
+            gridTemplateRows: 'repeat(20, 1fr)', // Define 20 linhas para a grade.
+            gridTemplateColumns: 'repeat(20, 1fr)', // Define 20 colunas para a grade.
           }}
         >
-          {/* Horizontal lines */}
+          {/* Linhas Horizontais da Grade */}
+          {/* Mapeamento para criar as linhas horizontais. */}
           {Array.from({ length: 21 }).map((_, index) => (
             <div
-              key={`h-${index}`}
-              className="absolute left-0 right-0 border-t border-[#4f9bff]/30"
-              style={{ top: `${(index * 100) / 20}%` }}
+              key={`h-cta-${index}`} // Chave única para cada linha horizontal.
+              className="absolute left-0 right-0 border-t border-[#4f9bff]/30" // Estilos da linha.
+              style={{ top: `${(index * 100) / 20}%` }} // Posicionamento vertical da linha.
             />
           ))}
 
-          {/* Vertical lines */}
+          {/* Linhas Verticais da Grade */}
+          {/* Mapeamento para criar as linhas verticais. */}
           {Array.from({ length: 21 }).map((_, index) => (
             <div
-              key={`v-${index}`}
-              className="absolute top-0 bottom-0 border-l border-[#4f9bff]/30"
-              style={{ left: `${(index * 100) / 20}%` }}
+              key={`v-cta-${index}`} // Chave única para cada linha vertical.
+              className="absolute top-0 bottom-0 border-l border-[#4f9bff]/30" // Estilos da linha.
+              style={{ left: `${(index * 100) / 20}%` }} // Posicionamento horizontal da linha.
             />
           ))}
         </div>
