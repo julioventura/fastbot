@@ -112,14 +112,14 @@ const Account = () => {
       <BackgroundDecoration />
       
       <div className="container mx-auto py-10 px-4 relative z-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-8 gradient-text">Minha Conta</h1>
+        <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Minha Conta</h1>
         
         <div className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-2">
             <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white">
               <CardHeader>
-                <CardTitle className="text-white">Informações Pessoais</CardTitle>
-                <CardDescription className="text-gray-300">Atualize suas informações pessoais</CardDescription>
+                <CardTitle className="text-white">Seus dados profissionais</CardTitle>
+                <CardDescription className="text-gray-300"> </CardDescription>
               </CardHeader>
               <CardContent>
                 {isProfileLoading ? (

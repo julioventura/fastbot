@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';   // Opcional: Adicione o Footer se de
 
 const PricingPage: React.FC = () => {
   return (
-    <div className="flex flex-col bg-gradient-to-b from-[#0a1629] to-[#0e2d5e] text-white">
+    <div className="flex flex-col bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]">
       <main className="flex-grow">
         <Pricing />
       </main>

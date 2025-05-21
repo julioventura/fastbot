@@ -163,9 +163,10 @@ const MyChatbotPage: React.FC = () => {
         <h1 className="text-3xl md:text-4xl font-bold text-white mb-8 gradient-text">Meu Chatbot</h1>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-[#0e203e]/70 border border-[#2a4980]/50 mb-6">
-            <TabsTrigger value="view" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">Meus Dados</TabsTrigger>
-            <TabsTrigger value="edit" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">Editar</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-[#0e203e]/70 border border-[#2a4980]/50 mb-6">
+            <TabsTrigger value="view" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">INSTRUÇÕES</TabsTrigger>
+            <TabsTrigger value="edit" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">EDITAR</TabsTrigger>
+            <TabsTrigger value="chat" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">TESTAR</TabsTrigger>
           </TabsList>
 
           <TabsContent value="view">

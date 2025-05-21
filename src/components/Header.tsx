@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut } from 'lucide-react'; // Certifique-se que LogOut está importado
+import { User, LogOut, Bot, Coins } from 'lucide-react'; // Certifique-se que LogOut está importado
 import { supabase } from '@/integrations/supabase/client';
 
 // Custom hook to track scroll direction
@@ -210,12 +210,12 @@ const Header = () => {
           </div>
 
           <nav className="hidden md:flex items-center space-x-8">
-            {/* <NavLink
+            <NavLink
               to="/"
               className={({ isActive }) => `text-sm font-medium ${isActive ? "text-white drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
             >
               Início
-            </NavLink> */}
+            </NavLink>
 
 
             {!user && ( // Mostrar apenas se o usuário NÃO estiver logado
@@ -271,7 +271,7 @@ const Header = () => {
                     asChild
                   >
                     <Link to="/account">
-                      <User className="mr-2 h-4 w-4" />
+                      <User className="mr-3 h-6 w-6" />
                       Minha Conta
                     </Link>
                   </DropdownMenuItem>
@@ -281,8 +281,8 @@ const Header = () => {
                     asChild
                   >
                     <Link to="/my-chatbot">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4 lucide lucide-bot"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg>
-                      Meu Chatbot
+                    <Coins className="mr-3 h-6 w-6" />
+                      Meu Créditos
                     </Link>
                   </DropdownMenuItem>
 
@@ -290,7 +290,7 @@ const Header = () => {
                     onClick={handleSignOut}
                     className="cursor-pointer rounded-md px-3 py-2 text-red-400 hover:!bg-[#2a4980]/70 hover:!text-red-300 focus:!bg-[#2a4980]/70 focus:!text-red-300 transition-colors flex items-center"
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-3 h-6 w-6" />
                     Sair
                   </DropdownMenuItem>
 
