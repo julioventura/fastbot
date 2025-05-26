@@ -76,7 +76,7 @@ const App = () => (
         {/* Sonner: Componente para exibir notificações globais (estilo Sonner). */}
         <Sonner />
         {/* BrowserRouter: Habilita o roteamento baseado no histórico do navegador. */}
-        <BrowserRouter>
+        <BrowserRouter basename="/fastbot">
           {/* Header: Componente de cabeçalho, renderizado em todas as rotas. */}
           <Header />
           {/* Routes: Contêiner para todas as definições de rotas da aplicação. */}
