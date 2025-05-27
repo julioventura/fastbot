@@ -81,7 +81,7 @@ const Pricing = () => {
         // 'min-h-screen' garante que a seção ocupe pelo menos a altura total da tela.
         <section
             id="pricing"
-            className="relative min-h-screen flex items-center justify-center py-16 md:py-24 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
+            className="relative min-h-screen flex items-center justify-center py-0 md:py-5 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
         >
             {/* Efeito de Brilho SVG (Decorativo) */}
             {/* Este div contém um SVG que cria um efeito de brilho de fundo. */}

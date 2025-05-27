@@ -27,7 +27,7 @@
 // - handleProfileUpdate (função): Manipulador chamado após a atualização do perfil, para buscar os timestamps atualizados.
 
 import React, { useEffect, useState } from "react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/lib/auth/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";

@@ -44,7 +44,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/lib/auth/useAuth";
 import { Eye, EyeOff, Mail, Lock, User as UserIcon, MessageSquare } from "lucide-react"; // Ícones adicionados
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";

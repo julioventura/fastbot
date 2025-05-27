@@ -29,7 +29,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth/AuthContext"; // Hook para autenticação
+import { useAuth } from "@/lib/auth/useAuth"; // Hook para autenticação
 import { Mail } from "lucide-react"; // Ícone de Email
 import { useToast } from "@/hooks/use-toast"; // Hook para exibir toasts
 

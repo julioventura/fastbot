@@ -30,7 +30,7 @@
 // - renderViewData (função): Função auxiliar para renderizar os campos de dados na aba de visualização.
 
 import React, { useEffect, useState } from "react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/lib/auth/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
