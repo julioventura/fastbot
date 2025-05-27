@@ -310,6 +310,23 @@ const MyChatbotPage: React.FC = () => {
               <CardContent>
                 {/* Formulário de Edição das Configurações */}
                 <form onSubmit={handleSubmit} className="space-y-6">
+
+                
+                  {/* Campo WhatsApp */}
+                  <div>
+                    <Label htmlFor="whatsapp" className="text-gray-300">Número do WhatsApp do chatbot</Label>
+                    <Input
+                      id="whatsapp"
+                      name="whatsapp"
+                      value={chatbotData.whatsapp}
+                      onChange={handleChange}
+                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      placeholder="Ex: +55 11 91234-5678"
+                    />
+                    <p className="mt-1 text-xs text-gray-400">Número do WhatsApp do chatbot</p>
+                  </div>
+
+
                   {/* Campo Nome do Chatbot */}
                   <div>
                     <Label htmlFor="chatbot_name" className="text-gray-300">Nome do Chatbot (para Homepage)</Label>
@@ -335,21 +352,6 @@ const MyChatbotPage: React.FC = () => {
                       placeholder="Olá! Sou o assistente virtual do consultório. Como posso ajudar?"
                       rows={3}
                     />
-                  </div>
-
-                  {/* Campo Mensagem de Sistema (Prompt) */}
-                  <div>
-                    <Label htmlFor="system_message" className="text-gray-300">Mensagem de Sistema (Prompt do Chatbot)</Label>
-                    <Textarea
-                      id="system_message"
-                      name="system_message"
-                      value={chatbotData.system_message}
-                      onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Você é um assistente virtual de um consultório médico/odontológico. Seja cordial e ajude com informações sobre..."
-                      rows={6}
-                    />
-                    <p className="mt-1 text-xs text-gray-400">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
                   </div>
 
                   {/* Campo Endereço do Consultório */}
@@ -392,20 +394,23 @@ const MyChatbotPage: React.FC = () => {
                     />
                   </div>
 
-                  {/* Campo WhatsApp */}
+
+                  {/* Campo Mensagem de Sistema (Prompt) */}
                   <div>
-                    <Label htmlFor="whatsapp" className="text-gray-300">Número do WhatsApp</Label>
-                    <Input
-                      id="whatsapp"
-                      name="whatsapp"
-                      value={chatbotData.whatsapp}
+                    <Label htmlFor="system_message" className="text-gray-300">Mensagem de Sistema (Prompt do Chatbot)</Label>
+                    <Textarea
+                      id="system_message"
+                      name="system_message"
+                      value={chatbotData.system_message}
                       onChange={handleChange}
                       className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Ex: +55 11 91234-5678"
+                      placeholder="Você é um assistente virtual de um consultório médico/odontológico. Seja cordial e ajude com informações sobre..."
+                      rows={6}
                     />
-                    <p className="mt-1 text-xs text-gray-400">Número para contato via WhatsApp.</p>
+                    <p className="mt-1 text-xs text-gray-400">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
                   </div>
-                  
+                                    
+
                   {/* Botões de Ação do Formulário (Cancelar e Salvar) */}
                   <div className="flex justify-end space-x-3 pt-4">
                     <Button 
