@@ -52,6 +52,7 @@ interface ChatbotData {
   specialties: string;    // Especialidades atendidas.
   chatbot_name: string;   // Nome do chatbot (exibido na homepage).
   welcome_message: string; // Mensagem de boas-vindas do chatbot.
+  whatsapp: string; // Novo campo
 }
 
 // Componente MyChatbotPage
@@ -78,6 +79,7 @@ const MyChatbotPage: React.FC = () => {
     specialties: "",
     chatbot_name: "",
     welcome_message: "",
+    whatsapp: "", // Novo campo
   });
 
   // isLoading: Controla a exibição do indicador de carregamento dos dados do chatbot.
@@ -128,6 +130,7 @@ const MyChatbotPage: React.FC = () => {
               specialties: data.specialties || "",
               chatbot_name: data.chatbot_name || "",
               welcome_message: data.welcome_message || "",
+              whatsapp: data.whatsapp || "", // Novo campo
             });
           }
         } catch (error) {
@@ -159,12 +162,17 @@ const MyChatbotPage: React.FC = () => {
   // Manipulador de eventos para o envio do formulário de edição das configurações do chatbot.
   // Salva (insere um novo registro ou atualiza um existente) os dados na tabela 'mychatbot' do Supabase.
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('handleSubmit');
+
     e.preventDefault(); // Previne o comportamento padrão de submissão do formulário (recarregar a página).
     if (!user) return; // Retorna se não houver usuário (proteção adicional).
 
     setIsSaving(true); // Ativa o estado de salvamento (para feedback visual e desabilitar o botão).
     try {
       // Verifica se já existe um registro para o usuário para decidir entre INSERT ou UPDATE.
+
+      console.log("user_id = ", user.id);
+
       const { data: existingData, error: fetchError } = await supabase
         .from("mychatbot")
         .select("id") // Seleciona apenas o ID para verificar a existência, otimizando a query.
@@ -382,6 +390,20 @@ const MyChatbotPage: React.FC = () => {
                       placeholder="Clínica Geral, Ortodontia, Implantes..."
                       rows={3}
                     />
+                  </div>
+
+                  {/* Campo WhatsApp */}
+                  <div>
+                    <Label htmlFor="whatsapp" className="text-gray-300">Número do WhatsApp</Label>
+                    <Input
+                      id="whatsapp"
+                      name="whatsapp"
+                      value={chatbotData.whatsapp}
+                      onChange={handleChange}
+                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      placeholder="Ex: +55 11 91234-5678"
+                    />
+                    <p className="mt-1 text-xs text-gray-400">Número para contato via WhatsApp.</p>
                   </div>
                   
                   {/* Botões de Ação do Formulário (Cancelar e Salvar) */}
