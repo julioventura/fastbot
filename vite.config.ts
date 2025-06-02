@@ -19,5 +19,5 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/fastbot/', // <-- ESSENCIAL!
+  base: '/fastbot/', // <-- ESSENCIAL! Define a subpasta como caminho base
 }));
