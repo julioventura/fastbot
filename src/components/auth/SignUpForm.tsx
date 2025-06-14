@@ -44,11 +44,11 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth/useAuth";
+import { useAuth } from "@/lib/auth/useAuth"; // Certifique-se que está importando de useAuth.ts
 import { Eye, EyeOff, Mail, Lock, User as UserIcon, MessageSquare } from "lucide-react"; // Ícones adicionados
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import type { User, Session } from "@supabase/supabase-js";
+import type { User, Session, AuthError } from '@supabase/supabase-js'; // Importe tipos se necessário para anotações
 
 
 // Interface SignUpFormProps
@@ -125,7 +125,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Obtém a função signUp do contexto de autenticação.
-  const { signUp } = useAuth();
+  const { signUp } = useAuth(); // signUp agora deve ter o tipo correto de AuthContextType
 
   // Obtém a função toast para exibir notificações.
   const { toast } = useToast();
@@ -149,9 +149,10 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
     if (password !== confirmPassword) {
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "As senhas não coincidem",
+        title: "Erro de Validação",
+        description: "As senhas não coincidem.",
       });
+      setIsLoading(false);
       return;
     }
 
@@ -167,91 +168,85 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
     setIsLoading(true); // Ativa o estado de carregamento.
 
     try {
-      // Tenta realizar o cadastro utilizando a função signUp do contexto.
-      const { data, error } = await signUp(email, password);
-
-      // Se houver um erro retornado pela função signUp.
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Erro ao criar conta",
-          description: error.message || "Tente novamente com outro email",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      let userId: string | undefined;
-
-      // Lógica para obter o userId da resposta do signUp.
-      // Prioridade 1: Verifica se 'data' contém 'session.user.id' (cenário mais direto com sessão ativa).
-      if (isDataWithValidSessionUser(data)) {
-        userId = data.session.user.id;
-      }
-      // Prioridade 2: Verifica se 'data' contém 'user.id' diretamente (comum se a sessão for nula, ex: confirmação de email).
-      else if (isDataWithValidUser(data)) {
-        userId = data.user.id;
-        // Loga um aviso se o ID foi obtido de 'data.user' e a sessão não estava presente,
-        // o que é um comportamento esperado durante a confirmação de email.
-        if (!data.session) {
-          console.warn(
-            "User ID found directly on data.user, and session was not present. This is typical during email confirmation."
-          );
-        }
-      }
-
-      // Se o userId foi obtido com sucesso, insere os dados do perfil no Supabase.
-      if (userId) {
-        const { error: profileError } = await supabase.from("profiles").insert([
-          {
-            user_id: userId,
-            name,
-            whatsapp,
-            email, // Inclui o email no perfil para consistência.
+      // A função signUp de useAuth() já está tipada.
+      // O resultado de await signUp(...) deve ser { data: { user: User | null; session: Session | null }, error: AuthError | null }
+      const result = await signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+            whatsapp: whatsapp,
           },
-        ]);
-
-        // Se houver um erro ao inserir o perfil.
-        if (profileError) {
-          console.error("Error inserting profile:", profileError);
-          toast({
-            variant: "destructive",
-            title: "Erro ao Salvar Perfil",
-            description: "Sua conta foi criada, mas houve um erro ao salvar seus dados de perfil. Por favor, tente atualizar em seu perfil mais tarde.",
-          });
-          // Não retorna aqui, pois a conta foi criada. O usuário pode tentar atualizar o perfil depois.
-        }
-      } else {
-        // Se o userId não pôde ser obtido após o cadastro.
-        console.error("User ID could not be obtained after sign up. Data object:", data);
-        toast({
-          variant: "destructive",
-          title: "Erro ao Processar Cadastro",
-          description: "Não foi possível obter a identificação do usuário para salvar o perfil.",
-        });
-        setIsLoading(false); // Interrompe o carregamento.
-        return; // Interrompe a execução.
-      }
-
-      // Se o cadastro e a inserção do perfil (ou apenas o cadastro, se o perfil falhar) forem bem-sucedidos.
-      toast({
-        title: "Conta criada com sucesso!",
-        description: "Verifique seu email para confirmar sua conta.",
-        duration: 5000, // Aumenta a duração do toast.
+        },
       });
 
-      onSuccess(); // Chama a função de callback onSuccess.
+      const signUpData = result.data; // Explicitamente pegando o objeto data
+      const signUpError = result.error;
 
-    } catch (error) {
-      // Captura erros inesperados durante o processo.
+      if (signUpError) {
+        toast({
+          variant: "destructive",
+          title: "Erro no Cadastro",
+          description: signUpError.message || "Ocorreu um erro ao tentar criar a conta.",
+        });
+      } else if (signUpData) { // Verifique se signUpData (anteriormente 'data') existe
+        // Se o cadastro foi bem-sucedido (mesmo que precise de confirmação de email),
+        // o Supabase pode retornar um usuário e/ou sessão.
+        // O onAuthStateChange no AuthContext deve lidar com a atualização do estado global do usuário.
+
+        toast({
+          title: "Cadastro Quase Lá!",
+          description: signUpData.user && signUpData.user.email_confirmed_at ? "Conta criada com sucesso!" : "Verifique seu e-mail para confirmar sua conta.",
+        });
+
+        // Tenta inserir no 'profiles' mesmo que o email não esteja confirmado ainda,
+        // pois o user.id já existe.
+        let userId: string | undefined;
+
+        if (signUpData.user && signUpData.user.id) {
+            userId = signUpData.user.id;
+        } else if (signUpData.session?.user?.id) { // Fallback se user direto for null mas houver sessão
+            userId = signUpData.session.user.id;
+        }
+
+
+        if (userId) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .insert([{ user_id: userId, name, whatsapp, email, is_student: false, is_professor: false }]);
+
+          if (profileError) {
+            console.error("Error inserting profile:", profileError);
+            toast({
+              variant: "destructive",
+              title: "Erro ao Salvar Perfil",
+              description: "Sua conta foi criada, mas houve um problema ao salvar seus dados de perfil.",
+            });
+          }
+        }
+        onSuccess(); // Chama o callback de sucesso
+      }
+    } catch (error) { // MODIFICADO AQUI: removido ': any'
       console.error("Sign up process error:", error);
+      let errorMessage = "Ocorreu um erro inesperado durante o cadastro.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      // Você também pode verificar se é um AuthError do Supabase, se aplicável
+      // else if (error && typeof error === 'object' && 'message' in error) {
+      //   errorMessage = (error as { message: string }).message;
+      // }
+
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Ocorreu um erro ao criar sua conta",
+        title: "Erro Inesperado",
+        description: errorMessage,
       });
     } finally {
-      setIsLoading(false); // Desativa o estado de carregamento, independentemente do resultado.
+      setIsLoading(false);
     }
   };
 

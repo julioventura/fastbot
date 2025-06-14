@@ -67,54 +67,69 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   // Chamada quando o formulário é submetido.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Previne o comportamento padrão de submissão do formulário.
+    console.log("[LoginForm] Botão Entrar clicado. Email:", email); // LOG 1
+    setIsLoading(true);
 
     // Validação básica dos campos.
     if (!email || !password) {
+      console.log("[LoginForm] Email ou senha não preenchidos."); // LOG 2
+
       toast({
         variant: "destructive", // Tipo de toast de erro.
         title: "Erro",
         description: "Por favor, preencha todos os campos",
       });
+      setIsLoading(false);
       return; // Interrompe a execução se os campos não estiverem preenchidos.
     }
 
-    setIsLoading(true); // Ativa o estado de carregamento.
+    // setIsLoading(true); // Ativa o estado de carregamento.
+
 
     try {
-      // Tenta realizar o login utilizando a função signIn do contexto.
-      const { error } = await signIn(email, password);
+      console.log("[LoginForm] Tentando chamar signIn do AuthContext com:", { email }); // LOG 3
+      const result = await signIn({ email, password });
+      console.log("[LoginForm] Resultado do signIn:", result); // LOG 4
 
-      // Se houver um erro retornado pela função signIn.
-      if (error) {
+      if (result.error) {
+        console.error("[LoginForm] Erro no login:", result.error.message); // LOG 5
         toast({
           variant: "destructive",
-          title: "Erro ao entrar",
-          description: error.message || "Verifique suas credenciais e tente novamente",
+          title: "Erro ao Fazer Login",
+          description: result.error.message || "Ocorreu um erro ao tentar fazer login.",
         });
-        return; // Interrompe a execução.
+      } else if (result.data?.user) {
+        console.log("[LoginForm] Login bem-sucedido. Usuário:", result.data.user.email); // LOG 6
+        toast({
+          title: "Login Bem-Sucedido!",
+          description: `Bem-vindo de volta, ${result.data.user.email}!`,
+        });
+        if (onSuccess) onSuccess(); // Chamar callback de sucesso se existir
+      } else {
+        // Caso inesperado onde não há erro mas também não há usuário/sessão
+        console.warn("[LoginForm] signIn retornou sem erro mas sem dados de usuário/sessão.", result); // LOG 7
+         toast({
+          variant: "destructive",
+          title: "Erro ao Fazer Login",
+          description: "Não foi possível completar o login. Tente novamente.",
+        });
       }
-
-      // Se o login for bem-sucedido.
-      toast({
-        title: "Bem-vindo de volta!",
-        description: "Login realizado com sucesso",
-        duration: 3000, // Duração do toast em milissegundos.
-      });
-
-      onSuccess(); // Chama a função de callback onSuccess.
-
     } catch (error) {
-      // Captura erros inesperados durante o processo.
+      console.error("[LoginForm] Erro catastrófico no handleSubmit:", error); // LOG 8
+      let errorMessage = "Ocorreu um erro inesperado.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Ocorreu um erro ao fazer login",
+        title: "Erro Inesperado",
+        description: errorMessage,
       });
     } finally {
-      setIsLoading(false); // Desativa o estado de carregamento, independentemente do resultado.
+      setIsLoading(false);
+      console.log("[LoginForm] Finalizando handleSubmit."); // LOG 9
     }
   };
-
 
   // Renderização do formulário de login.
   return (
@@ -174,9 +189,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       </div>
 
       {/* Botão de Submissão do Formulário */}
-      <Button 
-        type="submit" 
-        className="w-full bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all" 
+      <Button
+        type="submit"
+        className="w-full bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
         disabled={isLoading} // Desabilita o botão durante o carregamento.
       >
         {isLoading ? "Entrando..." : "Entrar"} {/* Texto do botão muda durante o carregamento. */}

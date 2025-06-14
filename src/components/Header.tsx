@@ -33,7 +33,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
-import { useAuth } from '@/lib/auth/AuthContext';
+import { useAuth } from "@/lib/auth/useAuth"; // CORREÇÃO AQUI
 import { Link, NavLink } from 'react-router-dom';
 import {
   DropdownMenu,
