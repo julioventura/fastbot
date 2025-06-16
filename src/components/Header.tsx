@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut, Bot, Coins } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-
+import { useProfile } from '../hooks/useProfile';
 
 // Custom Hook: useScrollDirection
 // Determina a direção do scroll da página (para cima ou para baixo).
@@ -100,7 +100,8 @@ const Header = () => {
 
   // user: Objeto do usuário autenticado.
   // signOut: Função para deslogar o usuário.
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading, initializing } = useAuth();
+  const { profile, loading: profileLoading, error } = useProfile();
 
   // userName: Estado para armazenar o nome do usuário a ser exibido.
   const [userName, setUserName] = useState("");
@@ -118,7 +119,7 @@ const Header = () => {
           const { data } = await supabase
             .from('profiles') // Tabela 'profiles'.
             .select('name')   // Seleciona apenas a coluna 'name'.
-            .eq('user_id', user.id) // Filtra pelo ID do usuário logado.
+            .eq('id', user.id) // CORREÇÃO: usar 'id' em vez de 'user_id'
             .single(); // Espera um único registro.
 
           if (data && data.name) {
@@ -248,6 +249,24 @@ const Header = () => {
     }
   };
 
+
+  // Mostrar loading durante inicialização
+  if (initializing) {
+    return (
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10">
+            <div className="flex justify-start lg:w-0 lg:flex-1">
+              <Link to="/">
+                <span className="text-2xl font-bold text-gray-900">FastBot</span>
+              </Link>
+            </div>
+            <div className="text-gray-500">Carregando...</div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   // --- Renderização do Componente Header ---
   return (

@@ -1,70 +1,156 @@
-import React, { useEffect, useState, ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
-// Importa o contexto e o tipo do novo arquivo de definição
-import { AuthContext, AuthContextType } from "./authContextDefinition";
-import type { User, Session, AuthError, SignUpWithPasswordCredentials, SignInWithPasswordCredentials } from '@supabase/supabase-js';
+import React, { useEffect, useState } from 'react';
+import { User, Session, AuthError } from '@supabase/supabase-js';
+import { supabase } from '../../integrations/supabase/client';
+import { AuthContextType, AuthResponse } from './authContextDefinition';
+import { AuthContext } from './context';
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  console.log('AuthProvider renderizando...'); // Debug
+  
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true); // O estado loading já existe
+  const [loading, setLoading] = useState(true);
+  const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data: { session: currentSession }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error("Error getting session:", error);
+    let mounted = true;
+
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (mounted) {
+          if (error) {
+            console.error('Erro ao buscar sessão:', error);
+          } else {
+            setSession(session);
+            setUser(session?.user ?? null);
+          }
+          setInitializing(false);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Erro inesperado ao buscar sessão:', error);
+        if (mounted) {
+          setInitializing(false);
+          setLoading(false);
+        }
       }
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      setLoading(false);
     };
 
-    getSession();
+    getInitialSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-      setLoading(false);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (mounted) {
+          console.log('Auth state changed:', event, session?.user?.id);
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      }
+    );
 
     return () => {
-      authListener?.subscription?.unsubscribe();
+      mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
-  const signUp = async (credentials: SignUpWithPasswordCredentials): Promise<{ data: { user: User | null; session: Session | null }; error: AuthError | null }> => {
-    const response = await supabase.auth.signUp(credentials);
-    return response;
+  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      const authError = error as AuthError;
+      return { data: null, error: authError };
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const signIn = async (credentials: SignInWithPasswordCredentials): Promise<{ data: { user: User | null; session: Session | null }; error: AuthError | null }> => {
-    const response = await supabase.auth.signInWithPassword(credentials);
-    return response;
+  const signUp = async (email: string, password: string, name: string): Promise<AuthResponse> => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      // Criar perfil se o usuário foi criado com sucesso
+      if (data.user && !data.user.email_confirmed_at) {
+        // Para usuários que precisam confirmar email, criamos perfil depois
+        console.log('Usuário criado, aguardando confirmação de email');
+      } else if (data.user) {
+        // Usuário criado e confirmado, criar perfil imediatamente
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert([
+            {
+              id: data.user.id,  // CORREÇÃO: usar 'id' em vez de 'user_id'
+              name: name,
+            }
+          ], {
+            onConflict: 'id'  // CORREÇÃO: conflito por 'id' em vez de 'user_id'
+          });
+
+        if (profileError) {
+          console.error('Erro ao criar perfil no signup:', profileError);
+        }
+      }
+
+      return { data, error: null };
+    } catch (error) {
+      const authError = error as AuthError;
+      return { data: null, error: authError };
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const signOut = async (): Promise<{ error: AuthError | null }> => {
-    const response = await supabase.auth.signOut();
-    return response;
+  const signOut = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const value: AuthContextType = { // Garante que o valor corresponda à AuthContextType
+  const contextValue: AuthContextType = {
     user,
     session,
-    uuid: user?.id,
-    loading, // ADICIONAR ESTA LINHA
-    signUp,
+    loading,
+    initializing,
     signIn,
+    signUp,
     signOut,
   };
 
+  console.log('AuthProvider contexto value:', contextValue); // Debug
+
   return (
-    <AuthContext.Provider value={value}>
-      {/* Não é mais necessário !loading aqui se MyChatbotPage vai usar auth.loading */}
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

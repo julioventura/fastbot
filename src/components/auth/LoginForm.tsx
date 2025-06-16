@@ -29,10 +29,10 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth/useAuth"; // Hook para autenticação
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"; // Ícones
-import { useToast } from "@/hooks/use-toast"; // Hook para exibir toasts
-
+import { useAuth } from "@/lib/auth/useAuth";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 // Interface LoginFormProps
 // Define as propriedades que o componente LoginForm aceita.
@@ -40,10 +40,9 @@ interface LoginFormProps {
   onSuccess: () => void; // Função a ser chamada quando o login for bem-sucedido.
 }
 
-
 // Componente LoginForm
 // Renderiza e gerencia o formulário de login.
-const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   // Estado para o campo de email.
   const [email, setEmail] = useState("");
 
@@ -62,6 +61,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   // Obtém a função toast para exibir notificações.
   const { toast } = useToast();
 
+  // Obtém a função navigate do react-router-dom para redirecionamento.
+  const navigate = useNavigate();
 
   // Função handleSubmit
   // Chamada quando o formulário é submetido.
@@ -83,12 +84,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       return; // Interrompe a execução se os campos não estiverem preenchidos.
     }
 
-    // setIsLoading(true); // Ativa o estado de carregamento.
-
-
     try {
-      console.log("[LoginForm] Tentando chamar signIn do AuthContext com:", { email }); // LOG 3
-      const result = await signIn({ email, password });
+      console.log("[LoginForm] Tentando chamar signIn do AuthContext com:", {
+        email,
+      }); // LOG 3
+      // Chamada correta do signIn com 2 parâmetros separados
+      const result = await signIn(email, password);
       console.log("[LoginForm] Resultado do signIn:", result); // LOG 4
 
       if (result.error) {
@@ -96,19 +97,27 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         toast({
           variant: "destructive",
           title: "Erro ao Fazer Login",
-          description: result.error.message || "Ocorreu um erro ao tentar fazer login.",
+          description:
+            result.error.message || "Ocorreu um erro ao tentar fazer login.",
         });
       } else if (result.data?.user) {
-        console.log("[LoginForm] Login bem-sucedido. Usuário:", result.data.user.email); // LOG 6
+        console.log(
+          "[LoginForm] Login bem-sucedido. Usuário:",
+          result.data.user.email
+        ); // LOG 6
         toast({
           title: "Login Bem-Sucedido!",
           description: `Bem-vindo de volta, ${result.data.user.email}!`,
         });
+        navigate("/my-chatbot"); // Redireciona para a página do chatbot
         if (onSuccess) onSuccess(); // Chamar callback de sucesso se existir
       } else {
         // Caso inesperado onde não há erro mas também não há usuário/sessão
-        console.warn("[LoginForm] signIn retornou sem erro mas sem dados de usuário/sessão.", result); // LOG 7
-         toast({
+        console.warn(
+          "[LoginForm] signIn retornou sem erro mas sem dados de usuário/sessão.",
+          result
+        ); // LOG 7
+        toast({
           variant: "destructive",
           title: "Erro ao Fazer Login",
           description: "Não foi possível completar o login. Tente novamente.",
@@ -133,70 +142,95 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
   // Renderização do formulário de login.
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 py-4">
-      {/* Campo de Email */}
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-gray-300">Email</Label>
-        <div className="relative">
-          {/* Ícone de Email */}
-          <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="email"
-            type="email"
-            placeholder="seu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
-            disabled={isLoading} // Desabilita o campo durante o carregamento.
-          />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Entre na sua conta
+          </h2>
         </div>
-      </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  placeholder="seu@email.com"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
 
-      {/* Campo de Senha */}
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-gray-300">Senha</Label>
-        <div className="relative">
-          {/* Ícone de Cadeado */}
-          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="password"
-            type={showPassword ? "text" : "password"} // Alterna o tipo do input para mostrar/esconder senha.
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="pl-8 pr-10 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
-            disabled={isLoading} // Desabilita o campo durante o carregamento.
-          />
-          {/* Botão para Mostrar/Esconder Senha */}
+            <div>
+              <Label htmlFor="password">Senha</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10 pr-10"
+                  placeholder="Sua senha"
+                  disabled={isLoading}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                  <span className="sr-only">
+                    {showPassword ? "Esconder senha" : "Mostrar senha"}
+                  </span>
+                </Button>
+              </div>
+            </div>
+          </div>
+
           <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:bg-gray-700/50"
-            onClick={() => setShowPassword(!showPassword)} // Alterna o estado showPassword.
+            type="submit"
+            className="w-full"
             disabled={isLoading}
           >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" /> // Ícone de olho fechado.
+            {isLoading ? (
+              <>
+                <div className="animate-spin -ml-1 mr-3 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                Entrando...
+              </>
             ) : (
-              <Eye className="h-4 w-4" /> // Ícone de olho aberto.
+              "Entrar"
             )}
-            <span className="sr-only">
-              {showPassword ? "Esconder senha" : "Mostrar senha"}
-            </span>
           </Button>
-        </div>
-      </div>
 
-      {/* Botão de Submissão do Formulário */}
-      <Button
-        type="submit"
-        className="w-full bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
-        disabled={isLoading} // Desabilita o botão durante o carregamento.
-      >
-        {isLoading ? "Entrando..." : "Entrar"} {/* Texto do botão muda durante o carregamento. */}
-      </Button>
-    </form>
+          <div className="text-center">
+            <Link
+              to="/signup"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Não tem uma conta? Cadastre-se
+            </Link>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

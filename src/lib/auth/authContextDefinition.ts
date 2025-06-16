@@ -1,15 +1,20 @@
 import { createContext } from 'react';
-import type { User, Session, AuthError, SignUpWithPasswordCredentials, SignInWithPasswordCredentials } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 
 // Interface para o valor do contexto
+export interface AuthResponse {
+  data: { user: User | null; session: Session | null } | null;
+  error: AuthError | null;
+}
+
 export interface AuthContextType {
   user: User | null;
   session: Session | null;
-  uuid: string | undefined;
-  loading: boolean; // ADICIONAR ESTA LINHA
-  signUp: (credentials: SignUpWithPasswordCredentials) => Promise<{ data: { user: User | null; session: Session | null }; error: AuthError | null }>;
-  signIn: (credentials: SignInWithPasswordCredentials) => Promise<{ data: { user: User | null; session: Session | null }; error: AuthError | null }>;
-  signOut: () => Promise<{ error: AuthError | null }>;
+  loading: boolean;
+  initializing: boolean; // Novo estado para carregamento inicial
+  signIn: (email: string, password: string) => Promise<AuthResponse>;
+  signUp: (email: string, password: string, name: string) => Promise<AuthResponse>;
+  signOut: () => Promise<void>;
 }
 
 // Inicialize e exporte o contexto

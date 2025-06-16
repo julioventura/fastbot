@@ -93,26 +93,28 @@ const Account = () => {
       // --- Função fetchProfile ---
       // Busca os dados do perfil do usuário na tabela 'profiles' do Supabase.
       const fetchProfile = async () => {
-        setIsProfileLoading(true); // Inicia o carregamento dos dados do perfil.
+        setIsProfileLoading(true);
         try {
-          console.log("Fetching profile for user ID:", user.id); // Log para depuração.
+          console.log("Fetching profile for user ID:", user.id);
           const { data, error } = await supabase
-            .from("profiles") // Tabela 'profiles'.
-            .select("*")      // Seleciona todas as colunas.
-            .eq("user_id", user.id) // Filtra pelo ID do usuário logado.
-            .single(); // Espera um único registro.
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id) // CORREÇÃO: usar 'id' em vez de 'user_id'
+            .single();
           
           console.log("Profile data:", data); // Log para depuração.
           console.log("Profile error:", error); // Log para depuração.
           
           // Se dados forem encontrados e não houver erro, atualiza o estado 'profileData' e os timestamps.
           if (data && !error) {
+            console.log("Dados do perfil carregados:", data);
+            
             setProfileData({
               name: data.name || "",
               email: user.email || "", // Garante que o email do auth seja usado.
               whatsapp: data.whatsapp || "",
-              isStudent: data.is_student || false,
-              isProfessor: data.is_professor || false,
+              isStudent: Boolean(data.is_student), // Forçar boolean
+              isProfessor: Boolean(data.is_professor), // Forçar boolean
               profession: data.profession || "",
               gender: data.gender || "",
               birthDate: data.birth_date || "",
@@ -155,8 +157,8 @@ const Account = () => {
       try {
         const { data, error } = await supabase
           .from("profiles")
-          .select("created_at, updated_at") // Seleciona apenas os timestamps.
-          .eq("user_id", user.id)
+          .select("created_at, updated_at")
+          .eq("id", user.id) // CORREÇÃO: usar 'id' em vez de 'user_id'
           .single();
         
         if (data && !error) {
