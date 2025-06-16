@@ -11,7 +11,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // O estado loading já existe
 
   useEffect(() => {
     const getSession = async () => {
@@ -52,10 +52,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return response;
   };
 
-  const value: AuthContextType = {
+  const value: AuthContextType = { // Garante que o valor corresponda à AuthContextType
     user,
     session,
     uuid: user?.id,
+    loading, // ADICIONAR ESTA LINHA
     signUp,
     signIn,
     signOut,
@@ -63,7 +64,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading ? children : null}
+      {/* Não é mais necessário !loading aqui se MyChatbotPage vai usar auth.loading */}
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -6,6 +6,7 @@ export interface AuthContextType {
   user: User | null;
   session: Session | null;
   uuid: string | undefined;
+  loading: boolean; // ADICIONAR ESTA LINHA
   signUp: (credentials: SignUpWithPasswordCredentials) => Promise<{ data: { user: User | null; session: Session | null }; error: AuthError | null }>;
   signIn: (credentials: SignInWithPasswordCredentials) => Promise<{ data: { user: User | null; session: Session | null }; error: AuthError | null }>;
   signOut: () => Promise<{ error: AuthError | null }>;
