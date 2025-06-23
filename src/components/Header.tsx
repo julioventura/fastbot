@@ -290,7 +290,10 @@ const Header = () => {
         <div className="container relative z-10 mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Seção do Logo/Nome da Aplicação */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center space-x-2 group">
+            <NavLink 
+              to="/" 
+              className="flex items-center space-x-2 group"
+            >
               <span className="font-bold text-2xl text-white 
               [text-shadow:0_0_8px_#4f9bff,0_0_20px_rgba(0,99,247,0.8)]
               group-hover:text-[#4f9bff] 
@@ -298,10 +301,10 @@ const Header = () => {
               transition-all duration-300">
                 FastBot
               </span>
-            </a>
+            </NavLink>
           </div>
 
-          {/* Navegação Principal (links) */}
+          {/* Menu de Navegação Principal (links) */}
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink
               to="/"
@@ -329,7 +332,7 @@ const Header = () => {
               </NavLink>
             )}
 
-            {/* Link condicionalmente exibido se o usuário ESTIVER logado */}
+            {/* Links condicionalmente exibidos se o usuário ESTIVER logado */}
             {user && (
               <NavLink
                 to="/my-chatbot"
@@ -338,6 +341,17 @@ const Header = () => {
                 Meu Chatbot
               </NavLink>
             )}
+
+            {/* NOVO: Link "Minha Conta" para usuários logados */}
+            {user && (
+              <NavLink
+                to="/account"
+                className={({ isActive }) => `font-medium ${isActive ? "text-white text-2xl drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300 text-sm"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+              >
+                Minha Conta
+              </NavLink>
+            )}
+            
           </nav>
 
           {/* Seção de Ações do Usuário (Autenticação/Menu) */}
@@ -359,13 +373,14 @@ const Header = () => {
                   align="end"
                   className="w-56 bg-[#0a1629] border-2 border-[#2a4980]/80 shadow-xl rounded-lg p-1 backdrop-blur-sm"
                 >
+                  {/* NOVO: Link "Meu Chatbot" com ícone de robô */}
                   <DropdownMenuItem
                     className="cursor-pointer rounded-md px-3 py-2 text-gray-200 hover:!bg-[#2a4980]/70 hover:!text-white focus:!bg-[#2a4980]/70 focus:!text-white transition-colors flex items-center"
                     asChild
                   >
-                    <Link to="/account">
-                      <User className="mr-3 h-6 w-6" />
-                      Minha Conta
+                    <Link to="/my-chatbot">
+                      <Bot className="mr-3 h-6 w-6" />
+                      Meu Chatbot
                     </Link>
                   </DropdownMenuItem>
 
@@ -373,9 +388,9 @@ const Header = () => {
                     className="cursor-pointer rounded-md px-3 py-2 text-gray-200 hover:!bg-[#2a4980]/70 hover:!text-white focus:!bg-[#2a4980]/70 focus:!text-white transition-colors flex items-center"
                     asChild
                   >
-                    <Link to="/my-chatbot"> {/* Ajustar o link se a página de créditos for diferente */}
-                    <Coins className="mr-3 h-6 w-6" />
-                      Meus Créditos
+                    <Link to="/account">
+                      <User className="mr-3 h-6 w-6" />
+                      Minha Conta
                     </Link>
                   </DropdownMenuItem>
 

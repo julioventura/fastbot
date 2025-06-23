@@ -35,6 +35,7 @@ import BackgroundDecoration from "@/components/account/BackgroundDecoration";
 import ProfileForm from "@/components/account/ProfileForm";
 import ProfileTimestamps from "@/components/account/ProfileTimestamps";
 import SecurityCard from "@/components/account/SecurityCard";
+import CloseAccount from "@/components/account/CloseAccount"; // Importar o novo componente
 import LoadingScreen from "@/components/account/LoadingScreen";
 
 // Componente Account
@@ -240,12 +241,16 @@ const Account = () => {
           <div>
             {/* Componente ProfileTimestamps para exibir informações de criação e atualização do perfil */}
             <ProfileTimestamps 
-              userId={user.id} // NOVO: passar o ID do usuário
+              userId={user.id}
               createdAt={createdAt} 
               updatedAt={updatedAt} 
             />
             
-            <SecurityCard onSignOut={handleSignOut} />
+            {/* Componente SecurityCard - só com "Alterar senha" */}
+            <SecurityCard />
+            
+            {/* Componente CloseAccount - só com "Sair da conta" */}
+            <CloseAccount onSignOut={handleSignOut} />
           </div>
         </div>
       </div>
