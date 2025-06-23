@@ -36,12 +36,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // ADICIONADO
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BackgroundDecoration from "@/components/account/BackgroundDecoration";
-import LoadingScreen from "@/components/account/LoadingScreen";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import LoadingScreen from "@/components/account/LoadingScreen"; // ADICIONADO
 
 // Interface ChatbotData
 // Define a estrutura dos dados para as configurações do chatbot.
@@ -255,8 +255,27 @@ const MyChatbotPage: React.FC = () => {
     <div className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-screen">
       <BackgroundDecoration />
       
+    {/* Decoração de fundo inline para garantir que seja renderizada */}
+      <div className="absolute inset-0 z-0">
+        {/* Gradiente principal horizontal */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1e3a5f]/40 via-[#0a1629]/20 to-[#1e3a5f]/40"></div>
+        
+        {/* Elementos decorativos sutis */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#4f9bff]/10 rounded-full blur-3xl opacity-60"></div>
+        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-[#60a5fa]/10 rounded-full blur-2xl opacity-50"></div>
+        <div className="absolute top-1/2 left-3/4 w-64 h-64 bg-[#3b82f6]/10 rounded-full blur-xl opacity-40"></div>
+        
+        {/* Grade sutil de pontos para textura */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="w-full h-full" style={{
+            backgroundImage: 'radial-gradient(circle, #4f9bff 1px, transparent 1px)',
+            backgroundSize: '50px 50px'
+          }}></div>
+        </div>
+      </div>
+      
       <div className="container mx-auto py-10 px-4 relative z-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-8 gradient-text">Meu Chatbot</h1>
+        <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Meu Chatbot</h1>
         
         {/* Sistema de Abas para organizar o conteúdo */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -268,12 +287,9 @@ const MyChatbotPage: React.FC = () => {
 
           {/* Conteúdo da Aba de Visualização ("view") */}
           <TabsContent value="view">
-            <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white">
+            <Card className="bg-transparent border border-[#2a4980]/50 backdrop-blur-sm text-white">
               <CardHeader>
-                <CardTitle className="text-white">Informações do Chatbot</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Revise as configurações atuais do seu chatbot e da sua homepage.
-                </CardDescription>
+                <CardTitle className="text-white">Configuração do Chatbot</CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
@@ -320,7 +336,7 @@ const MyChatbotPage: React.FC = () => {
                       name="whatsapp"
                       value={chatbotData.whatsapp}
                       onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
                       placeholder="Ex: +55 11 91234-5678"
                     />
                     <p className="mt-1 text-xs text-gray-400">Número do WhatsApp do chatbot</p>
@@ -335,7 +351,7 @@ const MyChatbotPage: React.FC = () => {
                       name="chatbot_name"
                       value={chatbotData.chatbot_name}
                       onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
                       placeholder="Ex: Assistente Virtual Dr. Silva"
                     />
                   </div>
@@ -348,7 +364,7 @@ const MyChatbotPage: React.FC = () => {
                       name="welcome_message"
                       value={chatbotData.welcome_message}
                       onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
                       placeholder="Olá! Sou o assistente virtual do consultório. Como posso ajudar?"
                       rows={3}
                     />
@@ -362,7 +378,7 @@ const MyChatbotPage: React.FC = () => {
                       name="office_address"
                       value={chatbotData.office_address}
                       onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
                       placeholder="Rua Exemplo, 123, Bairro, Cidade - UF"
                     />
                   </div>
@@ -375,7 +391,7 @@ const MyChatbotPage: React.FC = () => {
                       name="office_hours"
                       value={chatbotData.office_hours}
                       onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
                       placeholder="Segunda a Sexta, das 08h às 18h"
                     />
                   </div>
@@ -388,7 +404,7 @@ const MyChatbotPage: React.FC = () => {
                       name="specialties"
                       value={chatbotData.specialties}
                       onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
                       placeholder="Clínica Geral, Ortodontia, Implantes..."
                       rows={3}
                     />
@@ -397,15 +413,15 @@ const MyChatbotPage: React.FC = () => {
 
                   {/* Campo Mensagem de Sistema (Prompt) */}
                   <div>
-                    <Label htmlFor="system_message" className="text-gray-300">Mensagem de Sistema (Prompt do Chatbot)</Label>
+                    <Label htmlFor="system_message" className="text-gray-300">Mensagem de Sistema do Chatbot</Label>
                     <Textarea
                       id="system_message"
                       name="system_message"
                       value={chatbotData.system_message}
                       onChange={handleChange}
-                      className="mt-1 bg-[#0e203e] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
                       placeholder="Você é um assistente virtual de um consultório médico/odontológico. Seja cordial e ajude com informações sobre..."
-                      rows={6}
+                      rows={20}
                     />
                     <p className="mt-1 text-xs text-gray-400">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
                   </div>

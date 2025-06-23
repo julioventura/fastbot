@@ -84,3 +84,8 @@
     @apply p-6 rounded-2xl bg-card-gradient shadow-card hover:shadow-lg transition-all duration-300;
   }
 }
+
+/* Adicione isso ao seu arquivo CSS global (index.css ou globals.css) */
+.bg-gradient-radial {
+  background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
+}
