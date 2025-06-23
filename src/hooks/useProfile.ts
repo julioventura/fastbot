@@ -33,7 +33,7 @@ export const useProfile = () => {
       const { data, error: fetchError } = await supabase
         .from('profiles')
         .select('id, name')
-        .eq('id', user.id)
+        .eq('id', user.id) // DEVE estar usando 'id' - CORRETO
         .single();
 
       if (fetchError) {

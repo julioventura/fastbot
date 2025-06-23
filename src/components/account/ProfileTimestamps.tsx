@@ -17,21 +17,25 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock } from "lucide-react"; // Ícone de relógio.
-import { format } from "date-fns"; // Biblioteca para formatação de datas.
+import { Clock, User, Copy } from "lucide-react"; // Adicionar ícone Copy
+import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast"; // Importar toast para feedback
 
 
 // Interface ProfileTimestampsProps
 // Define as propriedades que o componente ProfileTimestamps aceita.
 interface ProfileTimestampsProps {
+  userId: string; // ID do usuário para automações
   createdAt: string | null; // Data de criação do perfil. Pode ser uma string ISO ou null.
   updatedAt: string | null; // Data da última atualização do perfil. Pode ser uma string ISO ou null.
 }
 
 
 // Componente ProfileTimestamps
-// Renderiza um card exibindo as datas de criação e atualização do perfil.
-const ProfileTimestamps = ({ createdAt, updatedAt }: ProfileTimestampsProps) => {
+// Renderiza um card exibindo as datas de criação e atualização do perfil + ID do usuário
+const ProfileTimestamps = ({ userId, createdAt, updatedAt }: ProfileTimestampsProps) => {
+  const { toast } = useToast(); // Hook para exibir notificações
+
 
   // Função formatDateTime
   // Formata uma string de data para o padrão "dd-MM-yyyy (HH:mm)".
@@ -51,6 +55,41 @@ const ProfileTimestamps = ({ createdAt, updatedAt }: ProfileTimestampsProps) => 
   };
 
 
+  // Função copyToClipboard
+  // Copia o ID do usuário para a área de transferência
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(userId);
+      toast({
+        title: "ID Copiado!",
+        description: "O ID do usuário foi copiado para a área de transferência.",
+      });
+    } catch (error) {
+      console.error("Erro ao copiar ID:", error);
+      // Fallback para navegadores que não suportam navigator.clipboard
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = userId;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        toast({
+          title: "ID Copiado!",
+          description: "O ID do usuário foi copiado para a área de transferência.",
+        });
+      } catch (fallbackError) {
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: "Não foi possível copiar o ID. Copie manualmente.",
+        });
+      }
+    }
+  };
+
+
   // Renderização do card com os timestamps.
   return (
     <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white mb-8">
@@ -63,13 +102,38 @@ const ProfileTimestamps = ({ createdAt, updatedAt }: ProfileTimestampsProps) => 
       {/* Conteúdo do Card */}
       <CardContent className="space-y-4">
         
+        {/* Seção "ID do Usuário" - COM FUNCIONALIDADE DE COPY */}
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2 text-gray-300">
+            <User size={16} className="text-[#4f9bff]" />
+            <span className="text-sm">ID do Usuário</span>
+          </div>
+          {/* Div para exibir o ID do usuário com botão de copy */}
+          <div className="flex items-center justify-between px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded">
+            <span className="text-gray-300 font-mono text-sm flex-1 truncate pr-2">
+              {userId}
+            </span>
+            {/* Botão de Copy */}
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-[#4f9bff] hover:bg-[#2a4980]/30 rounded transition-colors group"
+              title="Copiar ID"
+            >
+              <Copy 
+                size={16} 
+                className="group-hover:scale-110 transition-transform" 
+              />
+            </button>
+          </div>
+          <p className="text-xs text-gray-400">Use este ID para automações e configurações do chatbot</p>
+        </div>
+        
         {/* Seção "Criado em" */}
         <div className="space-y-2">
           <div className="flex items-center space-x-2 text-gray-300">
-            <Clock size={16} className="text-[#4f9bff]" /> {/* Ícone de relógio */}
+            <Clock size={16} className="text-[#4f9bff]" />
             <span className="text-sm">Criado em</span>
           </div>
-          {/* Div para exibir a data formatada de criação */}
           <div className="px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded text-gray-300">
             {formatDateTime(createdAt)}
           </div>
@@ -78,10 +142,9 @@ const ProfileTimestamps = ({ createdAt, updatedAt }: ProfileTimestampsProps) => 
         {/* Seção "Atualizado em" */}
         <div className="space-y-2">
           <div className="flex items-center space-x-2 text-gray-300">
-            <Clock size={16} className="text-[#4f9bff]" /> {/* Ícone de relógio */}
+            <Clock size={16} className="text-[#4f9bff]" />
             <span className="text-sm">Atualizado em</span>
           </div>
-          {/* Div para exibir a data formatada da última atualização */}
           <div className="px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded text-gray-300">
             {formatDateTime(updatedAt)}
           </div>

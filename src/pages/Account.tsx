@@ -101,7 +101,7 @@ const Account = () => {
             .select("*")
             .eq("id", user.id) // CORREÇÃO: usar 'id' em vez de 'user_id'
             .single();
-          
+
           console.log("Profile data:", data); // Log para depuração.
           console.log("Profile error:", error); // Log para depuração.
           
@@ -155,19 +155,41 @@ const Account = () => {
   const handleProfileUpdate = async () => {
     if (user) {
       try {
+        // Buscar todos os dados do perfil atualizado, incluindo timestamps
         const { data, error } = await supabase
           .from("profiles")
-          .select("created_at, updated_at")
-          .eq("id", user.id) // CORREÇÃO: usar 'id' em vez de 'user_id'
+          .select("*")
+          .eq("id", user.id)
           .single();
         
         if (data && !error) {
+          console.log("Timestamps atualizados:", {
+            created_at: data.created_at,
+            updated_at: data.updated_at
+          });
+          
+          // Atualizar os timestamps
           setCreatedAt(data.created_at || null);
           setUpdatedAt(data.updated_at || null);
+          
+          // Também atualizar os dados do formulário para sincronizar
+          setProfileData(prev => ({
+            ...prev,
+            name: data.name || "",
+            whatsapp: data.whatsapp || "",
+            isStudent: Boolean(data.is_student),
+            isProfessor: Boolean(data.is_professor),
+            profession: data.profession || "",
+            gender: data.gender || "",
+            birthDate: data.birth_date || "",
+            city: data.city || "",
+            state: data.state || "",
+          }));
         }
       } catch (error) {
         console.error("Erro ao buscar timestamps atualizados:", error);
-        // Poderia adicionar um toast de erro aqui se necessário.
+        // Forçar um refresh dos dados se houver erro
+        window.location.reload();
       }
     }
   };
@@ -216,9 +238,11 @@ const Account = () => {
           
           {/* Coluna Lateral (Timestamps e Segurança) */}
           <div>
-            <ProfileTimestamps
-              createdAt={createdAt}
-              updatedAt={updatedAt}
+            {/* Componente ProfileTimestamps para exibir informações de criação e atualização do perfil */}
+            <ProfileTimestamps 
+              userId={user.id} // NOVO: passar o ID do usuário
+              createdAt={createdAt} 
+              updatedAt={updatedAt} 
             />
             
             <SecurityCard onSignOut={handleSignOut} />

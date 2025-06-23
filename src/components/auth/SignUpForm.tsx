@@ -48,7 +48,6 @@ import { useAuth } from "@/lib/auth/useAuth";
 import { Eye, EyeOff, Mail, Lock, User as UserIcon, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Link, useNavigate } from 'react-router-dom';
 
 // Interface SignUpFormProps
 // Define as propriedades que o componente SignUpForm aceita.
@@ -77,12 +76,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
   // Obtém a função toast para exibir notificações.
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   // Função handleSubmit
   // Chamada quando o formulário de cadastro é submetido.
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Previne o comportamento padrão de submissão do formulário.
+    e.preventDefault();
 
     // Validação dos campos do formulário.
     if (!name || !email || !password || !confirmPassword || !whatsapp) {
@@ -112,63 +110,94 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
       return;
     }
 
-    setIsLoading(true); // Ativa o estado de carregamento.
+    setIsLoading(true);
 
     try {
-      // Chamada correta do signUp com 3 parâmetros
-      const result = await signUp(email, password, name);
-
-      if (result.error) {
-        toast({
-          variant: "destructive",
-          title: "Erro no Cadastro",
-          description: result.error.message || "Ocorreu um erro ao tentar criar a conta.",
-        });
-      } else if (result.data?.user) {
-        toast({
-          title: "Cadastro Quase Lá!",
-          description: result.data.user.email_confirmed_at ? "Conta criada com sucesso!" : "Verifique seu e-mail para confirmar sua conta.",
-        });
-
-        // Inserir dados adicionais no perfil
-        const userId = result.data.user.id;
-        if (userId) {
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .upsert([{ 
-              id: userId,  // CORREÇÃO: usar 'id' em vez de 'user_id'
-              name, 
-              whatsapp, 
-              email, 
-              is_student: false, 
-              is_professor: false 
-            }], {
-              onConflict: 'id'  // CORREÇÃO: conflito por 'id' em vez de 'user_id'
-            });
-
-          if (profileError) {
-            console.error("Error inserting profile:", profileError);
-            toast({
-              variant: "destructive",
-              title: "Erro ao Salvar Perfil",
-              description: "Sua conta foi criada, mas houve um problema ao salvar seus dados de perfil.",
-            });
+      // Tentar fazer signup direto pelo Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name,
           }
         }
-        
-        onSuccess();
-        navigate('/my-chatbot');
+      });
+
+      console.log("Resultado do signup:", { data, error });
+
+      // Se houve erro E não é problema de email de confirmação, lançar erro
+      if (error && !error.message.includes("confirmation email")) {
+        throw error;
       }
-    } catch (error) {
-      console.error("Sign up process error:", error);
-      let errorMessage = "Ocorreu um erro inesperado durante o cadastro.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
+
+      // Se o usuário foi criado (mesmo com erro de email)
+      if (data.user) {
+        console.log("Usuário criado:", data.user.id);
+        
+        // Criar perfil imediatamente
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert([{ 
+            id: data.user.id,
+            name, 
+            whatsapp, 
+            email, 
+            is_student: false, 
+            is_professor: false 
+          }], {
+            onConflict: 'id'
+          });
+
+        if (profileError) {
+          console.error("Erro ao criar perfil:", profileError);
+          toast({
+            variant: "destructive",
+            title: "Erro ao Salvar Perfil",
+            description: "Conta criada, mas houve problema ao salvar o perfil.",
+          });
+        } else {
+          console.log("Perfil criado com sucesso");
+        }
+
+        // Mostrar toast de sucesso
+        if (error && error.message.includes("confirmation email")) {
+          toast({
+            title: "Cadastro Realizado!",
+            description: "Conta criada com sucesso! Problema com email de confirmação, mas você já pode fazer login.",
+          });
+        } else {
+          toast({
+            title: "Cadastro Realizado!",
+            description: data.user.email_confirmed_at 
+              ? "Conta criada com sucesso!" 
+              : "Conta criada! Verifique seu email para confirmar.",
+          });
+        }
+
+        onSuccess();
+      } else {
+        // Se não há usuário, algo deu errado
+        throw new Error("Falha ao criar usuário - dados não retornados");
+      }
+      
+    } catch (error: unknown) {
+      const authError = error as { message?: string };
+      console.error("Erro no cadastro:", authError);
+      
+      let errorMessage = "Ocorreu um erro durante o cadastro.";
+      
+      if (authError.message?.includes("already registered")) {
+        errorMessage = "Este email já está cadastrado.";
+      } else if (authError.message?.includes("Password")) {
+        errorMessage = "Problema com a senha. Verifique se tem pelo menos 6 caracteres.";
+      } else if (authError.message) {
+        errorMessage = authError.message;
       }
 
       toast({
         variant: "destructive",
-        title: "Erro Inesperado",
+        title: "Erro no Cadastro",
         description: errorMessage,
       });
     } finally {
@@ -176,139 +205,111 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
     }
   };
 
-  // Renderização do formulário de cadastro.
+  // Renderização do formulário de cadastro com estilo do modal.
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Crie sua conta
-          </h2>
+    <form onSubmit={handleSubmit} className="space-y-4 py-4">
+      {/* Campo Nome */}
+      <div className="space-y-2">
+        <Label htmlFor="name" className="text-gray-300">Nome Completo</Label>
+        <div className="relative">
+          <UserIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="name"
+            type="text"
+            placeholder="Seu nome completo"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            disabled={isLoading}
+          />
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">Nome Completo</Label>
-              <div className="relative">
-                <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="pl-10"
-                  placeholder="Seu nome completo"
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-            </div>
+      </div>
 
-            <div>
-              <Label htmlFor="whatsapp">WhatsApp</Label>
-              <div className="relative">
-                <MessageSquare className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  id="whatsapp"
-                  type="tel"
-                  value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
-                  className="pl-10"
-                  placeholder="(11) 99999-9999"
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-            </div>
+      {/* Campo WhatsApp */}
+      <div className="space-y-2">
+        <Label htmlFor="whatsapp" className="text-gray-300">WhatsApp</Label>
+        <div className="relative">
+          <MessageSquare className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="whatsapp"
+            type="tel"
+            placeholder="(11) 99999-9999"
+            value={whatsapp}
+            onChange={(e) => setWhatsapp(e.target.value)}
+            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            disabled={isLoading}
+          />
+        </div>
+      </div>
 
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  placeholder="seu@email.com"
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-            </div>
+      {/* Campo Email */}
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-gray-300">Email</Label>
+        <div className="relative">
+          <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="email"
+            type="email"
+            placeholder="seu@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            disabled={isLoading}
+          />
+        </div>
+      </div>
 
-            <div>
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  placeholder="Mínimo 6 caracteres"
-                  disabled={isLoading}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  id="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10"
-                  placeholder="Confirme sua senha"
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
+      {/* Campo Senha */}
+      <div className="space-y-2">
+        <Label htmlFor="password" className="text-gray-300">Senha</Label>
+        <div className="relative">
+          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Mínimo 6 caracteres"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="pl-8 pr-10 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="absolute right-2 top-2.5 text-muted-foreground hover:text-white transition-colors"
+            onClick={() => setShowPassword(!showPassword)}
             disabled={isLoading}
           >
-            {isLoading ? (
-              <>
-                <div className="animate-spin -ml-1 mr-3 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
-                Criando conta...
-              </>
-            ) : (
-              "Criar conta"
-            )}
-          </Button>
-
-          <div className="text-center">
-            <Link
-              to="/login"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              Já tem uma conta? Entre
-            </Link>
-          </div>
-        </form>
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Campo Confirmar Senha */}
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword" className="text-gray-300">Confirmar Senha</Label>
+        <div className="relative">
+          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="confirmPassword"
+            type={showPassword ? "text" : "password"}
+            placeholder="Confirme sua senha"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            disabled={isLoading}
+          />
+        </div>
+      </div>
+
+      {/* Botão de Submissão */}
+      <Button 
+        type="submit" 
+        className="w-full bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all" 
+        disabled={isLoading}
+      >
+        {isLoading ? "Criando conta..." : "Criar conta"}
+      </Button>
+    </form>
   );
 };
 

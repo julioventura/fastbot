@@ -163,8 +163,10 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
         description: "Suas informações foram salvas com sucesso.",
       });
 
+      // Chamar o callback APÓS confirmar que salvou com sucesso
       if (onUpdate) {
-        onUpdate();
+        console.log("Chamando callback onUpdate...");
+        await onUpdate(); // Aguardar o callback completar
       }
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);

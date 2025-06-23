@@ -110,38 +110,33 @@ const Header = () => {
   // useEffect para buscar o nome do perfil do usuário.
   // Executado quando o objeto 'user' (do contexto de autenticação) muda.
   useEffect(() => {
-    // --- Função fetchUserName ---
-    // Busca o nome do perfil do usuário na tabela 'profiles' do Supabase.
-    // Se não encontrar um nome, utiliza a parte local do email do usuário como fallback.
     const fetchUserName = async () => {
-      if (user) { // Procede apenas se houver um usuário logado.
+      if (user) {
         try {
           const { data } = await supabase
-            .from('profiles') // Tabela 'profiles'.
-            .select('name')   // Seleciona apenas a coluna 'name'.
+            .from('profiles')
+            .select('name')
             .eq('id', user.id) // CORREÇÃO: usar 'id' em vez de 'user_id'
-            .single(); // Espera um único registro.
+            .single();
 
           if (data && data.name) {
-            setUserName(data.name); // Define o nome do usuário se encontrado.
+            setUserName(data.name);
           } else {
-            // Fallback: usa a parte local do email se o nome não estiver no perfil.
             const emailName = user.email?.split('@')[0] || "";
             setUserName(emailName);
           }
         } catch (error) {
           console.error("Erro ao buscar nome do usuário:", error);
-          // Fallback em caso de erro na busca: usa a parte local do email.
           const emailName = user.email?.split('@')[0] || "";
           setUserName(emailName);
         }
       } else {
-        setUserName(""); // Limpa o nome se não houver usuário logado.
+        setUserName("");
       }
     };
 
-    fetchUserName(); // Chama a função para buscar o nome.
-  }, [user]); // Dependência do useEffect: executa quando 'user' muda.
+    fetchUserName();
+  }, [user]);
 
 
   // --- Função truncate ---

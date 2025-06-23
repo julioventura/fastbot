@@ -34,8 +34,8 @@ const SecurityCard = ({ onSignOut }: SecurityCardProps) => {
       
       {/* Cabeçalho do Card */}
       <CardHeader>
-        <CardTitle className="text-white">Segurança</CardTitle>
-        <CardDescription className="text-gray-300">Gerencie sua senha e segurança da conta</CardDescription>
+        <CardTitle className="text-white">Senha</CardTitle>
+        <CardDescription className="text-gray-300">Altere sua senha regularmente</CardDescription>
       </CardHeader>
       
       {/* Conteúdo do Card */}
@@ -44,14 +44,14 @@ const SecurityCard = ({ onSignOut }: SecurityCardProps) => {
         {/* Seção "Senha" */}
         <div className="flex items-center space-x-2 text-gray-300">
           <Lock size={16} className="text-[#4f9bff]" /> {/* Ícone de cadeado */}
-          <span className="text-sm">Senha</span>
+          <span className="text-sm">Alterar senha</span>
         </div>
         
         {/* Botão "Alterar senha" */}
         {/* TODO: Implementar a funcionalidade de alteração de senha ou navegação para a página correspondente. */}
         <Button 
           variant="outline" 
-          className="w-full border-[#2a4980]/50 text-[#4f9bff] hover:bg-[#2a4980]/30"
+          className="w-full bg-blue-600 border-[#2a4980]/50 text-[#dcebff] hover:bg-[#2a4980]/50 hover:border-blue-400 hover:text-gray-400"
           // onClick={() => { /* Lógica para alterar senha */ }} // Exemplo de onde a lógica seria adicionada
         >
           Alterar senha
@@ -62,7 +62,7 @@ const SecurityCard = ({ onSignOut }: SecurityCardProps) => {
         <div className="border-t border-[#2a4980]/50 pt-4">
           <Button
             variant="destructive" // Variante de botão para ações destrutivas (como sair).
-            className="w-full bg-red-500/80 hover:bg-red-600/80" // Estilos customizados para o botão de sair.
+            className="w-full bg-red-500/80 border-2 border-red-800 hover:border-red-600 hover:bg-red-800/100" // Estilos customizados para o botão de sair.
             onClick={onSignOut} // Chama a função onSignOut ao ser clicado.
           >
             Sair da conta
