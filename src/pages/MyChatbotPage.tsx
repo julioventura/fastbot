@@ -31,17 +31,15 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth/useAuth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // ADICIONADO
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BackgroundDecoration from "@/components/account/BackgroundDecoration";
-import LoadingScreen from "@/components/account/LoadingScreen"; // ADICIONADO
+import LoadingScreen from "@/components/account/LoadingScreen";
+import ViewChatbotConfig from "@/components/chatbot/ViewChatbotConfig";
+import EditChatbotConfig from "@/components/chatbot/EditChatbotConfig";
+import TestChatbot from "@/components/chatbot/TestChatbot";
 
 // Interface ChatbotData
 // Define a estrutura dos dados para as configurações do chatbot.
@@ -228,25 +226,17 @@ const MyChatbotPage: React.FC = () => {
     }
   };
 
+  // --- Função handleCancel ---
+  // Manipulador para o botão de cancelar, que simplesmente muda a aba ativa de volta para "view".
+  const handleCancel = () => {
+    setActiveTab("view");
+  };
 
   // --- Condicional de Carregamento Global ---
   // Exibe a tela de carregamento se a autenticação inicial ou os dados do chatbot ainda estiverem carregando.
   if (authLoading || isLoading) {
     return <LoadingScreen />;
   }
-
-
-  // --- Função renderViewData ---
-  // Função auxiliar para renderizar os campos de dados na aba de visualização ("view").
-  // Exibe o valor fornecido ou uma mensagem padrão ("Não informado") se o valor for nulo ou vazio.
-  const renderViewData = (label: string, value: string | null | undefined) => (
-    <div className="mb-4">
-      <h3 className="text-sm font-medium text-gray-400">{label}</h3>
-      <p className="text-white whitespace-pre-wrap break-words">
-        {value || <span className="text-gray-500 italic">Não informado</span>}
-      </p>
-    </div>
-  );
 
 
   // --- Renderização do Componente ---
@@ -285,188 +275,23 @@ const MyChatbotPage: React.FC = () => {
             <TabsTrigger value="chat" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">TESTAR</TabsTrigger>
           </TabsList>
 
-          {/* Conteúdo da Aba de Visualização ("view") */}
           <TabsContent value="view">
-            <Card className="bg-transparent border border-[#2a4980]/50 backdrop-blur-sm text-white">
-              <CardHeader>
-                <CardTitle className="text-white">Configuração do Chatbot</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
-                  {/* Coluna 1 para dados do chatbot */}
-                  <div className="space-y-6 p-4 border border-[#3b82f6]/70 rounded-lg shadow-md bg-[#0e203e]/30">
-                    {renderViewData("Nome do Chatbot (Homepage)", chatbotData.chatbot_name)}
-                    {renderViewData("Endereço do Consultório", chatbotData.office_address)}
-                    {renderViewData("Horários de Atendimento", chatbotData.office_hours)}
-                  </div>
-                  {/* Coluna 2 para dados do chatbot */}
-                  <div className="space-y-6 p-4 border border-[#3b82f6]/70 rounded-lg shadow-md bg-[#0e203e]/30">
-                    {renderViewData("Mensagem de Boas-vindas (Chatbot)", chatbotData.welcome_message)}
-                    {renderViewData("Especialidades Atendidas", chatbotData.specialties)}
-                  </div>
-                  {/* Mensagem de Sistema ocupando as duas colunas abaixo para maior visibilidade */}
-                  <div className="md:col-span-2 space-y-6 p-4 border border-[#3b82f6]/70 rounded-lg shadow-md bg-[#0e203e]/30">
-                     {renderViewData("Mensagem de Sistema (Prompt do Chatbot)", chatbotData.system_message)}
-                  </div>
-                </div>
-
-              </CardContent>
-            </Card>
+            <ViewChatbotConfig chatbotData={chatbotData} />
           </TabsContent>
 
-          {/* Conteúdo da Aba de Edição ("edit") */}
           <TabsContent value="edit">
-            <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white">
-              <CardHeader>
-                <CardTitle className="text-white">Editar Configurações do Chatbot</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Personalize as informações e o comportamento do seu chatbot.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Formulário de Edição das Configurações */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-
-                
-                  {/* Campo WhatsApp */}
-                  <div>
-                    <Label htmlFor="whatsapp" className="text-gray-300">Número do WhatsApp do chatbot</Label>
-                    <Input
-                      id="whatsapp"
-                      name="whatsapp"
-                      value={chatbotData.whatsapp}
-                      onChange={handleChange}
-                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Ex: +55 11 91234-5678"
-                    />
-                    <p className="mt-1 text-xs text-gray-400">Número do WhatsApp do chatbot</p>
-                  </div>
-
-
-                  {/* Campo Nome do Chatbot */}
-                  <div>
-                    <Label htmlFor="chatbot_name" className="text-gray-300">Nome do Chatbot (para Homepage)</Label>
-                    <Input
-                      id="chatbot_name"
-                      name="chatbot_name"
-                      value={chatbotData.chatbot_name}
-                      onChange={handleChange}
-                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Ex: Assistente Virtual Dr. Silva"
-                    />
-                  </div>
-
-                  {/* Campo Mensagem de Boas-vindas */}
-                  <div>
-                    <Label htmlFor="welcome_message" className="text-gray-300">Mensagem de Boas-vindas (Chatbot)</Label>
-                    <Textarea
-                      id="welcome_message"
-                      name="welcome_message"
-                      value={chatbotData.welcome_message}
-                      onChange={handleChange}
-                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Olá! Sou o assistente virtual do consultório. Como posso ajudar?"
-                      rows={3}
-                    />
-                  </div>
-
-                  {/* Campo Endereço do Consultório */}
-                  <div>
-                    <Label htmlFor="office_address" className="text-gray-300">Endereço do Consultório</Label>
-                    <Input
-                      id="office_address"
-                      name="office_address"
-                      value={chatbotData.office_address}
-                      onChange={handleChange}
-                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Rua Exemplo, 123, Bairro, Cidade - UF"
-                    />
-                  </div>
-
-                  {/* Campo Horários de Atendimento */}
-                  <div>
-                    <Label htmlFor="office_hours" className="text-gray-300">Horários de Atendimento</Label>
-                    <Input
-                      id="office_hours"
-                      name="office_hours"
-                      value={chatbotData.office_hours}
-                      onChange={handleChange}
-                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Segunda a Sexta, das 08h às 18h"
-                    />
-                  </div>
-
-                  {/* Campo Especialidades Atendidas */}
-                  <div>
-                    <Label htmlFor="specialties" className="text-gray-300">Especialidades Atendidas</Label>
-                    <Textarea
-                      id="specialties"
-                      name="specialties"
-                      value={chatbotData.specialties}
-                      onChange={handleChange}
-                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Clínica Geral, Ortodontia, Implantes..."
-                      rows={3}
-                    />
-                  </div>
-
-
-                  {/* Campo Mensagem de Sistema (Prompt) */}
-                  <div>
-                    <Label htmlFor="system_message" className="text-gray-300">Mensagem de Sistema do Chatbot</Label>
-                    <Textarea
-                      id="system_message"
-                      name="system_message"
-                      value={chatbotData.system_message}
-                      onChange={handleChange}
-                      className="mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
-                      placeholder="Você é um assistente virtual de um consultório médico/odontológico. Seja cordial e ajude com informações sobre..."
-                      rows={20}
-                    />
-                    <p className="mt-1 text-xs text-gray-400">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
-                  </div>
-                                    
-
-                  {/* Botões de Ação do Formulário (Cancelar e Salvar) */}
-                  <div className="flex justify-end space-x-3 pt-4">
-                    <Button 
-                      type="button" // Define como tipo 'button' para não submeter o formulário ao clicar.
-                      variant="outline"
-                      onClick={() => setActiveTab("view")} // Volta para a aba de visualização ao cancelar.
-                      className="border-[#4f9bff] text-[#60a5fa] hover:bg-[#4f9bff]/10 hover:text-[#7caffd]"
-                      disabled={isSaving} // Desabilita o botão de cancelar enquanto estiver salvando.
-                    >
-                      Cancelar
-                    </Button>
-                    <Button 
-                      type="submit" // Botão principal para submeter o formulário.
-                      className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white px-6 py-2 text-base rounded-md drop-shadow-[0_0_8px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_12px_rgba(79,155,255,0.5)] transition-all"
-                      disabled={isSaving} // Desabilita o botão de salvar enquanto uma operação de salvamento estiver em progresso.
-                    >
-                      {isSaving ? "Salvando..." : "Salvar Configurações"}
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
+            <EditChatbotConfig
+              chatbotData={chatbotData}
+              isSaving={isSaving}
+              onSubmit={handleSubmit}
+              onChange={handleChange}
+              onCancel={handleCancel}
+            />
           </TabsContent>
 
-          {/* Conteúdo da Aba de Teste ("chat") - Placeholder para implementação futura */}
-          {/* 
           <TabsContent value="chat">
-            <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white">
-              <CardHeader>
-                <CardTitle className="text-white">Testar Chatbot</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Interaja com seu chatbot para testar as configurações.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                // A interface de chat será implementada aqui.
-              </CardContent>
-            </Card>
-          </TabsContent> 
-          */}
+            <TestChatbot chatbotData={chatbotData} />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
