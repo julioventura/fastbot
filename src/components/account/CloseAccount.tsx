@@ -31,7 +31,7 @@ const CloseAccount = ({ onSignOut }: CloseAccountProps) => {
       {/* Cabeçalho do Card */}
       <CardHeader>
         <CardTitle className="text-white">Fechar Conta</CardTitle>
-        <CardDescription className="text-gray-300">Gerencie sua senha e segurança da conta</CardDescription>
+        <CardDescription className="text-gray-300">Fechar sua conta de usuário</CardDescription>
       </CardHeader>
       
       {/* Conteúdo do Card */}
@@ -44,7 +44,7 @@ const CloseAccount = ({ onSignOut }: CloseAccountProps) => {
             className="w-full bg-red-500/80 border-2 border-red-800 hover:border-red-600 hover:bg-red-800/100" // Estilos customizados para o botão de sair.
             onClick={onSignOut} // Chama a função onSignOut ao ser clicado.
           >
-            Sair da conta
+            Fechar a conta
           </Button>
         </div>
       </CardContent>

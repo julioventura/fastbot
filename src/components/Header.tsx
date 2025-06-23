@@ -292,14 +292,24 @@ const Header = () => {
           <div className="flex items-center">
             <NavLink 
               to="/" 
-              className="flex items-center space-x-2 group"
+              className="flex flex-col items-start group"
             >
-              <span className="font-bold text-2xl text-white 
-              [text-shadow:0_0_8px_#4f9bff,0_0_20px_rgba(0,99,247,0.8)]
+              {/* "FastBot" - mantido igual */}
+              <span className="font-bold text-3xl text-white 
+              [text-shadow:0_0_12px_#4f9bff,0_0_24px_rgba(79,155,255,0.9),0_0_36px_rgba(79,155,255,0.6),0_0_48px_rgba(79,155,255,0.3)]
               group-hover:text-[#4f9bff] 
-              group-hover:[text-shadow:0_0_12px_#4f9bff,0_0_25px_rgba(0,99,247,0.9)]
-              transition-all duration-300">
+              group-hover:[text-shadow:0_0_16px_#4f9bff,0_0_32px_rgba(79,155,255,1),0_0_48px_rgba(79,155,255,0.8),0_0_64px_rgba(79,155,255,0.5)]
+              transition-all duration-300 tracking-wide">
                 FastBot
+              </span>
+              
+              {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
+              <span className="font-mono text-xs text-[#00d4ff] font-light
+              [text-shadow:0_0_2px_#00d4ff,0_0_4px_#00d4ff,0_0_6px_rgba(0,212,255,0.4)]
+              group-hover:text-[#4fc3f7] 
+              group-hover:[text-shadow:0_0_3px_#4fc3f7,0_0_6px_#4fc3f7,0_0_9px_rgba(79,195,247,0.6)]
+              transition-all duration-300 tracking-[0.15em] uppercase -mt-1 max-w-[140px] truncate">
+                DENTISTAS.COM.BR
               </span>
             </NavLink>
           </div>
