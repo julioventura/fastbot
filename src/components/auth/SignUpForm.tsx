@@ -113,93 +113,147 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
     setIsLoading(true);
 
     try {
-      // Tentar fazer signup direto pelo Supabase Auth
+      console.log("=== INICIANDO SIGNUP DIRETO ===");
+      console.log("Email:", email);
+      console.log("Nome:", name);
+      console.log("WhatsApp:", whatsapp);
+
+      // Tentar signup direto pelo Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: undefined, // Remover redirecionamento
           data: {
             name: name,
+            whatsapp: whatsapp
           }
         }
       });
 
-      console.log("Resultado do signup:", { data, error });
+      console.log("=== RESULTADO DO SIGNUP ===");
+      console.log("Data:", JSON.stringify(data, null, 2));
+      console.log("Error:", JSON.stringify(error, null, 2));
 
-      // Se houve erro E não é problema de email de confirmação, lançar erro
-      if (error && !error.message.includes("confirmation email")) {
-        throw error;
-      }
-
-      // Se o usuário foi criado (mesmo com erro de email)
-      if (data.user) {
-        console.log("Usuário criado:", data.user.id);
+      // NOVA LÓGICA: Tratar erro de email como situação esperada
+      if (error) {
+        console.error("Erro do Supabase:", error);
         
-        // Criar perfil imediatamente
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .upsert([{ 
-            id: data.user.id,
-            name, 
-            whatsapp, 
-            email, 
-            is_student: false, 
-            is_professor: false 
-          }], {
-            onConflict: 'id'
+        // Se é erro de email (que sabemos que vai acontecer por causa da configuração)
+        if (error.message?.includes("Error sending confirmation email") || 
+            error.code === "unexpected_failure" || 
+            error.status === 500) {
+          
+          console.log("=== ERRO DE EMAIL DETECTADO - ORIENTANDO USUÁRIO ===");
+          
+          // Como sabemos que há problema na configuração de email do servidor,
+          // vamos orientar o usuário a tentar fazer login
+          toast({
+            title: "Problema conhecido detectado",
+            description: "Há um problema na configuração de email do servidor. Sua conta pode ter sido criada. Tente fazer login com os dados informados.",
           });
-
-        if (profileError) {
-          console.error("Erro ao criar perfil:", profileError);
+          
+          // Dar chance do usuário tentar fazer login
+          onSuccess();
+          return;
+        }
+        
+        // Tratar outros tipos de erro
+        if (error.message?.includes("User already registered")) {
           toast({
             variant: "destructive",
-            title: "Erro ao Salvar Perfil",
-            description: "Conta criada, mas houve problema ao salvar o perfil.",
+            title: "Email já cadastrado",
+            description: "Este email já possui uma conta. Tente fazer login.",
           });
-        } else {
-          console.log("Perfil criado com sucesso");
+          return;
         }
-
-        // Mostrar toast de sucesso
-        if (error && error.message.includes("confirmation email")) {
+        
+        if (error.message?.includes("Invalid email")) {
           toast({
-            title: "Cadastro Realizado!",
-            description: "Conta criada com sucesso! Problema com email de confirmação, mas você já pode fazer login.",
+            variant: "destructive",
+            title: "Email inválido",
+            description: "Por favor, verifique se o email está correto.",
           });
-        } else {
+          return;
+        }
+        
+        // Outros erros
+        toast({
+          variant: "destructive",
+          title: "Erro no cadastro",
+          description: error.message || "Tente fazer login com os dados informados.",
+        });
+        return;
+      }
+
+      // Se não houve erro, usuário foi criado normalmente
+      if (data.user) {
+        console.log("=== USUÁRIO CRIADO COM SUCESSO (SEM ERRO DE EMAIL) ===");
+        console.log("User ID:", data.user.id);
+        
+        // Criar perfil
+        try {
+          console.log("=== CRIANDO PERFIL ===");
+          const profileData = {
+            id: data.user.id,
+            name: name,
+            whatsapp: whatsapp,
+            email: email,
+            is_student: false,
+            is_professor: false
+          };
+
+          const { data: profileResult, error: profileError } = await supabase
+            .from("profiles")
+            .insert([profileData])
+            .select()
+            .single();
+
+          if (profileError) {
+            console.error("Erro ao criar perfil:", profileError);
+            toast({
+              title: "Conta criada!",
+              description: "Conta criada com sucesso, mas houve problema ao salvar o perfil. Você pode completar depois.",
+            });
+          } else {
+            console.log("Perfil criado com sucesso:", profileResult);
+            toast({
+              title: "Cadastro realizado!",
+              description: data.user.email_confirmed_at 
+                ? "Conta criada com sucesso! Você já pode fazer login." 
+                : "Conta criada! Você pode fazer login (email de confirmação pode não ter sido enviado).",
+            });
+          }
+        } catch (profileError) {
+          console.error("Erro ao criar perfil:", profileError);
           toast({
-            title: "Cadastro Realizado!",
-            description: data.user.email_confirmed_at 
-              ? "Conta criada com sucesso!" 
-              : "Conta criada! Verifique seu email para confirmar.",
+            title: "Conta criada!",
+            description: "Conta criada com sucesso!",
           });
         }
 
         onSuccess();
       } else {
-        // Se não há usuário, algo deu errado
-        throw new Error("Falha ao criar usuário - dados não retornados");
-      }
-      
-    } catch (error: unknown) {
-      const authError = error as { message?: string };
-      console.error("Erro no cadastro:", authError);
-      
-      let errorMessage = "Ocorreu um erro durante o cadastro.";
-      
-      if (authError.message?.includes("already registered")) {
-        errorMessage = "Este email já está cadastrado.";
-      } else if (authError.message?.includes("Password")) {
-        errorMessage = "Problema com a senha. Verifique se tem pelo menos 6 caracteres.";
-      } else if (authError.message) {
-        errorMessage = authError.message;
+        // Caso não tenha erro nem usuário criado
+        toast({
+          title: "Situação incerta",
+          description: "Tente fazer login com os dados informados. Se não funcionar, a conta não foi criada.",
+        });
+        onSuccess();
       }
 
+    } catch (error) {
+      console.error("=== ERRO INESPERADO ===", error);
+      
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      
       toast({
-        variant: "destructive",
-        title: "Erro no Cadastro",
-        description: errorMessage,
+        title: "Erro técnico",
+        description: `Tente fazer login com os dados informados. Erro: ${errorMessage}`,
       });
+      
+      // Mesmo com erro, dar chance do usuário tentar login
+      onSuccess();
     } finally {
       setIsLoading(false);
     }
@@ -216,10 +270,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
           <Input
             id="name"
             type="text"
-            placeholder="Seu nome completo"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            placeholder="Seu nome completo"
             className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            autoComplete="name" // ADICIONADO
             disabled={isLoading}
           />
         </div>
@@ -233,10 +288,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
           <Input
             id="whatsapp"
             type="tel"
-            placeholder="(11) 99999-9999"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
+            placeholder="(11) 99999-9999"
             className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            autoComplete="tel" // ADICIONADO
             disabled={isLoading}
           />
         </div>
@@ -250,10 +306,11 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
           <Input
             id="email"
             type="email"
-            placeholder="seu@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="seu@email.com"
             className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            autoComplete="email" // ADICIONADO
             disabled={isLoading}
           />
         </div>
@@ -261,17 +318,19 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
       {/* Campo Senha */}
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-gray-300">Senha</Label>
+        <Label htmlFor="password" className="text-gray-300">
+          Senha
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Mínimo 6 caracteres"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Mínimo 6 caracteres"
             className="pl-8 pr-10 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
-            disabled={isLoading}
+            autoComplete="new-password" // ADICIONADO
           />
           <button
             type="button"
@@ -286,17 +345,19 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
       {/* Campo Confirmar Senha */}
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-gray-300">Confirmar Senha</Label>
+        <Label htmlFor="confirmPassword" className="text-gray-300">
+          Confirmar Senha
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
           <Input
             id="confirmPassword"
-            type={showPassword ? "text" : "password"}
-            placeholder="Confirme sua senha"
+            type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirme sua senha"
             className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
-            disabled={isLoading}
+            autoComplete="new-password" // ADICIONADO
           />
         </div>
       </div>

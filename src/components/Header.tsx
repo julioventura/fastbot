@@ -97,6 +97,7 @@ const Header = () => {
 
   // isAuthModalOpen: Estado para controlar a visibilidade do modal de autenticação.
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "reset">("login");
 
   // user: Objeto do usuário autenticado.
   // signOut: Função para deslogar o usuário.
@@ -375,7 +376,6 @@ const Header = () => {
                     className="border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-blue-400 hover:border-[#4f9bff]  transition-all px-3 py-2 rounded-md"
                   >
                     <User className="mr-2 h-4 w-4" />
-                    {/* Exibe o nome do usuário truncado (ou parte do email como fallback) */}
                     <span className="hidden sm:inline">{truncate(userName)}</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -383,7 +383,6 @@ const Header = () => {
                   align="end"
                   className="w-56 bg-[#0a1629] border-2 border-[#2a4980]/80 shadow-xl rounded-lg p-1 backdrop-blur-sm"
                 >
-                  {/* NOVO: Link "Meu Chatbot" com ícone de robô */}
                   <DropdownMenuItem
                     className="cursor-pointer rounded-md px-3 py-2 text-gray-200 hover:!bg-[#2a4980]/70 hover:!text-white focus:!bg-[#2a4980]/70 focus:!text-white transition-colors flex items-center"
                     asChild
@@ -411,7 +410,6 @@ const Header = () => {
                     <LogOut className="mr-3 h-6 w-6" />
                     Sair
                   </DropdownMenuItem>
-
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -420,14 +418,26 @@ const Header = () => {
                 <Button
                   variant="outline"
                   className="hidden md:inline-flex border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
-                  onClick={() => setIsAuthModalOpen(true)}
+                  onClick={() => {
+                    console.log("Clicou em Entrar - definindo aba para login");
+                    setAuthModalTab("login");
+                    // Usar setTimeout para garantir que o estado seja atualizado antes de abrir o modal
+                    setTimeout(() => {
+                      setIsAuthModalOpen(true);
+                    }, 0);
+                  }}
                 >
                   Entrar
                 </Button>
                 <Button
                   className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
                   onClick={() => {
-                    setIsAuthModalOpen(true);
+                    console.log("Clicou em Cadastre-se - definindo aba para signup");
+                    setAuthModalTab("signup");
+                    // Usar setTimeout para garantir que o estado seja atualizado antes de abrir o modal
+                    setTimeout(() => {
+                      setIsAuthModalOpen(true);
+                    }, 0);
                   }}
                 >
                   Cadastre-se
@@ -437,10 +447,12 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Modal de Autenticação */}
+        {/* Modal de Autenticação - CORRIGIDO com key para forçar re-render */}
         <AuthModal
+          key={authModalTab} // Força re-render quando a aba muda
           isOpen={isAuthModalOpen}
           onOpenChange={setIsAuthModalOpen}
+          defaultTab={authModalTab}
         />
       </header>
     </div>
