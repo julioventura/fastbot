@@ -54,6 +54,8 @@ import Footer from "@/components/Footer";
 import PricingPage from "./pages/PricingPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import MyChatbotPage from "./pages/MyChatbotPage"; // Nova importação para a página do chatbot.
+import ResetPasswordPage from "./pages/ResetPasswordPage"; // Nova importação para a página de reset de senha.
+import { AdminPage } from "./pages/AdminPage"; // Nova importação para a página administrativa.
 
 
 // Constante queryClient
@@ -91,6 +93,10 @@ const App = () => (
             <Route path="/features" element={<FeaturesPage />} />
             {/* Rota para a página "Meu Chatbot". */}
             <Route path="/my-chatbot" element={<MyChatbotPage />} />
+            {/* Rota para a página de reset de senha. */}
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            {/* Rota para a página administrativa (restrita). */}
+            <Route path="/admin" element={<AdminPage />} />
             {/* Rota "catch-all" para páginas não encontradas (404). 
                 Deve ser a última rota definida. */}
             <Route path="*" element={<NotFound />} />

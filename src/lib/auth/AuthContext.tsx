@@ -87,10 +87,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     try {
       console.log('Tentando criar conta para:', email);
+      
+      // Para desenvolvimento, usar localhost:8080 (porta configurada do Vite)
+      // Para produção, usar window.location.origin
+      const redirectUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:8080/fastbot/'
+        : window.location.origin;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             name: userData?.name || '',
             whatsapp: userData?.whatsapp || ''
@@ -102,7 +110,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         data, 
         error,
         userConfirmed: data?.user?.email_confirmed_at,
-        userCreated: data?.user?.created_at
+        userCreated: data?.user?.created_at,
+        redirectUrl
       });
 
       if (error) throw error;
@@ -131,9 +140,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const resetPassword = async (email: string): Promise<{ error: AuthError | null }> => {
     try {
+      // Para desenvolvimento, usar localhost:8080 (porta configurada do Vite)
+      // Para produção, usar window.location.origin
+      const redirectUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:8080/fastbot/#reset-password'
+        : `${window.location.origin}/#reset-password`;
+        
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/#reset-password`,
+        redirectTo: redirectUrl,
       });
+      
+      console.log('Reset password solicitado para:', email, 'Redirect URL:', redirectUrl);
       
       return { error };
     } catch (error) {

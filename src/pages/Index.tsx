@@ -14,7 +14,8 @@
 //     - Pricing: Seção com os planos e preços.
 //     - CTA: Seção de Call to Action.
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 // Componentes de Seção da Homepage
 import Hero from '@/components/Hero';
 import Features from '@/components/Features';
@@ -29,6 +30,24 @@ import CTA from '@/components/CTA';
 // Componente Index
 // Define a estrutura e o layout da página inicial da aplicação.
 const Index = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Verificar se há parâmetros de hash para reset de senha
+    const hash = window.location.hash;
+    if (hash.includes('reset-password') || hash.includes('type=recovery')) {
+      // Extrair parâmetros do hash
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get('access_token');
+      const type = params.get('type');
+      
+      if (accessToken && type === 'recovery') {
+        // Redirecionar para a página de reset com os parâmetros como query string
+        navigate(`/reset-password?access_token=${accessToken}&type=${type}&refresh_token=${params.get('refresh_token') || ''}`);
+      }
+    }
+  }, [navigate]);
+
   return (
     // Contêiner principal da página, define um layout de coluna e um fundo preto.
     // O fundo preto pode ser sobreposto pelos gradientes das seções internas.
