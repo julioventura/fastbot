@@ -170,3 +170,100 @@ Em caso de problemas:
 2. Usar comandos SQL manuais de emergência
 3. Verificar permissões de usuário
 4. Confirmar que as funções foram criadas corretamente
+
+## 👥 **Sistema de Administradores**
+
+### Como Verificar Quem São os Admins (via SQL)
+
+```sql
+-- Ver todos os administradores atuais
+SELECT * FROM get_all_admins();
+
+-- Ver se um usuário específico é admin
+SELECT is_admin((SELECT id FROM auth.users WHERE email = 'dolescfo@gmail.com'));
+
+-- Listar todos os usuários e suas roles
+SELECT 
+    u.email,
+    COALESCE(ur.role, 'user') as role,
+    ur.granted_at
+FROM auth.users u
+LEFT JOIN user_roles ur ON u.id = ur.user_id
+ORDER BY u.created_at;
+```
+
+### Como Definir Administradores
+
+#### 1. **Primeira Configuração (Execute UMA vez)**
+```sql
+-- Executar o script admin_roles_system.sql primeiro
+-- Depois conceder admin para o usuário inicial:
+INSERT INTO user_roles (user_id, role, granted_by)
+SELECT 
+    u.id, 
+    'admin', 
+    u.id  -- Auto-concede (primeira vez)
+FROM auth.users u 
+WHERE u.email = 'dolescfo@gmail.com'
+ON CONFLICT (user_id, role) DO NOTHING;
+```
+
+#### 2. **Adicionar Novos Admins**
+```sql
+-- Via SQL
+SELECT grant_admin_role('novo.admin@cirurgia.com.br');
+
+-- Via Interface Web (aba "Gerenciar Administradores")
+-- Acesse /admin → aba "Gerenciar Administradores"
+```
+
+#### 3. **Remover Admins**
+```sql
+-- Via SQL
+SELECT revoke_admin_role('usuario@email.com');
+
+-- Via Interface Web
+-- Use o botão "Remover" na lista de administradores
+```
+
+### Estrutura do Sistema
+
+**Tabela `user_roles`:**
+- Armazena roles (funções) dos usuários
+- Suporta múltiplas roles por usuário
+- Rastreia quem concedeu a role e quando
+- Protegida por RLS (Row Level Security)
+
+**Funções Disponíveis:**
+- `is_admin(user_id)` - Verifica se usuário é admin
+- `get_all_admins()` - Lista todos os administradores
+- `grant_admin_role(email)` - Concede role de admin
+- `revoke_admin_role(email)` - Remove role de admin
+
+**Segurança:**
+- Apenas admins podem modificar roles
+- Proteção contra auto-remoção
+- Logs de auditoria (quem concedeu, quando)
+- RLS habilitado para proteção de dados
+
+## 🔧 Correção de Problemas Conhecidos
+
+### Erro na Função get_all_admins (Tipo de Retorno)
+
+Se você encontrar erro relacionado ao tipo de retorno da função `get_all_admins`, execute:
+
+1. **Execute o script de correção rápida**:
+   - Abra o arquivo `supabase/fix_get_all_admins.sql`
+   - Execute todo o conteúdo no SQL Editor
+   - Isso irá recriar a função com os tipos corretos
+
+2. **Teste a correção**:
+
+   ```sql
+   SELECT * FROM get_all_admins();
+   ```
+
+### Problema: "Function does not exist"
+
+- Certifique-se de que executou o script `admin_roles_clean.sql` completo
+- Se persistir, execute cada seção do script individualmente

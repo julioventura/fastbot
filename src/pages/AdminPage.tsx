@@ -1,17 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
+import { AdminRoleManagement } from '@/components/admin/AdminRoleManagement';
 import { useAuth } from '@/lib/auth/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Shield, AlertTriangle, Users, Trash2 } from 'lucide-react';
 
 export const AdminPage = () => {
   const { user } = useAuth();
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Verificar se o usuário tem permissão de admin
-  // Você pode ajustar esta lógica conforme necessário
-  const isAdmin = user?.email === 'admin@cirurgia.com.br' || 
-                  user?.email === 'suporte@cirurgia.com.br' ||
-                  user?.email?.includes('@cirurgia.com.br');
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Primeiro verificar usando a função do banco
+        const { data, error } = await supabase.rpc('is_admin');
+        
+        if (error) {
+          console.error('Erro ao verificar status de admin:', error);
+          // Fallback para verificação por email (compatibilidade)
+          const emailBasedAdmin = user.email === 'admin@cirurgia.com.br' || 
+                                 user.email === 'suporte@cirurgia.com.br' ||
+                                 user.email === 'dolescfo@gmail.com' ||
+                                 user.email?.includes('@cirurgia.com.br');
+          setIsAdmin(emailBasedAdmin);
+        } else {
+          setIsAdmin(data);
+        }
+      } catch (error) {
+        console.error('Erro inesperado ao verificar admin:', error);
+        // Fallback para verificação por email
+        const emailBasedAdmin = user.email === 'dolescfo@gmail.com' ||
+                               user.email?.includes('@cirurgia.com.br');
+        setIsAdmin(emailBasedAdmin);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-6 max-w-2xl">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Verificando permissões...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -34,7 +81,15 @@ export const AdminPage = () => {
           <AlertDescription>
             Acesso negado. Esta página é restrita para administradores.
             <br />
-            <small className="text-gray-600">Usuário atual: {user.email}</small>
+            <small className="text-gray-600">
+              Usuário atual: {user?.email}
+              <br />
+              Para se tornar administrador, peça para um admin existente executar:
+              <br />
+              <code className="bg-gray-100 px-1 rounded text-xs">
+                SELECT grant_admin_role('{user?.email}');
+              </code>
+            </small>
           </AlertDescription>
         </Alert>
       </div>
@@ -56,7 +111,26 @@ export const AdminPage = () => {
       </div>
 
       <div className="py-8">
-        <AdminUserManagement />
+        <div className="container mx-auto px-6">
+          <Tabs defaultValue="users" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="users" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Gerenciar Usuários
+              </TabsTrigger>
+              <TabsTrigger value="admins" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Gerenciar Administradores
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="users">
+              <AdminUserManagement />
+            </TabsContent>
+            <TabsContent value="admins">
+              <AdminRoleManagement />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
 
       <div className="container mx-auto px-6 py-8">
