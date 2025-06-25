@@ -4,9 +4,6 @@ import { AuthContext } from "./context";
 export const useAuth = () => {
   const context = useContext(AuthContext);
 
-  // Debug: adicionar log para ver o que está acontecendo
-  console.log("useAuth chamado, context:", context);
-
   if (context === undefined) {
     console.error("AuthContext é undefined! AuthProvider não está funcionando.");
     throw new Error(

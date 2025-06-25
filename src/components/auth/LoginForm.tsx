@@ -24,6 +24,10 @@
 //       - Chama a função `signIn`.
 //       - Exibe toasts de feedback.
 //       - Chama `onSuccess` em caso de login bem-sucedido.
+//     - handleResendConfirmation (async function): Manipula o reenvio do email de confirmação.
+//       - Valida o campo de email.
+//       - Chama a função `resendConfirmation`.
+//       - Exibe toasts de feedback.
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -54,8 +58,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   // Estado para controlar a visibilidade da senha.
   const [showPassword, setShowPassword] = useState(false);
 
+  // Estado para controlar se deve mostrar o botão de reenvio de confirmação.
+  const [showResendConfirmation, setShowResendConfirmation] = useState(false);
+
   // Obtém a função signIn do contexto de autenticação.
-  const { signIn } = useAuth();
+  const { signIn, resendConfirmation } = useAuth();
 
   // Obtém a função toast para exibir notificações.
   const { toast } = useToast();
@@ -83,10 +90,29 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       const result = await signIn(email, password);
 
       if (result.error) {
+        // Tratamento específico para diferentes tipos de erro
+        let errorTitle = "Erro ao Fazer Login";
+        let errorDescription = result.error.message || "Credenciais inválidas. Verifique seu email e senha.";
+        
+        // Verificar se é erro de email não confirmado
+        if (result.error.message?.includes("Email not confirmed") || 
+            result.error.message?.includes("signup_disabled") ||
+            result.error.message?.includes("confirmation")) {
+          errorTitle = "Email não confirmado";
+          errorDescription = "Você precisa confirmar seu email antes de fazer login. Verifique sua caixa de entrada e clique no link de confirmação.";
+          setShowResendConfirmation(true); // Mostrar botão de reenvio
+        } else if (result.error.message?.includes("Invalid login credentials")) {
+          errorDescription = "Email ou senha incorretos. Verifique suas credenciais e tente novamente.";
+          setShowResendConfirmation(false); // Esconder botão de reenvio
+        } else {
+          setShowResendConfirmation(false); // Esconder botão de reenvio para outros erros
+        }
+        
         toast({
           variant: "destructive",
-          title: "Erro ao Fazer Login",
-          description: result.error.message || "Credenciais inválidas. Verifique seu email e senha.",
+          title: errorTitle,
+          description: errorDescription,
+          duration: 6000, // Mais tempo para ler a mensagem
         });
       } else if (result.data?.user) {
         toast({
@@ -114,6 +140,42 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Função para reenviar email de confirmação
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Por favor, preencha o campo de email primeiro",
+      });
+      return;
+    }
+
+    try {
+      const result = await resendConfirmation(email);
+      
+      if (result.error) {
+        toast({
+          variant: "destructive",
+          title: "Erro ao reenviar confirmação",
+          description: result.error.message || "Não foi possível reenviar o email de confirmação",
+        });
+      } else {
+        toast({
+          title: "Email reenviado!",
+          description: "Um novo email de confirmação foi enviado. Verifique sua caixa de entrada.",
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Ocorreu um erro ao reenviar o email de confirmação",
+      });
     }
   };
 
@@ -176,6 +238,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       >
         {isLoading ? "Entrando..." : "Entrar"} {/* Texto do botão muda durante o carregamento. */}
       </Button>
+
+      {/* Botão para reenviar confirmação de email - só aparece quando necessário */}
+      {showResendConfirmation && (
+        <Button 
+          type="button"
+          variant="outline"
+          className="w-full mt-2 border-[#2a4980]/70 bg-transparent text-[#4f9bff] hover:bg-[#2a4980]/20 hover:text-white transition-all"
+          onClick={handleResendConfirmation}
+          disabled={isLoading || !email}
+        >
+          Reenviar Email de Confirmação
+        </Button>
+      )}
     </form>
   );
 };

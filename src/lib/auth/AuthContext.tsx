@@ -9,8 +9,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  console.log('AuthProvider renderizando...'); // Debug
-  
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,7 +45,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (mounted) {
-          console.log('Auth state changed:', event, session?.user?.id);
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
@@ -64,61 +61,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signIn = async (email: string, password: string): Promise<AuthResponse> => {
     setLoading(true);
     try {
+      console.log('Tentando fazer login com:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
-      if (error) throw error;
+      console.log('Resposta do login:', { data, error });
+      
+      if (error) {
+        console.log('Erro detalhado do login:', error);
+        throw error;
+      }
       return { data, error: null };
     } catch (error) {
       const authError = error as AuthError;
+      console.log('Erro capturado no signIn:', authError);
       return { data: null, error: authError };
     } finally {
       setLoading(false);
     }
   };
 
-  const signUp = async (email: string, password: string, name: string): Promise<AuthResponse> => {
+  const signUp = async (email: string, password: string, userData?: { name?: string; whatsapp?: string }): Promise<AuthResponse> => {
     setLoading(true);
     try {
+      console.log('Tentando criar conta para:', email);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            name: name,
+            name: userData?.name || '',
+            whatsapp: userData?.whatsapp || ''
           }
         }
       });
 
+      console.log('Resposta do signUp:', { 
+        data, 
+        error,
+        userConfirmed: data?.user?.email_confirmed_at,
+        userCreated: data?.user?.created_at
+      });
+
       if (error) throw error;
-
-      // Criar perfil se o usuário foi criado com sucesso
-      if (data.user && !data.user.email_confirmed_at) {
-        // Para usuários que precisam confirmar email, criamos perfil depois
-        console.log('Usuário criado, aguardando confirmação de email');
-      } else if (data.user) {
-        // Usuário criado e confirmado, criar perfil imediatamente
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert([
-            {
-              id: data.user.id,  // CORREÇÃO: usar 'id' em vez de 'user_id'
-              name: name,
-            }
-          ], {
-            onConflict: 'id'  // CORREÇÃO: conflito por 'id' em vez de 'user_id'
-          });
-
-        if (profileError) {
-          console.error('Erro ao criar perfil no signup:', profileError);
-        }
-      }
 
       return { data, error: null };
     } catch (error) {
       const authError = error as AuthError;
+      console.log('Erro capturado no signUp:', authError);
       return { data: null, error: authError };
     } finally {
       setLoading(false);
@@ -137,6 +129,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const resetPassword = async (email: string): Promise<{ error: AuthError | null }> => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/#reset-password`,
+      });
+      
+      return { error };
+    } catch (error) {
+      const authError = error as AuthError;
+      return { error: authError };
+    }
+  };
+
+  const resendConfirmation = async (email: string): Promise<{ error: AuthError | null }> => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
+      
+      return { error };
+    } catch (error) {
+      const authError = error as AuthError;
+      return { error: authError };
+    }
+  };
+
   const contextValue: AuthContextType = {
     user,
     session,
@@ -145,9 +164,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signIn,
     signUp,
     signOut,
+    resetPassword,
+    resendConfirmation,
   };
-
-  console.log('AuthProvider contexto value:', contextValue); // Debug
 
   return (
     <AuthContext.Provider value={contextValue}>

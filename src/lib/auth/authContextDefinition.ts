@@ -13,8 +13,10 @@ export interface AuthContextType {
   loading: boolean;
   initializing: boolean; // Novo estado para carregamento inicial
   signIn: (email: string, password: string) => Promise<AuthResponse>;
-  signUp: (email: string, password: string, name: string) => Promise<AuthResponse>;
+  signUp: (email: string, password: string, userData?: { name?: string; whatsapp?: string }) => Promise<AuthResponse>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  resendConfirmation: (email: string) => Promise<{ error: AuthError | null }>;
 }
 
 // Inicialize e exporte o contexto
