@@ -174,9 +174,9 @@ const Header = () => {
     // Se textPart é o nome completo e cabe, não precisa de "...".
     // Se textPart é uma parte do nome, então precisa de "...".
     if (textPart.length < trimmedName.length) { // Compara com trimmedName para ser mais preciso
-        return textPart + "..."; // Adiciona "..." se nem todas as palavras couberam
+      return textPart + "..."; // Adiciona "..." se nem todas as palavras couberam
     } else {
-        return textPart; // Retorna a parte do texto que coube (pode ser o nome completo se <= limit)
+      return textPart; // Retorna a parte do texto que coube (pode ser o nome completo se <= limit)
     }
   };
 
@@ -232,7 +232,7 @@ const Header = () => {
   // --- Renderização do Componente Header ---
   return (
     // Contêiner div com fundo preto. Importante para o efeito visual durante a retração do header.
-    <div className='bg-black'>  
+    <div className='bg-black'>
       <header
         // Classes de estilo e posicionamento do header.
         // 'sticky': Mantém o header fixo no topo.
@@ -256,8 +256,8 @@ const Header = () => {
         <div className="container relative z-10 mx-auto px-4 flex items-center justify-between h-16 md:h-20">
           {/* Seção do Logo/Nome da Aplicação */}
           <div className="flex items-center">
-            <NavLink 
-              to="/" 
+            <NavLink
+              to="/"
               className="flex flex-col items-start group cursor-pointer"
             >
               {/* "FastBot" - mantido igual */}
@@ -268,7 +268,7 @@ const Header = () => {
               transition-all duration-300 tracking-wide">
                 FastBot
               </span>
-              
+
               {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
               <span className="font-mono text-center text-sm !text-primary font-light pt-1">
                 DENTISTAS.COM.BR
@@ -278,14 +278,16 @@ const Header = () => {
 
           {/* Menu de Navegação Principal (links) */}
           <nav className="hidden md:flex items-center space-x-8">
-            <NavLink
-              to="/"
-              className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
-            >
-              Início
-            </NavLink>
 
-            {/* Links condicionalmente exibidos se o usuário NÃO estiver logado */}
+            {!user && (
+              <NavLink
+                to="/"
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
+              >
+                Início
+              </NavLink>
+            )}
+
             {!user && (
               <NavLink
                 to="/features"
@@ -305,25 +307,25 @@ const Header = () => {
             )}
 
             {/* Links condicionalmente exibidos se o usuário ESTIVER logado */}
-            {user && (
+            {/* {user && (
               <NavLink
                 to="/my-chatbot"
                 className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Meu Chatbot
               </NavLink>
-            )}
+            )} */}
 
             {/* NOVO: Link "Minha Conta" para usuários logados */}
-            {user && (
+            {/* {user && (
               <NavLink
                 to="/account"
                 className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Minha Conta
               </NavLink>
-            )}
-            
+            )} */}
+
           </nav>
 
           {/* Seção de Ações do Usuário (Autenticação/Menu) */}

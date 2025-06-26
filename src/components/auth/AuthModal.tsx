@@ -19,6 +19,7 @@
 //   - Inclui um efeito de grade de fundo decorativo.
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,8 @@ const AuthModal: React.FC<AuthModalProps> = ({
   onOpenChange,
   defaultTab = "login", // Define 'login' como a aba padrão se nenhuma for fornecida.
 }) => {
+  const navigate = useNavigate();
+  
   // activeTab: Estado para controlar qual aba (login, signup, reset) está atualmente selecionada.
   // Inicializado com o valor de defaultTab.
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
@@ -135,7 +138,10 @@ const AuthModal: React.FC<AuthModalProps> = ({
           {/* Conteúdo da Aba de Login */}
           {/* Renderiza o formulário de login. */}
           <TabsContent value="login" className="mt-6">
-            <LoginForm onSuccess={() => onOpenChange(false)} /> {/* Fecha o modal em caso de sucesso no login. */}
+            <LoginForm onSuccess={() => {
+              onOpenChange(false); // Fecha o modal
+              navigate('/my-chatbot'); // Redireciona para my-chatbot
+            }} />
           </TabsContent>
 
           {/* Conteúdo da Aba de Cadastro */}
