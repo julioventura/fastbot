@@ -118,20 +118,20 @@ export const AdminRoleManagement = () => {
   }, []);
 
   return (
-    <Card className="bg-white border-gray-200">
+    <Card className="bg-theme-card border border-theme-accent/50 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-blue-600" />
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Shield className="h-5 w-5 text-primary" />
           Gerenciamento de Administradores
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-muted-foreground">
           Gerencie quem tem acesso administrativo ao sistema.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Seção para adicionar novo admin */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
             <UserPlus className="h-4 w-4" />
             Adicionar Novo Administrador
           </h3>
@@ -141,8 +141,9 @@ export const AdminRoleManagement = () => {
               value={newAdminEmail}
               onChange={(e) => setNewAdminEmail(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && grantAdminRole()}
+              className="bg-background border-border text-foreground"
             />
-            <Button onClick={grantAdminRole} disabled={loading}>
+            <Button onClick={grantAdminRole} disabled={loading} className="bg-primary hover:bg-primary/90">
               <UserPlus className="h-4 w-4 mr-2" />
               {loading ? 'Adicionando...' : 'Adicionar Admin'}
             </Button>
@@ -151,20 +152,20 @@ export const AdminRoleManagement = () => {
 
         {/* Lista de administradores */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
+          <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
             <Users className="h-4 w-4" />
             Administradores Atuais ({admins.length})
           </h3>
           
           {loading && admins.length === 0 ? (
-            <div className="text-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Carregando administradores...</p>
+            <div className="text-center py-4 text-muted-foreground">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-2 text-muted-foreground">Carregando administradores...</p>
             </div>
           ) : admins.length === 0 ? (
-            <Alert className="border-border bg-secondary/50">
-              <AlertTriangle className="h-4 w-4 text-yellow-600" />
-              <AlertDescription className="text-yellow-800">
+            <Alert className="border-border bg-secondary/50 backdrop-blur-sm">
+              <AlertTriangle className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 Nenhum administrador encontrado. Isso pode indicar que o sistema de roles ainda não foi configurado.
               </AlertDescription>
             </Alert>
@@ -173,16 +174,16 @@ export const AdminRoleManagement = () => {
               {admins.map((admin) => (
                 <div
                   key={admin.user_id}
-                  className="flex items-center justify-between p-3 border rounded-lg bg-gray-50"
+                  className="flex items-center justify-between p-3 border border-border rounded-lg bg-secondary/20 backdrop-blur-sm"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{admin.email}</span>
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                      <span className="font-medium text-foreground">{admin.email}</span>
+                      <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
                         {admin.role}
                       </Badge>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                       Concedido em: {new Date(admin.granted_at).toLocaleString('pt-BR')}
                       {admin.granted_by_email && (
                         <span> • Por: {admin.granted_by_email}</span>
@@ -205,36 +206,50 @@ export const AdminRoleManagement = () => {
         </div>
 
         {/* Instruções SQL */}
-        <div className="space-y-4 border-t pt-4">
-          <h3 className="text-lg font-semibold">Comandos SQL Diretos</h3>
-          <div className="bg-gray-100 p-3 rounded text-sm font-mono space-y-2">
+        <div className="space-y-4 border-t border-border pt-4">
+          <h3 className="text-lg font-semibold text-foreground">Comandos SQL Diretos</h3>
+          <div className="bg-secondary/30 p-3 rounded border border-border text-sm font-mono space-y-2">
             <div>
-              <strong>Ver todos os admins:</strong>
+              <strong className="text-foreground">Ver todos os admins:</strong>
               <br />
-              <code>SELECT * FROM get_all_admins();</code>
+              <code className="text-primary">SELECT * FROM get_all_admins();</code>
             </div>
             <div>
-              <strong>Adicionar admin:</strong>
+              <strong className="text-foreground">Adicionar admin:</strong>
               <br />
-              <code>SELECT grant_admin_role('email@exemplo.com');</code>
+              <code className="text-primary">SELECT grant_admin_role('email@exemplo.com');</code>
             </div>
             <div>
-              <strong>Remover admin:</strong>
+              <strong className="text-foreground">Remover admin:</strong>
               <br />
-              <code>SELECT revoke_admin_role('email@exemplo.com');</code>
+              <code className="text-primary">SELECT revoke_admin_role('email@exemplo.com');</code>
             </div>
             <div>
-              <strong>Verificar se é admin:</strong>
+              <strong className="text-foreground">Verificar se é admin:</strong>
               <br />
-              <code>SELECT is_admin((SELECT id FROM auth.users WHERE email = 'email@exemplo.com'));</code>
+              <code className="text-primary">SELECT is_admin((SELECT id FROM auth.users WHERE email = 'email@exemplo.com'));</code>
             </div>
           </div>
         </div>
 
         {/* Mensagens */}
         {message && (
-          <Alert className={message.type === 'error' ? 'border-destructive bg-destructive/10' : message.type === 'success' ? 'border-green-500 bg-green-500/10' : 'border-primary bg-primary/10'}>
-            <AlertDescription>{message.text}</AlertDescription>
+          <Alert className={
+            message.type === 'error' 
+              ? 'border-destructive/50 bg-destructive/10 backdrop-blur-sm' 
+              : message.type === 'success' 
+              ? 'border-primary/50 bg-primary/10 backdrop-blur-sm' 
+              : 'border-accent/50 bg-accent/10 backdrop-blur-sm'
+          }>
+            <AlertDescription className={
+              message.type === 'error' 
+                ? 'text-destructive' 
+                : message.type === 'success' 
+                ? 'text-primary' 
+                : 'text-foreground'
+            }>
+              {message.text}
+            </AlertDescription>
           </Alert>
         )}
       </CardContent>

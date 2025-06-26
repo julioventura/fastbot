@@ -199,30 +199,31 @@ export const AdminUserManagement = () => {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
-      <Card>
+      <Card className="bg-theme-card border border-theme-accent/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Trash2 className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <Trash2 className="h-5 w-5 text-destructive" />
             Gerenciamento de Usuários - Administrativo
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Ferramenta para verificar e deletar usuários em ambientes Supabase self-hosted.
             <br />
-            <strong className="text-red-600">⚠️ Use com extrema cautela - deleções são irreversíveis!</strong>
+            <strong className="text-destructive">⚠️ Use com extrema cautela - deleções são irreversíveis!</strong>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Seção de busca de usuário */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">1. Verificar Usuário</h3>
+            <h3 className="text-lg font-semibold text-foreground">1. Verificar Usuário</h3>
             <div className="flex gap-2">
               <Input
                 placeholder="Digite o email do usuário..."
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && checkUser()}
+                className="bg-background border-border text-foreground"
               />
-              <Button onClick={checkUser} disabled={loading} variant="outline">
+              <Button onClick={checkUser} disabled={loading} variant="outline" className="border-border">
                 <Search className="h-4 w-4 mr-2" />
                 {loading ? 'Buscando...' : 'Buscar'}
               </Button>
@@ -231,12 +232,12 @@ export const AdminUserManagement = () => {
 
           {/* Resultados da busca */}
           {userData?.success && userData.user && (
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className="border-primary/30 bg-primary/5 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg">Dados do Usuário</CardTitle>
+                <CardTitle className="text-lg text-foreground">Dados do Usuário</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-foreground">
                   <div>
                     <p><strong>ID:</strong> {userData.user.id}</p>
                     <p><strong>Email:</strong> {userData.user.email}</p>
@@ -249,13 +250,13 @@ export const AdminUserManagement = () => {
                 </div>
                 
                 {userData.related_records && (
-                  <div className="mt-4 p-4 bg-white rounded border">
-                    <h4 className="font-semibold mb-2">Registros Relacionados:</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                      <p>Perfis: <strong>{userData.related_records.profiles}</strong></p>
-                      <p>Dentistas: <strong>{userData.related_records.dentist_homepage}</strong></p>
-                      <p>Chatbots: <strong>{userData.related_records.mychatbot}</strong></p>
-                      <p>Sessões: <strong>{userData.related_records.sessions}</strong></p>
+                  <div className="mt-4 p-4 bg-secondary/20 rounded border border-border">
+                    <h4 className="font-semibold mb-2 text-foreground">Registros Relacionados:</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-muted-foreground">
+                      <p>Perfis: <strong className="text-foreground">{userData.related_records.profiles}</strong></p>
+                      <p>Dentistas: <strong className="text-foreground">{userData.related_records.dentist_homepage}</strong></p>
+                      <p>Chatbots: <strong className="text-foreground">{userData.related_records.mychatbot}</strong></p>
+                      <p>Sessões: <strong className="text-foreground">{userData.related_records.sessions}</strong></p>
                     </div>
                   </div>
                 )}
@@ -276,10 +277,10 @@ export const AdminUserManagement = () => {
           )}
 
           {/* Seção de manutenção */}
-          <div className="space-y-4 border-t pt-6">
-            <h3 className="text-lg font-semibold">2. Manutenção do Banco</h3>
+          <div className="space-y-4 border-t border-border pt-6">
+            <h3 className="text-lg font-semibold text-foreground">2. Manutenção do Banco</h3>
             <div className="flex gap-2">
-              <Button onClick={checkOrphanedRecords} disabled={loading} variant="outline">
+              <Button onClick={checkOrphanedRecords} disabled={loading} variant="outline" className="border-border">
                 <AlertTriangle className="h-4 w-4 mr-2" />
                 Verificar Registros Órfãos
               </Button>
@@ -292,8 +293,22 @@ export const AdminUserManagement = () => {
 
           {/* Mensagens */}
           {message && (
-            <Alert className={message.type === 'error' ? 'border-red-200 bg-red-50' : message.type === 'success' ? 'border-green-200 bg-green-50' : 'border-blue-200 bg-blue-50'}>
-              <AlertDescription>{message.text}</AlertDescription>
+            <Alert className={
+              message.type === 'error' 
+                ? 'border-destructive/50 bg-destructive/10 backdrop-blur-sm' 
+                : message.type === 'success' 
+                ? 'border-primary/50 bg-primary/10 backdrop-blur-sm' 
+                : 'border-accent/50 bg-accent/10 backdrop-blur-sm'
+            }>
+              <AlertDescription className={
+                message.type === 'error' 
+                  ? 'text-destructive' 
+                  : message.type === 'success' 
+                  ? 'text-primary' 
+                  : 'text-foreground'
+              }>
+                {message.text}
+              </AlertDescription>
             </Alert>
           )}
         </CardContent>
