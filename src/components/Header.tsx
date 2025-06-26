@@ -253,31 +253,32 @@ const Header = () => {
         </div>
 
         {/* Contêiner principal do conteúdo do header. */}
-        <div className="container relative z-10 mx-auto px-4 flex items-center justify-between h-16 md:h-20">
-          {/* Seção do Logo/Nome da Aplicação */}
-          <div className="flex items-center">
-            <NavLink
-              to="/"
-              className="flex flex-col items-start group cursor-pointer"
-            >
-              {/* "FastBot" - mantido igual */}
-              <span className="font-bold text-center text-3xl mt-2 text-primary
-              [text-shadow:0_0_12px_hsl(var(--primary)),0_0_12px_hsl(var(--primary)/0.9),0_0_18px_hsl(var(--primary)/0.1),0_0_48px_hsl(var(--primary)/0.3)]
-              group-hover:!text-primary  
-              group-hover:[text-shadow:0_0_16px_hsl(var(--primary)),0_0_32px_hsl(var(--primary)),0_0_48px_hsl(var(--primary)/0.8),0_0_64px_hsl(var(--primary)/0.5)]
-              transition-all duration-300 tracking-wide">
-                FastBot
-              </span>
+        <div className="container relative z-10 mx-auto px-4 h-16 md:h-20">
+          <div className="grid grid-cols-3 items-center h-full">
+            {/* Seção do Logo/Nome da Aplicação */}
+            <div className="flex items-center justify-start">
+              <NavLink
+                to="/"
+                className="flex flex-col items-start group cursor-pointer"
+              >
+                {/* "FastBot" - mantido igual */}
+                <span className="font-bold text-center text-3xl mt-2 text-primary
+                [text-shadow:0_0_12px_hsl(var(--primary)),0_0_12px_hsl(var(--primary)/0.9),0_0_18px_hsl(var(--primary)/0.1),0_0_48px_hsl(var(--primary)/0.3)]
+                group-hover:!text-primary  
+                group-hover:[text-shadow:0_0_16px_hsl(var(--primary)),0_0_32px_hsl(var(--primary)),0_0_48px_hsl(var(--primary)/0.8),0_0_64px_hsl(var(--primary)/0.5)]
+                transition-all duration-300 tracking-wide">
+                  FastBot
+                </span>
 
-              {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
-              <span className="font-mono text-center text-md !text-primary font-light pt-1">
-                DENTISTAS.COM.BR
-              </span>
-            </NavLink>
-          </div>
+                {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
+                <span className="font-mono text-center text-md !text-primary font-light pt-1">
+                  DENTISTAS.COM.BR
+                </span>
+              </NavLink>
+            </div>
 
-          {/* Menu de Navegação Principal (links) */}
-          <nav className="hidden md:flex items-center space-x-8">
+            {/* Menu de Navegação Principal (links) - Centralizado */}
+            <nav className="hidden md:flex items-center justify-center space-x-8">
 
             {/* {!user && ( */}
             {(
@@ -329,8 +330,8 @@ const Header = () => {
 
           </nav>
 
-          {/* Seção de Ações do Usuário (Autenticação/Menu) */}
-          <div className="flex items-center space-x-4">
+            {/* Seção de Ações do Usuário (Autenticação/Menu) */}
+            <div className="flex items-center justify-end space-x-4">
             {authLoading ? (
               // Mostrar um indicador de loading só para a seção de usuário
               <div className="text-muted-foreground text-sm">Carregando...</div>
@@ -422,6 +423,7 @@ const Header = () => {
                 </Button>
               </>
             )}
+            </div>
           </div>
         </div>
 
