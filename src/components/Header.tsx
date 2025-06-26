@@ -379,7 +379,7 @@ const Header = () => {
               className="flex flex-col items-start group"
             >
               {/* "FastBot" - mantido igual */}
-              <span className="font-bold text-4xl text-foreground 
+              <span className="font-bold text-4xl mt-2 text-foreground 
               [text-shadow:0_0_12px_hsl(var(--primary)),0_0_24px_hsl(var(--primary)/0.9),0_0_36px_hsl(var(--primary)/0.6),0_0_48px_hsl(var(--primary)/0.3)]
               group-hover:text-primary 
               group-hover:[text-shadow:0_0_16px_hsl(var(--primary)),0_0_32px_hsl(var(--primary)),0_0_48px_hsl(var(--primary)/0.8),0_0_64px_hsl(var(--primary)/0.5)]
@@ -388,7 +388,7 @@ const Header = () => {
               </span>
               
               {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
-              <span className="font-mono text-sm text-primary font-light pt-1">
+              <span className="font-mono text-md text-primary font-light pt-0">
                 DENTISTAS.COM.BR / FASTBOT
               </span>
             </NavLink>
@@ -452,7 +452,7 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="border-border text-foreground bg-background/70 hover:bg-secondary hover:border-primary transition-all px-3 py-2 rounded-md"
+                    className="border-primary text-foreground bg-background/70 hover:bg-secondary hover:border-primary transition-all px-3 py-2 rounded-md"
                   >
                     <User className="mr-2 h-4 w-4" />
                     <span className="hidden sm:inline">{truncate(userName)}</span>

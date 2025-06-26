@@ -21,13 +21,13 @@ export default function CTA() {
   return (
     // Elemento <section> principal com estilos de fundo e posicionamento relativo.
     // 'relative' é usado para posicionar o padrão de grade absoluto dentro dele.
-    <section className="relative py-5 md:py-16 bg-gradient-to-br from-[#0a1629] to-[#0e2d5e]">
+    <section className="relative py-5 md:py-16 bg-theme-gradient">
       
       {/* Contêiner do Conteúdo Principal da Seção CTA */}
       {/* 'relative z-10' garante que este conteúdo fique acima do padrão de grade. */}
       <div className="section-container relative z-10" id="cta-section">
         {/* Contêiner para centralizar o texto e limitar a largura máxima. */}
-        <div className="max-w-4xl mx-auto text-center text-white">
+        <div className="max-w-4xl mx-auto text-center">
           {/* Bloco de texto principal da CTA. */}
           <div className="text-center mb-12">
             {/* Título da CTA */}
@@ -41,7 +41,7 @@ export default function CTA() {
             {/* Botão de Chamada para Ação */}
             <div className="mt-8">
               <Button 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-lg drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-lg"
                 // O ícone ArrowRight poderia ser adicionado aqui se desejado.
                 // Exemplo: <ArrowRight className="ml-2 h-5 w-5" />
               >
@@ -68,7 +68,7 @@ export default function CTA() {
           {Array.from({ length: 21 }).map((_, index) => (
             <div
               key={`h-cta-${index}`} // Chave única para cada linha horizontal.
-              className="absolute left-0 right-0 border-t border-[#4f9bff]/30" // Estilos da linha.
+              className="absolute left-0 right-0 border-t border-primary/30" // Estilos da linha.
               style={{ top: `${(index * 100) / 20}%` }} // Posicionamento vertical da linha.
             />
           ))}
@@ -78,7 +78,7 @@ export default function CTA() {
           {Array.from({ length: 21 }).map((_, index) => (
             <div
               key={`v-cta-${index}`} // Chave única para cada linha vertical.
-              className="absolute top-0 bottom-0 border-l border-[#4f9bff]/30" // Estilos da linha.
+              className="absolute top-0 bottom-0 border-l border-primary/30" // Estilos da linha.
               style={{ left: `${(index * 100) / 20}%` }} // Posicionamento horizontal da linha.
             />
           ))}

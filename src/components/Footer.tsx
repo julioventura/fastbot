@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 // Componente Footer
 // Define a estrutura e o layout do rodapé da aplicação.
@@ -65,11 +66,21 @@ const Footer = () => {
         {/* Layout Flex para alinhar o nome da aplicação e os ícones de redes sociais. */}
         {/* 'flex-col md:flex-row' torna o layout responsivo: coluna em telas pequenas, linha em médias e maiores. */}
         <div className="flex flex-col md:flex-row justify-between items-center">
-          {/* Nome da Aplicação */}
-          <span className="text-gray-400 text-sm">
-            <span className="text-brightblue-500 font-bold text-2xl">FastBot</span>
-          </span>
-          
+
+          {/* Seção do Logo/Nome da Aplicação */}
+          <div className="flex items-center">
+            <NavLink 
+              to="/" 
+              className="flex flex-col items-start group"
+            >             
+              {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
+              <span className="font-mono text-xl text-primary font-semibold">
+                DENTISTAS.COM.BR / FASTBOT
+              </span>
+            </NavLink>
+          </div>
+        
+         
           {/* Ícones de Redes Sociais */}
           {/* 'flex space-x-6' organiza os ícones horizontalmente com espaçamento. */}
           {/* 'mt-4 md:mt-0' adiciona margem superior em telas pequenas, removendo-a em maiores. */}

@@ -162,7 +162,7 @@ export const AdminRoleManagement = () => {
               <p className="mt-2 text-gray-600">Carregando administradores...</p>
             </div>
           ) : admins.length === 0 ? (
-            <Alert className="border-yellow-200 bg-yellow-50">
+            <Alert className="border-border bg-secondary/50">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
                 Nenhum administrador encontrado. Isso pode indicar que o sistema de roles ainda não foi configurado.
@@ -233,7 +233,7 @@ export const AdminRoleManagement = () => {
 
         {/* Mensagens */}
         {message && (
-          <Alert className={message.type === 'error' ? 'border-red-200 bg-red-50' : message.type === 'success' ? 'border-green-200 bg-green-50' : 'border-blue-200 bg-blue-50'}>
+          <Alert className={message.type === 'error' ? 'border-destructive bg-destructive/10' : message.type === 'success' ? 'border-green-500 bg-green-500/10' : 'border-primary bg-primary/10'}>
             <AlertDescription>{message.text}</AlertDescription>
           </Alert>
         )}
