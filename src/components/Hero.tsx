@@ -99,16 +99,11 @@ const Hero = () => {
             <span className='text-4xl md:text-6xl gradient-text'>em 3 minutos!</span> <br />&nbsp;
           </h1>
 
-          {/* Subtítulo/Descrição */}
-          <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Chatbot de IA + Homepage profissional
-          </p>
-
           {/* Botão de Chamada para Ação (CTA) */}
           {/* Layout flexível para o botão, responsivo para telas pequenas. */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button className="hero-button bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 rounded-full text-lg flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
-              <span>Use nosso Plano Gratuito e comece já!</span>
+              <span>Comece agora GRÁTIS!</span>
               {/* Ícone de seta para a direita, indicando progressão ou ação. */}
               <ArrowRight className="h-5 w-5" />
             </Button>

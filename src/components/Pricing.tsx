@@ -30,44 +30,44 @@ import { Check } from 'lucide-react';
 // Cada objeto no array define as características de um plano.
 const pricingPlans = [
     {
-        name: 'Plano Gratuito',
-        price: 'R$ 0',
-        description: 'Ideal para experimentar e para uso pessoal com baixo volume.', // Descrição adicionada
+        name: 'Modo Texto',
+        price: 'GRÁTIS',
+        description: 'Para conversas de texto',
         features: [
-            '100 créditos por mês',
-            'Mensagens de texto',
-            'Use créditos para adicionar áudio e imagem se precisar',
+            '100 conversas de texto por mês',
+            'Mensagens ilimitadas por conversa',
+            'Use créditos avulsos para adicionar áudio e imagem',
         ],
         isPopular: true, // Destaca este plano como o mais popular.
         buttonText: 'COMECE JÁ !',
         buttonVariant: 'default' as const, // Tipo específico para a variante do botão.
     },
     {
-        name: 'Plano Mensal',
-        price: 'R$ 120',
-        description: 'Para consultórios e clínicas.', // Descrição adicionada
-        features: [
-            '1.200 créditos por mês',
-            'Conversa de texto ilimitada',
-            'Inclui áudio e imagens',
-        ],
-        isPopular: false,
-        buttonText: 'ASSINE JÁ !',
-        buttonVariant: 'outline' as const,
-    },
-    {
         name: 'Pacote de Créditos',
         price: 'R$ 50',
-        description: 'Créditos extras.', // Descrição adicionada
+        description: 'Créditos para áudio e imagem',
         features: [
-            '500 créditos avulsos',
-            'Validade de um ano',
-            'Utilize em qualquer plano',
+            '500 créditos para áudio e imagens',
+            'Validade de um ano para os créditos',
+            'Conversas de texto ilimitadas por um mês',
         ],
         isPopular: false,
         buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado
         buttonVariant: 'outline' as const, // Variante do botão ajustada para diferenciar
     },
+    // {
+    //     name: 'Modo Assinatura',
+    //     price: 'R$ 120',
+    //     description: 'Para consultórios e clínicas.', // Descrição adicionada
+    //     features: [
+    //         '1.200 créditos por mês',
+    //         'Conversa de texto ilimitada',
+    //         'Inclui áudio e imagens',
+    //     ],
+    //     isPopular: false,
+    //     buttonText: 'ASSINE JÁ !',
+    //     buttonVariant: 'outline' as const,
+    // },
 ];
 
 
@@ -183,13 +183,14 @@ const Pricing = () => {
                 {/* Título da Seção */}
                 <div className="text-center mb-12 md:mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-                        <span className='gradient-text'>Gratuito, mensal ou créditos...</span> <br /><span>na sua medida!</span>
+                        <span>Modo Texto Grátis</span> <br />
+                        <span className='gradient-text pt-5 mt-3'>Áudio e imagem opcionais </span>
                     </h2>
                 </div>
 
                 {/* Grade de Cards de Planos de Preços */}
                 {/* Layout responsivo: 1 coluna em telas pequenas, 3 colunas em médias e grandes. */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
                     {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
                     {pricingPlans.map((plan, index) => (
                         <Card
@@ -203,7 +204,7 @@ const Pricing = () => {
                             {/* Badge "Popular" (ou texto customizado) para o plano destacado. */}
                             {plan.isPopular && (
                                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
-                                    MAIS POPULAR
+                                    GRATUITO
                                 </div>
                             )}
 
@@ -214,13 +215,9 @@ const Pricing = () => {
                                 </h3>
                                 <div className="flex items-baseline justify-center text-white">
                                     <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
-                                    {/* Exibe "/mês" condicionalmente, se não for plano gratuito ou pacote de créditos. */}
-                                    {plan.price !== 'Custom' && plan.name !== 'Plano Gratuito' && plan.name !== 'Pacote de Créditos' && (
-                                        <span className="text-gray-400 ml-1 text-sm">/mês</span>
-                                    )}
                                 </div>
                                 {/* Descrição do plano com altura fixa para alinhamento visual entre cards. */}
-                                <p className="text-sm text-gray-300 mt-2 h-10">{plan.description}</p>
+                                <p className="text-lg text-gray-300 mt-2 h-10">{plan.description}</p>
                             </div>
 
                             {/* Lista de Recursos do Plano */}

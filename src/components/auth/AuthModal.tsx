@@ -91,14 +91,18 @@ const AuthModal: React.FC<AuthModalProps> = ({
           {/* O título muda dinamicamente com base na aba ativa. */}
           <DialogTitle className="text-center text-xl font-bold text-white drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]">
             {activeTab === "login"
-              ? "Acesse sua conta"
+              ? "Acessar sua conta"
               : activeTab === "signup"
               ? "Criar nova conta"
               : "Recuperar senha"}
           </DialogTitle>
           {/* Descrição/Subtítulo do Modal */}
           <DialogDescription className="text-center text-sm text-gray-300 mt-2 pb-10">
-            Ainda não tem uma conta? Cadastre-se GRÁTIS!
+            {activeTab === "login"
+              ? "Use seu email e senha"
+              : activeTab === "signup"
+              ? "Cadastre-se GRÁTIS!"
+              : "Informe o email usado no cadastro"}
           </DialogDescription>
         </DialogHeader>
 

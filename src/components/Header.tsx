@@ -124,7 +124,7 @@ const Header = () => {
   // Trunca uma string (nome do usuário) para um limite de caracteres especificado.
   // Tenta manter palavras iniciais inteiras e adiciona "..." se o nome for truncado.
   const truncate = (name: string): string => {
-    const limit = 15; // Limite máximo de caracteres para a parte do texto.
+    const limit = 32; // Limite máximo de caracteres para a parte do texto.
 
     if (!name) {
       return ""; // Retorna string vazia se o nome for nulo ou indefinido.
@@ -397,8 +397,7 @@ const Header = () => {
               // Botões de "Entrar" e "Cadastre-se" para usuário não logado
               <>
                 <Button
-                  variant="outline"
-                  className="hidden md:inline-flex border-border text-foreground bg-background/70 hover:bg-secondary hover:border-primary transition-all"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all"
                   onClick={() => {
                     setAuthModalTab("login");
                     setTimeout(() => {
@@ -409,7 +408,8 @@ const Header = () => {
                   Entrar
                 </Button>
                 <Button
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all"
+                  variant="outline"
+                  className="hidden md:inline-flex border-primary text-primary-foreground bg-primary/40 hover:bg-primary/80 hover:border-primary hover:text-primary-foreground transition-all hover:shadow-[0_0_25px_hsl(var(--primary)/0.1)]"
                   onClick={() => {
                     setAuthModalTab("signup");
                     setTimeout(() => {
