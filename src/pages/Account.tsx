@@ -48,7 +48,6 @@ interface Profile {
   whatsapp: string | null;
   is_student: boolean;
   is_professor: boolean;
-  theme_preference?: string;
   created_at: string;
   updated_at: string;
 }
@@ -109,7 +108,6 @@ const Account = () => {
       if (data) {
         setProfileData({
           ...data,
-          theme_preference: data.theme_preference || "blue-dark",
         });
       }
     } catch (err) {
@@ -143,7 +141,6 @@ const Account = () => {
           whatsapp: updatedProfile.whatsapp,
           is_student: updatedProfile.is_student,
           is_professor: updatedProfile.is_professor,
-          theme_preference: updatedProfile.theme_preference,
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);
@@ -186,8 +183,7 @@ const Account = () => {
       name: updatedProfile.name || '',
       whatsapp: updatedProfile.whatsapp || '',
       is_student: Boolean(updatedProfile.is_student),
-      is_professor: Boolean(updatedProfile.is_professor),
-      theme_preference: updatedProfile.theme_preference || 'blue-dark'
+      is_professor: Boolean(updatedProfile.is_professor)
     }));
   };
 
@@ -233,7 +229,6 @@ const Account = () => {
               whatsapp: data.whatsapp || "",
               is_student: Boolean(data.is_student), // Forçar boolean
               is_professor: Boolean(data.is_professor), // Forçar boolean
-              theme_preference: data.theme_preference || "blue-dark", // Adicionar preferência de tema
               created_at: data.created_at,
               updated_at: data.updated_at,
             });
@@ -294,7 +289,6 @@ const Account = () => {
             whatsapp: data.whatsapp || "",
             is_student: Boolean(data.is_student),
             is_professor: Boolean(data.is_professor),
-            theme_preference: data.theme_preference || "blue-dark",
             created_at: data.created_at,
             updated_at: data.updated_at
           });

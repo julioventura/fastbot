@@ -41,9 +41,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useTheme } from "@/hooks/useTheme";
-import { User, Mail, Phone, UserPlus, GraduationCap, Palette } from "lucide-react";
-import { ThemePalette } from "@/contexts/theme-context";
+import { User, Mail, Phone, UserPlus, GraduationCap } from "lucide-react";
 
 // Interface ProfileFormProps
 // Define as propriedades que o componente ProfileForm aceita.
@@ -55,7 +53,6 @@ interface ProfileFormProps {
     whatsapp: string | null;
     is_student: boolean;
     is_professor: boolean;
-    theme_preference?: string;
     created_at: string;
     updated_at: string;
   };
@@ -66,7 +63,6 @@ interface ProfileFormProps {
     whatsapp: string | null;
     is_student: boolean;
     is_professor: boolean;
-    theme_preference?: string;
     created_at: string;
     updated_at: string;
   }) => Promise<void>;
@@ -76,18 +72,12 @@ interface ProfileFormProps {
 // Componente ProfileForm
 // Renderiza e gerencia o formulário de edição de perfil do usuário.
 const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
-  // Hook do tema
-  const { setTheme } = useTheme();
-
   // Estados apenas para campos que existem na tabela
   const [name, setName] = useState(profile.name || "");
   const [email, setEmail] = useState(profile.email || "");
   const [whatsapp, setWhatsapp] = useState(profile.whatsapp || "");
   const [isStudent, setIsStudent] = useState(profile.is_student || false);
   const [isProfessor, setIsProfessor] = useState(profile.is_professor || false);
-  const [themePreference, setThemePreference] = useState<ThemePalette>(
-    (profile.theme_preference as ThemePalette) || 'blue-dark'
-  );
 
   // Hook para exibir notificações (toasts).
   const { toast } = useToast();
@@ -104,14 +94,12 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
     setWhatsapp(profile.whatsapp || "");
     setIsStudent(profile.is_student || false);
     setIsProfessor(profile.is_professor || false);
-    setThemePreference((profile.theme_preference as ThemePalette) || 'blue-dark');
     
     console.log("Estados após setState:", { 
       name: profile.name || "", 
       whatsapp: profile.whatsapp || "",
       isStudent: profile.is_student || false,
-      isProfessor: profile.is_professor || false,
-      themePreference: profile.theme_preference || 'blue-dark'
+      isProfessor: profile.is_professor || false
     });
   }, [profile]); // Usar profile como dependência
 
@@ -130,7 +118,6 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
         whatsapp: whatsapp || null,
         is_student: Boolean(isStudent),
         is_professor: Boolean(isProfessor),
-        theme_preference: themePreference,
         updated_at: new Date().toISOString(),
       };
 
@@ -138,11 +125,6 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
       
       // Chamar a função onSave do componente pai
       await onSave(updatedProfile);
-      
-      // Aplicar o tema se mudou
-      if (themePreference !== profile.theme_preference) {
-        setTheme(themePreference);
-      }
       
       toast({
         title: "Perfil atualizado",
@@ -156,14 +138,6 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
         description: "Não foi possível atualizar seu perfil. Por favor, tente novamente.",
       });
     }
-  };
-
-  // Função para lidar com mudança de tema
-  const handleThemeChange = (newTheme: string) => {
-    const theme = newTheme as ThemePalette;
-    setThemePreference(theme);
-    // Aplicar o tema imediatamente
-    setTheme(theme);
   };
 
   // Renderização do formulário de perfil.
@@ -250,46 +224,6 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
             </Label>
           </div>
         </div>
-      </div>
-      
-      {/* Seletor de Tema */}
-      <div className="space-y-2">
-        <Label htmlFor="theme" className="text-foreground flex items-center space-x-2">
-          <Palette className="h-4 w-4 text-theme-accent" />
-          <span>Tema da Interface</span>
-        </Label>
-        <Select 
-          value={themePreference} 
-          onValueChange={handleThemeChange}
-          disabled={loading}
-        >
-          <SelectTrigger className="bg-background border-border text-foreground">
-            <SelectValue placeholder="Selecione um tema" />
-          </SelectTrigger>
-          <SelectContent className="bg-background border-border">
-            <SelectItem value="blue-dark" className="text-foreground hover:bg-accent">
-              🌙 Azul Escuro
-            </SelectItem>
-            <SelectItem value="blue-light" className="text-foreground hover:bg-accent">
-              ☀️ Azul Claro
-            </SelectItem>
-            <SelectItem value="purple-dark" className="text-foreground hover:bg-accent">
-              🌙 Roxo Escuro
-            </SelectItem>
-            <SelectItem value="purple-light" className="text-foreground hover:bg-accent">
-              ☀️ Roxo Claro
-            </SelectItem>
-            <SelectItem value="gray-dark" className="text-foreground hover:bg-accent">
-              🌙 Cinza Escuro
-            </SelectItem>
-            <SelectItem value="gray-light" className="text-foreground hover:bg-accent">
-              ☀️ Cinza Claro
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <p className="text-sm text-muted-foreground">
-          Escolha o tema que será aplicado quando você fizer login
-        </p>
       </div>
       
       {/* Botão de Submissão do Formulário */}

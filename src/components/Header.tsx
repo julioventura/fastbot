@@ -11,8 +11,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useTheme } from '@/hooks/useTheme';
 import { useAuth } from "@/lib/auth/useAuth";
 import { Link, NavLink } from 'react-router-dom';
 import {
@@ -22,13 +20,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Bot, Coins, Shield, Palette, Moon, Sun } from 'lucide-react';
+import { User, LogOut, Bot, Coins, Shield } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '../hooks/useProfile';
 import { useIsAdmin } from '../hooks/useIsAdmin';
-
-// Definir os tipos de tema diretamente aqui
-type ThemePalette = 'blue-dark' | 'blue-light' | 'purple-dark' | 'purple-light' | 'gray-dark' | 'gray-light';
 
 // Custom Hook: useScrollDirection
 // Determina a direção do scroll da página (para cima ou para baixo).
@@ -83,99 +78,15 @@ const Header = () => {
   // isAuthModalOpen: Estado para controlar a visibilidade do modal de autenticação.
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "reset">("login");
-  const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
 
   // user: Objeto do usuário autenticado.
   // signOut: Função para deslogar o usuário.
   const { user, signOut, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, error } = useProfile();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
-  const { theme, setTheme } = useTheme();
 
   // userName: Estado para armazenar o nome do usuário a ser exibido.
   const [userName, setUserName] = useState("");
-
-  // Opções de tema
-  const themeOptions = [
-    {
-      id: 'blue-dark' as ThemePalette,
-      name: 'Azul modo escuro',
-      description: 'Tema escuro com tons de azul',
-      icon: <Moon className="h-4 w-4" />,
-      colors: { 
-        primary: '#4f9bff', 
-        secondary: '#1e3a5f',
-        background: '#0a1629' // Cor de fundo do tema
-      },
-      isDark: true
-    },
-    {
-      id: 'blue-light' as ThemePalette,
-      name: 'Azul modo claro',
-      description: 'Tema claro com tons de azul',
-      icon: <Sun className="h-4 w-4" />,
-      colors: { 
-        primary: '#2563eb', 
-        secondary: '#dbeafe',
-        background: '#f8fafc' // Cor de fundo do tema
-      },
-      isDark: false
-    },
-    {
-      id: 'purple-dark' as ThemePalette,
-      name: 'Púrpura modo escuro',
-      description: 'Tema escuro com tons de púrpura',
-      icon: <Moon className="h-4 w-4" />,
-      colors: { 
-        primary: '#a855f7', 
-        secondary: '#581c87',
-        background: '#1a0b2e' // Cor de fundo do tema
-      },
-      isDark: true
-    },
-    {
-      id: 'purple-light' as ThemePalette,
-      name: 'Púrpura modo claro',
-      description: 'Tema claro com tons de púrpura',
-      icon: <Sun className="h-4 w-4" />,
-      colors: { 
-        primary: '#9333ea', 
-        secondary: '#f3e8ff',
-        background: '#fefcff' // Cor de fundo do tema
-      },
-      isDark: false
-    },
-    {
-      id: 'gray-dark' as ThemePalette,
-      name: 'Cinza modo escuro',
-      description: 'Tema escuro com tons de cinza',
-      icon: <Moon className="h-4 w-4" />,
-      colors: { 
-        primary: '#6b7280', 
-        secondary: '#374151',
-        background: '#111827' // Cor de fundo do tema
-      },
-      isDark: true
-    },
-    {
-      id: 'gray-light' as ThemePalette,
-      name: 'Cinza modo claro',
-      description: 'Tema claro com tons de cinza',
-      icon: <Sun className="h-4 w-4" />,
-      colors: { 
-        primary: '#4b5563', 
-        secondary: '#f9fafb',
-        background: '#ffffff' // Cor de fundo do tema
-      },
-      isDark: false
-    }
-  ];
-
-  const handleThemeChange = (newTheme: ThemePalette) => {
-    setTheme(newTheme);
-    setIsThemeDialogOpen(false); // Fecha o dialog após selecionar o tema
-  };
-
 
   // useEffect para buscar o nome do perfil do usuário.
   // Executado quando o objeto 'user' (do contexto de autenticação) muda.
@@ -350,16 +261,16 @@ const Header = () => {
               className="flex flex-col items-start group cursor-pointer"
             >
               {/* "FastBot" - mantido igual */}
-              <span className="font-bold text-4xl mt-2 text-foreground 
+              <span className="font-bold text-4xl mt-2 !text-foreground 
               [text-shadow:0_0_12px_hsl(var(--primary)),0_0_24px_hsl(var(--primary)/0.9),0_0_36px_hsl(var(--primary)/0.6),0_0_48px_hsl(var(--primary)/0.3)]
-              group-hover:text-primary 
+              group-hover:!text-primary 
               group-hover:[text-shadow:0_0_16px_hsl(var(--primary)),0_0_32px_hsl(var(--primary)),0_0_48px_hsl(var(--primary)/0.8),0_0_64px_hsl(var(--primary)/0.5)]
               transition-all duration-300 tracking-wide">
                 FastBot
               </span>
               
               {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
-              <span className="font-mono text-md text-primary font-light pt-0">
+              <span className="font-mono text-md !text-primary font-light pt-0">
                 DENTISTAS.COM.BR / FASTBOT
               </span>
             </NavLink>
@@ -369,7 +280,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink
               to="/"
-              className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
+              className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
             >
               Início
             </NavLink>
@@ -378,7 +289,7 @@ const Header = () => {
             {!user && (
               <NavLink
                 to="/features"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Recursos
               </NavLink>
@@ -387,7 +298,7 @@ const Header = () => {
             {!user && (
               <NavLink
                 to="/pricing"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Preços
               </NavLink>
@@ -397,7 +308,7 @@ const Header = () => {
             {user && (
               <NavLink
                 to="/my-chatbot"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Meu Chatbot
               </NavLink>
@@ -407,7 +318,7 @@ const Header = () => {
             {user && (
               <NavLink
                 to="/account"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Minha Conta
               </NavLink>
@@ -471,17 +382,6 @@ const Header = () => {
 
                   <DropdownMenuSeparator className="bg-border" />
 
-                  {/* Item Configurar Tema */}
-                  <DropdownMenuItem
-                    onClick={() => setIsThemeDialogOpen(true)}
-                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
-                  >
-                    <Palette className="mr-3 h-6 w-6" />
-                    Tema
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator className="bg-border" />
-
                   <DropdownMenuItem
                     onClick={handleSignOut}
                     className="cursor-pointer rounded-md px-3 py-2 text-destructive hover:!bg-secondary hover:!text-destructive focus:!bg-secondary focus:!text-destructive transition-colors flex items-center"
@@ -521,70 +421,6 @@ const Header = () => {
             )}
           </div>
         </div>
-
-        {/* Dialog de Seleção de Tema */}
-        <Dialog open={isThemeDialogOpen} onOpenChange={setIsThemeDialogOpen}>
-          <DialogContent className="max-w-4xl p-6">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Palette className="h-5 w-5" />
-                Escolha seu tema
-              </DialogTitle>
-              <DialogDescription>
-                Selecione um tema para personalizar a aparência da interface
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              {themeOptions.map((option) => (
-                <div
-                  key={option.id}
-                  className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${
-                    theme === option.id 
-                      ? 'border-primary ring-2 ring-primary/20' 
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                  style={{
-                    backgroundColor: option.colors.background // Aplica o fundo para TODOS os temas
-                  }}
-                  onClick={() => handleThemeChange(option.id)}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="flex gap-1">
-                      <div 
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: option.colors.primary }}
-                      />
-                      <div 
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: option.colors.secondary }}
-                      />
-                      {option.isDark && (
-                        <div className="w-3 h-3 rounded-full bg-gray-600" />
-                      )}
-                    </div>
-                    {option.icon}
-                  </div>
-                  <h3 className={`font-medium mb-1 ${option.isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {option.name}
-                  </h3>
-                  <p className={`text-sm ${option.isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                    {option.description}
-                  </p>
-                  {theme === option.id && (
-                    <div className="absolute top-2 right-2">
-                      <div 
-                        className="w-5 h-5 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: option.colors.primary }}
-                      >
-                        <div className="w-2 h-2 rounded-full bg-white" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </DialogContent>
-        </Dialog>
 
         {/* Modal de Autenticação - CORRIGIDO com key para forçar re-render */}
         <AuthModal
