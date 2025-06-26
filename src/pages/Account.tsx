@@ -141,12 +141,19 @@ const Account = () => {
   }, [user, loading, navigate]); // Dependências do useEffect.
 
 
-  // --- Função handleSignOut ---
-  // Manipulador de evento para deslogar o usuário.
-  // Chama a função signOut do contexto de autenticação e redireciona para a página inicial.
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
+  // --- Função handleAccountDeletion ---
+  // Manipulador para exclusão permanente da conta do usuário.
+  // Desloga o usuário e redireciona para a página inicial após exclusão.
+  const handleAccountDeletion = async () => {
+    try {
+      // Fazer logout do usuário
+      await signOut();
+      // Redirecionar para a página inicial
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao processar exclusão da conta:", error);
+      navigate("/");
+    }
   };
 
 
@@ -249,8 +256,11 @@ const Account = () => {
             {/* Componente SecurityCard - só com "Alterar senha" */}
             <SecurityCard />
             
-            {/* Componente CloseAccount - só com "Sair da conta" */}
-            <CloseAccount onSignOut={handleSignOut} />
+            {/* Componente CloseAccount - exclusão permanente da conta */}
+            <CloseAccount 
+              userEmail={user?.email || ""} 
+              onAccountDeleted={handleAccountDeletion} 
+            />
           </div>
         </div>
       </div>
