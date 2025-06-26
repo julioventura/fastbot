@@ -44,26 +44,25 @@ const pricingPlans = [
     },
     {
         name: 'Plano Mensal',
-        price: 'R$ 50',
-        description: 'Perfeito para profissionais e pequenas empresas que buscam mais recursos.', // Descrição adicionada
+        price: 'R$ 120',
+        description: 'Para consultórios e clínicas.', // Descrição adicionada
         features: [
-            '500 créditos por mês',
-            'Mensagens de áudio',
-            'Visão e criação de imagens',
+            '1.200 créditos por mês',
+            'Conversa de texto ilimitada',
+            'Inclui áudio e imagens',
         ],
         isPopular: false,
-        buttonText: 'COMECE JÁ !',
-        buttonVariant: 'default' as const,
+        buttonText: 'ASSINE JÁ !',
+        buttonVariant: 'outline' as const,
     },
     {
         name: 'Pacote de Créditos',
-        price: 'R$ 10',
-        description: 'Adicione créditos extras conforme sua necessidade, sem compromisso mensal.', // Descrição adicionada
+        price: 'R$ 50',
+        description: 'Créditos extras.', // Descrição adicionada
         features: [
-            '100 créditos avulsos',
+            '500 créditos avulsos',
             'Validade de um ano',
             'Utilize em qualquer plano',
-            'Flexibilidade total',
         ],
         isPopular: false,
         buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado

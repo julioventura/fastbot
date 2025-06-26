@@ -18,7 +18,7 @@
     --primary-foreground: 210 40% 98%;
 
     --secondary: 217 32% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary-foreground: 221 68% 81%;
 
     --muted: 217 32% 17%;
     --muted-foreground: 215 20% 65%;
@@ -42,7 +42,7 @@
     --foreground: 210 40% 98% !important;
 
     --card: 222 47% 11% !important;
-    --card-foreground: 210 40% 98% !important;
+    --card-foreground: 210 40% 60% !important;
 
     --popover: 222 47% 11% !important;
     --popover-foreground: 210 40% 98% !important;
@@ -51,7 +51,7 @@
     --primary-foreground: 210 40% 98% !important;
 
     --secondary: 217 32% 17% !important;
-    --secondary-foreground: 210 40% 98% !important;
+    --secondary-foreground: 221 68% 81% !important;
 
     --muted: 217 32% 17% !important;
     --muted-foreground: 215 20% 65% !important;
@@ -67,7 +67,7 @@
     --ring: 221 83% 53% !important;
 
     /* Variáveis personalizadas para o tema azul escuro */
-    --gradient-from: #0a1629 !important;
+    --gradient-from: #0c203f !important;
     --gradient-to: #082756 !important;
     --gradient-secondary-to: #0e2d5e !important;
     --accent-blue: #4f9bff !important;
@@ -192,11 +192,3 @@
 .bg-gradient-radial {
   background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
 }
-
-/* Removendo todas as animações de glow do footer */
-/* As animações fast-pulse-glow, fast-pulse-glow-hover, fast-pulse-text, fast-scanline foram removidas */
-/* As animações medium-pulse, medium-scanline, medium-glow foram removidas */
-/* As animações slow-pulse, slow-scanline, gentle-glow foram removidas */
-/* As animações digital-flicker relacionadas foram removidas */
-
-/* Mantendo apenas animações básicas se necessário para outros componentes */
