@@ -30,12 +30,11 @@ import { Check } from 'lucide-react';
 // Cada objeto no array define as características de um plano.
 const pricingPlans = [
     {
-        name: 'Modo Texto',
+        name: 'Plano Básico',
         price: 'GRÁTIS',
         description: 'Para conversas de texto',
         features: [
-            '100 conversas de texto por mês',
-            'Mensagens ilimitadas por conversa',
+            '100 conversas por mês',
             'Use créditos avulsos para adicionar áudio e imagem',
         ],
         isPopular: true, // Destaca este plano como o mais popular.
@@ -43,31 +42,30 @@ const pricingPlans = [
         buttonVariant: 'default' as const, // Tipo específico para a variante do botão.
     },
     {
+        name: 'Plano Texto Ilimitado',
+        price: 'R$ 40',
+        description: 'Para consultórios e clínicas.', // Descrição adicionada
+        features: [
+            'Conversas ilimitadas de texto',
+            'Inclua créditos para áudio e imagens',
+        ],
+        isPopular: false,
+        buttonText: 'ASSINE JÁ !',
+        buttonVariant: 'outline' as const,
+    },    
+    {
         name: 'Pacote de Créditos',
-        price: 'R$ 50',
+        price: 'R$ 100',
         description: 'Créditos para áudio e imagem',
         features: [
-            '500 créditos para áudio e imagens',
-            'Validade de um ano para os créditos',
-            'Conversas de texto ilimitadas por um mês',
+            '500 créditos cumulativos',
+            'Para áudio e imagens',
+            'Validade de um ano!',
         ],
         isPopular: false,
         buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado
         buttonVariant: 'outline' as const, // Variante do botão ajustada para diferenciar
     },
-    // {
-    //     name: 'Modo Assinatura',
-    //     price: 'R$ 120',
-    //     description: 'Para consultórios e clínicas.', // Descrição adicionada
-    //     features: [
-    //         '1.200 créditos por mês',
-    //         'Conversa de texto ilimitada',
-    //         'Inclui áudio e imagens',
-    //     ],
-    //     isPopular: false,
-    //     buttonText: 'ASSINE JÁ !',
-    //     buttonVariant: 'outline' as const,
-    // },
 ];
 
 
@@ -190,7 +188,7 @@ const Pricing = () => {
 
                 {/* Grade de Cards de Planos de Preços */}
                 {/* Layout responsivo: 1 coluna em telas pequenas, 3 colunas em médias e grandes. */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
                     {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
                     {pricingPlans.map((plan, index) => (
                         <Card
