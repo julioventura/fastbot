@@ -279,7 +279,8 @@ const Header = () => {
           {/* Menu de Navegação Principal (links) */}
           <nav className="hidden md:flex items-center space-x-8">
 
-            {!user && (
+            {/* {!user && ( */}
+            {(
               <NavLink
                 to="/"
                 className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
@@ -307,24 +308,24 @@ const Header = () => {
             )}
 
             {/* Links condicionalmente exibidos se o usuário ESTIVER logado */}
-            {/* {user && (
+            {user && (
               <NavLink
                 to="/my-chatbot"
                 className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Meu Chatbot
               </NavLink>
-            )} */}
+            )}
 
             {/* NOVO: Link "Minha Conta" para usuários logados */}
-            {/* {user && (
+            {user && (
               <NavLink
                 to="/account"
                 className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Minha Conta
               </NavLink>
-            )} */}
+            )}
 
           </nav>
 
