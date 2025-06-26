@@ -7,36 +7,13 @@
 // "Entrar", "Cadastre-se" ou um menu dropdown para usuários logados com opções
 // como "Minha Conta", "Meus Créditos" e "Sair".
 // Utiliza um modal para autenticação (AuthModal).
-//
-// Funções e Constantes Principais:
-// - useScrollDirection (Custom Hook):
-//   - scrollDirection (estado): String ('up' ou 'down') indicando a direção atual do scroll.
-//   - lastScrollY (estado): Number, armazena a última posição vertical do scroll.
-//   - useEffect (hook): Adiciona e remove um event listener para o evento de scroll,
-//     atualizando 'scrollDirection' e 'lastScrollY' com base no movimento da página.
-//   - Retorna: A direção atual do scroll ('up' ou 'down').
-// - Header (Componente): Componente funcional principal do cabeçalho.
-//   - scrollDirection (const): Obtém a direção do scroll do hook useScrollDirection.
-//   - isAuthModalOpen (estado): Booleano, controla a visibilidade do modal de autenticação.
-//   - setIsAuthModalOpen (função de estado): Atualiza o estado isAuthModalOpen.
-//   - user (const): Objeto contendo informações do usuário autenticado, obtido do hook useAuth.
-//   - signOut (const): Função para deslogar o usuário, obtida do hook useAuth.
-//   - userName (estado): String, armazena o nome do usuário (ou parte do email como fallback).
-//   - setUserName (função de estado): Atualiza o estado userName.
-//   - useEffect (hook para fetchUserName): Busca o nome do perfil do usuário no Supabase
-//     quando o estado 'user' muda. Se não encontrar um nome, usa parte do email.
-//   - truncate (função): Função utilitária para truncar uma string (nome do usuário)
-//     para um limite de caracteres, tentando manter palavras inteiras e adicionando "..." se necessário.
-//   - handleSignOut (função): Manipulador para o evento de logout. Limpa tokens,
-//     chama signOut do Supabase e do contexto, e redireciona o usuário.
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useTheme } from '@/hooks/useTheme';
-import { ThemePalette } from '@/contexts/theme-context';
-import { useAuth } from "@/lib/auth/useAuth"; // CORREÇÃO AQUI
+import { useAuth } from "@/lib/auth/useAuth";
 import { Link, NavLink } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -49,6 +26,9 @@ import { User, LogOut, Bot, Coins, Shield, Palette, Moon, Sun } from 'lucide-rea
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '../hooks/useProfile';
 import { useIsAdmin } from '../hooks/useIsAdmin';
+
+// Definir os tipos de tema diretamente aqui
+type ThemePalette = 'blue-dark' | 'blue-light' | 'purple-dark' | 'purple-light' | 'gray-dark' | 'gray-light';
 
 // Custom Hook: useScrollDirection
 // Determina a direção do scroll da página (para cima ou para baixo).
@@ -107,11 +87,10 @@ const Header = () => {
 
   // user: Objeto do usuário autenticado.
   // signOut: Função para deslogar o usuário.
-  const { user, signOut, loading: authLoading, initializing } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, error } = useProfile();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   const { theme, setTheme } = useTheme();
-  const currentTheme = theme; // Adicionar esta linha
 
   // userName: Estado para armazenar o nome do usuário a ser exibido.
   const [userName, setUserName] = useState("");
@@ -119,7 +98,7 @@ const Header = () => {
   // Opções de tema
   const themeOptions = [
     {
-      id: 'blue-dark',
+      id: 'blue-dark' as ThemePalette,
       name: 'Azul modo escuro',
       description: 'Tema escuro com tons de azul',
       icon: <Moon className="h-4 w-4" />,
@@ -131,7 +110,7 @@ const Header = () => {
       isDark: true
     },
     {
-      id: 'blue-light',
+      id: 'blue-light' as ThemePalette,
       name: 'Azul modo claro',
       description: 'Tema claro com tons de azul',
       icon: <Sun className="h-4 w-4" />,
@@ -143,7 +122,7 @@ const Header = () => {
       isDark: false
     },
     {
-      id: 'purple-dark',
+      id: 'purple-dark' as ThemePalette,
       name: 'Púrpura modo escuro',
       description: 'Tema escuro com tons de púrpura',
       icon: <Moon className="h-4 w-4" />,
@@ -155,7 +134,7 @@ const Header = () => {
       isDark: true
     },
     {
-      id: 'purple-light',
+      id: 'purple-light' as ThemePalette,
       name: 'Púrpura modo claro',
       description: 'Tema claro com tons de púrpura',
       icon: <Sun className="h-4 w-4" />,
@@ -167,7 +146,7 @@ const Header = () => {
       isDark: false
     },
     {
-      id: 'gray-dark',
+      id: 'gray-dark' as ThemePalette,
       name: 'Cinza modo escuro',
       description: 'Tema escuro com tons de cinza',
       icon: <Moon className="h-4 w-4" />,
@@ -179,7 +158,7 @@ const Header = () => {
       isDark: true
     },
     {
-      id: 'gray-light',
+      id: 'gray-light' as ThemePalette,
       name: 'Cinza modo claro',
       description: 'Tema claro com tons de cinza',
       icon: <Sun className="h-4 w-4" />,
@@ -192,8 +171,8 @@ const Header = () => {
     }
   ];
 
-  const handleThemeChange = (newTheme: string) => { // Mudar o tipo para string
-    setTheme(newTheme as ThemePalette);
+  const handleThemeChange = (newTheme: ThemePalette) => {
+    setTheme(newTheme);
     setIsThemeDialogOpen(false); // Fecha o dialog após selecionar o tema
   };
 
@@ -336,23 +315,8 @@ const Header = () => {
   };
 
 
-  // Mostrar loading durante inicialização
-  if (initializing) {
-    return (
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10">
-            <div className="flex justify-start lg:w-0 lg:flex-1">
-              <Link to="/">
-                <span className="text-2xl font-bold text-gray-900">FastBot</span>
-              </Link>
-            </div>
-            <div className="text-gray-500">Carregando...</div>
-          </div>
-        </div>
-      </header>
-    );
-  }
+  // REMOVIDO: Condição de inicialização que causava o loading infinito
+  // Agora o header sempre renderiza, mesmo durante o carregamento
 
   // --- Renderização do Componente Header ---
   return (
@@ -383,7 +347,7 @@ const Header = () => {
           <div className="flex items-center">
             <NavLink 
               to="/" 
-              className="flex flex-col items-start group"
+              className="flex flex-col items-start group cursor-pointer"
             >
               {/* "FastBot" - mantido igual */}
               <span className="font-bold text-4xl mt-2 text-foreground 
@@ -405,7 +369,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink
               to="/"
-              className={({ isActive }) => `font-medium ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
+              className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
             >
               Início
             </NavLink>
@@ -414,7 +378,7 @@ const Header = () => {
             {!user && (
               <NavLink
                 to="/features"
-                className={({ isActive }) => `font-medium ${isActive ? "text-white text-2xl drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300 text-sm"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Recursos
               </NavLink>
@@ -423,7 +387,7 @@ const Header = () => {
             {!user && (
               <NavLink
                 to="/pricing"
-                className={({ isActive }) => `font-medium ${isActive ? "text-white text-2xl drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300 text-sm"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Preços
               </NavLink>
@@ -433,7 +397,7 @@ const Header = () => {
             {user && (
               <NavLink
                 to="/my-chatbot"
-                className={({ isActive }) => `font-medium ${isActive ? "text-white text-2xl drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300 text-sm"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Meu Chatbot
               </NavLink>
@@ -443,7 +407,7 @@ const Header = () => {
             {user && (
               <NavLink
                 to="/account"
-                className={({ isActive }) => `font-medium ${isActive ? "text-white text-2xl drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300 text-sm"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
               >
                 Minha Conta
               </NavLink>
@@ -453,7 +417,10 @@ const Header = () => {
 
           {/* Seção de Ações do Usuário (Autenticação/Menu) */}
           <div className="flex items-center space-x-4">
-            {user ? (
+            {authLoading ? (
+              // Mostrar um indicador de loading só para a seção de usuário
+              <div className="text-muted-foreground text-sm">Carregando...</div>
+            ) : user ? (
               // Menu Dropdown para usuário logado
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -531,9 +498,7 @@ const Header = () => {
                   variant="outline"
                   className="hidden md:inline-flex border-border text-foreground bg-background/70 hover:bg-secondary hover:border-primary transition-all"
                   onClick={() => {
-                    console.log("Clicou em Entrar - definindo aba para login");
                     setAuthModalTab("login");
-                    // Usar setTimeout para garantir que o estado seja atualizado antes de abrir o modal
                     setTimeout(() => {
                       setIsAuthModalOpen(true);
                     }, 0);
@@ -544,9 +509,7 @@ const Header = () => {
                 <Button
                   className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all"
                   onClick={() => {
-                    console.log("Clicou em Cadastre-se - definindo aba para signup");
                     setAuthModalTab("signup");
-                    // Usar setTimeout para garantir que o estado seja atualizado antes de abrir o modal
                     setTimeout(() => {
                       setIsAuthModalOpen(true);
                     }, 0);
@@ -567,13 +530,16 @@ const Header = () => {
                 <Palette className="h-5 w-5" />
                 Escolha seu tema
               </DialogTitle>
+              <DialogDescription>
+                Selecione um tema para personalizar a aparência da interface
+              </DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-2 gap-4 mt-4">
               {themeOptions.map((option) => (
                 <div
                   key={option.id}
                   className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${
-                    currentTheme === option.id 
+                    theme === option.id 
                       ? 'border-primary ring-2 ring-primary/20' 
                       : 'border-border hover:border-primary/50'
                   }`}
@@ -604,7 +570,7 @@ const Header = () => {
                   <p className={`text-sm ${option.isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                     {option.description}
                   </p>
-                  {currentTheme === option.id && (
+                  {theme === option.id && (
                     <div className="absolute top-2 right-2">
                       <div 
                         className="w-5 h-5 rounded-full flex items-center justify-center"

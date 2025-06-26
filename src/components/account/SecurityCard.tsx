@@ -18,7 +18,7 @@ import { Lock } from "lucide-react"; // Ícone de cadeado.
 const SecurityCard = () => {
   return (
     // Card principal com estilos de fundo, borda e backdrop-filter + MARGEM INFERIOR.
-    <Card className="bg-theme-card border border-theme-accent/50 backdrop-blur-sm text-foreground mb-8">
+    <Card className="bg-theme-card border border-theme-accent/50 text-foreground mb-8 shadow-lg">
       
       {/* Cabeçalho do Card */}
       <CardHeader>

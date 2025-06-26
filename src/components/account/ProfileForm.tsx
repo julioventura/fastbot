@@ -38,136 +38,116 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, Phone, UserPlus, GraduationCap } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
+import { User, Mail, Phone, UserPlus, GraduationCap, Palette } from "lucide-react";
+import { ThemePalette } from "@/contexts/theme-context";
 
 // Interface ProfileFormProps
 // Define as propriedades que o componente ProfileForm aceita.
 interface ProfileFormProps {
-  userId: string; // ID do usuário, usado para buscar e salvar o perfil.
-  userData: { // Dados iniciais do perfil do usuário.
-    name: string;
+  profile: {
+    id: string;
+    name: string | null;
     email: string;
-    whatsapp: string;
-    isStudent: boolean;
-    isProfessor: boolean;
-    // Remover campos que não existem na tabela
-    profession?: string;
-    gender?: string;
-    birthDate?: string;
-    city?: string;
-    state?: string;
+    whatsapp: string | null;
+    is_student: boolean;
+    is_professor: boolean;
+    theme_preference?: string;
+    created_at: string;
+    updated_at: string;
   };
-  onUpdate?: () => void; // Callback opcional chamado após a atualização bem-sucedida do perfil.
+  onSave: (updatedProfile: {
+    id: string;
+    name: string | null;
+    email: string;
+    whatsapp: string | null;
+    is_student: boolean;
+    is_professor: boolean;
+    theme_preference?: string;
+    created_at: string;
+    updated_at: string;
+  }) => Promise<void>;
+  loading: boolean;
 }
 
 // Componente ProfileForm
 // Renderiza e gerencia o formulário de edição de perfil do usuário.
-const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
-  // Estados apenas para campos que existem na tabela
-  const [name, setName] = useState(userData.name || "");
-  const [email, setEmail] = useState(userData.email || "");
-  const [whatsapp, setWhatsapp] = useState(userData.whatsapp || "");
-  const [isStudent, setIsStudent] = useState(userData.isStudent || false);
-  const [isProfessor, setIsProfessor] = useState(userData.isProfessor || false);
+const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
+  // Hook do tema
+  const { setTheme } = useTheme();
 
-  // Estado para indicar se o formulário está sendo salvo.
-  const [isSaving, setIsSaving] = useState(false);
+  // Estados apenas para campos que existem na tabela
+  const [name, setName] = useState(profile.name || "");
+  const [email, setEmail] = useState(profile.email || "");
+  const [whatsapp, setWhatsapp] = useState(profile.whatsapp || "");
+  const [isStudent, setIsStudent] = useState(profile.is_student || false);
+  const [isProfessor, setIsProfessor] = useState(profile.is_professor || false);
+  const [themePreference, setThemePreference] = useState<ThemePalette>(
+    (profile.theme_preference as ThemePalette) || 'blue-dark'
+  );
 
   // Hook para exibir notificações (toasts).
   const { toast } = useToast();
 
   // Efeito useEffect
-  // Atualiza o estado interno do formulário se a prop `userData` mudar.
+  // Atualiza o estado interno do formulário se a prop `profile` mudar.
   // Isso garante que o formulário reflita os dados mais recentes se eles forem atualizados externamente.
   useEffect(() => {
     console.log("=== DEBUG ProfileForm ===");
-    console.log("userData recebido:", userData);
+    console.log("profile recebido:", profile);
     
-    setName(userData.name || "");
-    setEmail(userData.email || "");
-    setWhatsapp(userData.whatsapp || "");
-    setIsStudent(userData.isStudent || false);
-    setIsProfessor(userData.isProfessor || false);
+    setName(profile.name || "");
+    setEmail(profile.email || "");
+    setWhatsapp(profile.whatsapp || "");
+    setIsStudent(profile.is_student || false);
+    setIsProfessor(profile.is_professor || false);
+    setThemePreference((profile.theme_preference as ThemePalette) || 'blue-dark');
     
     console.log("Estados após setState:", { 
-      name: userData.name || "", 
-      whatsapp: userData.whatsapp || "",
-      isStudent: userData.isStudent || false,
-      isProfessor: userData.isProfessor || false
+      name: profile.name || "", 
+      whatsapp: profile.whatsapp || "",
+      isStudent: profile.is_student || false,
+      isProfessor: profile.is_professor || false,
+      themePreference: profile.theme_preference || 'blue-dark'
     });
-  }, [userData]); // Manter apenas userData como dependência
+  }, [profile]); // Usar profile como dependência
 
   // Função handleUpdateProfile
   // Chamada quando o formulário é submetido para salvar as alterações do perfil.
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!userId) return;
-    
-    setIsSaving(true);
+    if (!profile?.id) return;
     
     try {
-      // Forçar os valores boolean e garantir que whatsapp seja string
-      const profileData = {
-        name: name || '',
-        whatsapp: whatsapp || '',
-        is_student: Boolean(isStudent), // Forçar boolean
-        is_professor: Boolean(isProfessor), // Forçar boolean
+      // Preparar os dados atualizados do perfil
+      const updatedProfile = {
+        ...profile,
+        name: name || null,
+        whatsapp: whatsapp || null,
+        is_student: Boolean(isStudent),
+        is_professor: Boolean(isProfessor),
+        theme_preference: themePreference,
+        updated_at: new Date().toISOString(),
       };
 
-      console.log("Dados que serão enviados:", profileData);
-      console.log("Estado atual:", { name, whatsapp, isStudent, isProfessor });
+      console.log("Dados que serão enviados:", updatedProfile);
       
-      // Verificar se já existe um perfil para este usuário
-      const { data: existingProfile, error: checkError } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", userId)
-        .maybeSingle(); // Usar maybeSingle em vez de single
-
-      if (checkError) {
-        console.error("Erro ao verificar perfil existente:", checkError);
-        throw checkError;
-      }
+      // Chamar a função onSave do componente pai
+      await onSave(updatedProfile);
       
-      let result;
-      
-      if (existingProfile) {
-        console.log("Atualizando perfil existente...");
-        // Atualiza o perfil existente
-        result = await supabase
-          .from("profiles")
-          .update(profileData)
-          .eq("id", userId)
-          .select(); // Adicionar select para ver o resultado
-      } else {
-        console.log("Criando novo perfil...");
-        // Cria um novo perfil se não existir
-        result = await supabase
-          .from("profiles")
-          .insert([{ id: userId, ...profileData }])
-          .select(); // Adicionar select para ver o resultado
-      }
-      
-      console.log("Resultado da operação:", result);
-      
-      if (result.error) {
-        console.error("Erro ao salvar perfil:", result.error);
-        throw result.error;
+      // Aplicar o tema se mudou
+      if (themePreference !== profile.theme_preference) {
+        setTheme(themePreference);
       }
       
       toast({
         title: "Perfil atualizado",
         description: "Suas informações foram salvas com sucesso.",
       });
-
-      // Chamar o callback APÓS confirmar que salvou com sucesso
-      if (onUpdate) {
-        console.log("Chamando callback onUpdate...");
-        await onUpdate(); // Aguardar o callback completar
-      }
     } catch (error) {
       console.error("Erro ao atualizar perfil:", error);
       toast({
@@ -175,9 +155,15 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
         title: "Erro",
         description: "Não foi possível atualizar seu perfil. Por favor, tente novamente.",
       });
-    } finally {
-      setIsSaving(false);
     }
+  };
+
+  // Função para lidar com mudança de tema
+  const handleThemeChange = (newTheme: string) => {
+    const theme = newTheme as ThemePalette;
+    setThemePreference(theme);
+    // Aplicar o tema imediatamente
+    setTheme(theme);
   };
 
   // Renderização do formulário de perfil.
@@ -194,7 +180,7 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
             onChange={(e) => setName(e.target.value)}
             placeholder="Seu nome"
             className="pl-8 bg-background border-border text-foreground placeholder:text-muted-foreground"
-            disabled={isSaving} // Desabilita durante o salvamento.
+            disabled={loading} // Desabilita durante o salvamento.
           />
         </div>
       </div>
@@ -226,7 +212,7 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
             onChange={(e) => setWhatsapp(e.target.value)}
             placeholder="Seu número de WhatsApp"
             className="pl-8 bg-background border-border text-foreground placeholder:text-muted-foreground"
-            disabled={isSaving}
+            disabled={loading}
           />
         </div>
       </div>
@@ -239,7 +225,7 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
             checked={isStudent} 
             onCheckedChange={(checked) => setIsStudent(checked === true)} // Garante que o valor seja boolean.
             className="border-primary data-[state=checked]:bg-primary"
-            disabled={isSaving}
+            disabled={loading}
           />
           <div className="grid gap-1.5 leading-none">
             <Label htmlFor="is_student" className="text-foreground flex items-center space-x-2">
@@ -255,7 +241,7 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
             checked={isProfessor} 
             onCheckedChange={(checked) => setIsProfessor(checked === true)} // Garante que o valor seja boolean.
             className="border-primary data-[state=checked]:bg-primary"
-            disabled={isSaving}
+            disabled={loading}
           />
           <div className="grid gap-1.5 leading-none">
             <Label htmlFor="is_professor" className="text-foreground flex items-center space-x-2">
@@ -266,13 +252,53 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
         </div>
       </div>
       
+      {/* Seletor de Tema */}
+      <div className="space-y-2">
+        <Label htmlFor="theme" className="text-foreground flex items-center space-x-2">
+          <Palette className="h-4 w-4 text-theme-accent" />
+          <span>Tema da Interface</span>
+        </Label>
+        <Select 
+          value={themePreference} 
+          onValueChange={handleThemeChange}
+          disabled={loading}
+        >
+          <SelectTrigger className="bg-background border-border text-foreground">
+            <SelectValue placeholder="Selecione um tema" />
+          </SelectTrigger>
+          <SelectContent className="bg-background border-border">
+            <SelectItem value="blue-dark" className="text-foreground hover:bg-accent">
+              🌙 Azul Escuro
+            </SelectItem>
+            <SelectItem value="blue-light" className="text-foreground hover:bg-accent">
+              ☀️ Azul Claro
+            </SelectItem>
+            <SelectItem value="purple-dark" className="text-foreground hover:bg-accent">
+              🌙 Roxo Escuro
+            </SelectItem>
+            <SelectItem value="purple-light" className="text-foreground hover:bg-accent">
+              ☀️ Roxo Claro
+            </SelectItem>
+            <SelectItem value="gray-dark" className="text-foreground hover:bg-accent">
+              🌙 Cinza Escuro
+            </SelectItem>
+            <SelectItem value="gray-light" className="text-foreground hover:bg-accent">
+              ☀️ Cinza Claro
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-sm text-muted-foreground">
+          Escolha o tema que será aplicado quando você fizer login
+        </p>
+      </div>
+      
       {/* Botão de Submissão do Formulário */}
       <Button 
         type="submit" 
-        disabled={isSaving} // Desabilita o botão durante o salvamento.
+        disabled={loading} // Desabilita o botão durante o salvamento.
         className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_15px_rgba(59,130,246,0.3)]"
       >
-        {isSaving ? "Salvando..." : "Salvar alterações"} {/* Texto do botão muda durante o salvamento. */}
+        {loading ? "Salvando..." : "Salvar alterações"} {/* Texto do botão muda durante o salvamento. */}
       </Button>
     </form>
   );

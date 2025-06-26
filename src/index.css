@@ -78,7 +78,7 @@
     --border-accent: #2a4980 !important;
     --hover-bg: rgba(42, 73, 128, 0.3) !important;
     --hover-bg-light: rgba(79, 155, 255, 0.1) !important;
-    --card-bg: rgba(10, 22, 41, 0.6) !important;
+    --card-bg: rgba(10, 22, 41, 0.95) !important;
   }
 
   /* Tema Azul Claro */
@@ -168,7 +168,7 @@
     --border-accent: #581c87 !important;
     --hover-bg: rgba(88, 28, 135, 0.3) !important;
     --hover-bg-light: rgba(168, 85, 247, 0.1) !important;
-    --card-bg: rgba(30, 27, 75, 0.6) !important;
+    --card-bg: rgba(30, 27, 75, 0.95) !important;
   }
 
   /* Tema Roxo Claro */
@@ -258,7 +258,7 @@
     --border-accent: #374151 !important;
     --hover-bg: rgba(55, 65, 81, 0.3) !important;
     --hover-bg-light: rgba(248, 250, 252, 0.1) !important;
-    --card-bg: rgba(17, 24, 39, 0.6) !important;
+    --card-bg: rgba(17, 24, 39, 0.95) !important;
   }
 
   /* Tema Cinza Claro */

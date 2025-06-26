@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Palette, Moon, Sun, Sunset } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
@@ -113,6 +113,9 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ children }) => {
             <Palette className="h-5 w-5" />
             Escolha seu tema
           </DialogTitle>
+          <DialogDescription>
+            Selecione um tema para personalizar a aparência da interface
+          </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
           {themeOptions.map((option) => (

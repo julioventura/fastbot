@@ -92,7 +92,7 @@ const ProfileTimestamps = ({ userId, createdAt, updatedAt }: ProfileTimestampsPr
 
   // Renderização do card com os timestamps.
   return (
-    <Card className="bg-theme-card border border-theme-accent/50 backdrop-blur-sm text-foreground mb-8">
+    <Card className="bg-theme-card border border-theme-accent/50 text-foreground mb-8 shadow-lg">
       {/* Cabeçalho do Card */}
       <CardHeader>
         <CardTitle className="text-white">Informações do Perfil</CardTitle>

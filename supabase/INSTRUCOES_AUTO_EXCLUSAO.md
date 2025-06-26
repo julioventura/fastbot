@@ -1,80 +1,94 @@
-# INSTRUÇÕES PARA APLICAR AS FUNÇÕES DE AUTO-EXCLUSÃO
+# Instruções para Auto-Exclusão de Usuário
 
-## Aplicar as Funções SQL no Supabase
+## Funcionalidades
 
-### Método 1: Via Dashboard do Supabase
-1. Acesse o dashboard do Supabase
-2. Vá em `SQL Editor`
-3. Copie e cole o conteúdo do arquivo `supabase/self_delete_user.sql`
-4. Execute o script
+- Permite que o próprio usuário exclua sua conta
+- Remove dados de `profiles` e `auth.users`
+- Segurança através de `auth.uid()`
+- Validação com email de confirmação
 
-### Método 2: Via CLI do Supabase (se configurado)
-```bash
-supabase db reset
-# ou
-supabase db push
-```
+## Para Instalar
 
-### Método 3: Manualmente via psql
-```bash
-psql -h [HOST] -p [PORT] -U [USER] -d [DATABASE] -f supabase/self_delete_user.sql
-```
-
-## Testando as Funções
-
-### Teste da função self_delete_user_with_email:
 ```sql
-SELECT self_delete_user_with_email('seu.email@exemplo.com');
+-- Execute este arquivo no SQL Editor do Supabase
+-- O arquivo self_delete_user.sql contém as funções necessárias
 ```
 
-### Teste da função self_delete_user:
+## Para Usar na Aplicação
+
+```javascript
+// Método 1: Exclusão simples
+const result = await supabase.rpc('self_delete_user');
+
+// Método 2: Exclusão com confirmação de email
+const result = await supabase.rpc('self_delete_user_with_email', {
+  confirm_email: 'usuario@email.com'
+});
+```
+
+## Exemplo de Uso
+
+```javascript
+const handleDeleteAccount = async () => {
+  try {
+    const { data, error } = await supabase.rpc('self_delete_user_with_email', {
+      confirm_email: user.email
+    });
+    
+    if (error) throw error;
+    
+    if (data.success) {
+      console.log('Conta excluída:', data.message);
+      // Redirecionar para página de login
+    } else {
+      console.error('Erro:', data.message);
+    }
+  } catch (error) {
+    console.error('Erro ao excluir conta:', error);
+  }
+};
+```
+
+## Exemplo de Resposta
+
+```json
+{
+  "success": true,
+  "message": "Conta excluida com sucesso",
+  "user_id": "uuid-do-usuario",
+  "email": "usuario@email.com",
+  "deleted_profiles": 1
+}
+```
+
+## Como Funciona
+
+1. Verifica se usuário está autenticado via `auth.uid()`
+
 ```sql
-SELECT self_delete_user();
+current_user_id := auth.uid();
 ```
 
-## Como Funciona no Frontend
+1. Confirma email se solicitado
 
-O componente CloseAccount agora tenta executar as funções na seguinte ordem:
-
-1. **self_delete_user_with_email** (mais segura - confirma email)
-2. **self_delete_user** (menos segura - não confirma email)
-3. **simple_delete_user** (função admin como fallback)
-
-## Recursos de Segurança
-
-- ✅ Usa `auth.uid()` para identificar o usuário autenticado
-- ✅ Verifica se o usuário está autenticado antes de excluir
-- ✅ Opção com confirmação de email para maior segurança
-- ✅ Excluí primeiro o perfil, depois o usuário auth
-- ✅ Tratamento de erros com JSON de resposta
-- ✅ `SECURITY DEFINER` para execução com privilégios elevados
-
-## Notas Importantes
-
-⚠️ **ATENÇÃO**: Essas funções fazem exclusão permanente de dados!
-
-- A exclusão é irreversível
-- Remove todos os dados do usuário (perfil + autenticação)
-- Funciona apenas para o usuário autenticado (não pode excluir outros)
-- Requer que o usuário esteja logado
-
-## Solução de Problemas
-
-Se as funções não funcionarem:
-
-1. **Verificar se foram criadas no banco**:
 ```sql
-SELECT routine_name FROM information_schema.routines 
-WHERE routine_name LIKE '%self_delete%';
+IF current_user_email != confirm_email THEN
+    RETURN json_build_object('success', false, 'message', 'Email nao confere');
+END IF;
 ```
 
-2. **Verificar permissões**:
+1. Exclui perfil primeiro, depois usuário
+
 ```sql
-SELECT * FROM information_schema.role_routine_grants 
-WHERE routine_name = 'self_delete_user';
+DELETE FROM profiles WHERE id = current_user_id;
+DELETE FROM auth.users WHERE id = current_user_id;
 ```
 
-3. **Testar manualmente**:
-```sql
-SELECT self_delete_user(); -- Como usuário autenticado
-```
+## Segurança
+
+- ✅ Apenas o próprio usuário pode se excluir
+- ✅ Validação via `auth.uid()`
+- ✅ Confirmação opcional por email
+- ✅ Transação atômica (tudo ou nada)
+- ✅ Logs detalhados de erro
+- ✅ Função `SECURITY DEFINER` para privilégios elevados
