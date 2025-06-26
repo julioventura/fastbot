@@ -192,3 +192,11 @@
 .bg-gradient-radial {
   background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
 }
+
+/* Removendo todas as animações de glow do footer */
+/* As animações fast-pulse-glow, fast-pulse-glow-hover, fast-pulse-text, fast-scanline foram removidas */
+/* As animações medium-pulse, medium-scanline, medium-glow foram removidas */
+/* As animações slow-pulse, slow-scanline, gentle-glow foram removidas */
+/* As animações digital-flicker relacionadas foram removidas */
+
+/* Mantendo apenas animações básicas se necessário para outros componentes */

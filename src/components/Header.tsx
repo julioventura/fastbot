@@ -261,7 +261,7 @@ const Header = () => {
               className="flex flex-col items-start group cursor-pointer"
             >
               {/* "FastBot" - mantido igual */}
-              <span className="font-bold text-4xl mt-2 !text-foreground 
+              <span className="font-bold text-center text-3xl mt-2 !text-foreground 
               [text-shadow:0_0_12px_hsl(var(--primary)),0_0_24px_hsl(var(--primary)/0.9),0_0_36px_hsl(var(--primary)/0.6),0_0_48px_hsl(var(--primary)/0.3)]
               group-hover:!text-primary 
               group-hover:[text-shadow:0_0_16px_hsl(var(--primary)),0_0_32px_hsl(var(--primary)),0_0_48px_hsl(var(--primary)/0.8),0_0_64px_hsl(var(--primary)/0.5)]
@@ -270,8 +270,8 @@ const Header = () => {
               </span>
               
               {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
-              <span className="font-mono text-md !text-primary font-light pt-0">
-                DENTISTAS.COM.BR / FASTBOT
+              <span className="font-mono text-center text-sm !text-primary font-light pt-1">
+                DENTISTAS.COM.BR
               </span>
             </NavLink>
           </div>
