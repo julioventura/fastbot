@@ -244,7 +244,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         <Button 
           type="button"
           variant="outline"
-          className="w-full mt-2 border-[#2a4980]/70 bg-transparent text-[#4f9bff] hover:bg-[#2a4980]/20 hover:text-white transition-all"
+          className="w-full mt-2 border-border bg-transparent text-primary hover:bg-secondary hover:text-primary-foreground transition-all"
           onClick={handleResendConfirmation}
           disabled={isLoading || !email}
         >

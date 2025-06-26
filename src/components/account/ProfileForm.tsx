@@ -185,15 +185,15 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
     <form onSubmit={handleUpdateProfile} className="space-y-6">
       {/* Campo Nome */}
       <div className="space-y-2">
-        <Label htmlFor="name" className="text-gray-300">Nome</Label>
+        <Label htmlFor="name" className="text-foreground">Nome</Label>
         <div className="relative">
-          <User className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+          <User className="absolute left-2 top-2.5 h-4 w-4 text-theme-accent" />
           <Input
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Seu nome"
-            className="pl-8 bg-[#0a1629]/80 border-[#2a4980]/50 text-white placeholder:text-gray-500"
+            className="pl-8 bg-background border-border text-foreground placeholder:text-muted-foreground"
             disabled={isSaving} // Desabilita durante o salvamento.
           />
         </div>
@@ -201,31 +201,31 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
       
       {/* Campo Email (Somente Leitura) */}
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-gray-300">Email</Label>
+        <Label htmlFor="email" className="text-foreground">Email</Label>
         <div className="relative">
-          <Mail className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+          <Mail className="absolute left-2 top-2.5 h-4 w-4 text-theme-accent" />
           <Input
             id="email"
             value={email}
             readOnly // Campo não pode ser editado.
             disabled // Desabilita visualmente o campo.
-            className="pl-8 bg-[#0a1629] border-[#2a4980]/50 text-gray-400"
+            className="pl-8 bg-background border-border text-muted-foreground"
           />
         </div>
-        <p className="text-sm text-gray-400">O email não pode ser alterado.</p>
+        <p className="text-sm text-muted-foreground">O email não pode ser alterado.</p>
       </div>
       
       {/* Campo WhatsApp */}
       <div className="space-y-2">
-        <Label htmlFor="whatsapp" className="text-gray-300">WhatsApp</Label>
+        <Label htmlFor="whatsapp" className="text-foreground">WhatsApp</Label>
         <div className="relative">
-          <Phone className="absolute left-2 top-2.5 h-4 w-4 text-[#4f9bff]" />
+          <Phone className="absolute left-2 top-2.5 h-4 w-4 text-theme-accent" />
           <Input
             id="whatsapp"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
             placeholder="Seu número de WhatsApp"
-            className="pl-8 bg-[#0a1629]/80 border-[#2a4980]/50 text-white placeholder:text-gray-500"
+            className="pl-8 bg-background border-border text-foreground placeholder:text-muted-foreground"
             disabled={isSaving}
           />
         </div>
@@ -238,12 +238,12 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
             id="is_student" 
             checked={isStudent} 
             onCheckedChange={(checked) => setIsStudent(checked === true)} // Garante que o valor seja boolean.
-            className="border-[#4f9bff] data-[state=checked]:bg-[#4f9bff]"
+            className="border-primary data-[state=checked]:bg-primary"
             disabled={isSaving}
           />
           <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="is_student" className="text-gray-300 flex items-center space-x-2">
-              <GraduationCap className="h-4 w-4 text-[#4f9bff]" />
+            <Label htmlFor="is_student" className="text-foreground flex items-center space-x-2">
+              <GraduationCap className="h-4 w-4 text-theme-accent" />
               <span>Estudante</span>
             </Label>
           </div>
@@ -254,12 +254,12 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
             id="is_professor" 
             checked={isProfessor} 
             onCheckedChange={(checked) => setIsProfessor(checked === true)} // Garante que o valor seja boolean.
-            className="border-[#4f9bff] data-[state=checked]:bg-[#4f9bff]"
+            className="border-primary data-[state=checked]:bg-primary"
             disabled={isSaving}
           />
           <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="is_professor" className="text-gray-300 flex items-center space-x-2">
-              <UserPlus className="h-4 w-4 text-[#4f9bff]" />
+            <Label htmlFor="is_professor" className="text-foreground flex items-center space-x-2">
+              <UserPlus className="h-4 w-4 text-theme-accent" />
               <span>Professor</span>
             </Label>
           </div>
@@ -270,7 +270,7 @@ const ProfileForm = ({ userId, userData, onUpdate }: ProfileFormProps) => {
       <Button 
         type="submit" 
         disabled={isSaving} // Desabilita o botão durante o salvamento.
-        className="bg-[#3b82f6] hover:bg-[#2563eb] text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+        className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_15px_rgba(59,130,246,0.3)]"
       >
         {isSaving ? "Salvando..." : "Salvar alterações"} {/* Texto do botão muda durante o salvamento. */}
       </Button>

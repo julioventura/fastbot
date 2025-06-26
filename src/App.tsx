@@ -46,6 +46,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Account from "./pages/Account";
@@ -71,13 +72,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     {/* TooltipProvider: Habilita o uso de tooltips (dicas de ferramenta) em toda a aplicação. */}
     <TooltipProvider>
-      {/* AuthProvider: Gerencia o estado de autenticação e fornece contexto de autenticação. */}
-      <AuthProvider>
-        {/* Toaster: Componente para exibir notificações globais (estilo toast tradicional). */}
-        <Toaster />
-        {/* Sonner: Componente para exibir notificações globais (estilo Sonner). */}
-        <Sonner />
-        {/* BrowserRouter: Habilita o roteamento baseado no histórico do navegador. */}
+      {/* ThemeProvider: Gerencia o estado do tema global da aplicação. */}
+      <ThemeProvider>
+        {/* AuthProvider: Gerencia o estado de autenticação e fornece contexto de autenticação. */}
+        <AuthProvider>
+          {/* Toaster: Componente para exibir notificações globais (estilo toast tradicional). */}
+          <Toaster />
+          {/* Sonner: Componente para exibir notificações globais (estilo Sonner). */}
+          <Sonner />        {/* BrowserRouter: Habilita o roteamento baseado no histórico do navegador. */}
         <BrowserRouter basename="/fastbot">
           {/* Header: Componente de cabeçalho, renderizado em todas as rotas. */}
           <Header />
@@ -105,8 +107,9 @@ const App = () => (
           <Footer />
         </BrowserRouter>
       </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+    </ThemeProvider>
+  </TooltipProvider>
+</QueryClientProvider>
 );
 
 export default App;

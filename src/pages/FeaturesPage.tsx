@@ -26,7 +26,7 @@ const FeaturesPage: React.FC = () => {
     // 'flex flex-col' para organizar o conteúdo em coluna.
     // 'bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]' define o fundo com gradiente.
     // 'text-white' define a cor do texto padrão para branco.
-    <div className="flex flex-col bg-gradient-to-b from-[#0a1629] to-[#0e2d5e] text-white">
+    <div className="flex flex-col bg-theme-gradient-alt text-foreground">
       
       {/* Seção principal do conteúdo da página. */}
       {/* 'flex-grow' faz com que esta seção ocupe o espaço disponível, empurrando o Footer (se existir) para baixo. */}

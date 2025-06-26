@@ -31,17 +31,17 @@ export default function CTA() {
           {/* Bloco de texto principal da CTA. */}
           <div className="text-center mb-12">
             {/* Título da CTA */}
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-              Pronto em <span className="text-[#4f9bff]">3 minutos!</span>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
+              Pronto em <span className="text-theme-accent">3 minutos!</span>
             </h2>
             {/* Descrição/Subtítulo da CTA */}
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Nosso chatbot coloca a sua vida profissional em outro patamar!
             </p>
             {/* Botão de Chamada para Ação */}
             <div className="mt-8">
               <Button 
-                className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white px-8 py-6 text-lg rounded-lg drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-lg drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
                 // O ícone ArrowRight poderia ser adicionado aqui se desejado.
                 // Exemplo: <ArrowRight className="ml-2 h-5 w-5" />
               >

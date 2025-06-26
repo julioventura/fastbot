@@ -46,7 +46,7 @@ const Testimonials = () => {
     return (
         // Elemento <section> principal com estilos de fundo e posicionamento relativo.
         // 'relative' é usado para posicionar os elementos SVG de decoração e a grade absoluta dentro dele.
-        <section className="relative py-5 md:py-0 bg-gradient-to-b from-[#082756] to-[#0a1629]">
+        <section className="relative py-5 md:py-0 bg-theme-gradient-alt">
             
             {/* Efeito de Brilho SVG (Decorativo) */}
             {/* Este div contém um SVG que cria um efeito de brilho de fundo dinâmico. */}
@@ -115,8 +115,8 @@ const Testimonials = () => {
             <div className="section-container relative z-10" id="testimonials-section">
                 {/* Título da Seção */}
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-                        <span className="text-[#4f9bff]">O que falam de nossos</span> chatbots
+                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
+                        <span className="text-theme-accent">O que falam de nossos</span> chatbots
                     </h2>
                 </div>
 
@@ -128,7 +128,7 @@ const Testimonials = () => {
                         <Card 
                             key={index} // Chave única para cada card.
                             // Estilos do card, incluindo fundo, borda, sombra e efeito de hover.
-                            className="p-8 bg-[#0a1629]/50 backdrop-blur-sm border border-[#2a4980]/50 shadow-md hover:shadow-lg transition-shadow duration-300"
+                            className="p-8 bg-theme-card backdrop-blur-sm border border-theme-accent/50 shadow-md hover:shadow-lg transition-shadow duration-300"
                         >
                             {/* Layout flexível interno para o conteúdo do card. */}
                             <div className="flex flex-col h-full">

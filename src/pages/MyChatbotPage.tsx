@@ -248,17 +248,17 @@ const MyChatbotPage: React.FC = () => {
     {/* Decoração de fundo inline para garantir que seja renderizada */}
       <div className="absolute inset-0 z-0">
         {/* Gradiente principal horizontal */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1e3a5f]/40 via-[#0a1629]/20 to-[#1e3a5f]/40"></div>
+        <div className="absolute inset-0 bg-theme-gradient"></div>
         
         {/* Elementos decorativos sutis */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#4f9bff]/10 rounded-full blur-3xl opacity-60"></div>
-        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-[#60a5fa]/10 rounded-full blur-2xl opacity-50"></div>
-        <div className="absolute top-1/2 left-3/4 w-64 h-64 bg-[#3b82f6]/10 rounded-full blur-xl opacity-40"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-60"></div>
+        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-2xl opacity-50"></div>
+        <div className="absolute top-1/2 left-3/4 w-64 h-64 bg-primary/8 rounded-full blur-xl opacity-40"></div>
         
         {/* Grade sutil de pontos para textura */}
         <div className="absolute inset-0 opacity-5">
           <div className="w-full h-full" style={{
-            backgroundImage: 'radial-gradient(circle, #4f9bff 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, hsl(var(--primary)) 1px, transparent 1px)',
             backgroundSize: '50px 50px'
           }}></div>
         </div>
@@ -269,10 +269,10 @@ const MyChatbotPage: React.FC = () => {
         
         {/* Sistema de Abas para organizar o conteúdo */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-[#0e203e]/70 border border-[#2a4980]/50 mb-6">
-            <TabsTrigger value="view" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">INSTRUÇÕES</TabsTrigger>
-            <TabsTrigger value="edit" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">EDITAR</TabsTrigger>
-            <TabsTrigger value="chat" className="data-[state=active]:bg-[#3b82f6]/30 data-[state=active]:text-white text-gray-300">TESTAR</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-secondary/70 border border-border mb-6">
+            <TabsTrigger value="view" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">INSTRUÇÕES</TabsTrigger>
+            <TabsTrigger value="edit" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">EDITAR</TabsTrigger>
+            <TabsTrigger value="chat" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">TESTAR</TabsTrigger>
           </TabsList>
 
           <TabsContent value="view">

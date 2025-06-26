@@ -18,7 +18,7 @@ import { Lock } from "lucide-react"; // Ícone de cadeado.
 const SecurityCard = () => {
   return (
     // Card principal com estilos de fundo, borda e backdrop-filter + MARGEM INFERIOR.
-    <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white mb-8">
+    <Card className="bg-theme-card border border-theme-accent/50 backdrop-blur-sm text-foreground mb-8">
       
       {/* Cabeçalho do Card */}
       <CardHeader>
@@ -30,8 +30,8 @@ const SecurityCard = () => {
       <CardContent className="space-y-4">
         
         {/* Seção "Senha" */}
-        <div className="flex items-center space-x-2 text-gray-300">
-          <Lock size={16} className="text-[#4f9bff]" /> {/* Ícone de cadeado */}
+        <div className="flex items-center space-x-2 text-foreground">
+          <Lock size={16} className="text-theme-accent" /> {/* Ícone de cadeado */}
           <span className="text-sm">Alterar senha</span>
         </div>
         
@@ -39,7 +39,7 @@ const SecurityCard = () => {
         {/* TODO: Implementar a funcionalidade de alteração de senha ou navegação para a página correspondente. */}
         <Button 
           variant="outline" 
-          className="w-full bg-blue-600 border-[#2a4980]/50 text-[#dcebff] hover:bg-[#2a4980]/50 hover:border-blue-400 hover:text-gray-400"
+          className="w-full bg-primary border-border text-primary-foreground hover:bg-primary/90 hover:border-primary"
           // onClick={() => { /* Lógica para alterar senha */ }} // Exemplo de onde a lógica seria adicionada
         >
           Alterar senha

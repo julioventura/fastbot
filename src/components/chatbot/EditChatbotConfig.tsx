@@ -31,10 +31,10 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
   onCancel
 }) => {
   return (
-    <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white">
+    <Card className="bg-card/60 border border-border backdrop-blur-sm text-foreground">
       <CardHeader>
-        <CardTitle className="text-white">Editar Configurações do Chatbot</CardTitle>
-        <CardDescription className="text-gray-300">
+        <CardTitle className="text-foreground">Editar Configurações do Chatbot</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Personalize as informações e o comportamento do seu chatbot.
         </CardDescription>
       </CardHeader>
@@ -42,40 +42,40 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
         <form onSubmit={onSubmit} className="space-y-6">
           {/* Campo WhatsApp */}
           <div>
-            <Label htmlFor="whatsapp" className="text-gray-300">Número do WhatsApp do chatbot</Label>
+            <Label htmlFor="whatsapp" className="text-foreground">Número do WhatsApp do chatbot</Label>
             <Input
               id="whatsapp"
               name="whatsapp"
               value={chatbotData.whatsapp}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Ex: +55 11 91234-5678"
             />
-            <p className="mt-1 text-xs text-gray-400">Número do WhatsApp do chatbot</p>
+            <p className="mt-1 text-xs text-muted-foreground">Número do WhatsApp do chatbot</p>
           </div>
 
           {/* Campo Nome do Chatbot */}
           <div>
-            <Label htmlFor="chatbot_name" className="text-gray-300">Nome do Chatbot (para Homepage)</Label>
+            <Label htmlFor="chatbot_name" className="text-foreground">Nome do Chatbot (para Homepage)</Label>
             <Input
               id="chatbot_name"
               name="chatbot_name"
               value={chatbotData.chatbot_name}
               onChange={onChange}
-              className="text-lg mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+              className="text-lg mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Ex: Assistente Virtual Dr. Silva"
             />
           </div>
 
           {/* Campo Mensagem de Boas-vindas */}
           <div>
-            <Label htmlFor="welcome_message" className="text-gray-300">Mensagem de Boas-vindas (Chatbot)</Label>
+            <Label htmlFor="welcome_message" className="text-foreground">Mensagem de Boas-vindas (Chatbot)</Label>
             <Textarea
               id="welcome_message"
               name="welcome_message"
               value={chatbotData.welcome_message}
               onChange={onChange}
-              className="text-lg mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+              className="text-lg mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Olá! Sou o assistente virtual do consultório. Como posso ajudar?"
               rows={3}
             />
@@ -83,39 +83,39 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
 
           {/* Campo Endereço do Consultório */}
           <div>
-            <Label htmlFor="office_address" className="text-gray-300">Endereço do Consultório</Label>
+            <Label htmlFor="office_address" className="text-foreground">Endereço do Consultório</Label>
             <Input
               id="office_address"
               name="office_address"
               value={chatbotData.office_address}
               onChange={onChange}
-              className="text-lg mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+              className="text-lg mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Rua Exemplo, 123, Bairro, Cidade - UF"
             />
           </div>
 
           {/* Campo Horários de Atendimento */}
           <div>
-            <Label htmlFor="office_hours" className="text-gray-300">Horários de Atendimento</Label>
+            <Label htmlFor="office_hours" className="text-foreground">Horários de Atendimento</Label>
             <Input
               id="office_hours"
               name="office_hours"
               value={chatbotData.office_hours}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Segunda a Sexta, das 08h às 18h"
             />
           </div>
 
           {/* Campo Especialidades Atendidas */}
           <div>
-            <Label htmlFor="specialties" className="text-gray-300">Especialidades Atendidas</Label>
+            <Label htmlFor="specialties" className="text-foreground">Especialidades Atendidas</Label>
             <Textarea
               id="specialties"
               name="specialties"
               value={chatbotData.specialties}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Clínica Geral, Ortodontia, Implantes..."
               rows={3}
             />
@@ -123,17 +123,17 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
 
           {/* Campo Mensagem de Sistema (Prompt) */}
           <div>
-            <Label htmlFor="system_message" className="text-gray-300">Mensagem de Sistema do Chatbot</Label>
+            <Label htmlFor="system_message" className="text-foreground">Mensagem de Sistema do Chatbot</Label>
             <Textarea
               id="system_message"
               name="system_message"
               value={chatbotData.system_message}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-[#16305d] border-[#2a4980]/70 text-white placeholder:text-gray-500 focus:ring-[#4f9bff] focus:border-[#4f9bff]"
+              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Você é um assistente virtual. Seja cordial e ajude com informações sobre..."
               rows={30}
             />
-            <p className="mt-1 text-xs text-gray-400">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
           </div>
 
           {/* Botões de Ação do Formulário */}
@@ -142,14 +142,14 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="border-[#4f9bff] text-[#60a5fa] bg-blue-800 hover:bg-[#4f9bff]/10 hover:text-[#7caffd]"
+              className="border-primary text-primary bg-secondary hover:bg-secondary/80 hover:text-primary"
               disabled={isSaving}
             >
               Cancelar
             </Button>
             <Button 
               type="submit"
-              className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white px-6 py-2 text-base rounded-md drop-shadow-[0_0_8px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_12px_rgba(79,155,255,0.5)] transition-all"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 text-base rounded-md"
               disabled={isSaving}
             >
               {isSaving ? "Salvando..." : "Salvar Configurações"}

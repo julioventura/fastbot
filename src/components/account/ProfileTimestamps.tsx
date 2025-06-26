@@ -92,7 +92,7 @@ const ProfileTimestamps = ({ userId, createdAt, updatedAt }: ProfileTimestampsPr
 
   // Renderização do card com os timestamps.
   return (
-    <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white mb-8">
+    <Card className="bg-theme-card border border-theme-accent/50 backdrop-blur-sm text-foreground mb-8">
       {/* Cabeçalho do Card */}
       <CardHeader>
         <CardTitle className="text-white">Informações do Perfil</CardTitle>
@@ -104,19 +104,19 @@ const ProfileTimestamps = ({ userId, createdAt, updatedAt }: ProfileTimestampsPr
         
         {/* Seção "ID do Usuário" - COM FUNCIONALIDADE DE COPY */}
         <div className="space-y-2">
-          <div className="flex items-center space-x-2 text-gray-300">
-            <User size={16} className="text-[#4f9bff]" />
+          <div className="flex items-center space-x-2 text-foreground">
+            <User size={16} className="text-theme-accent" />
             <span className="text-sm">ID do Usuário</span>
           </div>
           {/* Div para exibir o ID do usuário com botão de copy */}
-          <div className="flex items-center justify-between px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded">
-            <span className="text-gray-300 font-mono text-sm flex-1 truncate pr-2">
+          <div className="flex items-center justify-between px-4 py-2 bg-background border border-border rounded">
+            <span className="text-foreground font-mono text-sm flex-1 truncate pr-2">
               {userId}
             </span>
             {/* Botão de Copy */}
             <button
               onClick={copyToClipboard}
-              className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-[#4f9bff] hover:bg-[#2a4980]/30 rounded transition-colors group"
+              className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-theme-accent hover:bg-theme-hover rounded transition-colors group"
               title="Copiar ID"
             >
               <Copy 
@@ -130,22 +130,22 @@ const ProfileTimestamps = ({ userId, createdAt, updatedAt }: ProfileTimestampsPr
         
         {/* Seção "Criado em" */}
         <div className="space-y-2">
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Clock size={16} className="text-[#4f9bff]" />
+          <div className="flex items-center space-x-2 text-foreground">
+            <Clock size={16} className="text-theme-accent" />
             <span className="text-sm">Criado em</span>
           </div>
-          <div className="px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded text-gray-300">
+          <div className="px-4 py-2 bg-background border border-border rounded text-foreground">
             {formatDateTime(createdAt)}
           </div>
         </div>
         
         {/* Seção "Atualizado em" */}
         <div className="space-y-2">
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Clock size={16} className="text-[#4f9bff]" />
+          <div className="flex items-center space-x-2 text-foreground">
+            <Clock size={16} className="text-theme-accent" />
             <span className="text-sm">Atualizado em</span>
           </div>
-          <div className="px-4 py-2 bg-[#0a1629]/80 border border-[#2a4980]/50 rounded text-gray-300">
+          <div className="px-4 py-2 bg-background border border-border rounded text-foreground">
             {formatDateTime(updatedAt)}
           </div>
         </div>

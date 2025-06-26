@@ -138,7 +138,7 @@ const ResetPasswordPage: React.FC = () => {
             </p>
             <Button 
               onClick={() => navigate('/')}
-              className="w-full bg-[#3b82f6] hover:bg-[#4f9bff]"
+              className="w-full bg-primary hover:bg-primary/90"
             >
               Voltar à Página Inicial
             </Button>
@@ -216,7 +216,7 @@ const ResetPasswordPage: React.FC = () => {
             {/* Botão de Submissão */}
             <Button 
               type="submit" 
-              className="w-full bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all" 
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" 
               disabled={isLoading}
             >
               {isLoading ? "Alterando senha..." : "Alterar Senha"}

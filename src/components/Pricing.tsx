@@ -81,7 +81,7 @@ const Pricing = () => {
         // 'min-h-screen' garante que a seção ocupe pelo menos a altura total da tela.
         <section
             id="pricing"
-            className="relative min-h-screen flex items-center justify-center py-0 md:py-5 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
+            className="relative min-h-screen flex items-center justify-center py-0 md:py-5 bg-theme-gradient-alt"
         >
             {/* Efeito de Brilho SVG (Decorativo) */}
             {/* Este div contém um SVG que cria um efeito de brilho de fundo. */}
@@ -196,7 +196,7 @@ const Pricing = () => {
                         <Card
                             key={index} // Chave única para cada card.
                             // Classes condicionais para destacar o plano popular.
-                            className={`p-6 md:p-8 relative bg-[#0a1629]/60 backdrop-blur-md flex flex-col ${plan.isPopular
+                            className={`p-6 md:p-8 relative bg-theme-card backdrop-blur-md flex flex-col ${plan.isPopular
                                 ? 'border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]'
                                 : 'border border-[#2a4980]/70 shadow-lg'
                                 }`}
@@ -229,8 +229,8 @@ const Pricing = () => {
                             <div className="space-y-3 mb-8 flex-grow">
                                 {plan.features.map((feature, i) => (
                                     <div key={i} className="flex items-start">
-                                        <Check className="h-5 w-5 text-[#4f9bff] mr-2 mt-0.5 flex-shrink-0" />
-                                        <span className="text-gray-200 text-sm sm:text-base">{feature}</span>
+                                        <Check className="h-5 w-5 text-theme-accent mr-2 mt-0.5 flex-shrink-0" />
+                                        <span className="text-muted-foreground text-sm sm:text-base">{feature}</span>
                                     </div>
                                 ))}
                             </div>
@@ -240,12 +240,12 @@ const Pricing = () => {
                             <Button
                                 variant={plan.buttonVariant}
                                 // Classes condicionais para estilizar o botão do plano popular de forma diferente.
-                                className={`w-full mt-auto text-white font-semibold py-3 text-base md:text-lg
+                                className={`w-full mt-auto text-foreground font-semibold py-3 text-base md:text-lg
                                   ${plan.isPopular
-                                        ? 'bg-blue-600 hover:bg-[#3b82f6] drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]'
+                                        ? 'bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]'
                                         : plan.buttonVariant === 'outline' 
-                                            ? 'bg-transparent border-2 border-[#4f9bff] hover:bg-[#4f9bff]/20 text-[#4f9bff] hover:text-white' // Estilo para botão outline
-                                            : 'bg-[#2a4980]/80 hover:bg-[#375da0] border border-[#4f9bff]/50 hover:border-[#4f9bff]' // Estilo para botão default não popular
+                                            ? 'bg-transparent border-2 border-theme-accent hover:bg-theme-hover-light text-theme-accent hover:text-foreground' // Estilo para botão outline
+                                            : 'bg-theme-accent-bg/80 hover:bg-theme-accent-bg border border-theme-accent/50 hover:border-theme-accent' // Estilo para botão default não popular
                                     } transition-all duration-300 ease-in-out transform hover:scale-105`}
                             >
                                 {plan.buttonText}

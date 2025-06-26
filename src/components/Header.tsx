@@ -33,6 +33,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useTheme } from '@/hooks/useTheme';
+import { ThemePalette } from '@/contexts/theme-context';
 import { useAuth } from "@/lib/auth/useAuth"; // CORREÇÃO AQUI
 import { Link, NavLink } from 'react-router-dom';
 import {
@@ -40,10 +43,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Bot, Coins } from 'lucide-react';
+import { User, LogOut, Bot, Coins, Shield, Palette, Moon, Sun } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '../hooks/useProfile';
+import { useIsAdmin } from '../hooks/useIsAdmin';
 
 // Custom Hook: useScrollDirection
 // Determina a direção do scroll da página (para cima ou para baixo).
@@ -98,14 +103,92 @@ const Header = () => {
   // isAuthModalOpen: Estado para controlar a visibilidade do modal de autenticação.
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "reset">("login");
+  const [isThemeDialogOpen, setIsThemeDialogOpen] = useState(false);
 
   // user: Objeto do usuário autenticado.
   // signOut: Função para deslogar o usuário.
   const { user, signOut, loading: authLoading, initializing } = useAuth();
   const { profile, loading: profileLoading, error } = useProfile();
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { theme, setTheme } = useTheme();
 
   // userName: Estado para armazenar o nome do usuário a ser exibido.
   const [userName, setUserName] = useState("");
+
+  // Opções de tema
+  const themeOptions = [
+    {
+      id: 'blue-dark' as ThemePalette,
+      name: 'Azul modo escuro',
+      description: 'Tema escuro com tons de azul',
+      icon: <Moon className="h-4 w-4 text-blue-400" />,
+      preview: {
+        primary: '#3B82F6',
+        secondary: '#1E293B',
+        background: '#0F172A'
+      }
+    },
+    {
+      id: 'blue-light' as ThemePalette,
+      name: 'Azul modo claro',
+      description: 'Tema claro com tons de azul',
+      icon: <Sun className="h-4 w-4 text-blue-600" />,
+      preview: {
+        primary: '#3B82F6',
+        secondary: '#F1F5F9',
+        background: '#FFFFFF'
+      }
+    },
+    {
+      id: 'purple-dark' as ThemePalette,
+      name: 'Púrpura modo escuro',
+      description: 'Tema escuro com tons de púrpura',
+      icon: <Moon className="h-4 w-4 text-purple-400" />,
+      preview: {
+        primary: '#A855F7',
+        secondary: '#2E1065',
+        background: '#1E1B4B'
+      }
+    },
+    {
+      id: 'purple-light' as ThemePalette,
+      name: 'Púrpura modo claro',
+      description: 'Tema claro com tons de púrpura',
+      icon: <Sun className="h-4 w-4 text-purple-600" />,
+      preview: {
+        primary: '#A855F7',
+        secondary: '#FAF5FF',
+        background: '#FFFFFF'
+      }
+    },
+    {
+      id: 'gray-dark' as ThemePalette,
+      name: 'Cinza modo escuro',
+      description: 'Tema escuro com tons de cinza',
+      icon: <Moon className="h-4 w-4 text-gray-400" />,
+      preview: {
+        primary: '#F8FAFC',
+        secondary: '#374151',
+        background: '#111827'
+      }
+    },
+    {
+      id: 'gray-light' as ThemePalette,
+      name: 'Cinza modo claro',
+      description: 'Tema claro com tons de cinza',
+      icon: <Sun className="h-4 w-4 text-gray-600" />,
+      preview: {
+        primary: '#1F2937',
+        secondary: '#F9FAFB',
+        background: '#FFFFFF'
+      }
+    }
+  ];
+
+  const handleThemeChange = (newTheme: ThemePalette) => {
+    setTheme(newTheme);
+    setIsThemeDialogOpen(false); // Fecha o dialog após selecionar o tema
+  };
 
 
   // useEffect para buscar o nome do perfil do usuário.
@@ -276,7 +359,7 @@ const Header = () => {
         // 'z-50': Garante que o header fique acima de outros elementos.
         // Estilos de fundo, borda e sombra.
         className={`sticky transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
-          } top-0 z-50 bg-gradient-to-r from-[#0a1629] to-[#0e2d5e] backdrop-blur-md border-b border-[#2a4980]/40 shadow-lg shadow-[#0063F7]/10`}
+          } top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-lg`}
       >
         {/* Overlay de grade com efeito de brilho (decorativo). */}
         <div className="absolute inset-0 z-0 opacity-10">
@@ -296,21 +379,17 @@ const Header = () => {
               className="flex flex-col items-start group"
             >
               {/* "FastBot" - mantido igual */}
-              <span className="font-bold text-3xl text-white 
-              [text-shadow:0_0_12px_#4f9bff,0_0_24px_rgba(79,155,255,0.9),0_0_36px_rgba(79,155,255,0.6),0_0_48px_rgba(79,155,255,0.3)]
-              group-hover:text-[#4f9bff] 
-              group-hover:[text-shadow:0_0_16px_#4f9bff,0_0_32px_rgba(79,155,255,1),0_0_48px_rgba(79,155,255,0.8),0_0_64px_rgba(79,155,255,0.5)]
+              <span className="font-bold text-4xl text-foreground 
+              [text-shadow:0_0_12px_hsl(var(--primary)),0_0_24px_hsl(var(--primary)/0.9),0_0_36px_hsl(var(--primary)/0.6),0_0_48px_hsl(var(--primary)/0.3)]
+              group-hover:text-primary 
+              group-hover:[text-shadow:0_0_16px_hsl(var(--primary)),0_0_32px_hsl(var(--primary)),0_0_48px_hsl(var(--primary)/0.8),0_0_64px_hsl(var(--primary)/0.5)]
               transition-all duration-300 tracking-wide">
                 FastBot
               </span>
               
               {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
-              <span className="font-mono text-xs text-[#00d4ff] font-light
-              [text-shadow:0_0_2px_#00d4ff,0_0_4px_#00d4ff,0_0_6px_rgba(0,212,255,0.4)]
-              group-hover:text-[#4fc3f7] 
-              group-hover:[text-shadow:0_0_3px_#4fc3f7,0_0_6px_#4fc3f7,0_0_9px_rgba(79,195,247,0.6)]
-              transition-all duration-300 tracking-[0.15em] uppercase -mt-1 max-w-[140px] truncate">
-                DENTISTAS.COM.BR
+              <span className="font-mono text-sm text-primary font-light pt-1">
+                DENTISTAS.COM.BR / FASTBOT
               </span>
             </NavLink>
           </div>
@@ -319,7 +398,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink
               to="/"
-              className={({ isActive }) => `font-medium ${isActive ? "text-white text-2xl drop-shadow-[0_0_8px_rgba(79,155,255,0.7)]" : "text-gray-300 text-sm"} hover:text-white hover:drop-shadow-[0_0_8px_rgba(79,155,255,0.7)] transition-all`}
+              className={({ isActive }) => `font-medium ${isActive ? "text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "text-muted-foreground text-sm"} hover:text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
             >
               Início
             </NavLink>
@@ -373,7 +452,7 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-blue-400 hover:border-[#4f9bff]  transition-all px-3 py-2 rounded-md"
+                    className="border-border text-foreground bg-background/70 hover:bg-secondary hover:border-primary transition-all px-3 py-2 rounded-md"
                   >
                     <User className="mr-2 h-4 w-4" />
                     <span className="hidden sm:inline">{truncate(userName)}</span>
@@ -381,10 +460,10 @@ const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="w-56 bg-[#0a1629] border-2 border-[#2a4980]/80 shadow-xl rounded-lg p-1 backdrop-blur-sm"
+                  className="w-56 bg-background border-2 border-border shadow-xl rounded-lg p-1 backdrop-blur-sm"
                 >
                   <DropdownMenuItem
-                    className="cursor-pointer rounded-md px-3 py-2 text-gray-200 hover:!bg-[#2a4980]/70 hover:!text-white focus:!bg-[#2a4980]/70 focus:!text-white transition-colors flex items-center"
+                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
                     asChild
                   >
                     <Link to="/my-chatbot">
@@ -394,7 +473,7 @@ const Header = () => {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    className="cursor-pointer rounded-md px-3 py-2 text-gray-200 hover:!bg-[#2a4980]/70 hover:!text-white focus:!bg-[#2a4980]/70 focus:!text-white transition-colors flex items-center"
+                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
                     asChild
                   >
                     <Link to="/account">
@@ -403,9 +482,35 @@ const Header = () => {
                     </Link>
                   </DropdownMenuItem>
 
+                  {/* Item Admin - apenas para administradores */}
+                  {isAdmin && (
+                    <DropdownMenuItem
+                      className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
+                      asChild
+                    >
+                      <Link to="/admin">
+                        <Shield className="mr-3 h-6 w-6" />
+                        Admin
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+
+                  <DropdownMenuSeparator className="bg-border" />
+
+                  {/* Item Configurar Tema */}
+                  <DropdownMenuItem
+                    onClick={() => setIsThemeDialogOpen(true)}
+                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
+                  >
+                    <Palette className="mr-3 h-6 w-6" />
+                    Tema
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator className="bg-border" />
+
                   <DropdownMenuItem
                     onClick={handleSignOut}
-                    className="cursor-pointer rounded-md px-3 py-2 text-red-400 hover:!bg-[#2a4980]/70 hover:!text-red-300 focus:!bg-[#2a4980]/70 focus:!text-red-300 transition-colors flex items-center"
+                    className="cursor-pointer rounded-md px-3 py-2 text-destructive hover:!bg-secondary hover:!text-destructive focus:!bg-secondary focus:!text-destructive transition-colors flex items-center"
                   >
                     <LogOut className="mr-3 h-6 w-6" />
                     Sair
@@ -417,7 +522,7 @@ const Header = () => {
               <>
                 <Button
                   variant="outline"
-                  className="hidden md:inline-flex border-[#4f9bff]/80 text-white bg-[#0a1629]/70 hover:bg-[#4f9bff]/20 hover:border-[#4f9bff] hover:drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] transition-all"
+                  className="hidden md:inline-flex border-border text-foreground bg-background/70 hover:bg-secondary hover:border-primary transition-all"
                   onClick={() => {
                     console.log("Clicou em Entrar - definindo aba para login");
                     setAuthModalTab("login");
@@ -430,7 +535,7 @@ const Header = () => {
                   Entrar
                 </Button>
                 <Button
-                  className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all"
                   onClick={() => {
                     console.log("Clicou em Cadastre-se - definindo aba para signup");
                     setAuthModalTab("signup");
@@ -446,6 +551,65 @@ const Header = () => {
             )}
           </div>
         </div>
+
+        {/* Dialog de Seleção de Tema */}
+        <Dialog open={isThemeDialogOpen} onOpenChange={setIsThemeDialogOpen}>
+          <DialogContent className="sm:max-w-[600px] bg-background border-border">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Palette className="h-5 w-5" />
+                Escolha seu tema
+              </DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+              {themeOptions.map((option) => (
+                <div
+                  key={option.id}
+                  className={`
+                    relative p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105
+                    ${theme === option.id 
+                      ? 'border-primary shadow-lg ring-2 ring-primary/20' 
+                      : 'border-border hover:border-primary/50'
+                    }
+                  `}
+                  onClick={() => handleThemeChange(option.id)}
+                >
+                  {/* Preview visual do tema */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex gap-1">
+                      <div 
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: option.preview.primary }}
+                      />
+                      <div 
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: option.preview.secondary }}
+                      />
+                      <div 
+                        className="w-4 h-4 rounded-full border"
+                        style={{ backgroundColor: option.preview.background }}
+                      />
+                    </div>
+                    {option.icon}
+                  </div>
+                  
+                  {/* Informações do tema */}
+                  <div className="space-y-1">
+                    <h3 className="font-medium text-foreground">{option.name}</h3>
+                    <p className="text-sm text-muted-foreground">{option.description}</p>
+                  </div>
+                  
+                  {/* Indicador de seleção */}
+                  {theme === option.id && (
+                    <div className="absolute top-2 right-2">
+                      <div className="w-3 h-3 bg-primary rounded-full" />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Modal de Autenticação - CORRIGIDO com key para forçar re-render */}
         <AuthModal

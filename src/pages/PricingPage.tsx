@@ -26,7 +26,7 @@ const PricingPage: React.FC = () => {
     // 'flex flex-col' para organizar o conteúdo em coluna.
     // 'bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]' define o fundo com gradiente.
     // 'p-0' remove qualquer padding padrão do contêiner.
-    <div className="flex flex-col bg-gradient-to-b from-[#0a1629] to-[#0e2d5e] p-0">
+    <div className="flex flex-col bg-theme-gradient-alt p-0">
       
       {/* Seção principal do conteúdo da página. */}
       {/* 'flex-grow' faz com que esta seção ocupe o espaço disponível, empurrando o Footer (se existir) para baixo. */}

@@ -206,7 +206,7 @@ const Account = () => {
   // --- Renderização do Componente ---
   // Estrutura JSX da página de conta do usuário.
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-screen">
+    <div className="relative overflow-hidden bg-theme-gradient min-h-screen">
       <BackgroundDecoration />
       
       <div className="container mx-auto py-10 px-4 relative z-10">
@@ -215,16 +215,16 @@ const Account = () => {
         <div className="grid gap-8 md:grid-cols-3">
           {/* Coluna Principal (Formulário de Perfil) */}
           <div className="md:col-span-2">
-            <Card className="bg-[#0a1629]/60 border border-[#2a4980]/50 backdrop-blur-sm text-white">
+            <Card className="bg-theme-card border border-theme-accent/50 backdrop-blur-sm text-foreground">
               <CardHeader>
-                <CardTitle className="text-white">Seus dados profissionais</CardTitle>
-                <CardDescription className="text-gray-300">Mantenha suas informações atualizadas.</CardDescription>
+                <CardTitle className="text-foreground">Seus dados profissionais</CardTitle>
+                <CardDescription className="text-muted-foreground">Mantenha suas informações atualizadas.</CardDescription>
               </CardHeader>
               <CardContent>
                 {/* Exibe indicador de carregamento para o formulário ou o formulário em si */}
                 {isProfileLoading ? (
                   <div className="flex justify-center py-8">
-                    <div className="w-8 h-8 border-4 border-t-[#4f9bff] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+                    <div className="w-8 h-8 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
                   </div>
                 ) : user && ( // Garante que o usuário exista antes de renderizar o ProfileForm
                   <ProfileForm 

@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     // Elemento <footer> principal com estilos de fundo e borda.
     // 'relative' é usado para posicionar os elementos SVG de decoração absoluta dentro dele.
-    <footer className="relative bg-gradient-to-b from-[#0a1629] to-[#051224] border-t border-[#2a4980]/30">
+    <footer className="relative bg-theme-gradient border-t border-theme-accent/30">
       
       {/* Efeito de Brilho SVG (Decorativo) */}
       {/* Este div contém um SVG que cria um efeito de brilho de fundo. */}

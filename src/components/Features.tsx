@@ -27,9 +27,9 @@ const features = [
             'Inicie navegadores de agentes com uma única chamada de API. Nossa tecnologia de navegador vem com IA embutida que entende o conteúdo, extrai dados e ajuda a navegar de forma eficiente.',
         // Ícone para "Agent Browser"
         icon: (
-            <div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
+            <div className="w-16 h-16 rounded-full bg-theme-card border border-theme-accent/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
                 <svg
-                    className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
+                    className="w-8 h-8 text-theme-accent drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -52,9 +52,9 @@ const features = [
             'Seu chatbot é a porta de entrada do seu site. DÚVIDAS? FAQ? PREÇOS? COMO CONFIGURAR? Pergunte ao CHATBOT!',
         // Ícone para "Seu site com recepcionista!"
         icon: (
-            <div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
+            <div className="w-16 h-16 rounded-full bg-theme-card border border-theme-accent/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
                 <svg
-                    className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
+                    className="w-8 h-8 text-theme-accent drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -77,9 +77,9 @@ const features = [
             'Nosso navegador entende o conteúdo, significado e objetos em páginas da web, permitindo que seus agentes de IA naveguem e extraiam dados facilmente.',
         // Ícone para "Web Understanding"
         icon: (
-            <div className="w-16 h-16 rounded-full bg-[#0a1629]/80 border border-[#2a4980]/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
+            <div className="w-16 h-16 rounded-full bg-theme-card border border-theme-accent/50 flex items-center justify-center shadow-[0_0_15px_rgba(0,99,247,0.3)]">
                 <svg
-                    className="w-8 h-8 text-[#4f9bff] drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
+                    className="w-8 h-8 text-theme-accent drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -106,7 +106,7 @@ const Features = () => {
         // 'relative' é usado para posicionar os elementos SVG de decoração absoluta dentro dele.
         <section
             id="features"
-            className="relative min-h-screen flex items-center justify-center py-16 md:py-24 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e]"
+            className="relative min-h-screen flex items-center justify-center py-16 md:py-24 bg-theme-gradient-alt"
         >
             {/* Efeito de Brilho SVG (Decorativo) */}
             {/* Este div contém um SVG que cria um efeito de brilho de fundo. */}
@@ -212,8 +212,8 @@ const Features = () => {
             >
                 {/* Título da Seção */}
                 <div className="text-center mb-12 md:mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-                        <span className="text-[#4f9bff]">Recursos</span> Poderosos
+                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
+                        <span className="text-theme-accent">Recursos</span> Poderosos
                     </h2>
                 </div>
 

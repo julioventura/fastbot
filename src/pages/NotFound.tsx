@@ -118,7 +118,7 @@ const NotFound = () => {
 
         <Link
           to="/"
-          className="bg-[#3b82f6] hover:bg-[#4f9bff] text-white font-semibold px-8 py-3 rounded-lg text-lg
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3 rounded-lg text-lg
                      drop-shadow-[0_0_10px_rgba(79,155,255,0.4)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.6)] 
                      transition-all duration-300 ease-in-out transform hover:scale-105"
         >

@@ -22,7 +22,7 @@ const Hero = () => {
   return (
     // Elemento <section> principal com estilos de fundo, altura mínima e centralização de conteúdo.
     // 'relative overflow-hidden' é usado para conter os elementos de decoração absoluta e evitar barras de rolagem indesejadas.
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-screen flex items-center justify-center">
+    <section className="relative overflow-hidden bg-theme-gradient min-h-screen flex items-center justify-center">
       
       {/* Efeito de Brilho SVG (Decorativo) */}
       {/* Este div contém um SVG que cria um efeito de brilho de fundo dinâmico. */}
@@ -107,7 +107,7 @@ const Hero = () => {
           {/* Botão de Chamada para Ação (CTA) */}
           {/* Layout flexível para o botão, responsivo para telas pequenas. */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button className="hero-button bg-[#3b82f6] hover:bg-[#2563eb] text-white px-8 py-6 rounded-full text-lg flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+            <Button className="hero-button bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 rounded-full text-lg flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
               <span>Use nosso Plano Gratuito e comece já!</span>
               {/* Ícone de seta para a direita, indicando progressão ou ação. */}
               <ArrowRight className="h-5 w-5" />
