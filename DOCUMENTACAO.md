@@ -36,7 +36,7 @@ O projeto segue uma estrutura modular e bem organizada, típica de aplicações 
 * **`src/`**: Diretório principal do código-fonte.
   * **`main.tsx`**: Ponto de entrada da aplicação React, renderiza o componente `App`.
   * **`App.tsx`**: Componente raiz da aplicação. Responsável por configurar provedores globais (QueryClientProvider, TooltipProvider, AuthProvider), componentes de UI globais (Toaster, Sonner, Header, Footer), e o sistema de roteamento principal (React Router) para todas as páginas principais.
-  * **`index.css`**: Estilos globais e configuração base do Tailwind CSS, incluindo estilos customizados para o autofill de inputs e variáveis de tema.
+  * **`index.css`**: Estilos globais e configuração base do Tailwind CSS, incluindo estilos customizados para o autofill de inputs.
   * **`App.css`**: Estilos específicos para o componente App (atualmente com estilos de exemplo/placeholder).
   * **`components/`**: Contém componentes de UI reutilizáveis.
     * **`ui/`**: Componentes base da biblioteca Shadcn/UI (Button, Card, Dialog, Input, Label, Tabs, ScrollArea, etc.).

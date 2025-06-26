@@ -141,7 +141,7 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
   };
 
   return (
-    // Card principal com estilos de tema.
+    // Card principal.
     <Card className="bg-theme-card border border-theme-accent/50 text-foreground shadow-lg">
       
       {/* Cabeçalho do Card */}
