@@ -111,6 +111,7 @@ const Header = () => {
   const { profile, loading: profileLoading, error } = useProfile();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   const { theme, setTheme } = useTheme();
+  const currentTheme = theme; // Adicionar esta linha
 
   // userName: Estado para armazenar o nome do usuário a ser exibido.
   const [userName, setUserName] = useState("");
@@ -118,75 +119,81 @@ const Header = () => {
   // Opções de tema
   const themeOptions = [
     {
-      id: 'blue-dark' as ThemePalette,
+      id: 'blue-dark',
       name: 'Azul modo escuro',
       description: 'Tema escuro com tons de azul',
-      icon: <Moon className="h-4 w-4 text-blue-400" />,
-      preview: {
-        primary: '#3B82F6',
-        secondary: '#1E293B',
-        background: '#0F172A'
-      }
+      icon: <Moon className="h-4 w-4" />,
+      colors: { 
+        primary: '#4f9bff', 
+        secondary: '#1e3a5f',
+        background: '#0a1629' // Cor de fundo do tema
+      },
+      isDark: true
     },
     {
-      id: 'blue-light' as ThemePalette,
+      id: 'blue-light',
       name: 'Azul modo claro',
       description: 'Tema claro com tons de azul',
-      icon: <Sun className="h-4 w-4 text-blue-600" />,
-      preview: {
-        primary: '#3B82F6',
-        secondary: '#F1F5F9',
-        background: '#FFFFFF'
-      }
+      icon: <Sun className="h-4 w-4" />,
+      colors: { 
+        primary: '#2563eb', 
+        secondary: '#dbeafe',
+        background: '#f8fafc' // Cor de fundo do tema
+      },
+      isDark: false
     },
     {
-      id: 'purple-dark' as ThemePalette,
+      id: 'purple-dark',
       name: 'Púrpura modo escuro',
       description: 'Tema escuro com tons de púrpura',
-      icon: <Moon className="h-4 w-4 text-purple-400" />,
-      preview: {
-        primary: '#A855F7',
-        secondary: '#2E1065',
-        background: '#1E1B4B'
-      }
+      icon: <Moon className="h-4 w-4" />,
+      colors: { 
+        primary: '#a855f7', 
+        secondary: '#581c87',
+        background: '#1a0b2e' // Cor de fundo do tema
+      },
+      isDark: true
     },
     {
-      id: 'purple-light' as ThemePalette,
+      id: 'purple-light',
       name: 'Púrpura modo claro',
       description: 'Tema claro com tons de púrpura',
-      icon: <Sun className="h-4 w-4 text-purple-600" />,
-      preview: {
-        primary: '#A855F7',
-        secondary: '#FAF5FF',
-        background: '#FFFFFF'
-      }
+      icon: <Sun className="h-4 w-4" />,
+      colors: { 
+        primary: '#9333ea', 
+        secondary: '#f3e8ff',
+        background: '#fefcff' // Cor de fundo do tema
+      },
+      isDark: false
     },
     {
-      id: 'gray-dark' as ThemePalette,
+      id: 'gray-dark',
       name: 'Cinza modo escuro',
       description: 'Tema escuro com tons de cinza',
-      icon: <Moon className="h-4 w-4 text-gray-400" />,
-      preview: {
-        primary: '#F8FAFC',
+      icon: <Moon className="h-4 w-4" />,
+      colors: { 
+        primary: '#6b7280', 
         secondary: '#374151',
-        background: '#111827'
-      }
+        background: '#111827' // Cor de fundo do tema
+      },
+      isDark: true
     },
     {
-      id: 'gray-light' as ThemePalette,
+      id: 'gray-light',
       name: 'Cinza modo claro',
       description: 'Tema claro com tons de cinza',
-      icon: <Sun className="h-4 w-4 text-gray-600" />,
-      preview: {
-        primary: '#1F2937',
-        secondary: '#F9FAFB',
-        background: '#FFFFFF'
-      }
+      icon: <Sun className="h-4 w-4" />,
+      colors: { 
+        primary: '#4b5563', 
+        secondary: '#f9fafb',
+        background: '#ffffff' // Cor de fundo do tema
+      },
+      isDark: false
     }
   ];
 
-  const handleThemeChange = (newTheme: ThemePalette) => {
-    setTheme(newTheme);
+  const handleThemeChange = (newTheme: string) => { // Mudar o tipo para string
+    setTheme(newTheme as ThemePalette);
     setIsThemeDialogOpen(false); // Fecha o dialog após selecionar o tema
   };
 
@@ -554,55 +561,57 @@ const Header = () => {
 
         {/* Dialog de Seleção de Tema */}
         <Dialog open={isThemeDialogOpen} onOpenChange={setIsThemeDialogOpen}>
-          <DialogContent className="sm:max-w-[600px] bg-background border-border">
+          <DialogContent className="max-w-4xl p-6">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Palette className="h-5 w-5" />
                 Escolha seu tema
               </DialogTitle>
             </DialogHeader>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4 mt-4">
               {themeOptions.map((option) => (
                 <div
                   key={option.id}
-                  className={`
-                    relative p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105
-                    ${theme === option.id 
-                      ? 'border-primary shadow-lg ring-2 ring-primary/20' 
+                  className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${
+                    currentTheme === option.id 
+                      ? 'border-primary ring-2 ring-primary/20' 
                       : 'border-border hover:border-primary/50'
-                    }
-                  `}
+                  }`}
+                  style={{
+                    backgroundColor: option.colors.background // Aplica o fundo para TODOS os temas
+                  }}
                   onClick={() => handleThemeChange(option.id)}
                 >
-                  {/* Preview visual do tema */}
-                  <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center gap-3 mb-2">
                     <div className="flex gap-1">
                       <div 
-                        className="w-4 h-4 rounded-full"
-                        style={{ backgroundColor: option.preview.primary }}
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: option.colors.primary }}
                       />
                       <div 
-                        className="w-4 h-4 rounded-full"
-                        style={{ backgroundColor: option.preview.secondary }}
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: option.colors.secondary }}
                       />
-                      <div 
-                        className="w-4 h-4 rounded-full border"
-                        style={{ backgroundColor: option.preview.background }}
-                      />
+                      {option.isDark && (
+                        <div className="w-3 h-3 rounded-full bg-gray-600" />
+                      )}
                     </div>
                     {option.icon}
                   </div>
-                  
-                  {/* Informações do tema */}
-                  <div className="space-y-1">
-                    <h3 className="font-medium text-foreground">{option.name}</h3>
-                    <p className="text-sm text-muted-foreground">{option.description}</p>
-                  </div>
-                  
-                  {/* Indicador de seleção */}
-                  {theme === option.id && (
+                  <h3 className={`font-medium mb-1 ${option.isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {option.name}
+                  </h3>
+                  <p className={`text-sm ${option.isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {option.description}
+                  </p>
+                  {currentTheme === option.id && (
                     <div className="absolute top-2 right-2">
-                      <div className="w-3 h-3 bg-primary rounded-full" />
+                      <div 
+                        className="w-5 h-5 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: option.colors.primary }}
+                      >
+                        <div className="w-2 h-2 rounded-full bg-white" />
+                      </div>
                     </div>
                   )}
                 </div>
