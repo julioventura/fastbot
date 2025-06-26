@@ -43,7 +43,7 @@ const pricingPlans = [
     },
     {
         name: 'Plano Texto Ilimitado',
-        price: 'R$ 40',
+        price: 'R$ 40 / mês',
         description: 'Para consultórios e clínicas.', // Descrição adicionada
         features: [
             'Conversas ilimitadas de texto',
