@@ -56,7 +56,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   // Retorna a estrutura JSX do modal de autenticação.
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] border border-[#2a4980]/50 bg-gradient-to-b from-[#0a1629] to-[#0e2d5e] text-white shadow-[0_0_15px_rgba(0,99,247,0.3)] overflow-hidden">
+      <DialogContent className="sm:max-w-[425px] border border-border bg-card text-card-foreground shadow-xl overflow-hidden">
         {/* Efeito de Grade de Fundo (Decorativo) */}
         {/* Este div cria um padrão de grade sutil sobre o fundo do modal. */}
         {/* 'absolute inset-0 z-0 opacity-10' posiciona a grade para preencher o modal e ficar atrás do conteúdo. */}
@@ -67,7 +67,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             {Array.from({ length: 10 }).map((_, index) => (
               <div
                 key={`h-${index}`} // Chave única para cada linha horizontal.
-                className="absolute left-0 right-0 border-t border-[#4f9bff]/30" // Estilos da linha.
+                className="absolute left-0 right-0 border-t border-primary/30" // Estilos da linha.
                 style={{ top: `${(index * 100) / 9}%` }} // Posicionamento vertical da linha.
               />
             ))}
@@ -77,7 +77,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             {Array.from({ length: 10 }).map((_, index) => (
               <div
                 key={`v-${index}`} // Chave única para cada linha vertical.
-                className="absolute top-0 bottom-0 border-l border-[#4f9bff]/30" // Estilos da linha.
+                className="absolute top-0 bottom-0 border-l border-primary/30" // Estilos da linha.
                 style={{ left: `${(index * 100) / 9}%` }} // Posicionamento horizontal da linha.
               />
             ))}
@@ -89,7 +89,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         <DialogHeader className="relative z-10">
           {/* Título do Modal */}
           {/* O título muda dinamicamente com base na aba ativa. */}
-          <DialogTitle className="text-center text-xl font-bold text-white drop-shadow-[0_0_8px_rgba(79,155,255,0.5)]">
+          <DialogTitle className="text-center text-xl font-bold text-primary">
             {activeTab === "login"
               ? "Acessar sua conta"
               : activeTab === "signup"
@@ -97,7 +97,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               : "Recuperar senha"}
           </DialogTitle>
           {/* Descrição/Subtítulo do Modal */}
-          <DialogDescription className="text-center text-sm text-gray-300 mt-2 pb-10">
+          <DialogDescription className="text-center text-sm text-muted-foreground mt-2 pb-10">
             {activeTab === "login"
               ? "Use seu email e senha"
               : activeTab === "signup"
@@ -115,25 +115,25 @@ const AuthModal: React.FC<AuthModalProps> = ({
         >
           {/* Lista de Triggers das Abas */}
           {/* Contém os botões que o usuário clica para mudar de aba. */}
-          <TabsList className="grid w-full grid-cols-3 bg-[#0a1629]/70 border border-[#2a4980]/50">
+          <TabsList className="grid w-full grid-cols-3 bg-card border border-border">
             {/* Trigger da Aba de Login */}
             <TabsTrigger
               value="login"
-              className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_10px_rgba(79,155,255,0.5)] text-gray-300"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-muted-foreground"
             >
               Login
             </TabsTrigger>
             {/* Trigger da Aba de Cadastro */}
             <TabsTrigger
               value="signup"
-              className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_10px_rgba(79,155,255,0.5)] text-gray-300"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-muted-foreground"
             >
               Cadastro
             </TabsTrigger>
             {/* Trigger da Aba de Recuperação de Senha */}
             <TabsTrigger
               value="reset"
-              className="data-[state=active]:bg-[#3b82f6] data-[state=active]:text-white data-[state=active]:shadow-[0_0_10px_rgba(79,155,255,0.5)] text-gray-300"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-muted-foreground"
             >
               Recuperar
             </TabsTrigger>

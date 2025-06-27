@@ -161,16 +161,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
     <form onSubmit={handleSubmit} className="space-y-4 py-4">
       {/* Campo Nome */}
       <div className="space-y-2">
-        <Label htmlFor="name" className="text-gray-300">Nome Completo</Label>
+        <Label htmlFor="name">Nome Completo</Label>
         <div className="relative">
-          <UserIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <UserIcon className="absolute left-2 top-2.5 h-4 w-4" />
           <Input
             id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Seu nome completo"
-            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            className="pl-8"
             autoComplete="name"
             disabled={isLoading}
           />
@@ -179,16 +179,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
       {/* Campo WhatsApp */}
       <div className="space-y-2">
-        <Label htmlFor="whatsapp" className="text-gray-300">WhatsApp</Label>
+        <Label htmlFor="whatsapp">WhatsApp</Label>
         <div className="relative">
-          <MessageSquare className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <MessageSquare className="absolute left-2 top-2.5 h-4 w-4" />
           <Input
             id="whatsapp"
             type="tel"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
             placeholder="(11) 99999-9999"
-            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            className="pl-8"
             autoComplete="tel"
             disabled={isLoading}
           />
@@ -197,16 +197,16 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
       {/* Campo Email */}
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-gray-300">Email</Label>
+        <Label htmlFor="email">Email</Label>
         <div className="relative">
-          <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Mail className="absolute left-2 top-2.5 h-4 w-4" />
           <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="seu@email.com"
-            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            className="pl-8"
             autoComplete="email"
             disabled={isLoading}
           />
@@ -215,24 +215,24 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
       {/* Campo Senha */}
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-gray-300">
+        <Label htmlFor="password">
           Senha
         </Label>
         <div className="relative">
-          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+          <Lock className="absolute left-2 top-2.5 h-4 w-4" />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mínimo 6 caracteres"
-            className="pl-8 pr-10 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            className="pl-8 pr-10"
             autoComplete="new-password"
             disabled={isLoading}
           />
           <button
             type="button"
-            className="absolute right-2 top-2.5 text-muted-foreground hover:text-white transition-colors"
+            className="absolute right-2 top-2.5 transition-colors"
             onClick={() => setShowPassword(!showPassword)}
             disabled={isLoading}
           >
@@ -243,18 +243,18 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
 
       {/* Campo Confirmar Senha */}
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-gray-300">
+        <Label htmlFor="confirmPassword">
           Confirmar Senha
         </Label>
         <div className="relative">
-          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+          <Lock className="absolute left-2 top-2.5 h-4 w-4" />
           <Input
             id="confirmPassword"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirme sua senha"
-            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            className="pl-8"
             autoComplete="new-password"
             disabled={isLoading}
           />
@@ -264,7 +264,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
       {/* Botão de Submissão */}
       <Button 
         type="submit" 
-        className="w-full bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all" 
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all" 
         disabled={isLoading}
       >
         {isLoading ? "Criando conta..." : "Criar conta"}

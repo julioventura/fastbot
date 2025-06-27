@@ -184,17 +184,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     <form onSubmit={handleSubmit} className="space-y-4 py-4">
       {/* Campo de Email */}
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-gray-300">Email</Label>
+        <Label htmlFor="email">Email</Label>
         <div className="relative">
           {/* Ícone de Email */}
-          <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Mail className="absolute left-2 top-2.5 h-4 w-4" />
           <Input
             id="email"
             type="email"
             placeholder="seu@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="pl-8 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            className="pl-8"
             disabled={isLoading} // Desabilita o campo durante o carregamento.
             autoComplete="email"
           />
@@ -203,17 +203,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       
       {/* Campo de Senha */}
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-gray-300">Senha</Label>
+        <Label htmlFor="password">Senha</Label>
         <div className="relative">
           {/* Ícone de Senha */}
-          <Lock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Lock className="absolute left-2 top-2.5 h-4 w-4" />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
             placeholder="Sua senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-8 pr-10 bg-gray-700/30 border-[#2a4980]/70 text-white placeholder-gray-500 focus:border-[#4f9bff]"
+            className="pl-8 pr-10"
             disabled={isLoading}
             autoComplete="current-password"
           />
@@ -221,7 +221,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           {/* Botão para Mostrar/Esconder Senha */}
           <button
             type="button"
-            className="absolute right-2 top-2.5 text-muted-foreground hover:text-white transition-colors"
+            className="absolute right-2 top-2.5 transition-colors"
             onClick={() => setShowPassword(!showPassword)}
             disabled={isLoading}
           >
@@ -233,7 +233,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       {/* Botão de Submissão do Formulário */}
       <Button 
         type="submit" 
-        className="w-full bg-[#3b82f6] hover:bg-[#4f9bff] text-white drop-shadow-[0_0_10px_rgba(79,155,255,0.3)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.5)] transition-all" 
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all" 
         disabled={isLoading} // Desabilita o botão durante o carregamento.
       >
         {isLoading ? "Entrando..." : "Entrar"} {/* Texto do botão muda durante o carregamento. */}

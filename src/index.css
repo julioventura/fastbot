@@ -453,4 +453,101 @@
 
 .bg-gradient-radial {
   background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
-}
+}  /* ===== MODAL DE AUTENTICAÇÃO ===== */
+  
+  /* Modo escuro - preservar gradiente original */
+  .dark [role="dialog"] {
+    background: linear-gradient(to bottom, #0a1629, #0e2d5e) !important;
+  }
+
+  /* Modo claro - fundo limpo */
+  .light [role="dialog"] {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  /* Inputs no modal para modo escuro */
+  .dark [role="dialog"] input {
+    background-color: rgba(31, 41, 55, 0.8) !important;
+    border-color: rgba(42, 73, 128, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .dark [role="dialog"] input::placeholder {
+    color: rgba(156, 163, 175, 0.8) !important;
+  }
+
+  .dark [role="dialog"] input:focus {
+    background-color: rgba(31, 41, 55, 0.9) !important;
+    border-color: #4f9bff !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(79, 155, 255, 0.2) !important;
+  }
+
+  /* Inputs no modal para modo claro - maior especificidade */
+  .light [role="dialog"] input,
+  .light [role="dialog"] .bg-background {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #1f2937 !important;
+  }
+
+  .light [role="dialog"] input::placeholder {
+    color: #9ca3af !important;
+  }
+
+  .light [role="dialog"] input:focus {
+    background-color: #ffffff !important;
+    border-color: #3b82f6 !important;
+    color: #1f2937 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  }
+
+  /* Labels no modal */
+  .dark [role="dialog"] label {
+    color: #d1d5db !important;
+  }
+
+  .light [role="dialog"] label {
+    color: #374151 !important;
+    font-weight: 500 !important;
+  }
+
+  /* Ícones nos inputs do modal */
+  .dark [role="dialog"] .lucide {
+    color: #9ca3af !important;
+  }
+
+  .light [role="dialog"] .lucide {
+    color: #6b7280 !important;
+  }
+
+  /* Sobrescrever especificamente classes de tema no modal claro */
+  .light [role="dialog"] .text-foreground {
+    color: #374151 !important;
+  }
+
+  .light [role="dialog"] .text-muted-foreground {
+    color: #6b7280 !important;
+  }
+
+  .light [role="dialog"] .border-border {
+    border-color: #d1d5db !important;
+  }
+
+  /* Botões de toggle de senha */
+  .dark [role="dialog"] button[type="button"] {
+    color: #9ca3af !important;
+  }
+
+  .dark [role="dialog"] button[type="button"]:hover {
+    color: #ffffff !important;
+  }
+
+  .light [role="dialog"] button[type="button"] {
+    color: #6b7280 !important;
+  }
+
+  .light [role="dialog"] button[type="button"]:hover {
+    color: #374151 !important;
+  }
