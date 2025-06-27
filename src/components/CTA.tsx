@@ -35,7 +35,7 @@ export default function CTA() {
               Pronto em <span className="text-theme-accent">3 minutos!</span>
             </h2>
             {/* Descrição/Subtítulo da CTA */}
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground font-bold max-w-3xl mx-auto">
               Nosso chatbot coloca a sua vida profissional em outro patamar!
             </p>
             {/* Botão de Chamada para Ação */}
@@ -45,7 +45,7 @@ export default function CTA() {
                 // O ícone ArrowRight poderia ser adicionado aqui se desejado.
                 // Exemplo: <ArrowRight className="ml-2 h-5 w-5" />
               >
-                Comece já
+                Comece já! &nbsp; Use o modo gratuito!
               </Button>
             </div>
           </div>
