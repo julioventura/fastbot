@@ -38,8 +38,10 @@ import SecurityCard from "@/components/account/SecurityCard";
 import CloseAccount from "@/components/account/CloseAccount"; // Importar o novo componente
 import LoadingScreen from "@/components/account/LoadingScreen";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle, ChevronDown, ChevronUp, User, Clock, Lock, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 
 interface Profile {
   id: string;
@@ -79,6 +81,68 @@ const Account = () => {
   // saving: Estado de carregamento ao salvar o perfil.
   const [saving, setSaving] = useState(false);
 
+  // Estados para controlar expansão dos componentes da coluna direita
+  const [expandedSections, setExpandedSections] = useState({
+    profileInfo: false,
+    security: false,
+    closeAccount: false
+  });
+
+
+  // --- Componente CollapsibleCard ---
+  // Wrapper para cards colapsáveis
+  const CollapsibleCard = ({ 
+    title, 
+    description, 
+    isExpanded, 
+    onToggle, 
+    children 
+  }: {
+    title: string;
+    description: string;
+    isExpanded: boolean;
+    onToggle: () => void;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <Card className="bg-theme-card border border-theme-accent/50 text-foreground mb-8 shadow-lg">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-white">{title}</CardTitle>
+              <CardDescription className="text-gray-300">{description}</CardDescription>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggle}
+              className="h-8 w-8 p-0 hover:bg-theme-hover text-theme-accent hover:text-theme-accent-light"
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        </CardHeader>
+        {isExpanded && (
+          <CardContent className="pt-0">
+            {children}
+          </CardContent>
+        )}
+      </Card>
+    );
+  };
+
+  // --- Função toggleSection ---
+  // Alterna o estado de expansão de uma seção específica
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   // --- Função loadProfile ---
   // Carrega os dados do perfil do usuário autenticado.
@@ -400,21 +464,100 @@ const Account = () => {
 
           {/* Coluna Lateral (Timestamps e Segurança) */}
           <div>
-            {/* Componente ProfileTimestamps para exibir informações de criação e atualização do perfil */}
-            <ProfileTimestamps
-              userId={user.id}
-              createdAt={profileData.created_at}
-              updatedAt={profileData.updated_at}
-            />
+            {/* Informações do Perfil - Colapsável */}
+            <CollapsibleCard
+              title="Informações do Perfil"
+              description="Detalhes da criação e atualização do seu perfil"
+              isExpanded={expandedSections.profileInfo}
+              onToggle={() => toggleSection('profileInfo')}
+            >
+              <div className="space-y-4">
+                {/* Seção "ID do Usuário" */}
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-foreground">
+                    <User size={16} className="text-theme-accent" />
+                    <span className="text-sm">ID do Usuário</span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-2 bg-background border border-border rounded">
+                    <span className="text-foreground font-mono text-sm flex-1 truncate pr-2">
+                      {user.id}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(user.id);
+                        toast({
+                          title: "ID Copiado!",
+                          description: "O ID do usuário foi copiado para a área de transferência.",
+                        });
+                      }}
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-theme-accent hover:bg-theme-hover"
+                      title="Copiar ID"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-400">Use este ID para automações e configurações do chatbot</p>
+                </div>
+                
+                {/* Seção "Criado em" */}
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-foreground">
+                    <Clock size={16} className="text-theme-accent" />
+                    <span className="text-sm">Criado em</span>
+                  </div>
+                  <div className="px-4 py-2 bg-background border border-border rounded text-foreground">
+                    {profileData.created_at ? format(new Date(profileData.created_at), "dd-MM-yyyy (HH:mm)") : "-"}
+                  </div>
+                </div>
+                
+                {/* Seção "Atualizado em" */}
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-foreground">
+                    <Clock size={16} className="text-theme-accent" />
+                    <span className="text-sm">Atualizado em</span>
+                  </div>
+                  <div className="px-4 py-2 bg-background border border-border rounded text-foreground">
+                    {profileData.updated_at ? format(new Date(profileData.updated_at), "dd-MM-yyyy (HH:mm)") : "-"}
+                  </div>
+                </div>
+              </div>
+            </CollapsibleCard>
 
-            {/* Componente SecurityCard - só com "Alterar senha" */}
-            <SecurityCard />
+            {/* Senha - Colapsável */}
+            <CollapsibleCard
+              title="Senha"
+              description="Altere sua senha regularmente"
+              isExpanded={expandedSections.security}
+              onToggle={() => toggleSection('security')}
+            >
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2 text-foreground">
+                  <Lock size={16} className="text-theme-accent" />
+                  <span className="text-sm">Alterar senha</span>
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-primary border-border text-primary-foreground hover:bg-primary/90 hover:border-primary"
+                >
+                  Alterar senha
+                </Button>
+              </div>
+            </CollapsibleCard>
 
-            {/* Componente CloseAccount - exclusão permanente da conta */}
-            <CloseAccount
-              userEmail={user?.email || ""}
-              onAccountDeleted={handleAccountDeletion}
-            />
+            {/* Fechar Conta - Colapsável */}
+            <CollapsibleCard
+              title="Fechar Conta"
+              description="Exclua permanentemente sua conta de usuário"
+              isExpanded={expandedSections.closeAccount}
+              onToggle={() => toggleSection('closeAccount')}
+            >
+              <CloseAccount
+                userEmail={user?.email || ""}
+                onAccountDeleted={handleAccountDeletion}
+              />
+            </CollapsibleCard>
           </div>
         </div>
       </div>

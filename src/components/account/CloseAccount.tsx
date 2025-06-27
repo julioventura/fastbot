@@ -141,78 +141,66 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
   };
 
   return (
-    // Card principal.
-    <Card className="bg-theme-card border border-theme-accent/50 text-foreground shadow-lg">
+    <div className="space-y-4">
+      {/* Aviso sobre exclusão permanente */}
+      <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
+        <p className="text-sm text-destructive font-medium">
+          ⚠️ Ação irreversível
+        </p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Esta ação excluirá permanentemente sua conta e todos os dados associados. Não será possível recuperar as informações.
+        </p>
+      </div>
       
-      {/* Cabeçalho do Card */}
-      <CardHeader>
-        <CardTitle className="text-foreground">Fechar Conta</CardTitle>
-        <CardDescription className="text-muted-foreground">Excluir permanentemente sua conta de usuário</CardDescription>
-      </CardHeader>
-      
-      {/* Conteúdo do Card */}
-      <CardContent className="space-y-4">
-        
-        {/* Aviso sobre exclusão permanente */}
-        <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
-          <p className="text-sm text-destructive font-medium">
-            ⚠️ Ação irreversível
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Esta ação excluirá permanentemente sua conta e todos os dados associados. Não será possível recuperar as informações.
-          </p>
-        </div>
-        
-        {/* Modal de confirmação com botão de exclusão */}
-        <div className="pt-4">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="destructive"
-                className="w-full"
+      {/* Modal de confirmação com botão de exclusão */}
+      <div className="pt-4">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              className="w-full"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Excluindo..." : "Fechar a conta"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="bg-background border border-border">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-foreground">
+                Confirmar exclusão da conta
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-muted-foreground">
+                Tem certeza de que deseja excluir permanentemente sua conta?
+                <br />
+                <br />
+                <strong>Esta ação não pode ser desfeita e resultará em:</strong>
+                <br />
+                • Exclusão de todos os seus dados pessoais
+                <br />
+                • Remoção de todas as configurações
+                <br />
+                • Perda de acesso permanente à plataforma
+                <br />
+                <br />
+                Email da conta: <strong>{userEmail}</strong>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteAccount}
                 disabled={isDeleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                {isDeleting ? "Excluindo..." : "Fechar a conta"}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="bg-background border border-border">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-foreground">
-                  Confirmar exclusão da conta
-                </AlertDialogTitle>
-                <AlertDialogDescription className="text-muted-foreground">
-                  Tem certeza de que deseja excluir permanentemente sua conta?
-                  <br />
-                  <br />
-                  <strong>Esta ação não pode ser desfeita e resultará em:</strong>
-                  <br />
-                  • Exclusão de todos os seus dados pessoais
-                  <br />
-                  • Remoção de todas as configurações
-                  <br />
-                  • Perda de acesso permanente à plataforma
-                  <br />
-                  <br />
-                  Email da conta: <strong>{userEmail}</strong>
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="bg-secondary text-secondary-foreground hover:bg-secondary/80">
-                  Cancelar
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeleteAccount}
-                  disabled={isDeleting}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  {isDeleting ? "Excluindo..." : "Sim, excluir conta"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </CardContent>
-    </Card>
+                {isDeleting ? "Excluindo..." : "Sim, excluir conta"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
   );
 };
 
