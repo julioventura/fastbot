@@ -8,7 +8,7 @@ const LoadingScreen = () => {
     // Contêiner principal da tela de carregamento.
     // Ocupa no mínimo a altura total da tela (min-h-screen).
     // Possui um fundo com gradiente e 'overflow-hidden' para conter os elementos de decoração.
-    <div className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-screen">
+    <div className="relative overflow-hidden bg-theme-gradient min-h-screen">
       
       {/* Componente de Decoração de Fundo */}
       {/* Adiciona os efeitos visuais de brilho SVG e grade ao fundo. */}

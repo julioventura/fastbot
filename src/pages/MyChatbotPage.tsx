@@ -242,7 +242,7 @@ const MyChatbotPage: React.FC = () => {
   // --- Renderização do Componente ---
   // Estrutura JSX da página MyChatbotPage, incluindo o sistema de abas e os formulários.
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-[#0a1629] to-[#082756] min-h-screen">
+    <div className="relative overflow-hidden bg-theme-gradient min-h-screen">
       <BackgroundDecoration />
       
     {/* Decoração de fundo inline para garantir que seja renderizada */}
