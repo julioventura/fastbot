@@ -220,7 +220,11 @@
 
   /* ===== TIPOGRAFIA REFINADA ===== */
   
-  /* Textos principais */
+  /* Comentando regras que conflitam com cores fixas do Tailwind */
+  /* Para usar cores fixas (white, black, yellow, etc.), use as classes normais do Tailwind */
+  /* Para usar cores que mudam com o tema, use text-foreground, text-muted-foreground, etc. */
+  
+  /*
   .light .text-white {
     color: #1e293b !important;
   }
@@ -228,6 +232,7 @@
   .light .text-gray-300 {
     color: #475569 !important;
   }
+  */
 
   .light .text-muted-foreground {
     color: #64748b !important;
@@ -550,4 +555,18 @@
 
   .light [role="dialog"] button[type="button"]:hover {
     color: #374151 !important;
+  }
+
+  /* ===== CARDS DE FEATURES - TEMA ESPECÍFICO ===== */
+  
+  /* Modo escuro - manter transparência original */
+  .dark .bg-theme-card {
+    background: rgba(10, 22, 41, 0.5) !important;
+    backdrop-filter: blur(12px) !important;
+  }
+
+  /* Modo claro - fundo sólido */
+  .light .bg-theme-card {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
   }

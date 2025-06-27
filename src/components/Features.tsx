@@ -224,16 +224,16 @@ const Features = () => {
                     {features.map((feature, index) => (
                         <div
                             key={index} // Chave única para cada card.
-                            className="border border-black rounded-lg shadow-xl p-6 bg-gray-900/50" // Estilos do card.
+                            className="bg-theme-card border border-border rounded-lg shadow-xl p-6 backdrop-blur-md" // Estilos do card adaptados para tema.
                         >
                             {/* Ícone da Funcionalidade */}
                             <div className="mb-4">{feature.icon}</div>
                             {/* Título da Funcionalidade */}
-                            <h3 className="text-xl font-semibold mb-2 text-blue-500">
+                            <h3 className="text-xl font-semibold mb-2 text-theme-accent">
                                 {feature.title}
                             </h3>
                             {/* Descrição da Funcionalidade */}
-                            <p className="text-gray-200">{feature.description}</p>
+                            <p className="text-muted-foreground">{feature.description}</p>
                         </div>
                     ))}
                 </div>
