@@ -32,7 +32,7 @@ const pricingPlans = [
     {
         name: 'Fastbot Gratuito',
         price: 'GRÁTIS',
-        description: 'Para conversas de texto',
+        description: 'Para uso eventual',
         features: [
             '100 conversas por mês',
         ],
@@ -43,9 +43,9 @@ const pricingPlans = [
     {
         name: 'Fastbot Plus',
         price: 'R$ 40 / mês',
-        description: 'Para consultórios e clínicas.', // Descrição adicionada
+        description: 'Para uso ativo', // Descrição adicionada
         features: [
-            'Conversas ilimitadas de texto',
+            'Conversas ilimitadas',
         ],
         isPopular: false,
         buttonText: 'ASSINE JÁ !',
@@ -56,7 +56,7 @@ const pricingPlans = [
         price: 'R$ 20',
         description: 'Créditos para áudio e imagem',
         features: [
-            'Pacote de 100 créditos avulsos',
+            '100 créditos cumulativos',
         ],
         isPopular: false,
         buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado
@@ -193,7 +193,7 @@ const Pricing = () => {
                             className={`p-6 md:p-8 relative backdrop-blur-md flex flex-col ${plan.isPopular
                                 ? 'bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]'
                                 : plan.buttonVariant === 'outline'
-                                    ? 'bg-theme-card/95 border-2 border-[#1d3661] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
+                                    ? 'bg-theme-card/95 border-2 border-[#0a1527] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
                                     : 'bg-theme-card/95 border-2 border-[#2a4980] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
                                 }`}
                         >
