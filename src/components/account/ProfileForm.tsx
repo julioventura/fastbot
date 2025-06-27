@@ -193,11 +193,19 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
       
       {/* Checkboxes para Estudante e Professor */}
       <div className="space-y-4">
+        {/* Checkbox Estudante */}
         <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="is_student" 
-            checked={isStudent} 
-            onCheckedChange={(checked) => setIsStudent(checked === true)} // Garante que o valor seja boolean.
+          <Checkbox
+            id="is_student"
+            checked={isStudent}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                setIsStudent(true);
+                setIsProfessor(false);
+              } else {
+                setIsStudent(false);
+              }
+            }}
             className="border-primary data-[state=checked]:bg-primary"
             disabled={loading}
           />
@@ -208,12 +216,20 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
             </Label>
           </div>
         </div>
-        
+
+        {/* Checkbox Professor */}
         <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="is_professor" 
-            checked={isProfessor} 
-            onCheckedChange={(checked) => setIsProfessor(checked === true)} // Garante que o valor seja boolean.
+          <Checkbox
+            id="is_professor"
+            checked={isProfessor}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                setIsProfessor(true);
+                setIsStudent(false);
+              } else {
+                setIsProfessor(false);
+              }
+            }}
             className="border-primary data-[state=checked]:bg-primary"
             disabled={loading}
           />
@@ -224,6 +240,7 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
             </Label>
           </div>
         </div>
+        
       </div>
       
       {/* Botão de Submissão do Formulário */}
