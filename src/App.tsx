@@ -15,6 +15,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Account from "./pages/Account";
@@ -32,26 +33,28 @@ const queryClient = new QueryClient();
 // Componente App
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter basename="/fastbot">
-          <Header />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/my-chatbot" element={<MyChatbotPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Footer />
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter basename="/fastbot">
+            <Header />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/features" element={<FeaturesPage />} />
+              <Route path="/my-chatbot" element={<MyChatbotPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Footer />
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

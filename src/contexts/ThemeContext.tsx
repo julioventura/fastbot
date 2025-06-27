@@ -1,0 +1,50 @@
+import React, { createContext, useEffect, useState } from 'react';
+
+type Theme = 'light' | 'dark';
+
+interface ThemeContextType {
+  theme: Theme;
+  toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
+}
+
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [theme, setThemeState] = useState<Theme>(() => {
+    // Verifica se há um tema salvo no localStorage
+    const savedTheme = localStorage.getItem('theme') as Theme;
+    if (savedTheme) {
+      return savedTheme;
+    }
+    
+    // Se não há tema salvo, usa o escuro como padrão (preservando o estilo atual)
+    return 'dark';
+  });
+
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+  };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    // Remove classes anteriores
+    root.classList.remove('light', 'dark');
+    
+    // Adiciona a classe do tema atual
+    root.classList.add(theme);
+  }, [theme]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};

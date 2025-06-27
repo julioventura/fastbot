@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Paleta Azul Escuro (Padrão inicial) */
+    /* MODO ESCURO como padrão (preservando estilo atual EXATAMENTE) */
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
@@ -34,51 +34,110 @@
     --ring: 221 83% 53%;
 
     --radius: 0.75rem;
+
+    /* Variáveis personalizadas para o tema azul escuro (PRESERVADAS) */
+    --gradient-from: #0c203f;
+    --gradient-to: #082756;
+    --gradient-secondary-to: #0e2d5e;
+    --accent-blue: #4f9bff;
+    --accent-blue-light: #60a5fa;
+    --accent-blue-lighter: #7caffd;
+    --accent-blue-bg: #2a4980;
+    --text-muted: #b6b6b6;
+    --border-accent: #2a4980;
+    --hover-bg: rgba(42, 73, 128, 0.3);
+    --hover-bg-light: rgba(79, 155, 255, 0.1);
+    --card-bg: rgba(10, 22, 41, 0.95);
   }
 
-  /* Tema Azul Escuro - Tema único da aplicação */
-  html {
-    --background: 222 47% 11% !important;
-    --foreground: 210 40% 98% !important;
+  /* MODO CLARO - Novo tema elegante */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
 
-    --card: 222 47% 11% !important;
-    --card-foreground: 210 40% 60% !important;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 222 47% 11% !important;
-    --popover-foreground: 210 40% 98% !important;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 221 83% 53% !important;
-    --primary-foreground: 210 40% 98% !important;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 32% 17% !important;
-    --secondary-foreground: 221 68% 81% !important;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 217 32% 17% !important;
-    --muted-foreground: 215 20% 65% !important;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 217 32% 17% !important;
-    --accent-foreground: 210 40% 98% !important;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 62% 30% !important;
-    --destructive-foreground: 210 40% 98% !important;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 32% 17% !important;
-    --input: 217 32% 17% !important;
-    --ring: 221 83% 53% !important;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
 
-    /* Variáveis personalizadas para o tema azul escuro */
-    --gradient-from: #0c203f !important;
-    --gradient-to: #082756 !important;
-    --gradient-secondary-to: #0e2d5e !important;
-    --accent-blue: #4f9bff !important;
-    --accent-blue-light: #60a5fa !important;
-    --accent-blue-lighter: #7caffd !important;
-    --accent-blue-bg: #2a4980 !important;
-    --text-muted: #b6b6b6 !important;
-    --border-accent: #2a4980 !important;
-    --hover-bg: rgba(42, 73, 128, 0.3) !important;
-    --hover-bg-light: rgba(79, 155, 255, 0.1) !important;
-    --card-bg: rgba(10, 22, 41, 0.95) !important;
+    /* Variáveis personalizadas para o tema claro */
+    --gradient-from: #ffffff;
+    --gradient-to: #ffffff;
+    --gradient-secondary-to: #ffffff;
+    --accent-blue: #3b82f6;
+    --accent-blue-light: #60a5fa;
+    --accent-blue-lighter: #93c5fd;
+    --accent-blue-bg: #eff6ff;
+    --text-muted: #64748b;
+    --border-accent: #e2e8f0;
+    --hover-bg: rgba(59, 130, 246, 0.1);
+    --hover-bg-light: rgba(59, 130, 246, 0.05);
+    --card-bg: rgba(255, 255, 255, 0.95);
+  }
+
+  /* MODO ESCURO explícito (garantindo preservação) */
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 221 68% 81%;
+
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 221 83% 53%;
+
+    /* Variáveis personalizadas para o tema azul escuro (PRESERVADAS) */
+    --gradient-from: #0c203f;
+    --gradient-to: #082756;
+    --gradient-secondary-to: #0e2d5e;
+    --accent-blue: #4f9bff;
+    --accent-blue-light: #60a5fa;
+    --accent-blue-lighter: #7caffd;
+    --accent-blue-bg: #2a4980;
+    --text-muted: #b6b6b6;
+    --border-accent: #2a4980;
+    --hover-bg: rgba(42, 73, 128, 0.3);
+    --hover-bg-light: rgba(79, 155, 255, 0.1);
+    --card-bg: rgba(10, 22, 41, 0.95);
   }
 }
 
@@ -90,10 +149,35 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold tracking-tight;
+  }
+
+  /* Transições suaves para mudanças de tema */
+  * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Ajustes específicos para modo claro */
+  .light .bg-black {
+    background-color: white !important;
+  }
+
+  .light header {
+    backdrop-filter: blur(10px) !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  /* Remover gradientes no modo claro */
+  .light .bg-theme-gradient {
+    background: white !important;
+  }
+
+  .light .bg-theme-gradient-alt {
+    background: white !important;
   }
 
   /* Estilos para WebKit Autofill */

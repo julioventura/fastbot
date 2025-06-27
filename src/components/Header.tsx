@@ -20,10 +20,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Bot, Coins, Shield } from 'lucide-react';
+import { User, LogOut, Bot, Coins, Shield, Sun, Moon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '../hooks/useProfile';
 import { useIsAdmin } from '../hooks/useIsAdmin';
+import { useTheme } from '../hooks/useTheme';
 
 // Custom Hook: useScrollDirection
 // Determina a direção do scroll da página (para cima ou para baixo).
@@ -84,6 +85,7 @@ const Header = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, error } = useProfile();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { theme, toggleTheme } = useTheme();
 
   // userName: Estado para armazenar o nome do usuário a ser exibido.
   const [userName, setUserName] = useState("");
@@ -372,6 +374,26 @@ const Header = () => {
                       </Link>
                     </DropdownMenuItem>
                   )}
+
+                  <DropdownMenuSeparator className="bg-border" />
+
+                  {/* Item Seletor de Tema */}
+                  <DropdownMenuItem
+                    onClick={toggleTheme}
+                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
+                  >
+                    {theme === 'dark' ? (
+                      <>
+                        <Sun className="mr-3 h-6 w-6" />
+                        Modo Claro
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="mr-3 h-6 w-6" />
+                        Modo Escuro
+                      </>
+                    )}
+                  </DropdownMenuItem>
 
                   <DropdownMenuSeparator className="bg-border" />
 
