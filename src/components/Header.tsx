@@ -226,31 +226,20 @@ const Header = () => {
   };
 
 
-  // REMOVIDO: Condição de inicialização que causava o loading infinito
-  // Agora o header sempre renderiza, mesmo durante o carregamento
-
   // --- Renderização do Componente Header ---
   return (
     // Contêiner div com fundo preto. Importante para o efeito visual durante a retração do header.
     <div className='bg-black'>
       <header
-        // Classes de estilo e posicionamento do header.
-        // 'sticky': Mantém o header fixo no topo.
-        // 'transition-transform duration-300 ease-in-out': Anima a transição de visibilidade.
-        // '-translate-y-full' ou 'translate-y-0': Controla a visibilidade com base na direção do scroll.
-        // 'z-50': Garante que o header fique acima de outros elementos.
-        // Estilos de fundo, borda e sombra.
         className={`sticky transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
-          } top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-lg`}
+          } top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-lg relative overflow-hidden`}
       >
-        {/* Overlay de grade com efeito de brilho (decorativo). */}
-        <div className="absolute inset-0 z-0 opacity-10">
-          <div className="w-full h-full grid grid-cols-12">
-            {Array.from({ length: 12 }).map((_, index) => (
-              <div key={index} className="border-l border-[#4f9bff]/30"></div>
-            ))}
-          </div>
-        </div>
+        {/* Gradient de Fundo Elegante */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-background/90 via-primary/10 to-background/90"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/15"></div>
+        
+        {/* Overlay sutil para profundidade */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-transparent via-primary/5 to-primary/10 opacity-60"></div>
 
         {/* Contêiner principal do conteúdo do header. */}
         <div className="container relative z-10 mx-auto px-4 h-16 md:h-20">
