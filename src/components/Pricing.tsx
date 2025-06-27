@@ -30,37 +30,33 @@ import { Check } from 'lucide-react';
 // Cada objeto no array define as características de um plano.
 const pricingPlans = [
     {
-        name: 'Plano Básico',
+        name: 'Fastbot Gratuito',
         price: 'GRÁTIS',
         description: 'Para conversas de texto',
         features: [
             '100 conversas por mês',
-            'Use créditos avulsos para adicionar áudio e imagem',
         ],
         isPopular: true, // Destaca este plano como o mais popular.
         buttonText: 'COMECE JÁ !',
         buttonVariant: 'default' as const, // Tipo específico para a variante do botão.
     },
     {
-        name: 'Plano Texto Ilimitado',
+        name: 'Fastbot Plus',
         price: 'R$ 40 / mês',
         description: 'Para consultórios e clínicas.', // Descrição adicionada
         features: [
             'Conversas ilimitadas de texto',
-            'Inclua créditos para áudio e imagens',
         ],
         isPopular: false,
         buttonText: 'ASSINE JÁ !',
         buttonVariant: 'outline' as const,
     },    
     {
-        name: 'Pacote de Créditos',
-        price: 'R$ 100',
+        name: 'Créditos Avulsos',
+        price: 'R$ 20',
         description: 'Créditos para áudio e imagem',
         features: [
-            '500 créditos cumulativos',
-            'Para áudio e imagens',
-            'Validade de um ano!',
+            'Pacote de 100 créditos avulsos',
         ],
         isPopular: false,
         buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado
@@ -181,8 +177,8 @@ const Pricing = () => {
                 {/* Título da Seção */}
                 <div className="text-center mb-12 md:mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-                        <span>Modo Texto Grátis</span> <br />
-                        <span className='gradient-text pt-5 mt-3'>Áudio e imagem opcionais </span>
+                        <p>Assine o Plano Gratuito</p>
+                        <p className='gradient-text pt-5 mt-3'>E comece a usar JÁ!</p>
                     </h2>
                 </div>
 
@@ -194,9 +190,11 @@ const Pricing = () => {
                         <Card
                             key={index} // Chave única para cada card.
                             // Classes condicionais para destacar o plano popular.
-                            className={`p-6 md:p-8 relative bg-theme-card backdrop-blur-md flex flex-col ${plan.isPopular
-                                ? 'border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]'
-                                : 'border border-[#2a4980]/70 shadow-lg'
+                            className={`p-6 md:p-8 relative backdrop-blur-md flex flex-col ${plan.isPopular
+                                ? 'bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]'
+                                : plan.buttonVariant === 'outline'
+                                    ? 'bg-theme-card/95 border-2 border-[#1d3661] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
+                                    : 'bg-theme-card/95 border-2 border-[#2a4980] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
                                 }`}
                         >
                             {/* Badge "Popular" (ou texto customizado) para o plano destacado. */}
@@ -212,7 +210,7 @@ const Pricing = () => {
                                     {plan.name}
                                 </h3>
                                 <div className="flex items-baseline justify-center text-white">
-                                    <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
+                                    <span className="gradient-text text-3xl sm:text-4xl font-bold">{plan.price}</span>
                                 </div>
                                 {/* Descrição do plano com altura fixa para alinhamento visual entre cards. */}
                                 <p className="text-lg text-gray-300 mt-2 h-10">{plan.description}</p>
@@ -239,7 +237,7 @@ const Pricing = () => {
                                         ? 'bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]'
                                         : plan.buttonVariant === 'outline' 
                                             ? 'bg-transparent border-2 border-theme-accent hover:bg-theme-hover-light text-theme-accent hover:text-foreground' // Estilo para botão outline
-                                            : 'bg-theme-accent-bg/80 hover:bg-theme-accent-bg border border-theme-accent/50 hover:border-theme-accent' // Estilo para botão default não popular
+                                            : 'bg-theme-accent-bg hover:bg-theme-accent-bg border border-theme-accent/50 hover:border-theme-accent' // Estilo para botão default não popular
                                     } transition-all duration-300 ease-in-out transform hover:scale-105`}
                             >
                                 {plan.buttonText}
