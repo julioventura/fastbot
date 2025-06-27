@@ -367,18 +367,7 @@ const Account = () => {
   // --- Condicional de Carregamento Global ---
   // Exibe a tela de carregamento se o estado de autenticação inicial ainda estiver carregando.
   if (authLoading || loading) {
-    return (
-      <div className="min-h-screen bg-theme-gradient">
-        <div className="container mx-auto p-6 max-w-2xl">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-            <p className="mt-2 text-muted-foreground">
-              Carregando dados da conta...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Carregando..." />;
   }
 
   if (error) {

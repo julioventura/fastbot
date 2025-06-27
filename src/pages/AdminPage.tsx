@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+// ...existing code...
+import LoadingScreen from '@/components/account/LoadingScreen';
 import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
 import { AdminRoleManagement } from '@/components/admin/AdminRoleManagement';
 import { useAuth } from '@/lib/auth/useAuth';
@@ -12,16 +14,7 @@ export const AdminPage = () => {
   const { isAdmin, loading } = useIsAdmin();
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-theme-gradient">
-        <div className="container mx-auto p-6 max-w-2xl">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-muted-foreground">Verificando permissões...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Verificando permissões..." />;
   }
 
   if (!user) {
