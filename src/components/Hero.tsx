@@ -15,98 +15,60 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
-
 // Componente Hero
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
 const Hero = () => {
   return (
-    // Elemento <section> principal com estilos de fundo, altura mínima e centralização de conteúdo.
-    // 'relative overflow-hidden' é usado para conter os elementos de decoração absoluta e evitar barras de rolagem indesejadas.
-    <section className="relative overflow-hidden bg-theme-gradient min-h-screen flex items-center justify-center">
+    <section className="relative overflow-hidden bg-hero-new min-h-screen flex items-center">
+      {/* Fundo com gradiente suave */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50"></div>
       
-      {/* Efeito de Brilho SVG (Decorativo) */}
-      {/* Este div contém um SVG que cria um efeito de brilho de fundo dinâmico. */}
-      {/* 'absolute inset-0 z-0 overflow-hidden' posiciona o SVG para preencher a seção e ficar atrás do conteúdo principal. */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <svg className="w-full h-full opacity-60" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          {/* Grupo de elementos SVG para o brilho, com filtros de desfoque aplicados. */}
-          <g opacity="0.4" filter="url(#filter0_f_101_3)">
-            <circle cx="1079" cy="540" r="359" fill="#0063F7" />
-          </g>
-          <g opacity="0.3" filter="url(#filter1_f_101_3)">
-            <circle cx="541" cy="540" r="359" fill="#8B2CF5" />
-          </g>
-          {/* Definições dos filtros SVG (GaussianBlur) usados para criar o efeito de brilho suave. */}
-          <defs>
-            <filter id="filter0_f_101_3" x="520" y="-19" width="1118" height="1118" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-              <feGaussianBlur stdDeviation="100" result="effect1_foregroundBlur_101_3" />
-            </filter>
-            <filter id="filter1_f_101_3" x="-18" y="-19" width="1118" height="1118" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-              <feGaussianBlur stdDeviation="100" result="effect1_foregroundBlur_101_3" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
+      {/* Container principal ocupando toda a altura disponível */}
+      <div className="container relative z-10 mx-auto px-4 w-full">
+        <div className="grid lg:grid-cols-5 gap-6 lg:gap-12 items-center h-screen max-h-screen">
+          
+          {/* Coluna do texto - lado esquerdo (40% no desktop) */}
+          <div className="lg:col-span-2 flex flex-col justify-center space-y-6 lg:space-y-8 py-8">
+            {/* Título Principal */}
+            <div className="space-y-2">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight">
+                <span className="block gradient-text-purple">Ana.</span>
+                <span className="block text-gray-900">Sua assistente</span>
+                <span className="block gradient-text-blue">Virtual de IA</span>
+                <span className="block gradient-text-purple">em 3 minutos!</span>
+              </h1>
+            </div>
 
-      {/* Padrão de Grade Sobreposto (Decorativo) */}
-      {/* Este div cria um padrão de grade sutil sobre o fundo. */}
-      {/* 'absolute inset-0 z-0 opacity-20' posiciona a grade para preencher a seção e ficar atrás do conteúdo principal. */}
-      <div className="absolute inset-0 z-0 opacity-20">
-        <div
-          className="h-full w-full grid"
-          style={{
-            gridTemplateRows: 'repeat(20, 1fr)', // Define 20 linhas para a grade.
-            gridTemplateColumns: 'repeat(20, 1fr)', // Define 20 colunas para a grade.
-          }}
-        >
-          {/* Linhas Horizontais da Grade */}
-          {/* Mapeamento para criar as linhas horizontais da grade. */}
-          {Array.from({ length: 21 }).map((_, index) => (
-            <div
-              key={`h-${index}`} // Chave única para cada linha horizontal.
-              className="absolute left-0 right-0 border-t border-[#4f9bff]/30" // Estilos da linha.
-              style={{ top: `${(index * 100) / 20}%` }} // Posicionamento vertical da linha.
-            />
-          ))}
+            {/* Botão CTA */}
+            <div className="pt-4">
+              <Button className="hero-cta-button text-white px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                <span>Comece agora GRÁTIS!</span>
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
 
-          {/* Linhas Verticais da Grade */}
-          {/* Mapeamento para criar as linhas verticais da grade. */}
-          {Array.from({ length: 21 }).map((_, index) => (
-            <div
-              key={`v-${index}`} // Chave única para cada linha vertical.
-              className="absolute top-0 bottom-0 border-l border-[#4f9bff]/30" // Estilos da linha.
-              style={{ left: `${(index * 100) / 20}%` }} // Posicionamento horizontal da linha.
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Contêiner do Conteúdo Principal da Seção Hero */}
-      {/* 'relative z-10' garante que este conteúdo fique acima dos elementos decorativos. */}
-      {/* 'data-lov-id' é um atributo de dados personalizado, possivelmente para rastreamento ou testes. */}
-      <div className="section-container relative z-10 pt-16 pb-20" data-lov-id="hero-section">
-        {/* Contêiner para centralizar o texto e limitar a largura máxima. */}
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Título Principal (H1) */}
-          {/* 'gradient-text' aplica um estilo de texto com gradiente. */}
-          <h1 className="text-4xl md:text-6xl font-bold gradient-text">
-            Seu<br />
-            <span className='text-white'>ChatBot de IA</span><br />
-            <span className='text-4xl md:text-6xl gradient-text'>em 3 minutos!</span> <br />&nbsp;
-          </h1>
-
-          {/* Botão de Chamada para Ação (CTA) */}
-          {/* Layout flexível para o botão, responsivo para telas pequenas. */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button className="hero-button bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 rounded-full text-lg flex items-center gap-2 shadow-[0_0_15px_rgba(59,130,246,0.6)]">
-              <span>Comece agora GRÁTIS!</span>
-              {/* Ícone de seta para a direita, indicando progressão ou ação. */}
-              <ArrowRight className="h-5 w-5" />
-            </Button>
+          {/* Coluna da imagem - lado direito (60% no desktop) */}
+          <div className="lg:col-span-3 flex justify-center lg:justify-end items-center h-full py-4 lg:py-8">
+            <div className="relative character-illustration w-full max-w-2xl lg:max-w-3xl">
+              {/* Container da imagem otimizado para ocupar mais espaço vertical */}
+              <div className="relative w-full aspect-[3/4] max-h-[90vh] lg:max-h-[95vh] rounded-3xl overflow-hidden">
+                {/* Imagem da Ana - maior e mais proeminente */}
+                <img 
+                  src="/fastbot/hero-ana.png"
+                  alt="Ana - Assistente Virtual Profissional da Saúde"
+                  className="w-full h-full object-contain object-center scale-150 lg:scale-125"
+                />
+                
+                {/* Overlay sutil para melhor integração com o design */}
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-50/10 to-transparent"></div>
+              </div>
+              
+              {/* Elementos decorativos externos otimizados */}
+              <div className="absolute -top-6 -right-6 lg:-top-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 decoration-circle bg-yellow-300 opacity-80"></div>
+              <div className="absolute -bottom-6 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 decoration-circle bg-purple-300 opacity-60"></div>
+              <div className="absolute top-1/4 -left-8 lg:-left-12 w-8 h-8 lg:w-12 lg:h-12 decoration-circle bg-blue-300 opacity-50"></div>
+            </div>
           </div>
         </div>
       </div>

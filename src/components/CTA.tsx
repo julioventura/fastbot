@@ -36,7 +36,7 @@ export default function CTA() {
             </h2>
             {/* Descrição/Subtítulo da CTA */}
             <p className="text-xl text-muted-foreground font-bold max-w-3xl mx-auto">
-              Nosso chatbot coloca a sua vida profissional em outro patamar!
+              Ana coloca a sua vida profissional em outro patamar!
             </p>
             {/* Botão de Chamada para Ação */}
             <div className="mt-8">

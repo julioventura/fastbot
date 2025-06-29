@@ -47,7 +47,7 @@ const Testimonials = () => {
         // Elemento <section> principal com estilos de fundo e posicionamento relativo.
         // 'relative' é usado para posicionar os elementos SVG de decoração e a grade absoluta dentro dele.
         <section className="relative py-5 md:py-0 bg-theme-gradient-alt">
-            
+
             {/* Efeito de Brilho SVG (Decorativo) */}
             {/* Este div contém um SVG que cria um efeito de brilho de fundo dinâmico. */}
             {/* 'absolute inset-0 z-0 overflow-hidden' posiciona o SVG para preencher a seção e ficar atrás do conteúdo principal. */}
@@ -116,8 +116,10 @@ const Testimonials = () => {
                 {/* Título da Seção */}
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
-                        <span className="text-theme-accent">O que falam de nossos</span> chatbots
+                        <p><span className="text-theme-accent">O que falam de nossos</span> chatbots...</p>
+                        <p><i>os parentes de <span className="text-theme-accent">Ana...</span></i> <span className="inline-block">😉</span></p>
                     </h2>
+
                 </div>
 
                 {/* Grade de Cards de Depoimentos */}
@@ -125,7 +127,7 @@ const Testimonials = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Mapeamento do array 'testimonials' para renderizar cada card de depoimento. */}
                     {testimonials.map((testimonial, index) => (
-                        <Card 
+                        <Card
                             key={index} // Chave única para cada card.
                             // Estilos do card, incluindo fundo, borda, sombra e efeito de hover.
                             className="p-8 bg-theme-card backdrop-blur-sm border border-theme-accent/50 shadow-md hover:shadow-lg transition-shadow duration-300"

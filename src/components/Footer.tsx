@@ -69,7 +69,7 @@ const Footer = () => {
             >
               {/* "DENTISTAS.COM.BR / FASTBOT" - texto simples sem efeitos */}
               <span className="font-mono text-xl text-primary font-bold tracking-[0.2em] uppercase">
-                DENTISTAS.COM.BR / FASTBOT
+                DENTISTAS.COM.BR / ANA
               </span>
             </NavLink>
           </div>

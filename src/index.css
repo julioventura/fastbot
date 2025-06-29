@@ -305,6 +305,55 @@
     font-weight: 600 !important;
   }
 
+  /* ===== NAVEGAÇÃO ATIVA - GARANTIR NEGRITO ===== */
+  .nav-active-item {
+    font-weight: 900 !important;
+    font-family: 'Inter', sans-serif !important;
+    text-shadow: 0 0 0.5px currentColor !important;
+    position: relative !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.2) 100%) !important;
+    box-shadow: 
+      0 0 20px rgba(59, 130, 246, 0.3),
+      0 0 40px rgba(59, 130, 246, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  /* Animação pulsante sutil */
+  .nav-active-item::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(37, 99, 235, 0.6));
+    border-radius: 22px;
+    z-index: -1;
+    animation: glow-pulse 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glow-pulse {
+    0% {
+      opacity: 0.5;
+      transform: scale(0.98);
+    }
+    100% {
+      opacity: 0.8;
+      transform: scale(1.02);
+    }
+  }
+  
+  /* Força para navegação ativa */
+  nav .nav-active-item,
+  header .nav-active-item {
+    font-weight: 900 !important;
+  }
+
   /* ===== SEÇÕES ESPECÍFICAS ===== */
   
   /* Testimonials */
@@ -569,4 +618,139 @@
   .light .bg-theme-card {
     background: #ffffff !important;
     backdrop-filter: none !important;
+  }
+
+  /* ===== NOVO DESIGN HERO ===== */
+  .bg-hero-new {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+
+  /* Personagem ilustrativa animada */
+  .character-illustration {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Efeitos de gradiente para o texto */
+  .gradient-text-blue {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-purple {
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Botão CTA melhorado */
+  .hero-cta-button {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 
+      0 4px 14px 0 rgba(37, 99, 235, 0.4),
+      0 0 0 1px rgba(37, 99, 235, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .hero-cta-button:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 8px 25px 0 rgba(37, 99, 235, 0.5),
+      0 0 0 1px rgba(37, 99, 235, 0.2);
+  }
+
+  /* Header limpo e moderno */
+  .header-modern {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  /* Elementos decorativos */
+  .decoration-circle {
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+  }
+
+  /* ===== APRIMORAMENTOS ESPECÍFICOS PARA O NOVO DESIGN ===== */
+  
+  /* Forçar fundo branco para o modo claro */
+  .light body,
+  .light .bg-hero-new {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+  }
+
+  /* Header no modo claro - mais limpo */
+  .light .header-modern,
+  .light header {
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+  }
+
+  /* Typography melhorada */
+  .light .gradient-text-blue {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+  }
+
+  .light .gradient-text-purple {
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+  }
+
+  /* Garantir que botões mantenham estilo no modo claro */
+  .light .hero-cta-button {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+  }
+
+  .light .hero-cta-button:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+    color: #ffffff !important;
+  }
+
+  /* Personagem - garantir cores corretas */
+  .light .character-illustration {
+    filter: brightness(1.1) contrast(1.05);
+  }
+
+  /* Animações suaves */
+  .character-illustration {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .decoration-circle {
+    animation: pulse 8s ease-in-out infinite;
+  }
+
+  /* Mobile responsivo melhorado */
+  @media (max-width: 768px) {
+    .character-illustration {
+      transform: scale(0.8);
+    }
+    
+    .hero-cta-button {
+      padding: 1rem 2rem !important;
+      font-size: 1rem !important;
+    }
   }

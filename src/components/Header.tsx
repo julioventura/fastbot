@@ -1,18 +1,8 @@
-// Componente: Header
-// Funcionalidade:
-// Este componente renderiza o cabeçalho da aplicação. Ele é fixo no topo da página
-// e possui um comportamento retrátil que o esconde ao rolar a página para baixo e
-// o exibe ao rolar para cima. Inclui o logo, links de navegação (que mudam
-// dependendo do estado de autenticação do usuário), e botões de ação como
-// "Entrar", "Cadastre-se" ou um menu dropdown para usuários logados com opções
-// como "Minha Conta", "Meus Créditos" e "Sair".
-// Utiliza um modal para autenticação (AuthModal).
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
 import { useAuth } from "@/lib/auth/useAuth";
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,78 +10,40 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Bot, Coins, Shield, Sun, Moon } from 'lucide-react';
+import { User, LogOut, MessageSquare, ChevronDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useProfile } from '../hooks/useProfile';
-import { useIsAdmin } from '../hooks/useIsAdmin';
-import { useTheme } from '../hooks/useTheme';
 
-// Custom Hook: useScrollDirection
-// Determina a direção do scroll da página (para cima ou para baixo).
-// Utilizado para controlar a visibilidade retrátil do Header.
 const useScrollDirection = () => {
-  // scrollDirection: Estado que armazena a direção atual do scroll ('up' ou 'down').
   const [scrollDirection, setScrollDirection] = useState("up");
-
-  // lastScrollY: Estado que armazena a última posição vertical do scroll conhecida.
   const [lastScrollY, setLastScrollY] = useState(0);
 
-
-  // useEffect para adicionar e limpar o event listener de scroll.
-  // Atualiza a direção do scroll com base na comparação da posição atual com a anterior.
   useEffect(() => {
     const updateScrollDirection = () => {
-      const scrollY = window.pageYOffset; // Posição vertical atual do scroll.
-      const direction = scrollY > lastScrollY ? "down" : "up"; // Determina a direção.
+      const scrollY = window.pageYOffset;
+      const direction = scrollY > lastScrollY ? "down" : "up";
 
-      // Condições para atualizar a direção:
-      // 1. A direção mudou.
-      // 2. Houve um movimento significativo (mais de 10 pixels).
-      // 3. O scroll não está no topo absoluto da página (scrollY > 20).
       if (direction !== scrollDirection &&
         (scrollY - lastScrollY > 10 || scrollY - lastScrollY < -10) &&
         scrollY > 20) {
         setScrollDirection(direction);
       }
-      setLastScrollY(scrollY); // Atualiza a última posição conhecida.
+      setLastScrollY(scrollY);
     };
 
-    // Adiciona o event listener ao montar o componente.
-    // 'passive: true' melhora a performance de scroll.
     window.addEventListener("scroll", updateScrollDirection, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrollDirection);
+  }, [scrollDirection, lastScrollY]);
 
-    // Remove o event listener ao desmontar o componente para evitar memory leaks.
-    return () => {
-      window.removeEventListener("scroll", updateScrollDirection);
-    };
-  }, [scrollDirection, lastScrollY]); // Dependências do useEffect.
-
-  return scrollDirection; // Retorna a direção atual do scroll.
+  return scrollDirection;
 };
 
-
-// Componente Header
-// Renderiza o cabeçalho principal da aplicação.
 const Header = () => {
-  // scrollDirection: Obtém a direção atual do scroll da página.
   const scrollDirection = useScrollDirection();
-
-  // isAuthModalOpen: Estado para controlar a visibilidade do modal de autenticação.
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "reset">("login");
-
-  // user: Objeto do usuário autenticado.
-  // signOut: Função para deslogar o usuário.
   const { user, signOut, loading: authLoading } = useAuth();
-  const { profile, loading: profileLoading, error } = useProfile();
-  const { isAdmin, loading: adminLoading } = useIsAdmin();
-  const { theme, toggleTheme } = useTheme();
-
-  // userName: Estado para armazenar o nome do usuário a ser exibido.
   const [userName, setUserName] = useState("");
 
-  // useEffect para buscar o nome do perfil do usuário.
-  // Executado quando o objeto 'user' (do contexto de autenticação) muda.
   useEffect(() => {
     const fetchUserName = async () => {
       if (user) {
@@ -99,19 +51,17 @@ const Header = () => {
           const { data } = await supabase
             .from('profiles')
             .select('name')
-            .eq('id', user.id) // CORREÇÃO: usar 'id' em vez de 'user_id'
+            .eq('user_id', user.id)
             .single();
-
-          if (data && data.name) {
+          
+          if (data?.name) {
             setUserName(data.name);
           } else {
-            const emailName = user.email?.split('@')[0] || "";
-            setUserName(emailName);
+            setUserName(user.email?.split('@')[0] || 'Usuário');
           }
         } catch (error) {
-          console.error("Erro ao buscar nome do usuário:", error);
-          const emailName = user.email?.split('@')[0] || "";
-          setUserName(emailName);
+          console.error('Erro ao buscar nome do usuário:', error);
+          setUserName(user.email?.split('@')[0] || 'Usuário');
         }
       } else {
         setUserName("");
@@ -121,337 +71,164 @@ const Header = () => {
     fetchUserName();
   }, [user]);
 
-
-  // --- Função truncate ---
-  // Trunca uma string (nome do usuário) para um limite de caracteres especificado.
-  // Tenta manter palavras iniciais inteiras e adiciona "..." se o nome for truncado.
-  const truncate = (name: string): string => {
-    const limit = 32; // Limite máximo de caracteres para a parte do texto.
-
-    if (!name) {
-      return ""; // Retorna string vazia se o nome for nulo ou indefinido.
-    }
-
-    const trimmedName = name.trim(); // Remove espaços extras no início e fim.
-
-    // Se o nome ajustado já é curto o suficiente, retorna ele.
-    if (trimmedName.length <= limit) {
-      return trimmedName;
-    }
-
-    // O nome é mais longo que o limite.
-    const words = trimmedName.split(/\s+/); // Divide o nome em palavras.
-
-    if (words.length === 0) {
-      return ""; // Caso improvável após trim.
-    }
-
-    // Caso especial: a primeira palavra sozinha já é muito longa.
-    if (words[0].length > limit) {
-      const cutLength = limit - 3; // Deixa espaço para "...".
-      if (cutLength < 1) {
-        return trimmedName.substring(0, limit); // Corta no limite se não houver espaço.
-      }
-      return words[0].substring(0, cutLength) + "...";
-    }
-
-    let textPart = "";
-    for (const word of words) {
-      const potentialTextPart = textPart + (textPart ? " " : "") + word;
-      if (potentialTextPart.length <= limit) {
-        textPart = potentialTextPart; // Adiciona a palavra se ainda couber.
-      } else {
-        break; // Adicionar esta palavra excederia o limite.
-      }
-    }
-
-    const normalizedFullName = words.join(" ");
-
-    // Adiciona "..." apenas se o texto foi efetivamente truncado.
-    // (textPart.length < normalizedFullName.length) não é a melhor condição aqui,
-    // pois textPart pode ser igual a normalizedFullName e ainda precisar de "..."
-    // se normalizedFullName > limit.
-    // A lógica correta é: se o textPart construído é menor que o nome original E o nome original era maior que o limite.
-    // No entanto, a lógica atual já garante que textPart <= limit.
-    // Se textPart é o nome completo e cabe, não precisa de "...".
-    // Se textPart é uma parte do nome, então precisa de "...".
-    if (textPart.length < trimmedName.length) { // Compara com trimmedName para ser mais preciso
-      return textPart + "..."; // Adiciona "..." se nem todas as palavras couberam
-    } else {
-      return textPart; // Retorna a parte do texto que coube (pode ser o nome completo se <= limit)
-    }
-  };
-
-
-  // --- Função handleSignOut ---
-  // Manipulador para o evento de logout do usuário.
-  // Realiza uma limpeza robusta de sessão local e do Supabase, e redireciona o usuário.
   const handleSignOut = async () => {
     try {
-      // 1. Limpar quaisquer tokens remanescentes do Supabase no localStorage.
-      for (const key of Object.keys(localStorage)) {
-        if (key.startsWith('sb-') || key.includes('supabase')) {
-          localStorage.removeItem(key);
-        }
-      }
-
-      // 2. Use o signOut do contexto de autenticação (limpa o estado do contexto).
-      if (typeof signOut === 'function') {
-        try {
-          await signOut();
-        } catch (contextError) {
-          console.log("Erro no signOut do contexto, continuando a limpeza:", contextError);
-        }
-      }
-
-      // 3. Tenta o signOut do Supabase (pode falhar com 403 se a sessão já for inválida).
-      try {
-        await supabase.auth.signOut();
-      } catch (supabaseError) {
-        console.log("Erro no signOut do Supabase (esperado se a sessão for inválida):", supabaseError);
-      }
-
-      // 4. Redefinir o estado local do componente.
+      await signOut();
       setUserName("");
-
-      // 5. Forçar um recarregamento completo para a página inicial para garantir que todo o estado seja limpo.
       window.location.href = '/';
-
     } catch (error) {
       console.error("Erro durante o processo de saída:", error);
-
-      // Mesmo em caso de erro fatal, tenta forçar um estado limpo.
       setUserName("");
-      localStorage.clear(); // Limpeza mais agressiva do localStorage.
-      window.location.href = '/'; // Redireciona para a página inicial.
+      localStorage.clear();
+      window.location.href = '/';
     }
   };
 
-
-  // --- Renderização do Componente Header ---
   return (
-    // Contêiner div com fundo preto. Importante para o efeito visual durante a retração do header.
-    <div className='bg-black'>
-      <header
-        className={`sticky transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
-          } top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-lg relative overflow-hidden`}
-      >
-        {/* Gradient de Fundo Elegante */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-background/90 via-primary/10 to-background/90"></div>
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/15"></div>
-        
-        {/* Overlay sutil para profundidade */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-transparent via-primary/5 to-primary/10 opacity-60"></div>
-
-        {/* Contêiner principal do conteúdo do header. */}
-        <div className="container relative z-10 mx-auto px-4 h-16 md:h-20">
-          <div className="grid grid-cols-3 items-center h-full">
-            {/* Seção do Logo/Nome da Aplicação */}
-            <div className="flex items-center justify-start">
-              <NavLink
-                to="/"
-                className="flex flex-col items-start group cursor-pointer"
-              >
-                {/* "FastBot" - mantido igual */}
-                <span className="font-bold text-center text-3xl mt-2 text-primary
-                [text-shadow:0_0_12px_hsl(var(--primary)),0_0_12px_hsl(var(--primary)/0.9),0_0_18px_hsl(var(--primary)/0.1),0_0_48px_hsl(var(--primary)/0.3)]
-                group-hover:!text-primary  
-                group-hover:[text-shadow:0_0_16px_hsl(var(--primary)),0_0_32px_hsl(var(--primary)),0_0_48px_hsl(var(--primary)/0.8),0_0_64px_hsl(var(--primary)/0.5)]
-                transition-all duration-300 tracking-wide">
-                  FastBot
+    <header className={`header-modern sticky transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"} top-0 z-50 shadow-sm`}>
+      
+      <div className="container mx-auto px-4 h-16 md:h-20">
+        <div className="flex items-center justify-between h-full">
+          
+          {/* Logo Section */}
+          <div className="flex items-center">
+            <NavLink to="/" className="flex items-center space-x-2 group">
+              <div className="flex flex-col">
+                <span className="text-2xl md:text-3xl font-black text-blue-600 group-hover:text-blue-700 transition-colors">
+                  Ana
                 </span>
-
-                {/* "DENTISTAS.COM.BR" - embaixo, menor e com largura limitada */}
-                <span className="text-center text-sm !text-primary pt-1
-                  font-bold
-                  [text-shadow:0_0_2px_hsl(var(--primary)/0.8)]
-                  [font-variant-numeric:slashed-zero]
-                  opacity-100">
+                <span className="text-xs text-blue-500 font-medium -mt-1">
                   Dentistas.com.br
                 </span>
-              </NavLink>
-            </div>
+              </div>
+            </NavLink>
+          </div>
 
-            {/* Menu de Navegação Principal (links) - Centralizado */}
-            <nav className="hidden md:flex items-center justify-center space-x-8">
-
-            {/* {!user && ( */}
-            {(
-              <NavLink
-                to="/"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
-              >
-                Início
-              </NavLink>
-            )}
-
-            {!user && (
-              <NavLink
-                to="/pricing"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
-              >
-                Preços
-              </NavLink>
-            )}
-
-            {!user && (
-              <NavLink
-                to="/features"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
-              >
-                Recursos
-              </NavLink>
-            )}
-
-
-            {/* NOVO: Link "Minha Conta" para usuários logados */}
+          {/* Navigation Menu - Center */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <NavLink
+              to="/"
+              className={({ isActive }) => 
+                `transition-all duration-300 text-base leading-none flex items-center ${
+                  isActive 
+                    ? "text-blue-600 nav-active-item" 
+                    : "text-gray-600 hover:text-blue-600 font-medium"
+                }`
+              }
+              style={({ isActive }) => 
+                isActive ? { fontWeight: '950' } : {}
+              }
+            >
+              Início
+            </NavLink>
+            
             {user && (
-              <NavLink
-                to="/account"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
-              >
-                Minha Conta
-              </NavLink>
-            )}
-
-
-            {/* Links condicionalmente exibidos se o usuário ESTIVER logado */}
-            {user && (
-              <NavLink
-                to="/my-chatbot"
-                className={({ isActive }) => `font-medium cursor-pointer ${isActive ? "!text-foreground text-2xl drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)]" : "!text-muted-foreground text-sm"} hover:!text-foreground hover:drop-shadow-[0_0_8px_hsl(var(--primary)/0.7)] transition-all`}
-              >
-                Meu Chatbot
-              </NavLink>
+              <>
+                <NavLink
+                  to="/account"
+                  className={({ isActive }) => 
+                    `transition-all duration-300 text-base leading-none flex items-center ${
+                      isActive 
+                        ? "text-blue-600 nav-active-item" 
+                        : "text-gray-600 hover:text-blue-600 font-medium"
+                    }`
+                  }
+                  style={({ isActive }) => 
+                    isActive ? { fontWeight: '950' } : {}
+                  }
+                >
+                  Minha Conta
+                </NavLink>
+                <NavLink
+                  to="/my-chatbot"
+                  className={({ isActive }) => 
+                    `transition-all duration-300 text-base leading-none flex items-center ${
+                      isActive 
+                        ? "text-blue-600 nav-active-item" 
+                        : "text-gray-600 hover:text-blue-600 font-medium"
+                    }`
+                  }
+                  style={({ isActive }) => 
+                    isActive ? { fontWeight: '950' } : {}
+                  }
+                >
+                  Meu Chatbot
+                </NavLink>
+              </>
             )}
           </nav>
 
-            {/* Seção de Ações do Usuário (Autenticação/Menu) */}
-            <div className="flex items-center justify-end space-x-4">
+          {/* Auth Section */}
+          <div className="flex items-center space-x-4">
             {authLoading ? (
-              // Mostrar um indicador de loading só para a seção de usuário
-              <div className="text-muted-foreground text-sm">Carregando...</div>
-            ) : user ? (
-              // Menu Dropdown para usuário logado
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="border-primary text-foreground bg-background/70 hover:bg-secondary hover:border-primary transition-all px-3 py-2 rounded-md"
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    <span className="hidden sm:inline">{truncate(userName)}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-56 bg-background border-2 border-border shadow-xl rounded-lg p-1 backdrop-blur-sm"
-                >
-                  <DropdownMenuItem
-                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
-                    asChild
-                  >
-                    <Link to="/my-chatbot">
-                      <Bot className="mr-3 h-6 w-6" />
-                      Meu Chatbot
-                    </Link>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
-                    asChild
-                  >
-                    <Link to="/account">
-                      <User className="mr-3 h-6 w-6" />
-                      Minha Conta
-                    </Link>
-                  </DropdownMenuItem>
-
-                  {/* Item Admin - apenas para administradores */}
-                  {isAdmin && (
-                    <DropdownMenuItem
-                      className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
-                      asChild
-                    >
-                      <Link to="/admin">
-                        <Shield className="mr-3 h-6 w-6" />
-                        Admin
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-
-                  <DropdownMenuSeparator className="bg-border" />
-
-                  {/* Item Seletor de Tema */}
-                  <DropdownMenuItem
-                    onClick={toggleTheme}
-                    className="cursor-pointer rounded-md px-3 py-2 text-foreground hover:!bg-secondary hover:!text-foreground focus:!bg-secondary focus:!text-foreground transition-colors flex items-center"
-                  >
-                    {theme === 'dark' ? (
-                      <>
-                        <Sun className="mr-3 h-6 w-6" />
-                        Modo Claro
-                      </>
-                    ) : (
-                      <>
-                        <Moon className="mr-3 h-6 w-6" />
-                        Modo Escuro
-                      </>
-                    )}
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator className="bg-border" />
-
-                  <DropdownMenuItem
-                    onClick={handleSignOut}
-                    className="cursor-pointer rounded-md px-3 py-2 text-destructive hover:!bg-secondary hover:!text-destructive focus:!bg-secondary focus:!text-destructive transition-colors flex items-center"
-                  >
-                    <LogOut className="mr-3 h-6 w-6" />
-                    Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              // Botões de "Entrar" e "Cadastre-se" para usuário não logado
+              <div className="text-gray-500 text-sm">Carregando...</div>
+            ) : !user ? (
               <>
                 <Button
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all"
+                  variant="ghost"
                   onClick={() => {
                     setAuthModalTab("login");
-                    setTimeout(() => {
-                      setIsAuthModalOpen(true);
-                    }, 0);
+                    setIsAuthModalOpen(true);
                   }}
+                  className="text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                 >
                   Entrar
                 </Button>
                 <Button
-                  variant="outline"
-                  className="hidden md:inline-flex border-primary text-primary-foreground bg-primary/40 hover:bg-primary/80 hover:border-primary hover:text-primary-foreground transition-all hover:shadow-[0_0_25px_hsl(var(--primary)/0.1)]"
                   onClick={() => {
                     setAuthModalTab("signup");
-                    setTimeout(() => {
-                      setIsAuthModalOpen(true);
-                    }, 0);
+                    setIsAuthModalOpen(true);
                   }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium shadow-sm"
                 >
                   Cadastre-se
                 </Button>
               </>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                    <User className="h-4 w-4" />
+                    <span className="hidden md:inline">{userName || user.email}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg">
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/account" className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                      <User className="h-4 w-4" />
+                      <span>Minha Conta</span>
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/my-chatbot" className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                      <MessageSquare className="h-4 w-4" />
+                      <span>Meu Chatbot</span>
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-gray-200" />
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="flex items-center space-x-2 px-3 py-2 text-red-600 hover:bg-red-50 cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Sair</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
-            </div>
           </div>
         </div>
+      </div>
 
-        {/* Modal de Autenticação - CORRIGIDO com key para forçar re-render */}
-        <AuthModal
-          key={authModalTab} // Força re-render quando a aba muda
-          isOpen={isAuthModalOpen}
-          onOpenChange={setIsAuthModalOpen}
-          defaultTab={authModalTab}
-        />
-      </header>
-    </div>
+      {/* Auth Modal */}
+      <AuthModal
+        key={authModalTab}
+        isOpen={isAuthModalOpen}
+        onOpenChange={setIsAuthModalOpen}
+        defaultTab={authModalTab}
+      />
+    </header>
   );
 };
 
