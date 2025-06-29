@@ -14,6 +14,7 @@
 //     - description (string): Uma breve descrição do plano.
 //     - features (array de strings): Uma lista dos recursos incluídos no plano.
 //     - isPopular (boolean): Indica se o plano deve ser destacado como popular.
+//     - popularText (string): Texto do detaque de isPopular.
 //     - buttonText (string): O texto do botão de chamada para ação.
 //     - buttonVariant ('default' | 'outline' | ...): A variante do botão (do Shadcn UI).
 // - Pricing (Componente): Componente funcional React que renderiza a estrutura da seção de preços.
@@ -35,8 +36,10 @@ const pricingPlans = [
         description: 'Para uso eventual',
         features: [
             '100 conversas por mês',
+            'Homepage profissional com chatbot',
         ],
         isPopular: true, // Destaca este plano como o mais popular.
+        popularText: 'GRATUITO',
         buttonText: 'COMECE JÁ !',
         buttonVariant: 'default' as const, // Tipo específico para a variante do botão.
     },
@@ -46,22 +49,25 @@ const pricingPlans = [
         description: 'Para uso ativo', // Descrição adicionada
         features: [
             'Conversas ilimitadas',
+            'Homepage profissional com chatbot',
         ],
-        isPopular: false,
+        isPopular: true,
+        popularText: 'ASSINATURA',
         buttonText: 'ASSINE JÁ !',
-        buttonVariant: 'outline' as const,
+        buttonVariant: 'default' as const,
     },    
-    {
-        name: 'Créditos Avulsos',
-        price: 'R$ 20',
-        description: 'Créditos para áudio e imagem',
-        features: [
-            '100 créditos cumulativos',
-        ],
-        isPopular: false,
-        buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado
-        buttonVariant: 'outline' as const, // Variante do botão ajustada para diferenciar
-    },
+    // {
+    //     name: 'Créditos Avulsos',
+    //     price: 'R$ 20',
+    //     description: 'Créditos para áudio e imagem',
+    //     features: [
+    //         '100 créditos cumulativos',
+    //     ],
+    //     isPopular: false,
+    //     popularText: 'GRATUITO',
+    //     buttonText: 'COMPRAR CRÉDITOS', // Texto do botão ajustado
+    //     buttonVariant: 'outline' as const, // Variante do botão ajustada para diferenciar
+    // },
 ];
 
 
@@ -184,7 +190,7 @@ const Pricing = () => {
 
                 {/* Grade de Cards de Planos de Preços */}
                 {/* Layout responsivo: 1 coluna em telas pequenas, 3 colunas em médias e grandes. */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
                     {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
                     {pricingPlans.map((plan, index) => (
                         <Card
@@ -192,21 +198,19 @@ const Pricing = () => {
                             // Classes condicionais para destacar o plano popular.
                             className={`p-6 md:p-8 relative backdrop-blur-md flex flex-col ${plan.isPopular
                                 ? 'bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]'
-                                : plan.buttonVariant === 'outline'
-                                    ? 'bg-theme-card/95 border-2 border-[#0a1527] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
-                                    : 'bg-theme-card/95 border-2 border-[#2a4980] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
+                                : 'bg-theme-card/95 border-2 border-[#2a4980] shadow-[0_0_60px_rgba(79,155,255,0.5)]'
                                 }`}
                         >
                             {/* Badge "Popular" (ou texto customizado) para o plano destacado. */}
                             {plan.isPopular && (
                                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
-                                    GRATUITO
+                                    {plan.popularText}
                                 </div>
                             )}
 
                             {/* Cabeçalho do Card (Nome do Plano, Preço, Descrição) */}
                             <div className="text-center mb-6 pt-4"> {/* pt-4 para dar espaço ao badge "Popular" */}
-                                <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">
+                                <h3 className="text-xl sm:text-2xl font-bold mb-6 text-white">
                                     {plan.name}
                                 </h3>
                                 <div className="flex items-baseline justify-center text-white">
@@ -218,11 +222,11 @@ const Pricing = () => {
 
                             {/* Lista de Recursos do Plano */}
                             {/* 'flex-grow' permite que esta seção expanda e empurre o botão para baixo. */}
-                            <div className="space-y-3 mb-8 flex-grow">
+                            <div className="space-y-3 mb-8 ml-8 flex-grow">
                                 {plan.features.map((feature, i) => (
                                     <div key={i} className="flex items-start">
                                         <Check className="h-5 w-5 text-theme-accent mr-2 mt-0.5 flex-shrink-0" />
-                                        <span className="text-muted-foreground text-sm sm:text-base">{feature}</span>
+                                        <span className="text-foreground text-lg">{feature}</span>
                                     </div>
                                 ))}
                             </div>
@@ -235,9 +239,7 @@ const Pricing = () => {
                                 className={`w-full mt-auto text-foreground font-semibold py-3 text-base md:text-lg
                                   ${plan.isPopular
                                         ? 'bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]'
-                                        : plan.buttonVariant === 'outline' 
-                                            ? 'bg-transparent border-2 border-theme-accent hover:bg-theme-hover-light text-theme-accent hover:text-foreground' // Estilo para botão outline
-                                            : 'bg-theme-accent-bg hover:bg-theme-accent-bg border border-theme-accent/50 hover:border-theme-accent' // Estilo para botão default não popular
+                                        : 'bg-theme-accent-bg hover:bg-theme-accent-bg border border-theme-accent/50 hover:border-theme-accent' // Estilo para botão default não popular
                                     } transition-all duration-300 ease-in-out transform hover:scale-105`}
                             >
                                 {plan.buttonText}
