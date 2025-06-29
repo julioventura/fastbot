@@ -1,10 +1,8 @@
-import { setupServer } from 'msw/node'
-import { authHandlers } from './handlers/auth'
-import { chatbotHandlers } from './handlers/chatbot'
-import { profileHandlers } from './handlers/profile'
+import { setupServer } from 'msw/node';
+import { authHandlers, chatbotHandlers, profileHandlers } from './handlers/index';
 
 export const server = setupServer(
   ...authHandlers,
   ...chatbotHandlers,
   ...profileHandlers
-)
+);

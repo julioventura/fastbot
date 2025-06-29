@@ -996,8 +996,8 @@ it('deve atualizar o estado ao clicar no botão', async () => {
 
 ### **Testes Unitários**
 
-- [ ] Componentes UI básicos (Button, Input, etc.)
-- [ ] Formulários (LoginForm, SignUpForm, ProfileForm)
+- [x] **CONCLUÍDO**: Componentes UI básicos (Button ✅, Input ✅, Card ✅, Pricing ✅)
+- [x] **CONCLUÍDO**: Formulários (LoginForm ✅, SignUpForm ✅, ProfileForm 📋)
 - [ ] Hooks customizados (useAuth, useChatbot, useTheme)
 - [ ] Funções utilitárias (utils.ts, validações)
 - [ ] Contextos (AuthContext, ThemeContext)
@@ -1029,18 +1029,18 @@ it('deve atualizar o estado ao clicar no botão', async () => {
 
 ### **Data de Início**: 29 de Junho de 2025
 
-#### **Status Atual**: ✅ FASE 1 CONCLUÍDA
+#### Status Atual: ✅ FASE 2 EM ANDAMENTO
 
-#### **Progresso Detalhado**
+#### Progresso Detalhado
 
-**✅ PREPARAÇÃO CONCLUÍDA**
+##### PREPARAÇÃO CONCLUÍDA
 
 - [x] Documento de implementação criado
 - [x] Estratégia definida  
 - [x] Stack selecionada (Vitest + RTL + MSW + Playwright)
 - [x] Cronograma aprovado
 
-**✅ FASE 1 - SETUP INICIAL (CONCLUÍDA)**
+##### FASE 1 - SETUP INICIAL (CONCLUÍDA)
 
 - Data início: 29/06/2025
 - Data conclusão: 29/06/2025
@@ -1057,20 +1057,89 @@ it('deve atualizar o estado ao clicar no botão', async () => {
 7. ✅ Scripts npm adicionados
 8. ✅ Teste básico funcionando (2/2 testes passando)
 
+##### FASE 2 - TESTES DE COMPONENTES (EM ANDAMENTO)
+
+- Data início: 29/06/2025
+- Status: 🚧 **EM ANDAMENTO**
+
+**Componentes testados:**
+
+1. ✅ **Button Component** - 10/10 testes passando
+   - Renderização básica e variantes
+   - Interações do usuário (clicks, foco)
+   - Estados (disabled, loading)
+   - Props customizadas e acessibilidade
+
+2. ✅ **Pricing Component** - 20/20 testes passando
+   - Renderização de planos e preços
+   - Badges populares e recursos
+   - Interações dos botões
+   - Responsividade e acessibilidade
+   - Elementos decorativos (SVG, grades)
+
+3. ✅ **Input Component** - 30/30 testes passando
+   - Renderização e tipos de input (text, password, email, etc.)
+   - Estados e propriedades (disabled, readOnly, required)
+   - Interações completas (onChange, onFocus, onBlur, onKeyDown)
+   - Acessibilidade (aria-labels, roles, navegação por teclado)
+   - Ref forwarding e controlled/uncontrolled
+   - Casos especiais (file input, atributos HTML)
+
+4. ✅ **Card Components** - 32/32 testes passando
+   - Renderização de todos os subcomponentes (Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter)
+   - Classes CSS e customização via className
+   - Ref forwarding para todos os componentes
+   - Composição e aninhamento flexível
+   - Acessibilidade (roles ARIA, hierarquia semântica)
+   - Casos de uso completos e integração entre componentes
+
+5. ✅ **LoginForm Component** - 25/25 testes passando
+   - Renderização completa (formulário, campos, botões)
+   - Interações dos campos (digitação, toggle senha)
+   - Validação robusta (campos vazios, parciais)
+   - Submissão e estados (loading, sucesso, erro)
+   - Tratamento de erros (credenciais, email não confirmado)
+   - Funcionalidade de reenvio de confirmação
+   - Acessibilidade completa (labels, autocomplete, types)
+   - Navegação por teclado (Enter, Tab)
+
+6. ✅ **SignUpForm Component** - 28/28 testes passando
+   - Renderização completa (todos os campos, placeholders, ícones)
+   - Interações dos campos (digitação em todos os campos, toggle senha)
+   - Validação robusta (campos vazios, parciais, confirmação de senha)
+   - Submissão e estados (loading, dados válidos, processo completo)
+   - Tratamento de erros do SignUp (email já cadastrado, inválido, problemas de senha)
+   - Tratamento de erros do perfil (problemas na criação, toasts de sucesso)
+   - Acessibilidade completa (labels, autocomplete, types)
+   - Navegação por teclado (Enter, Tab)
+
+##### Resultados dos Testes
+
+- **Total de testes**: 147 ✅ (+28 do SignUpForm)
+- **Taxa de sucesso**: 100%
+- **Cobertura atual**: Componentes UI + Autenticação críticos
+- **Tempo de execução**: ~40s
+- **Componentes testados**: Button, Pricing, Input, Card, LoginForm, SignUpForm (6/6 priorizados)
+
 **Verificações de segurança:**
 
 - ✅ `npm run build` funcionando normalmente
 - ✅ App não foi afetado
 - ✅ Testes executando com sucesso
+- ✅ Mock do Supabase corrigido para AuthContext
 
 **Próximos passos imediatos:**
 
-1. Começar Fase 2: Primeiros testes de componentes
-2. Testar componente Button (mais simples)
-3. Testar componente Pricing (atual)
-4. Expandir gradualmente
+1. ✅ ~~Testar componente Button~~
+2. ✅ ~~Testar componente Pricing~~
+3. ✅ ~~Testar componente Input~~
+4. ✅ ~~Testar componente Card~~
+5. ✅ ~~Testar componentes de autenticação (LoginForm, SignUpForm)~~
+6. 📋 Testar hooks customizados (useAuth, useChatbot, useTheme) - PRÓXIMO
+7. 📋 Testar outros componentes UI (Badge, Avatar, etc.)
+8. 📋 Testes de integração (fluxos completos)
 
-**📋 COMANDOS DE ROLLBACK (Se necessário)**
+##### COMANDOS DE ROLLBACK (Se necessário)
 
 ```bash
 # Para reverter completamente:
