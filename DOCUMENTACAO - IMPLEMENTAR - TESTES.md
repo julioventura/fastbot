@@ -998,9 +998,10 @@ it('deve atualizar o estado ao clicar no botão', async () => {
 
 - [x] **CONCLUÍDO**: Componentes UI básicos (Button ✅, Input ✅, Card ✅, Pricing ✅)
 - [x] **CONCLUÍDO**: Formulários (LoginForm ✅, SignUpForm ✅, ProfileForm 📋)
-- [ ] Hooks customizados (useAuth, useChatbot, useTheme)
+- [x] **CONCLUÍDO**: Hooks customizados (useAuth ✅, useChatbot ✅, useTheme ✅)
 - [ ] Funções utilitárias (utils.ts, validações)
 - [ ] Contextos (AuthContext, ThemeContext)
+- [ ] Outros componentes UI (Badge, Avatar, etc.)
 
 ### **Testes de Integração**
 
@@ -1057,10 +1058,11 @@ it('deve atualizar o estado ao clicar no botão', async () => {
 7. ✅ Scripts npm adicionados
 8. ✅ Teste básico funcionando (2/2 testes passando)
 
-##### FASE 2 - TESTES DE COMPONENTES (EM ANDAMENTO)
+##### FASE 2 - TESTES DE COMPONENTES (CONCLUÍDA)
 
 - Data início: 29/06/2025
-- Status: 🚧 **EM ANDAMENTO**
+- Data conclusão: 29/06/2025
+- Status: ✅ **CONCLUÍDA COM SUCESSO**
 
 **Componentes testados:**
 
@@ -1113,13 +1115,48 @@ it('deve atualizar o estado ao clicar no botão', async () => {
    - Acessibilidade completa (labels, autocomplete, types)
    - Navegação por teclado (Enter, Tab)
 
+##### FASE 3 - TESTES DE HOOKS (CONCLUÍDA)
+
+- Data início: 29/06/2025
+- Data conclusão: 29/06/2025
+- Status: ✅ **CONCLUÍDA COM SUCESSO**
+
+**Hooks testados:**
+
+1. ✅ **useAuth Hook** - 10/10 testes passando
+   - Funcionamento dentro do AuthProvider
+   - Retorno correto de usuário autenticado
+   - Estados de loading e initializing
+   - Exposição de métodos de autenticação
+   - Tratamento de erro quando usado fora do provider
+   - Estados combinados (logado/não logado, loading/não loading)
+
+2. ✅ **useTheme Hook** - 11/11 testes passando
+   - Funcionamento dentro do ThemeProvider
+   - Temas light e dark (padrão e configurado)
+   - Métodos toggleTheme e setTheme
+   - Integração com ThemeProvider real e localStorage
+   - Tratamento de erro quando usado fora do provider
+   - Persistência de estado entre re-renders
+   - Tipos de tema apropriados
+
+3. ✅ **useChatbot Hook** - 6/6 testes passando
+   - Estado inicial correto (usuário logado/não logado)
+   - Não busca dados quando usuário está inicializando
+   - Busca dados existentes do chatbot com sucesso
+   - Criação de novo chatbot quando não encontra dados
+   - Tratamento de erro com retry logic
+   - Funções updateChatbotData e refetch expostas
+   - Estados de loading e error apropriados
+
 ##### Resultados dos Testes
 
-- **Total de testes**: 147 ✅ (+28 do SignUpForm)
+- **Total de testes**: 174 ✅ (+27 dos hooks)
 - **Taxa de sucesso**: 100%
-- **Cobertura atual**: Componentes UI + Autenticação críticos
-- **Tempo de execução**: ~40s
+- **Cobertura atual**: Componentes UI + Autenticação + Hooks críticos
+- **Tempo de execução**: ~27s (completo)
 - **Componentes testados**: Button, Pricing, Input, Card, LoginForm, SignUpForm (6/6 priorizados)
+- **Hooks testados**: useAuth, useTheme, useChatbot (3/3 críticos)
 
 **Verificações de segurança:**
 
@@ -1135,9 +1172,10 @@ it('deve atualizar o estado ao clicar no botão', async () => {
 3. ✅ ~~Testar componente Input~~
 4. ✅ ~~Testar componente Card~~
 5. ✅ ~~Testar componentes de autenticação (LoginForm, SignUpForm)~~
-6. 📋 Testar hooks customizados (useAuth, useChatbot, useTheme) - PRÓXIMO
-7. 📋 Testar outros componentes UI (Badge, Avatar, etc.)
+6. ✅ ~~Testar hooks customizados (useAuth, useChatbot, useTheme)~~
+7. 📋 Testar outros componentes UI (Badge, Avatar, etc.) - PRÓXIMO
 8. 📋 Testes de integração (fluxos completos)
+9. 📋 Testes E2E (Playwright)
 
 ##### COMANDOS DE ROLLBACK (Se necessário)
 
