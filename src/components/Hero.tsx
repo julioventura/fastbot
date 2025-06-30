@@ -19,9 +19,9 @@ import { ArrowRight } from 'lucide-react';
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden bg-hero-new min-h-screen flex items-center">
-      {/* Fundo com gradiente suave */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50"></div>
+    <section className="relative overflow-hidden min-h-screen flex items-center bg-background">
+      {/* Fundo com gradiente suave responsivo ao tema */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-primary/5"></div>
       
       {/* Container principal ocupando toda a altura disponível */}
       <div className="container relative z-10 mx-auto px-4 w-full">
@@ -42,7 +42,7 @@ const Hero = () => {
 
             {/* Botão CTA */}
             <div className="pt-4">
-              <Button className="hero-cta-button text-white ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+              <Button className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                 <span>PLANO GRATUITO!</span>
                 <ArrowRight className="h-5 w-5" />
               </Button>
@@ -62,13 +62,13 @@ const Hero = () => {
                 />
                 
                 {/* Overlay sutil para melhor integração com o design */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-50/10 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
               </div>
               
               {/* Elementos decorativos externos otimizados */}
-              <div className="absolute -top-6 -right-6 lg:-top-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 decoration-circle bg-yellow-300 opacity-80"></div>
-              <div className="absolute -bottom-6 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 decoration-circle bg-purple-300 opacity-60"></div>
-              <div className="absolute top-1/4 -left-8 lg:-left-12 w-8 h-8 lg:w-12 lg:h-12 decoration-circle bg-blue-300 opacity-50"></div>
+              <div className="absolute -top-6 -right-6 lg:-top-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 decoration-circle bg-yellow-400 opacity-70 dark:opacity-50"></div>
+              <div className="absolute -bottom-6 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 decoration-circle bg-purple-400 opacity-60 dark:opacity-40"></div>
+              <div className="absolute top-1/4 -left-8 lg:-left-12 w-8 h-8 lg:w-12 lg:h-12 decoration-circle bg-primary opacity-50 dark:opacity-30"></div>
             </div>
           </div>
         </div>

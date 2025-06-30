@@ -140,6 +140,14 @@
     --card-bg: rgba(10, 22, 41, 0.95);
   }
 
+  /* Header no modo escuro */
+  .dark .header-modern,
+  .dark header {
+    background: rgba(12, 32, 63, 0.95) !important;
+    backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(42, 73, 128, 0.5) !important;
+  }
+
   /* ===== ESTILOS BASE ===== */
   * {
     @apply border-border;
@@ -676,9 +684,7 @@
 
   /* Header limpo e moderno */
   .header-modern {
-    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   }
 
   /* Elementos decorativos */

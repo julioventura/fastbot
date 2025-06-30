@@ -92,7 +92,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`header-modern sticky transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"} top-0 z-50 shadow-sm`}>
+    <header className={`header-modern sticky transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"} top-0 z-50 shadow-sm bg-background/95 backdrop-blur-md border-b border-border`}>
       
       <div className="container mx-auto px-4 h-16 md:h-20">
         <div className="flex items-center justify-between h-full">
@@ -100,12 +100,12 @@ const Header = () => {
           {/* Logo Section */}
           <div className="flex items-center">
             <NavLink to="/" className="flex items-center space-x-2 group">
-              <div className="flex flex-col">
-                <span className="text-2xl md:text-3xl font-black text-blue-600 group-hover:text-blue-700 transition-colors">
-                  Ana
+              <div>
+                <span className="text-md text-primary/70 font-bold -mt-1">
+                  Dentistas.com.br /&nbsp;
                 </span>
-                <span className="text-xs text-blue-500 font-medium -mt-1">
-                  Dentistas.com.br
+                <span className="text-2xl md:text-3xl font-black text-primary group-hover:text-primary/80 transition-colors">
+                  Ana
                 </span>
               </div>
             </NavLink>
@@ -118,8 +118,8 @@ const Header = () => {
               className={({ isActive }) => 
                 `transition-all duration-300 text-base leading-none flex items-center ${
                   isActive 
-                    ? "text-blue-600 nav-active-item" 
-                    : "text-gray-600 hover:text-blue-600 font-medium"
+                    ? "text-primary nav-active-item" 
+                    : "text-muted-foreground hover:text-primary font-medium"
                 }`
               }
               style={({ isActive }) => 
@@ -136,8 +136,8 @@ const Header = () => {
                   className={({ isActive }) => 
                     `transition-all duration-300 text-base leading-none flex items-center ${
                       isActive 
-                        ? "text-blue-600 nav-active-item" 
-                        : "text-gray-600 hover:text-blue-600 font-medium"
+                        ? "text-primary nav-active-item" 
+                        : "text-muted-foreground hover:text-primary font-medium"
                     }`
                   }
                   style={({ isActive }) => 
@@ -151,8 +151,8 @@ const Header = () => {
                   className={({ isActive }) => 
                     `transition-all duration-300 text-base leading-none flex items-center ${
                       isActive 
-                        ? "text-blue-600 nav-active-item" 
-                        : "text-gray-600 hover:text-blue-600 font-medium"
+                        ? "text-primary nav-active-item" 
+                        : "text-muted-foreground hover:text-primary font-medium"
                     }`
                   }
                   style={({ isActive }) => 
@@ -169,7 +169,7 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <ThemeSelector />
             {authLoading ? (
-              <div className="text-gray-500 text-sm">Carregando...</div>
+              <div className="text-muted-foreground text-sm">Carregando...</div>
             ) : !user ? (
               <>
                 <Button
@@ -178,7 +178,7 @@ const Header = () => {
                     setAuthModalTab("login");
                     setIsAuthModalOpen(true);
                   }}
-                  className="text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/10"
                 >
                   Entrar
                 </Button>
@@ -187,7 +187,7 @@ const Header = () => {
                     setAuthModalTab("signup");
                     setIsAuthModalOpen(true);
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium shadow-sm"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-full font-medium shadow-sm"
                 >
                   Cadastre-se
                 </Button>
@@ -195,29 +195,29 @@ const Header = () => {
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+                  <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground hover:text-primary hover:bg-primary/10">
                     <User className="h-4 w-4" />
                     <span className="hidden md:inline">{userName || user.email}</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg">
+                <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg">
                   <DropdownMenuItem asChild>
-                    <NavLink to="/account" className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                    <NavLink to="/account" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <User className="h-4 w-4" />
                       <span>Minha Conta</span>
                     </NavLink>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <NavLink to="/my-chatbot" className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                    <NavLink to="/my-chatbot" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <MessageSquare className="h-4 w-4" />
                       <span>Meu Chatbot</span>
                     </NavLink>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-gray-200" />
+                  <DropdownMenuSeparator className="bg-border" />
                   <DropdownMenuItem
                     onClick={handleSignOut}
-                    className="flex items-center space-x-2 px-3 py-2 text-red-600 hover:bg-red-50 cursor-pointer"
+                    className="flex items-center space-x-2 px-3 py-2 text-destructive hover:bg-destructive/10 cursor-pointer"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Sair</span>
