@@ -48,11 +48,17 @@ const Header = () => {
     const fetchUserName = async () => {
       if (user) {
         try {
-          const { data } = await supabase
+          const { data, error } = await supabase
             .from('profiles')
             .select('name')
             .eq('user_id', user.id)
-            .single();
+            .maybeSingle();
+          
+          if (error) {
+            console.error('Erro na consulta de perfil:', error);
+            setUserName(user.email?.split('@')[0] || 'Usuário');
+            return;
+          }
           
           if (data?.name) {
             setUserName(data.name);

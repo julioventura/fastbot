@@ -49,7 +49,7 @@ const Hero = () => {
           </div>
 
           {/* Coluna da imagem - lado direito (60% no desktop) */}
-          <div className="lg:col-span-3 flex justify-center lg:justify-end items-center h-full py-4 lg:py-8">
+          <div className="lg:col-span-3 flex justify-center lg:justify-end items-stretch h-full">
             <div className="relative character-illustration w-full max-w-2xl lg:max-w-3xl">
               {/* Container da imagem otimizado para ocupar mais espaço vertical */}
               <div className="relative w-full aspect-[3/4] max-h-[90vh] lg:max-h-[95vh] rounded-3xl overflow-hidden">
