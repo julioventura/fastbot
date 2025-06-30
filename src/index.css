@@ -4,50 +4,50 @@
 
 @layer base {
   :root {
-    /* MODO ESCURO como padrão (preservando estilo atual EXATAMENTE) */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* MODO CLARO como padrão */
+    --background: 0 0% 100%;
+    --foreground: 222 84% 5%;
 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 5%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 5%;
 
     --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 32% 17%;
-    --secondary-foreground: 221 68% 81%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 222 84% 5%;
 
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 217 32% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: 221 83% 53%;
 
     --radius: 0.75rem;
 
-    /* Variáveis personalizadas para o tema azul escuro (PRESERVADAS) */
-    --gradient-from: #0c203f;
-    --gradient-to: #082756;
-    --gradient-secondary-to: #0e2d5e;
-    --accent-blue: #4f9bff;
+    /* Variáveis personalizadas para o tema claro profissional */
+    --gradient-from: #ffffff;
+    --gradient-to: #f8fafc;
+    --gradient-secondary-to: #f1f5f9;
+    --accent-blue: #3b82f6;
     --accent-blue-light: #60a5fa;
-    --accent-blue-lighter: #7caffd;
-    --accent-blue-bg: #2a4980;
-    --text-muted: #b6b6b6;
-    --border-accent: #2a4980;
-    --hover-bg: rgba(42, 73, 128, 0.3);
-    --hover-bg-light: rgba(79, 155, 255, 0.1);
-    --card-bg: rgba(10, 22, 41, 0.95);
+    --accent-blue-lighter: #dbeafe;
+    --accent-blue-bg: #eff6ff;
+    --text-muted: #64748b;
+    --border-accent: #e2e8f0;
+    --hover-bg: rgba(59, 130, 246, 0.08);
+    --hover-bg-light: rgba(59, 130, 246, 0.04);
+    --card-bg: rgba(255, 255, 255, 0.95);
   }
 
   /* MODO CLARO - Paleta Profissional Azul Redesenhada */
