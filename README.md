@@ -60,14 +60,37 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Testing
 
-Simply open [Lovable](https://lovable.dev/projects/18518cc1-7e45-4bb2-b97e-a3378f87cabc) and click on Share -> Publish.
+This project has comprehensive automated testing with **453 tests** covering components, hooks, contexts, and utilities.
 
-## Can I connect a custom domain to my Lovable project?
+### Running Tests
 
-Yes, you can!
+```sh
+# Run tests in watch mode (development)
+npm run test
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Run tests once (CI/CD)
+npm run test:run
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Run tests with coverage report
+npm run test:coverage
+
+# Open visual test interface
+npm run test:ui
+```
+
+### Testing Guidelines
+
+When writing tests for components with fragmented text (multiple `<span>` elements), use flexible matchers:
+
+```typescript
+// ❌ Don't test concatenated text across multiple DOM elements
+expect(screen.getByText('Full concatenated text')).toBeInTheDocument()
+
+// ✅ Test individual text fragments
+expect(screen.getByText('Fragment 1')).toBeInTheDocument()
+expect(screen.getByText('Fragment 2')).toBeInTheDocument()
+```
+
+For detailed testing documentation, see `DOCUMENTACAO - IMPLEMENTAR - TESTES.md`.

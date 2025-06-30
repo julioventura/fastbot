@@ -4,6 +4,13 @@
  * Este arquivo contém testes abrangentes para o componente Hero,
  * validando a renderização, elementos de texto, imagens, botões
  * e funcionalidades de tema.
+ * 
+ * ABORDAGEM PARA TEXTOS FRAGMENTADOS:
+ * O componente Hero usa múltiplos <span> para aplicar diferentes
+ * classes de gradiente. Os testes foram adaptados para usar matchers
+ * mais flexíveis que testam cada fragmento de texto individualmente,
+ * ao invés de procurar por texto concatenado que pode estar 
+ * fragmentado em múltiplos elementos DOM.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -42,9 +49,11 @@ describe('Hero Component', () => {
     it('deve renderizar todos os elementos de texto principais', () => {
       render(<Hero />);
       
-      expect(screen.getByText('Olá! Sou Ana.')).toBeInTheDocument();
-      expect(screen.getByText('Sua atendente de IA')).toBeInTheDocument();
-      expect(screen.getByText(/em 3.*minutos!/)).toBeInTheDocument();
+      // Testa textos individuais em elementos separados
+      expect(screen.getByText('Olá!')).toBeInTheDocument();
+      expect(screen.getByText('Sou Ana.')).toBeInTheDocument();
+      expect(screen.getByText('Sua atendente')).toBeInTheDocument();
+      expect(screen.getByText('chatbot de IA')).toBeInTheDocument();
     });
 
     it('deve renderizar o botão CTA principal', () => {
@@ -55,12 +64,8 @@ describe('Hero Component', () => {
       expect(ctaButton).toHaveClass('hero-cta-button');
     });
 
-    it('deve renderizar o ícone de seta no botão', () => {
-      render(<Hero />);
-      
-      const arrowIcon = screen.getByTestId('arrow-right-icon');
-      expect(arrowIcon).toBeInTheDocument();
-    });
+    // Nota: Teste do ícone ArrowRight removido pois o ícone foi comentado/removido do componente
+    // Isso é uma melhoria de design que simplifica o botão CTA
   });
 
   describe('gerenciamento de imagens', () => {
@@ -159,14 +164,18 @@ describe('Hero Component', () => {
     it('deve aplicar classes de gradiente corretas nos textos', () => {
       render(<Hero />);
       
-      const redText = screen.getByText('Olá! Sou Ana.');
-      expect(redText).toHaveClass('gradient-text-red');
+      // Testa cada span individualmente com classes de gradiente
+      const helloText = screen.getByText('Olá!');
+      expect(helloText).toHaveClass('gradient-text-red');
       
-      const blueText = screen.getByText('Sua atendente de IA');
-      expect(blueText).toHaveClass('gradient-text-blue');
+      const nameText = screen.getByText('Sou Ana.');
+      expect(nameText).toHaveClass('gradient-text-red');
       
-      const purpleText = screen.getByText(/em 3.*minutos!/);
-      expect(purpleText).toHaveClass('gradient-text-purple');
+      const roleText = screen.getByText('Sua atendente');
+      expect(roleText).toHaveClass('gradient-text-blue');
+      
+      const chatbotText = screen.getByText('chatbot de IA');
+      expect(chatbotText).toHaveClass('gradient-text-purple');
     });
 
     it('deve ter tamanhos de fonte responsivos', () => {
