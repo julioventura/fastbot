@@ -26,16 +26,22 @@ const testimonials = [
         quote: 'O chatbot da FastBot transformou minha comunicação com os alunos. Consigo responder dúvidas frequentes 24h por dia, mesmo fora do horário de aula, e economizo cerca de 15 horas semanais em atendimentos repetitivos.',
         author: 'Prof. Carlos Mendes',
         role: 'Professor de Endodontia, FOP-PE',
+        name: 'TutFOP',
+        local: 'Disciplina de Endodontia da FO-UPE',
+    },
+    {
+        quote: 'O chatbot dinamizou a comunicação com o onosso aplicativo, como interface de acesso simplificada, tanto para pacientes via whatsapp (texto e audio) como para a equipe acessar os dados por conversa com a IA.',
+        author: 'Profa. Emanuelle',
+        role: 'Doutoranda',
+        name: 'Manu',
+        local: 'Projeto de doutorado da FO-UFC',
     },
     {
         quote: 'Implementamos o FastBot na recepção virtual da clínica e o resultado foi impressionante! Reduzimos as faltas em 40% com lembretes automáticos e nossos pacientes adoram poder agendar consultas e tirar dúvidas a qualquer momento.',
         author: 'Dra. Juliana Costa',
         role: 'Cirurgiã-Dentista, Clínica Oral Care',
-    },
-    {
-        quote: 'Como coordenadora pedagógica, precisava de uma solução para atender pais, alunos e professores simultaneamente. O FastBot nos permitiu automatizar 70% das consultas administrativas e melhorou significativamente a satisfação da comunidade escolar.',
-        author: 'Profa. Mariana Alves',
-        role: 'Coordenadora Pedagógica, Escola Nova Geração',
+        name: 'Bob',
+        local: 'Depto de O. Legal e Saúde Coletiva. FO-UFRJ',
     },
 ];
 
@@ -117,7 +123,7 @@ const Testimonials = () => {
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
                         <p><span className="text-theme-accent">O que falam de nossos</span> chatbots...</p>
-                        <p><i>os parentes de <span className="text-theme-accent">Ana...</span></i> <span className="inline-block">😉</span></p>
+                        <p className="text-4xl text-theme-accent"><i>TutFop, Manu e Bob, parentes de <span className="text-theme-accent text-5xl">Ana...</span></i> <span className="inline-block">😉</span></p>
                     </h2>
 
                 </div>
@@ -135,11 +141,15 @@ const Testimonials = () => {
                             {/* Layout flexível interno para o conteúdo do card. */}
                             <div className="flex flex-col h-full">
                                 {/* Ícone de Aspas (Citação) */}
-                                <div className="mb-6 text-brightpurple-500"> {/* Cor ajustada para 'brightpurple-500' */}
+                                <div className="mb-6 text-brightpurple-500 font-bold"> {/* Cor ajustada para 'brightpurple-500' */}
                                     <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                                     </svg>
+                                <span className='text-4xl text-brightpurple-500'>{testimonial.name}</span>
+                                <p><span className='text-sm ml-1 text-brightpurple-500'>{testimonial.local}</span></p>
                                 </div>
+
+
                                 {/* Texto do Depoimento (Citação) */}
                                 {/* 'flex-grow' permite que esta seção expanda e alinhe o autor/cargo na parte inferior. */}
                                 <p className="text-gray-400 text-lg mb-6 flex-grow">{testimonial.quote}</p>
