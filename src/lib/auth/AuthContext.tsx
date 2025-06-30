@@ -90,9 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Para desenvolvimento, usar localhost:8080 (porta configurada do Vite)
       // Para produção, usar window.location.origin
-      const redirectUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:8080/fastbot/'
-        : window.location.origin;
+      const redirectUrl = `${window.location.origin}/fastbot/`;
       
       const { data, error } = await supabase.auth.signUp({
         email,
