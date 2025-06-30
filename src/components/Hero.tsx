@@ -11,13 +11,30 @@
 //   - Não possui funções ou constantes complexas internas, sendo primariamente JSX para layout e estilo.
 //   - Utiliza o componente Button e o ícone ArrowRight da biblioteca lucide-react.
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 // Componente Hero
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
 const Hero = () => {
+  const { theme } = useTheme();
+  const [useImageFallback, setUseImageFallback] = useState(false);
+  
+  // Determina qual imagem usar
+  const getImageSrc = () => {
+    if (theme === 'dark' && !useImageFallback) {
+      return "/fastbot/hero-ana-dark.png";
+    }
+    return "/fastbot/hero-ana.png";
+  };
+
+  // Handler para erro de carregamento da imagem
+  const handleImageError = () => {
+    setUseImageFallback(true);
+  };
+  
   return (
     <section className="relative overflow-hidden min-h-screen flex items-center bg-background">
       {/* Fundo com gradiente suave responsivo ao tema */}
@@ -43,7 +60,7 @@ const Hero = () => {
             {/* Botão CTA */}
             <div className="pt-4">
               <Button className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                <span>PLANO GRATUITO!</span>
+                <span>PLANO GRATUITO : COMECE JÁ!</span>
                 <ArrowRight className="h-5 w-5" />
               </Button>
             </div>
@@ -56,9 +73,10 @@ const Hero = () => {
               <div className="relative h-[85vh] lg:h-[90vh] w-auto max-w-full">
                 {/* Imagem da Ana - altura completa, largura automática */}
                 <img 
-                  src="/fastbot/hero-ana.png"
+                  src={getImageSrc()}
                   alt="Ana - Assistente Virtual Profissional da Saúde"
                   className="h-full w-auto object-contain object-center"
+                  onError={handleImageError}
                 />
                 
                 {/* Overlay sutil para melhor integração com o design */}
