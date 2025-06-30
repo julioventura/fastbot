@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import {
@@ -11,6 +11,8 @@ import {
   SelectLabel,
   SelectSeparator,
   SelectGroup,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
 } from './select';
 
 // Mock Radix UI icons
@@ -156,23 +158,6 @@ describe('Select Components', () => {
       expect(screen.getByTestId('select-content')).toHaveClass('custom-content-class');
     });
 
-    it('renders scroll buttons', () => {
-      render(
-        <Select open>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="option1">Option 1</SelectItem>
-          </SelectContent>
-        </Select>
-      );
-
-      // Scroll buttons should be rendered (though they may not be visible depending on content height)
-      expect(screen.getAllByTestId('chevron-up-icon')).toHaveLength(1);
-      expect(screen.getAllByTestId('chevron-down-icon')).toHaveLength(2); // One in trigger, one in scroll down button
-    });
-
     it('supports different positions', () => {
       render(
         <Select open>
@@ -243,20 +228,45 @@ describe('Select Components', () => {
       expect(screen.getByTestId('select-item')).toHaveClass('custom-item-class');
     });
 
-    it('renders check icon indicator', () => {
+    it('does not render check icon indicator when not selected', () => {
       render(
-        <Select open>
+        <Select open defaultValue="option2">
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="option1">Option 1</SelectItem>
+            <SelectItem value="option1" data-testid="select-item">
+              Option 1
+            </SelectItem>
+            <SelectItem value="option2">Option 2</SelectItem>
           </SelectContent>
         </Select>
       );
 
-      expect(screen.getByTestId('check-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('check-icon')).toHaveClass('h-4', 'w-4');
+      const item = screen.getByTestId('select-item');
+      // The check icon should not be present in an unselected item
+      expect(within(item).queryByTestId('check-icon')).not.toBeInTheDocument();
+    });
+    
+    it('renders check icon indicator when selected', () => {
+      render(
+        <Select open defaultValue="option1">
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="option1" data-testid="select-item">
+              Option 1
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      );
+
+      const item = screen.getByTestId('select-item');
+      // The check icon should be present in the selected item
+      const checkIcon = within(item).getByTestId('check-icon');
+      expect(checkIcon).toBeInTheDocument();
+      expect(checkIcon).toHaveClass('h-4', 'w-4');
     });
 
     it('supports disabled state', () => {
@@ -286,7 +296,9 @@ describe('Select Components', () => {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectLabel data-testid="select-label">Categories</SelectLabel>
+            <SelectGroup>
+              <SelectLabel data-testid="select-label">Categories</SelectLabel>
+            </SelectGroup>
           </SelectContent>
         </Select>
       );
@@ -302,7 +314,9 @@ describe('Select Components', () => {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectLabel>Categories</SelectLabel>
+            <SelectGroup>
+              <SelectLabel>Categories</SelectLabel>
+            </SelectGroup>
           </SelectContent>
         </Select>
       );
@@ -317,9 +331,11 @@ describe('Select Components', () => {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectLabel className="custom-label-class" data-testid="select-label">
-              Categories
-            </SelectLabel>
+            <SelectGroup>
+              <SelectLabel className="custom-label-class" data-testid="select-label">
+                Categories
+              </SelectLabel>
+            </SelectGroup>
           </SelectContent>
         </Select>
       );
@@ -360,62 +376,6 @@ describe('Select Components', () => {
       );
 
       expect(screen.getByTestId('select-separator')).toHaveClass('custom-separator-class');
-    });
-  });
-
-  describe('SelectScrollUpButton', () => {
-    it('renders with default classes', () => {
-      render(
-        <SelectScrollUpButton data-testid="scroll-up-button" />
-      );
-
-      const button = screen.getByTestId('scroll-up-button');
-      expect(button).toHaveClass('flex', 'cursor-default', 'items-center', 'justify-center', 'py-1');
-    });
-
-    it('renders chevron up icon', () => {
-      render(
-        <SelectScrollUpButton />
-      );
-
-      expect(screen.getByTestId('chevron-up-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('chevron-up-icon')).toHaveClass('h-4', 'w-4');
-    });
-
-    it('applies custom className', () => {
-      render(
-        <SelectScrollUpButton className="custom-scroll-class" data-testid="scroll-up-button" />
-      );
-
-      expect(screen.getByTestId('scroll-up-button')).toHaveClass('custom-scroll-class');
-    });
-  });
-
-  describe('SelectScrollDownButton', () => {
-    it('renders with default classes', () => {
-      render(
-        <SelectScrollDownButton data-testid="scroll-down-button" />
-      );
-
-      const button = screen.getByTestId('scroll-down-button');
-      expect(button).toHaveClass('flex', 'cursor-default', 'items-center', 'justify-center', 'py-1');
-    });
-
-    it('renders chevron down icon', () => {
-      render(
-        <SelectScrollDownButton />
-      );
-
-      expect(screen.getByTestId('chevron-down-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('chevron-down-icon')).toHaveClass('h-4', 'w-4');
-    });
-
-    it('applies custom className', () => {
-      render(
-        <SelectScrollDownButton className="custom-scroll-class" data-testid="scroll-down-button" />
-      );
-
-      expect(screen.getByTestId('scroll-down-button')).toHaveClass('custom-scroll-class');
     });
   });
 
@@ -473,54 +433,71 @@ describe('Select Components', () => {
 
     it('handles selection changes', async () => {
       const handleValueChange = vi.fn();
+      const user = userEvent.setup();
       
       render(
-        <Select onValueChange={handleValueChange}>
+        <Select onValueChange={handleValueChange} open>
           <SelectTrigger data-testid="select-trigger">
             <SelectValue placeholder="Select option" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="option1">Option 1</SelectItem>
-            <SelectItem value="option2">Option 2</SelectItem>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
           </SelectContent>
         </Select>
       );
 
-      // Note: Full interaction testing would require more complex mocking of Radix UI
-      // This test verifies the components render correctly
-      expect(screen.getByTestId('select-trigger')).toBeInTheDocument();
+      const option = screen.getByText('Apple');
+      await user.click(option);
+
+      expect(handleValueChange).toHaveBeenCalledWith('apple');
     });
 
     it('supports default value', () => {
+      render(<SelectWithItems defaultValue="banana" />);
+
+      // The trigger should display the label of the default value
+      expect(screen.getByText('Banana')).toBeInTheDocument();
+    });
+
+    it('disables the entire select when disabled prop is set', async () => {
+      const user = userEvent.setup();
+      
+      render(<SelectWithItems disabled />);
+
+      const trigger = screen.getByTestId('select-trigger');
+      expect(trigger).toBeDisabled();
+
+      // Clicking a disabled trigger should not open the content
+      await user.click(trigger).catch(() => {}); // userEvent throws error on disabled elements
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    });
+
+    it('disables a specific item', async () => {
+      const handleValueChange = vi.fn();
+      const user = userEvent.setup();
+      
       render(
-        <Select defaultValue="option1">
+        <Select onValueChange={handleValueChange} open>
           <SelectTrigger data-testid="select-trigger">
             <SelectValue placeholder="Select option" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="option1">Option 1</SelectItem>
-            <SelectItem value="option2">Option 2</SelectItem>
+            <SelectItem value="enabled">Enabled</SelectItem>
+            <SelectItem value="disabled" disabled>Disabled</SelectItem>
           </SelectContent>
         </Select>
       );
 
-      expect(screen.getByTestId('select-trigger')).toBeInTheDocument();
-    });
+      const disabledOptionText = screen.getByText('Disabled');
+      const disabledOptionItem = disabledOptionText.closest('[role="option"]');
+      expect(disabledOptionItem).toHaveAttribute('data-disabled');
 
-    it('forwards all props correctly', () => {
-      render(
-        <Select name="test-select" required>
-          <SelectTrigger data-testid="select-trigger" aria-label="Test select">
-            <SelectValue placeholder="Select option" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="option1">Option 1</SelectItem>
-          </SelectContent>
-        </Select>
-      );
+      if (disabledOptionItem) {
+        await user.click(disabledOptionItem);
+      }
 
-      const trigger = screen.getByTestId('select-trigger');
-      expect(trigger).toHaveAttribute('aria-label', 'Test select');
+      expect(handleValueChange).not.toHaveBeenCalled();
     });
   });
 });

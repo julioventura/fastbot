@@ -51,8 +51,8 @@ describe('Pricing Component', () => {
       render(<Pricing />);
       
       // Verifica se os nomes dos planos estão presentes
-      expect(screen.getByText('Assinatura Gratuita')).toBeInTheDocument();
-      expect(screen.getByText('Assinatura Plus')).toBeInTheDocument();
+      expect(screen.getByText('Plano Gratuito')).toBeInTheDocument();
+      expect(screen.getByText('Plano Plus')).toBeInTheDocument();
     });
 
     it('deve exibir os preços corretos', () => {
@@ -65,22 +65,24 @@ describe('Pricing Component', () => {
     it('deve exibir as descrições dos planos', () => {
       render(<Pricing />);
       
-      expect(screen.getByText('Para uso eventual')).toBeInTheDocument();
-      expect(screen.getByText('Para uso ativo')).toBeInTheDocument();
+      // Os planos atuais não têm description definida (string vazia)
+      // Verifica se os containers de descrição existem
+      const descriptions = document.querySelectorAll('p.h-10');
+      expect(descriptions.length).toBeGreaterThanOrEqual(2);
     });
 
     it('deve renderizar os badges populares', () => {
       render(<Pricing />);
       
-      expect(screen.getByText('GRATUITO')).toBeInTheDocument();
-      expect(screen.getByText('ASSINATURA')).toBeInTheDocument();
+      expect(screen.getByText('USO EVENTUAL')).toBeInTheDocument();
+      expect(screen.getByText('USO CONTÍNUO')).toBeInTheDocument();
     });
 
     it('deve renderizar os botões com textos corretos', () => {
       render(<Pricing />);
       
-      expect(screen.getByRole('button', { name: /comece já/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /assine já/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /comece já !/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /assine já !/i })).toBeInTheDocument();
     });
   });
 
@@ -90,6 +92,7 @@ describe('Pricing Component', () => {
       
       expect(screen.getByText('100 conversas por mês')).toBeInTheDocument();
       expect(screen.getAllByText('Homepage profissional com chatbot')).toHaveLength(2);
+      expect(screen.getAllByText('Cartão de Visitas Digital com QR-Code')).toHaveLength(2);
     });
 
     it('deve renderizar todas as features do plano plus', () => {
@@ -97,6 +100,7 @@ describe('Pricing Component', () => {
       
       expect(screen.getByText('Conversas ilimitadas')).toBeInTheDocument();
       expect(screen.getAllByText('Homepage profissional com chatbot')).toHaveLength(2);
+      expect(screen.getAllByText('Cartão de Visitas Digital com QR-Code')).toHaveLength(2);
     });
 
     it('deve renderizar ícones de check para cada feature', () => {
@@ -104,7 +108,7 @@ describe('Pricing Component', () => {
       
       // Verifica se há ícones de check para todas as features
       const checkIcons = screen.getAllByTestId('check-icon');
-      expect(checkIcons).toHaveLength(4); // 2 features para cada plano
+      expect(checkIcons).toHaveLength(6); // 3 features para cada um dos 2 planos
     });
   });
 
@@ -113,7 +117,7 @@ describe('Pricing Component', () => {
       const user = userEvent.setup();
       render(<Pricing />);
       
-      const button = screen.getByRole('button', { name: /comece já/i });
+      const button = screen.getByRole('button', { name: /comece já !/i });
       expect(button).toBeEnabled();
       
       // Verifica se é clicável
@@ -125,7 +129,7 @@ describe('Pricing Component', () => {
       const user = userEvent.setup();
       render(<Pricing />);
       
-      const button = screen.getByRole('button', { name: /assine já/i });
+      const button = screen.getByRole('button', { name: /assine já !/i });
       expect(button).toBeEnabled();
       
       // Verifica se é clicável

@@ -11,6 +11,17 @@ afterEach(() => {
   cleanup()
 })
 
+// Mock Pointer Events API for Radix UI (Select, etc.)
+if (!window.Element.prototype.hasPointerCapture) {
+  window.Element.prototype.hasPointerCapture = () => false;
+}
+if (!window.Element.prototype.setPointerCapture) {
+  window.Element.prototype.setPointerCapture = () => {};
+}
+if (!window.Element.prototype.releasePointerCapture) {
+  window.Element.prototype.releasePointerCapture = () => {};
+}
+
 // Mock do localStorage
 Object.defineProperty(window, 'localStorage', {
   value: {

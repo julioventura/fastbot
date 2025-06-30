@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
@@ -86,9 +86,11 @@ describe('Tabs Components', () => {
   describe('TabsList', () => {
     it('renders with default classes', () => {
       render(
-        <TabsList data-testid="tabs-list">
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="tab1">
+          <TabsList data-testid="tabs-list">
+            <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          </TabsList>
+        </Tabs>
       );
 
       const tabsList = screen.getByTestId('tabs-list');
@@ -98,9 +100,11 @@ describe('Tabs Components', () => {
 
     it('applies custom className', () => {
       render(
-        <TabsList className="custom-tabs-list" data-testid="tabs-list">
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="tab1">
+          <TabsList className="custom-tabs-list" data-testid="tabs-list">
+            <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          </TabsList>
+        </Tabs>
       );
 
       expect(screen.getByTestId('tabs-list')).toHaveClass('custom-tabs-list');
@@ -110,9 +114,11 @@ describe('Tabs Components', () => {
       const ref = React.createRef<HTMLDivElement>();
       
       render(
-        <TabsList ref={ref}>
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="tab1">
+          <TabsList ref={ref}>
+            <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          </TabsList>
+        </Tabs>
       );
 
       expect(ref.current).toBeInstanceOf(HTMLDivElement);
@@ -120,13 +126,15 @@ describe('Tabs Components', () => {
 
     it('supports additional props', () => {
       render(
-        <TabsList 
-          data-testid="tabs-list"
-          role="tablist"
-          aria-label="Main navigation"
-        >
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="tab1">
+          <TabsList 
+            data-testid="tabs-list"
+            role="tablist"
+            aria-label="Main navigation"
+          >
+            <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+          </TabsList>
+        </Tabs>
       );
 
       const tabsList = screen.getByTestId('tabs-list');
@@ -402,11 +410,20 @@ describe('Tabs Components', () => {
       );
 
       expect(screen.getByTestId('tabs-root')).toBeInTheDocument();
-      expect(screen.getByTestId('tabs-list')).toBeInTheDocument();
-      expect(screen.getByText('Overview')).toBeInTheDocument();
-      expect(screen.getByText('Analytics')).toBeInTheDocument();
-      expect(screen.getByText('Reports')).toBeInTheDocument();
+      const tabsList = screen.getByTestId('tabs-list');
+      expect(tabsList).toBeInTheDocument();
+
+      // Check for triggers within the list
+      expect(within(tabsList).getByText('Overview')).toBeInTheDocument();
+      expect(within(tabsList).getByText('Analytics')).toBeInTheDocument();
+      expect(within(tabsList).getByText('Reports')).toBeInTheDocument();
+
+      // Check for content
       expect(screen.getByText('Overview content goes here.')).toBeInTheDocument();
+      
+      // Check for heading within the content
+      const overviewContent = screen.getByTestId('overview-content');
+      expect(within(overviewContent).getByRole('heading', { name: 'Overview' })).toBeInTheDocument();
     });
 
     it('works with controlled state', () => {

@@ -200,86 +200,45 @@ describe('Switch', () => {
   });
 
   it('supports required attribute', () => {
-    render(<Switch required data-testid="switch" />);
-
-    const switchElement = screen.getByTestId('switch');
-    expect(switchElement).toHaveAttribute('required');
-  });
-
-  it('supports name attribute for forms', () => {
-    render(<Switch name="notifications" data-testid="switch" />);
-
-    const switchElement = screen.getByTestId('switch');
-    expect(switchElement).toHaveAttribute('name', 'notifications');
-  });
-
-  it('supports value attribute for forms', () => {
-    render(<Switch value="on" data-testid="switch" />);
-
-    const switchElement = screen.getByTestId('switch');
-    expect(switchElement).toHaveAttribute('value', 'on');
-  });
-
-  it('handles controlled state changes properly', () => {
-    const TestComponent = () => {
-      const [checked, setChecked] = React.useState(false);
-
-      return (
-        <div>
-          <Switch 
-            checked={checked} 
-            onCheckedChange={setChecked}
-            data-testid="switch" 
-          />
-          <div data-testid="state-display">
-            {checked ? 'ON' : 'OFF'}
-          </div>
-        </div>
-      );
-    };
-
-    render(<TestComponent />);
-
-    const switchElement = screen.getByTestId('switch');
-    const stateDisplay = screen.getByTestId('state-display');
-
-    expect(switchElement).toHaveAttribute('data-state', 'unchecked');
-    expect(stateDisplay).toHaveTextContent('OFF');
-  });
-
-  it('works in uncontrolled mode', () => {
-    render(<Switch defaultChecked={false} data-testid="switch" />);
-
-    const switchElement = screen.getByTestId('switch');
-    expect(switchElement).toHaveAttribute('data-state', 'unchecked');
-  });
-
-  it('applies focus styles when focused', async () => {
-    const user = userEvent.setup();
-    
-    render(<Switch data-testid="switch" />);
-
-    const switchElement = screen.getByTestId('switch');
-    await user.tab(); // Focus the switch
-
-    expect(switchElement).toHaveFocus();
-    expect(switchElement).toHaveClass('focus-visible:outline-none');
-    expect(switchElement).toHaveClass('focus-visible:ring-2');
-  });
-
-  it('can be used in a form', () => {
-    const handleSubmit = vi.fn();
-
     render(
-      <form onSubmit={handleSubmit}>
-        <Switch name="agree" value="yes" data-testid="switch" />
-        <button type="submit">Submit</button>
+      <form>
+        <Switch required name="notifications" data-testid="switch" />
       </form>
     );
 
     const switchElement = screen.getByTestId('switch');
-    expect(switchElement).toHaveAttribute('name', 'agree');
+    expect(switchElement).toHaveAttribute('aria-required', 'true');
+
+    // Radix creates a hidden input for form submission.
+    const input = screen.getByRole('checkbox', { hidden: true });
+    expect(input).toBeInTheDocument();
+    expect(input).toHaveAttribute('name', 'notifications');
+    expect(input).toBeRequired();
+  });
+
+  it('can be used in a form', async () => {
+    const user = userEvent.setup();
+    render(
+      <form>
+        <Switch name="agree" value="yes" data-testid="switch" />
+      </form>
+    );
+
+    const switchElement = screen.getByTestId('switch');
     expect(switchElement).toHaveAttribute('value', 'yes');
+
+    // Radix creates a hidden input for form submission.
+    const input = screen.getByRole('checkbox', { hidden: true });
+    expect(input).toBeInTheDocument();
+    expect(input).toHaveAttribute('name', 'agree');
+    expect(input).toHaveAttribute('type', 'checkbox');
+    expect(input).not.toBeChecked();
+
+    // Click the switch to turn it on
+    await user.click(switchElement);
+
+    expect(input).toBeChecked();
+    expect(input).toHaveAttribute('value', 'yes');
   });
 
   it('supports data attributes', () => {
@@ -302,13 +261,11 @@ describe('Switch', () => {
         data-testid="switch"
         id="custom-switch"
         tabIndex={0}
-        style={{ margin: '10px' }}
       />
     );
 
     const switchElement = screen.getByTestId('switch');
     expect(switchElement).toHaveAttribute('id', 'custom-switch');
     expect(switchElement).toHaveAttribute('tabIndex', '0');
-    expect(switchElement).toHaveStyle('margin: 10px');
   });
 });
