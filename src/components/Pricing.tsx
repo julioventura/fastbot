@@ -31,7 +31,7 @@ import { Check } from 'lucide-react';
 // Cada objeto no array define as características de um plano.
 const pricingPlans = [
     {
-        name: 'Fastbot Gratuito',
+        name: 'Assinatura Gratuita',
         price: 'GRÁTIS',
         description: 'Para uso eventual',
         features: [
@@ -44,7 +44,7 @@ const pricingPlans = [
         buttonVariant: 'default' as const, // Tipo específico para a variante do botão.
     },
     {
-        name: 'Fastbot Plus',
+        name: 'Assinatura Plus',
         price: 'R$ 40 / mês',
         description: 'Para uso ativo', // Descrição adicionada
         features: [
@@ -182,9 +182,9 @@ const Pricing = () => {
             <div className="section-container relative z-10" id="pricing-section">
                 {/* Título da Seção */}
                 <div className="text-center mb-12 md:mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
-                        <p>Assine o Plano Gratuito</p>
-                        <p className='gradient-text pt-5 mt-3'>E comece a usar JÁ!</p>
+                    <h2 className="text-3xl md:text-6xl font-bold mb-6">
+                        <p className='block gradient-text-blue pt-5 mt-3'>Assine o Plano Gratuito</p>
+                        <p className='text-5xl md:text-6xl block gradient-text-purple'>E comece a usar JÁ!</p>
                     </h2>
                 </div>
 

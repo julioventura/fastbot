@@ -30,19 +30,20 @@ const Hero = () => {
           {/* Coluna do texto - lado esquerdo (40% no desktop) */}
           <div className="lg:col-span-2 flex flex-col justify-center space-y-6 lg:space-y-8 py-8">
             {/* Título Principal */}
-            <div className="space-y-2">
+            <div className="space-y-2 ml-10">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight">
-                <span className="block gradient-text-purple">Ana.</span>
-                <span className="block text-gray-900">Sua assistente</span>
-                <span className="block gradient-text-blue">Virtual de IA</span>
-                <span className="block gradient-text-purple">em 3 minutos!</span>
+                {/* <span className="block gradient-text-purple">Ana.</span> */}
+                <span className="block gradient-text-red">Ana.</span>
+                <span className="block gradient-text-blue">Sua atendente de IA</span>
+                {/* <span className="block text-gray-900">Sua assistente</span> */}
+                <span className="block gradient-text-purple">em 3  <br />minutos!</span>
               </h1>
             </div>
 
             {/* Botão CTA */}
             <div className="pt-4">
-              <Button className="hero-cta-button text-white px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                <span>Comece agora GRÁTIS!</span>
+              <Button className="hero-cta-button text-white ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                <span>PLANO GRATUITO!</span>
                 <ArrowRight className="h-5 w-5" />
               </Button>
             </div>
@@ -50,14 +51,14 @@ const Hero = () => {
 
           {/* Coluna da imagem - lado direito (60% no desktop) */}
           <div className="lg:col-span-3 flex justify-center lg:justify-end items-stretch h-full">
-            <div className="relative character-illustration w-full max-w-2xl lg:max-w-3xl">
-              {/* Container da imagem otimizado para ocupar mais espaço vertical */}
-              <div className="relative w-full aspect-[3/4] max-h-[90vh] lg:max-h-[95vh] rounded-3xl overflow-hidden">
-                {/* Imagem da Ana - maior e mais proeminente */}
+            <div className="relative character-illustration w-full h-full flex items-center justify-center">
+              {/* Container da imagem otimizado para altura completa */}
+              <div className="relative h-[85vh] lg:h-[90vh] w-auto max-w-full">
+                {/* Imagem da Ana - altura completa, largura automática */}
                 <img 
                   src="/fastbot/hero-ana.png"
                   alt="Ana - Assistente Virtual Profissional da Saúde"
-                  className="w-full h-full object-contain object-center scale-150 lg:scale-125"
+                  className="h-full w-auto object-contain object-center"
                 />
                 
                 {/* Overlay sutil para melhor integração com o design */}

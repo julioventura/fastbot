@@ -51,8 +51,8 @@ describe('Pricing Component', () => {
       render(<Pricing />);
       
       // Verifica se os nomes dos planos estão presentes
-      expect(screen.getByText('Fastbot Gratuito')).toBeInTheDocument();
-      expect(screen.getByText('Fastbot Plus')).toBeInTheDocument();
+      expect(screen.getByText('Assinatura Gratuita')).toBeInTheDocument();
+      expect(screen.getByText('Assinatura Plus')).toBeInTheDocument();
     });
 
     it('deve exibir os preços corretos', () => {
@@ -200,7 +200,7 @@ describe('Pricing Component', () => {
       render(<Pricing />);
       
       const mainTitle = screen.getByText('Assine o Plano Gratuito');
-      expect(mainTitle.closest('h2')).toHaveClass('text-3xl', 'md:text-5xl');
+      expect(mainTitle.closest('h2')).toHaveClass('text-3xl', 'md:text-6xl');
     });
   });
 });
