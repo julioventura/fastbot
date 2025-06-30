@@ -31,28 +31,30 @@ import { Check } from 'lucide-react';
 // Cada objeto no array define as características de um plano.
 const pricingPlans = [
     {
-        name: 'Assinatura Gratuita',
+        name: 'Plano Gratuito',
         price: 'GRÁTIS',
-        description: 'Para uso eventual',
+        description: '',
         features: [
             '100 conversas por mês',
             'Homepage profissional com chatbot',
+            'Cartão de Visitas Digital com QR-Code',
         ],
         isPopular: true, // Destaca este plano como o mais popular.
-        popularText: 'GRATUITO',
+        popularText: 'USO EVENTUAL',
         buttonText: 'COMECE JÁ !',
         buttonVariant: 'default' as const, // Tipo específico para a variante do botão.
     },
     {
-        name: 'Assinatura Plus',
+        name: 'Plano Plus',
         price: 'R$ 40 / mês',
-        description: 'Para uso ativo', // Descrição adicionada
+        description: '', // Descrição adicionada
         features: [
             'Conversas ilimitadas',
             'Homepage profissional com chatbot',
+            'Cartão de Visitas Digital com QR-Code',
         ],
         isPopular: true,
-        popularText: 'ASSINATURA',
+        popularText: 'USO CONTÍNUO',
         buttonText: 'ASSINE JÁ !',
         buttonVariant: 'default' as const,
     },    
