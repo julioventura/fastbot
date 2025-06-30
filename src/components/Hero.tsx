@@ -50,10 +50,12 @@ const Hero = () => {
             <div className="space-y-2 ml-10">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight">
                 {/* <span className="block gradient-text-purple">Ana.</span> */}
-                <span className="block gradient-text-red">Olá! Sou Ana.</span>
-                <span className="block gradient-text-blue">Sua atendente de IA</span>
+                <span className="block gradient-text-red">Olá!</span>
+                <span className="block gradient-text-red">Sou Ana.</span>
+                <span className="block gradient-text-blue">Sua atendente</span>
+                <span className="block gradient-text-purple">chatbot de IA</span>
                 {/* <span className="block text-gray-900">Sua assistente</span> */}
-                <span className="block gradient-text-purple">em 3  <br />minutos!</span>
+                {/* <span className="block gradient-text-purple">em 3  <br />minutos!</span> */}
               </h1>
             </div>
 
@@ -61,7 +63,7 @@ const Hero = () => {
             <div className="pt-4">
               <Button className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                 <span>COMECE JÁ O PLANO GRATUITO!</span>
-                <ArrowRight className="h-5 w-5" />
+                {/* <ArrowRight className="h-5 w-5" /> */}
               </Button>
             </div>
           </div>
