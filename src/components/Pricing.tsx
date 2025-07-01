@@ -38,6 +38,8 @@ const pricingPlans = [
             '100 conversas por mês',
             'Homepage profissional com chatbot',
             'Cartão de Visitas Digital com QR-Code',
+            'Poster com QRCODE para a sala de espera',
+            'Link fácil para compartilhar seu chatbot'
         ],
         isPopular: true, // Destaca este plano como o mais popular.
         popularText: 'USO EVENTUAL',
@@ -49,9 +51,8 @@ const pricingPlans = [
         price: 'R$ 40 / mês',
         description: '', // Descrição adicionada
         features: [
+            'Tudo do plano gratuito mais...',
             'Conversas ilimitadas',
-            'Homepage profissional com chatbot',
-            'Cartão de Visitas Digital com QR-Code',
         ],
         isPopular: true,
         popularText: 'USO CONTÍNUO',

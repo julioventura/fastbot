@@ -23,21 +23,21 @@ import { Card } from '@/components/ui/card';
 // Cada objeto no array define a citação, autor e cargo/papel do autor.
 const testimonials = [
     {
-        quote: 'O chatbot da FastBot transformou minha comunicação com os alunos. Consigo responder dúvidas frequentes 24h por dia, mesmo fora do horário de aula, e economizo cerca de 15 horas semanais em atendimentos repetitivos.',
-        author: 'Prof. Carlos Mendes',
+        quote: 'O TutFOP expandiu a comunicação com os alunos. Conseguimos dar dupla checagem aos diagnósticos e planos de tratamento dos alunos, com o acompanhamento críticpo e explicativo de um tutor virtual ded I.A. munido de conhecimento específico pré-selecionado.',
+        author: 'Prof. Paulo Reis',
         role: 'Professor de Endodontia, FOP-PE',
         name: 'TutFOP',
         local: 'Disciplina de Endodontia da FO-UPE',
     },
     {
-        quote: 'O chatbot dinamizou a comunicação com o onosso aplicativo, como interface de acesso simplificada, tanto para pacientes via whatsapp (texto e audio) como para a equipe acessar os dados por conversa com a IA.',
+        quote: 'A Manu dinamizou a comunicação do nosso aplicativo de gestão de pacientes do projeto de doutorado com  os funcionários e pacientes. Atuando como interface de acesso simplificada, tanto para pacientes via whatsapp (texto e audio) como para a equipe acessar os dados por conversa com a IA.',
         author: 'Profa. Emanuelle',
         role: 'Doutoranda',
         name: 'Manu',
         local: 'Projeto de doutorado da FO-UFC',
     },
     {
-        quote: 'Implementamos o FastBot na recepção virtual da clínica e o resultado foi impressionante! Reduzimos as faltas em 40% com lembretes automáticos e nossos pacientes adoram poder agendar consultas e tirar dúvidas a qualquer momento.',
+        quote: 'Implementamos o Bob no atendimento automatizado por whatsapp aos candidatos à seleção do nosso curso de especialização, respondendo dúvidas, passando links e dando um incentivo à decisão positiva do candidato.',
         author: 'Dra. Juliana Costa',
         role: 'Cirurgiã-Dentista, Clínica Oral Care',
         name: 'Bob',
