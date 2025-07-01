@@ -167,7 +167,9 @@ const Header = () => {
 
           {/* Auth Section */}
           <div className="flex items-center space-x-4">
+
             <ThemeSelector />
+            
             {authLoading ? (
               <div className="text-muted-foreground text-sm">Carregando...</div>
             ) : !user ? (

@@ -321,13 +321,13 @@
     position: relative !important;
     padding: 8px 16px !important;
     border-radius: 20px !important;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.2) 100%) !important;
+    background: linear-gradient(135deg, rgba(66, 120, 207, 0.15) 0%, rgba(67, 103, 180, 0.2) 100%) !important;
     box-shadow: 
       0 0 20px rgba(59, 130, 246, 0.3),
       0 0 40px rgba(59, 130, 246, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    border: px solid rgba(59, 130, 246, 0.3) !important;
     transition: all 0.3s ease !important;
   }
   

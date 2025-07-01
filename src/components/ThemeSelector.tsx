@@ -12,9 +12,9 @@ const ThemeSelector = () => {
       size="sm"
       onClick={toggleTheme}
       className="w-10 h-10 p-0 border-2 transition-all duration-300 hover:scale-105
-        bg-background/50 backdrop-blur-sm
+        bg-background/50 backdrop-blur-sm hover:bg-foreground
         border-primary/20 hover:border-primary/40
-        text-foreground hover:text-primary
+        text-foreground hover:text-background
         shadow-sm hover:shadow-md"
       aria-label={`Alternar para modo ${theme === 'light' ? 'escuro' : 'claro'}`}
     >
