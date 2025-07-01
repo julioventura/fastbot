@@ -21,6 +21,18 @@ import { useTheme } from '@/hooks/useTheme';
 const Hero = () => {
   const { theme } = useTheme();
   const [useImageFallback, setUseImageFallback] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    {
+      image: '/fastbot/ana-hero.png',
+      text: ['Olá!', 'Sou Ana.', 'Sua atendente', 'chatbot de IA'],
+    },
+    {
+      image: '/fastbot/ana-hero-5.png',
+      text: ['Faça seu', 'chatbot de IA', 'em apenas', '3 minutos!'],
+    },
+  ];
 
   // Determina qual imagem usar
   const getImageSrc = () => {
@@ -36,6 +48,23 @@ const Hero = () => {
     setUseImageFallback(true);
   };
 
+
+  // Troca automática de slides a cada 5 segundos
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [slides.length]);
+
+  const nextSlide = React.useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
+  const prevSlide = React.useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
+
   return (
     <section className="relative overflow-hidden min-h-screen flex items-center bg-background">
       {/* Fundo com gradiente suave responsivo ao tema */}
@@ -49,15 +78,16 @@ const Hero = () => {
           <div className="lg:col-span-2 flex flex-col justify-center space-y-6 lg:space-y-8 py-8">
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight">
-                {/* <span className="block gradient-text-purple">Ana.</span> */}
-                <span className="block gradient-text-red">Olá!</span>
-                <span className="block gradient-text-red">Sou Ana.</span>
-                <span className="block gradient-text-blue">Sua atendente</span>
-                <span className="block gradient-text-purple">chatbot de IA</span>
-                {/* <span className="block text-gray-900">Sua assistente</span> */}
-                {/* <span className="block gradient-text-purple">em 3  <br />minutos!</span> */}
-              </h1>
+              {slides[currentSlide].text.map((line, index) => (
+                <span
+                  key={index}
+                  className={`block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-${
+                    index % 4
+                  }`}
+                >
+                  {line}
+                </span>
+              ))}
             </div>
 
             {/* Botão CTA */}
@@ -76,7 +106,7 @@ const Hero = () => {
               <div className="relative h-[85vh] lg:h-[90vh] w-auto max-w-full">
                 {/* Imagem da Ana - altura completa, largura automática */}
                 <img
-                  src={getImageSrc()}
+                  src={slides[currentSlide].image}
                   alt="Ana - Assistente Virtual Profissional da Saúde"
                   className="h-full w-auto object-contain object-center"
                   onError={handleImageError}
@@ -94,6 +124,24 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Navegação do Carrossel - setas laterais centralizadas verticalmente */}
+      <button
+        onClick={prevSlide}
+        aria-label="Slide anterior"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-white/80 hover:bg-primary/90 text-primary hover:text-white shadow-lg transition-all duration-200"
+        style={{outline: 'none', border: 'none'}}
+      >
+        <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </button>
+      <button
+        onClick={nextSlide}
+        aria-label="Próximo slide"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-white/80 hover:bg-primary/90 text-primary hover:text-white shadow-lg transition-all duration-200"
+        style={{outline: 'none', border: 'none'}}
+      >
+        <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </button>
     </section>
   );
 };
