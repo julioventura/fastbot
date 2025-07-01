@@ -78,16 +78,19 @@ const Hero = () => {
           <div className="lg:col-span-2 flex flex-col justify-center space-y-6 lg:space-y-8 py-8">
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
-              {slides[currentSlide].text.map((line, index) => (
-                <span
-                  key={index}
-                  className={`block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-${
-                    index % 4
-                  }`}
-                >
-                  {line}
-                </span>
-              ))}
+              {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-red">
+                {slides[currentSlide].text[0] || ''}
+              </span>
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-red">
+                {slides[currentSlide].text[1] || ''}
+              </span>
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-blue">
+                {slides[currentSlide].text[2] || ''}
+              </span>
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-purple">
+                {slides[currentSlide].text[3] || ''}
+              </span>
             </div>
 
             {/* Botão CTA */}
