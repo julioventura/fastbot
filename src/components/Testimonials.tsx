@@ -37,11 +37,25 @@ const testimonials = [
         local: 'Projeto de doutorado da FO-UFC',
     },
     {
-        quote: 'Implementamos o Bob no atendimento automatizado por whatsapp aos candidatos à seleção do nosso curso de especialização, respondendo dúvidas, passando links e dando um incentivo à decisão positiva do candidato.',
-        author: 'Dra. Juliana Costa',
-        role: 'Cirurgiã-Dentista, Clínica Oral Care',
-        name: 'Bob',
+        quote: 'Implementamos o Dolesc no atendimento automatizado por whatsapp aos candidatos à seleção do nosso curso de especialização, respondendo dúvidas, passando links e dando um incentivo à decisão positiva do candidato.',
+        author: 'Profa. Maria do Céu',
+        role: 'Chefe de Departamento - FO-UFRJ',
+        name: 'Dolesc',
         local: 'Depto de O. Legal e Saúde Coletiva. FO-UFRJ',
+    },
+    {
+        quote: 'Criamos o Breno para o suporte aos episódios e apostilas de nossa serie prática de IA no Ensino Odontológico.',
+        author: 'Prof. Júlio César Cardoso',
+        role: 'Coordenador do Grupo de IA da ABENO',
+        name: 'Breno',
+        local: 'Grupo de IA da ABENO',
+    },
+    {
+        quote: 'Bob foi nosso primeiro chatbot, voltado ao apoio no atendimento do whatsapp e rfedes sociais do Dentistas.com.br',
+        author: 'Prof. Júlio César Cardoso',
+        role: 'Dentista, professor e coordenador do Dentistas.com.br',
+        name: 'Bob',
+        local: 'Site Dentistas.com.br',
     },
 ];
 
@@ -123,7 +137,7 @@ const Testimonials = () => {
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
                         <p><span className="text-theme-accent">O que falam de nossos</span> chatbots...</p>
-                        <p className="text-4xl text-theme-accent"><i>TutFop, Manu e Bob, parentes de <span className="text-theme-accent text-5xl">Ana...</span></i> <span className="inline-block">😉</span></p>
+                        <p className="text-4xl text-theme-accent"><i>Do TutFop, Manu e Bob e parentes de <span className="text-theme-accent text-5xl">Ana...</span></i> <span className="inline-block">😉</span></p>
                     </h2>
 
                 </div>
