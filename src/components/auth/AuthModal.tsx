@@ -119,23 +119,23 @@ const AuthModal: React.FC<AuthModalProps> = ({
             {/* Trigger da Aba de Login */}
             <TabsTrigger
               value="login"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-muted-foreground"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md text-primary"
             >
-              Login
+              <span className={activeTab === 'login' ? '!text-white' : ''}>Login</span>
             </TabsTrigger>
             {/* Trigger da Aba de Cadastro */}
             <TabsTrigger
               value="signup"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-muted-foreground"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md text-primary"
             >
-              Cadastro
+              <span className={activeTab === 'signup' ? '!text-white' : ''}>Cadastro</span>
             </TabsTrigger>
             {/* Trigger da Aba de Recuperação de Senha */}
             <TabsTrigger
               value="reset"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md text-muted-foreground"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md text-primary"
             >
-              Recuperar
+              <span className={activeTab === 'reset' ? '!text-white' : ''}>Recuperar</span>
             </TabsTrigger>
           </TabsList>
 
