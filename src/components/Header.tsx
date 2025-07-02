@@ -52,15 +52,15 @@ const Header = () => {
           const { data, error } = await supabase
             .from('profiles')
             .select('name')
-            .eq('user_id', user.id)
+            .eq('id', user.id) // Corrigido: coluna correta é 'id'
             .maybeSingle();
-          
+
           if (error) {
             console.error('Erro na consulta de perfil:', error);
             setUserName(user.email?.split('@')[0] || 'Usuário');
             return;
           }
-          
+
           if (data?.name) {
             setUserName(data.name);
           } else {
