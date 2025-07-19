@@ -38,7 +38,7 @@ const App = () => (
         <AuthProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter basename="/fastbot">
+          <BrowserRouter>
             <Header />
             <Routes>
               <Route path="/" element={<Index />} />

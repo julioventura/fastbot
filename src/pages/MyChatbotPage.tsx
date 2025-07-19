@@ -107,9 +107,9 @@ const MyChatbotPage: React.FC = () => {
         setIsLoading(true); // Inicia o estado de carregamento dos dados do chatbot.
         try {
           const { data, error } = await supabase
-            .from("mychatbot") // Tabela 'mychatbot'.
+            .from("mychatbot_2") // Tabela 'mychatbot_2'.
             .select("*")      // Seleciona todas as colunas.
-            .eq("user_id", user.id) // Filtra pelo ID do usuário logado.
+            .eq("chatbot_user", user.id) // Filtra pelo ID do usuário logado.
             .single(); // Espera um único registro.
 
           // Trata erro na busca, ignorando o erro 'PGRST116' (nenhum registro encontrado),
@@ -172,9 +172,9 @@ const MyChatbotPage: React.FC = () => {
       console.log("user_id = ", user.id);
 
       const { data: existingData, error: fetchError } = await supabase
-        .from("mychatbot")
+        .from("mychatbot_2")
         .select("id") // Seleciona apenas o ID para verificar a existência, otimizando a query.
-        .eq("user_id", user.id)
+        .eq("chatbot_user", user.id)
         .single();
 
       // Trata erro na busca, ignorando 'PGRST116' (nenhum registro encontrado).
@@ -182,10 +182,10 @@ const MyChatbotPage: React.FC = () => {
         throw fetchError;
       }
 
-      // Prepara os dados para salvar, incluindo o user_id e a data de atualização.
+      // Prepara os dados para salvar, incluindo o chatbot_user e a data de atualização.
       const dataToSave = {
         ...chatbotData,
-        user_id: user.id,
+        chatbot_user: user.id,
         updated_at: new Date().toISOString(), // Define a data de atualização para o momento atual.
       };
 
@@ -194,14 +194,14 @@ const MyChatbotPage: React.FC = () => {
       // Se já existe um registro (existingData não é null), atualiza (UPDATE).
       if (existingData) {
         const { error } = await supabase
-          .from("mychatbot")
+          .from("mychatbot_2")
           .update(dataToSave)
-          .eq("user_id", user.id); // Condição para atualizar o registro correto.
+          .eq("chatbot_user", user.id); // Condição para atualizar o registro correto.
         supabaseError = error;
       } else {
         // Se não existe, insere um novo registro (INSERT), incluindo a data de criação.
         const { error } = await supabase
-          .from("mychatbot")
+          .from("mychatbot_2")
           .insert({ ...dataToSave, created_at: new Date().toISOString() }); // Adiciona created_at para novos registros.
         supabaseError = error;
       }

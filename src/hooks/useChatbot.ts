@@ -39,16 +39,16 @@ export const useChatbot = () => {
 
     try {
       const { data, error: fetchError } = await supabase
-        .from('mychatbot')
+        .from('mychatbot_2')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('chatbot_user', user.id)
         .single();
 
       if (fetchError) {
         if (fetchError.code === 'PGRST116') {
           // Nenhum registro encontrado - criar um novo
           const newChatbot = {
-            user_id: user.id,
+            chatbot_user: user.id,
             system_message: '',
             office_address: '',
             office_hours: '',
@@ -59,7 +59,7 @@ export const useChatbot = () => {
           };
 
           const { data: newData, error: insertError } = await supabase
-            .from('mychatbot')
+            .from('mychatbot_2')
             .insert([newChatbot])
             .select()
             .single();
@@ -104,9 +104,9 @@ export const useChatbot = () => {
 
     try {
       const { data, error: updateError } = await supabase
-        .from('mychatbot')
+        .from('mychatbot_2')
         .update(updates)
-        .eq('user_id', user.id)
+        .eq('chatbot_user', user.id)
         .select()
         .single();
 

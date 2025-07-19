@@ -19,6 +19,10 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Force cache bust during development
+  define: {
+    __CACHE_BUST__: JSON.stringify(Date.now())
+  },
   // Comentado temporariamente para desenvolvimento local
   // base: '/fastbot/', // <-- ESSENCIAL! Define a subpasta como caminho base
 }));

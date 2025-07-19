@@ -90,7 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       // Para desenvolvimento, usar localhost:8080 (porta configurada do Vite)
       // Para produção, usar window.location.origin
-      const redirectUrl = `${window.location.origin}/fastbot/`;
+      const redirectUrl = `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -141,7 +141,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Para desenvolvimento, usar localhost:8080 (porta configurada do Vite)
       // Para produção, usar window.location.origin
       const redirectUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:8080/fastbot/#reset-password'
+        ? 'http://localhost:8081/#reset-password'
         : `${window.location.origin}/#reset-password`;
         
       const { error } = await supabase.auth.resetPasswordForEmail(email, {

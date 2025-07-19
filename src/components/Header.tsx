@@ -82,12 +82,12 @@ const Header = () => {
     try {
       await signOut();
       setUserName("");
-      window.location.href = '/fastbot/';
+      window.location.href = '/';
     } catch (error) {
       console.error("Erro durante o processo de saída:", error);
       setUserName("");
       localStorage.clear();
-      window.location.href = '/fastbot/';
+      window.location.href = '/';
     }
   };
 
