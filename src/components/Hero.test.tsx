@@ -51,7 +51,7 @@ describe('Hero Component', () => {
       
       // Testa textos individuais em elementos separados
       expect(screen.getByText('Olá!')).toBeInTheDocument();
-      expect(screen.getByText('Sou Ana.')).toBeInTheDocument();
+      expect(screen.getByText('Sou Fastbot.')).toBeInTheDocument();
       expect(screen.getByText('Sua atendente')).toBeInTheDocument();
       expect(screen.getByText('chatbot de IA')).toBeInTheDocument();
     });
@@ -69,11 +69,11 @@ describe('Hero Component', () => {
   });
 
   describe('gerenciamento de imagens', () => {
-    it('deve renderizar a imagem da Ana com tema light por padrão', () => {
+    it('deve renderizar a imagem da Fastbot com tema light por padrão', () => {
       mockUseTheme.mockReturnValue({ theme: 'light' });
       render(<Hero />);
       
-      const anaImage = screen.getByAltText('Ana - Assistente Virtual Profissional da Saúde');
+      const anaImage = screen.getByAltText('Fastbot - Assistente Virtual Profissional da Saúde');
       expect(anaImage).toBeInTheDocument();
       expect(anaImage).toHaveAttribute('src', '/fastbot/hero-ana.png');
     });
@@ -82,7 +82,7 @@ describe('Hero Component', () => {
       mockUseTheme.mockReturnValue({ theme: 'dark' });
       render(<Hero />);
       
-      const anaImage = screen.getByAltText('Ana - Assistente Virtual Profissional da Saúde');
+      const anaImage = screen.getByAltText('Fastbot - Assistente Virtual Profissional da Saúde');
       expect(anaImage).toBeInTheDocument();
       expect(anaImage).toHaveAttribute('src', '/fastbot/hero-ana-dark.png');
     });
@@ -91,7 +91,7 @@ describe('Hero Component', () => {
       mockUseTheme.mockReturnValue({ theme: 'dark' });
       render(<Hero />);
       
-      const anaImage = screen.getByAltText('Ana - Assistente Virtual Profissional da Saúde');
+      const anaImage = screen.getByAltText('Fastbot - Assistente Virtual Profissional da Saúde');
       
       // Simula erro de carregamento da imagem
       fireEvent.error(anaImage);
@@ -102,8 +102,8 @@ describe('Hero Component', () => {
     it('deve ter atributos de acessibilidade corretos na imagem', () => {
       render(<Hero />);
       
-      const anaImage = screen.getByAltText('Ana - Assistente Virtual Profissional da Saúde');
-      expect(anaImage).toHaveAttribute('alt', 'Ana - Assistente Virtual Profissional da Saúde');
+      const anaImage = screen.getByAltText('Fastbot - Assistente Virtual Profissional da Saúde');
+      expect(anaImage).toHaveAttribute('alt', 'Fastbot - Assistente Virtual Profissional da Saúde');
       expect(anaImage).toHaveClass('h-full', 'w-auto', 'object-contain', 'object-center');
     });
   });
@@ -168,7 +168,7 @@ describe('Hero Component', () => {
       const helloText = screen.getByText('Olá!');
       expect(helloText).toHaveClass('gradient-text-red');
       
-      const nameText = screen.getByText('Sou Ana.');
+      const nameText = screen.getByText('Sou Fastbot.');
       expect(nameText).toHaveClass('gradient-text-red');
       
       const roleText = screen.getByText('Sua atendente');
@@ -245,7 +245,7 @@ describe('Hero Component', () => {
       render(<Hero />);
       
       const image = screen.getByRole('img');
-      expect(image).toHaveAttribute('alt', 'Ana - Assistente Virtual Profissional da Saúde');
+      expect(image).toHaveAttribute('alt', 'Fastbot - Assistente Virtual Profissional da Saúde');
     });
   });
 });

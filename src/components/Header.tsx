@@ -105,7 +105,7 @@ const Header = () => {
                   Dentistas.com.br /&nbsp;
                 </span>
                 <span className="text-2xl md:text-3xl font-black text-primary group-hover:text-primary/95 transition-colors">
-                  Ana
+                  Fastbot
                 </span>
               </div>
             </NavLink>

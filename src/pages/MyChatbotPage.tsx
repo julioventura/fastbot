@@ -49,25 +49,37 @@ const MyChatbotPage: React.FC = () => {
       const fetchChatbotData = async () => {
         setIsLoading(true);
         try {
+          // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
           const { data, error } = await supabase
             .from("mychatbot_2")
             .select("*")
-            .eq("chatbot_user", user.id)
-            .single();
+            .eq("chatbot_user", user.id);
 
-          if (error && error.code !== 'PGRST116') {
+          if (error) {
             throw error;
           }
 
-          if (data) {
+          // Verificar se há registros
+          if (data && data.length > 0) {
             setChatbotData({
-              system_message: data.system_message || "",
-              office_address: data.office_address || "",
-              office_hours: data.office_hours || "",
-              specialties: data.specialties || "",
-              chatbot_name: data.chatbot_name || "",
-              welcome_message: data.welcome_message || "",
-              whatsapp: data.whatsapp || "",
+              system_message: data[0].system_message || "",
+              office_address: data[0].office_address || "",
+              office_hours: data[0].office_hours || "",
+              specialties: data[0].specialties || "",
+              chatbot_name: data[0].chatbot_name || "",
+              welcome_message: data[0].welcome_message || "",
+              whatsapp: data[0].whatsapp || "",
+            });
+          } else {
+            // Nenhum registro encontrado - inicializar com dados vazios
+            setChatbotData({
+              system_message: "",
+              office_address: "",
+              office_hours: "",
+              specialties: "",
+              chatbot_name: "",
+              welcome_message: "",
+              whatsapp: "",
             });
           }
         } catch (error) {
@@ -96,13 +108,13 @@ const MyChatbotPage: React.FC = () => {
 
     setIsSaving(true);
     try {
+      // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
       const { data: existingData, error: fetchError } = await supabase
         .from("mychatbot_2")
         .select("id")
-        .eq("chatbot_user", user.id)
-        .single();
+        .eq("chatbot_user", user.id);
 
-      if (fetchError && fetchError.code !== 'PGRST116') {
+      if (fetchError) {
         throw fetchError;
       }
 
@@ -114,7 +126,8 @@ const MyChatbotPage: React.FC = () => {
 
       let supabaseError;
 
-      if (existingData) {
+      // Verificar se há registros existentes
+      if (existingData && existingData.length > 0) {
         const { error } = await supabase
           .from("mychatbot_2")
           .update(dataToSave)

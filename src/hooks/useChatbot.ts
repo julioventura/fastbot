@@ -38,39 +38,41 @@ export const useChatbot = () => {
     }
 
     try {
+      // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
       const { data, error: fetchError } = await supabase
         .from('mychatbot_2')
         .select('*')
-        .eq('chatbot_user', user.id)
-        .single();
+        .eq('chatbot_user', user.id);
 
       if (fetchError) {
-        if (fetchError.code === 'PGRST116') {
-          // Nenhum registro encontrado - criar um novo
-          const newChatbot = {
-            chatbot_user: user.id,
-            system_message: '',
-            office_address: '',
-            office_hours: '',
-            specialties: '',
-            chatbot_name: '',
-            welcome_message: '',
-            whatsapp: '',
-          };
+        throw fetchError;
+      }
 
-          const { data: newData, error: insertError } = await supabase
-            .from('mychatbot_2')
-            .insert([newChatbot])
-            .select()
-            .single();
+      // Verificar se encontrou registros
+      if (!data || data.length === 0) {
+        // Nenhum registro encontrado - criar um novo
+        const newChatbot = {
+          chatbot_user: user.id,
+          system_message: '',
+          office_address: '',
+          office_hours: '',
+          specialties: '',
+          chatbot_name: '',
+          welcome_message: '',
+          whatsapp: '',
+        };
 
-          if (insertError) throw insertError;
-          setChatbotData(newData);
-        } else {
-          throw fetchError;
-        }
+        const { data: newData, error: insertError } = await supabase
+          .from('mychatbot_2')
+          .insert([newChatbot])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        setChatbotData(newData);
       } else {
-        setChatbotData(data);
+        // Registro encontrado - usar o primeiro (deve ser único por usuário)
+        setChatbotData(data[0]);
       }
 
       retryCount.current = 0; // Reset retry count on success

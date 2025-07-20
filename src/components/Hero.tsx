@@ -26,7 +26,7 @@ const Hero = () => {
   const slides = [
     {
       image: '/ana-hero.png',
-      text: ['Olá!', 'Sou Ana,', 'uma atendente', 'chatbot de IA'],
+      text: ['Olá!', 'Sou Fastbot,', 'uma atendente', 'chatbot de IA'],
     },
     {
       image: '/ana-hero-5.png',
@@ -107,10 +107,10 @@ const Hero = () => {
             <div className="relative character-illustration w-full h-full flex items-center justify-center">
               {/* Container da imagem otimizado para altura completa */}
               <div className="relative h-[85vh] lg:h-[90vh] w-auto max-w-full">
-                {/* Imagem da Ana - altura completa, largura automática */}
+                {/* Imagem da Fastbot - altura completa, largura automática */}
                 <img
                   src={slides[currentSlide].image}
-                  alt="Ana - Assistente Virtual Profissional da Saúde"
+                  alt="Fastbot - Assistente Virtual Profissional da Saúde"
                   className="h-full w-auto object-contain object-center"
                   onError={handleImageError}
                 />

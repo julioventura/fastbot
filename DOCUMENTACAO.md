@@ -206,11 +206,11 @@ Componentes como o `Hero` usam múltiplos `<span>` para aplicar diferentes class
 
 ```typescript
 // ❌ Abordagem tradicional (falha com textos fragmentados)
-expect(screen.getByText('Olá! Sou Ana. Sua atendente chatbot de IA')).toBeInTheDocument()
+expect(screen.getByText('Olá! Sou Fastbot. Sua atendente chatbot de IA')).toBeInTheDocument()
 
 // ✅ Abordagem com matchers flexíveis (funciona)
 expect(screen.getByText('Olá!')).toBeInTheDocument()
-expect(screen.getByText('Sou Ana.')).toBeInTheDocument()
+expect(screen.getByText('Sou Fastbot.')).toBeInTheDocument()
 expect(screen.getByText('Sua atendente')).toBeInTheDocument()
 expect(screen.getByText('chatbot de IA')).toBeInTheDocument()
 ```
