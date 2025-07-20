@@ -26,7 +26,7 @@ const Hero = () => {
   const slides = [
     {
       image: '/ana-hero.png',
-      text: ['Olá!', 'Sou Fastbot,', 'uma atendente', 'chatbot de IA'],
+      text: ['Olá!', 'Sou Ana,', 'uma atendente', 'chatbot de IA'],
     },
     {
       image: '/ana-hero-5.png',

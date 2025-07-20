@@ -1,6 +1,21 @@
 // Componente: CloseAccount
-// Funcionalidade:
-// Este componente renderiza um card com opção para fechar/excluir permanentemente a conta do usuário.
+// Funcional      // Primeiro, verificar TODAS as dependências do usuário
+      try {
+        const { data: checkData, error: checkError } = await supabase.rpc('check_all_user_dependencies');
+        
+        if (checkData && checkData.success) {
+          console.log('📋 Todas as dependências do usuário encontradas:', checkData);
+          console.log('📊 Resumo completo das dependências:', checkData.dependencies);
+        } else {
+          console.log('⚠️ Erro ao verificar dependências:', checkData || checkError);
+        }
+      } catch (checkErr) {
+        console.log('⚠️ Não foi possível verificar dependências, continuando...', checkErr);
+      }
+      
+      // Tentar a nova função ULTIMATE de exclusão
+      console.log('🗑️ Executando exclusão ULTIMATE da conta (trata mychatbot + mychatbot_2 + todas as foreign keys)...');
+      const { data, error } = await supabase.rpc('delete_user_account_ultimate');omponente renderiza um card com opção para fechar/excluir permanentemente a conta do usuário.
 // Inclui um modal de confirmação para evitar exclusões acidentais.
 // Utiliza componentes de UI do shadcn/ui para a estrutura do card, botão e modal.
 //
@@ -39,25 +54,25 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
     try {
       console.log('🔍 Iniciando processo de exclusão da conta...');
       
-      // Primeiro, verificar TODAS as dependências do usuário
+      // Primeiro, investigar todas as referências do usuário
       try {
-        const { data: checkData, error: checkError } = await supabase.rpc('check_all_user_dependencies');
+        const { data: checkData, error: checkError } = await supabase.rpc('investigate_user_references');
         
         if (checkData && checkData.success) {
-          console.log('📋 Todas as dependências do usuário encontradas:', checkData);
-          console.log('📊 Resumo completo das dependências:', checkData.dependencies);
+          console.log('� Referências do usuário encontradas:', checkData);
+          console.log('📊 Detalhes das referências:', checkData.references_found);
         } else {
-          console.log('⚠️ Erro ao verificar dependências:', checkData || checkError);
+          console.log('⚠️ Erro ao verificar referências:', checkData || checkError);
         }
       } catch (checkErr) {
-        console.log('⚠️ Não foi possível verificar dependências, continuando...', checkErr);
+        console.log('⚠️ Não foi possível verificar referências, continuando...', checkErr);
       }
       
-      // Tentar a nova função ULTIMATE de exclusão
-      console.log('🗑️ Executando exclusão ULTIMATE da conta (trata mychatbot + mychatbot_2 + todas as foreign keys)...');
-      const { data, error } = await supabase.rpc('delete_user_account_ultimate');
+      // Tentar a nova função ultra-robusta de exclusão
+      console.log('🗑️ Executando exclusão ultra-robusta da conta...');
+      const { data, error } = await supabase.rpc('delete_user_account_ultra_safe');
       
-      console.log('📤 Resposta da função delete_user_account_ultimate:', { data, error });
+      console.log('📤 Resposta da função delete_user_account_ultra_safe:', { data, error });
       
       if (error) {
         console.error('❌ Erro na função RPC:', error);
@@ -90,9 +105,7 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
         
         let userFriendlyMessage = errorMsg;
         
-        if (sqlError.includes('mychatbot_usuario_fkey')) {
-          userFriendlyMessage = 'Erro na exclusão: dependência encontrada na tabela mychatbot. A função ULTIMATE deveria resolver isso automaticamente. Entre em contato com o suporte.';
-        } else if (sqlError.includes('user_roles_granted_by_fkey')) {
+        if (sqlError.includes('user_roles_granted_by_fkey')) {
           userFriendlyMessage = 'Não é possível deletar a conta porque você concedeu permissões para outros usuários. Entre em contato com o administrador.';
         } else if (sqlError.includes('foreign key')) {
           userFriendlyMessage = 'Não é possível deletar a conta devido a dependências no sistema. Entre em contato com o suporte.';
@@ -114,9 +127,7 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
         errorMessage = error.message;
         
         // Tratar erros específicos
-        if (error.message.includes('mychatbot_usuario_fkey')) {
-          errorMessage = 'Erro na exclusão: dependência encontrada na tabela mychatbot. A função ULTIMATE deveria resolver isso automaticamente.';
-        } else if (error.message.includes('user_roles_granted_by_fkey')) {
+        if (error.message.includes('user_roles_granted_by_fkey')) {
           errorMessage = 'Não é possível deletar a conta porque você concedeu permissões para outros usuários.';
         }
       }
