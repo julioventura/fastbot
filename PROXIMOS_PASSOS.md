@@ -1,6 +1,7 @@
 # ✅ PRÓXIMOS PASSOS - Sistema de Administradores FastBot
 
 ## 🎯 Status Atual
+
 - ✅ Sistema de deleção de usuários: **FUNCIONANDO**
 - ✅ Sistema de roles/admins: **99% PRONTO**
 - ⚠️ Função `get_all_admins`: **PRECISA CORREÇÃO**
@@ -8,6 +9,7 @@
 ## 🔧 Ação Necessária
 
 ### PASSO 1: Corrigir Função get_all_admins
+
 Execute no SQL Editor do Supabase:
 
 ```sql
@@ -40,6 +42,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 ### PASSO 2: Testar o Sistema
+
 Após executar a correção, teste:
 
 ```sql
@@ -54,19 +57,23 @@ SELECT * FROM get_all_admins();
 ```
 
 ### PASSO 3: Usar Interface Web
+
 1. Acesse `/admin` no FastBot
 2. Na aba "Administradores":
    - Veja a lista de admins atuais
    - Conceda/revogue roles conforme necessário
 
 ## 🎉 Após Correção
+
 Com isso, você terá:
+
 - ✅ Deleção segura de usuários via SQL e interface web
 - ✅ Sistema de administradores completo
 - ✅ Interface administrativa funcional
 - ✅ Controle granular de permissões
 
 ## 📚 Documentação
+
 - `INSTRUCOES_DELECAO_USUARIOS.md` - Instruções completas
 - `TROUBLESHOOTING_AUTH.md` - Resolução de problemas
 - Scripts SQL em `supabase/` - Todos os comandos necessários

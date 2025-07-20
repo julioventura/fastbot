@@ -3,16 +3,19 @@
 ## 🚨 **PROBLEMA IDENTIFICADO**
 
 Seu browser está usando **JavaScript em cache** com as antigas chamadas da API:
+
 - `mychatbot?select=*&user_id=eq.` (deveria ser `mychatbot_2` com `chatbot_user`)
 - `profiles?select=name&user_id=eq.` (deveria ser `profiles` com `id`)
 
 ## ✅ **SOLUÇÕES APLICADAS**
 
 ### 1. **Favicon 404 - CORRIGIDO**
+
 - Comentado `base: '/fastbot/'` no `vite.config.ts`
 - Agora o favicon carrega corretamente
 
 ### 2. **Configuração Supabase - CORRIGIDA**
+
 - `.env` configurado para usar Supabase Cloud (mais estável)
 - Servidor reiniciado na porta 8080
 
@@ -32,7 +35,8 @@ Seu browser está usando **JavaScript em cache** com as antigas chamadas da API:
 ## 🧪 **TESTE**
 
 Após limpar o cache:
-1. Acesse: http://localhost:8080
+
+1. Acesse: <http://localhost:8080>
 2. Abra o DevTools (F12) → Console
 3. Verifique se **NÃO** aparecem mais:
    - `supabase.cirurgia.com.br/rest/v1/mychatbot?select=*&user_id=eq.`
@@ -40,7 +44,7 @@ Após limpar o cache:
 
 ## 📊 **STATUS ATUAL**
 
-- ✅ **Servidor:** http://localhost:8080 (rodando)
+- ✅ **Servidor:** <http://localhost:8080> (rodando)
 - ✅ **Supabase:** Cloud (gyhklifdpebujlvgwldi.supabase.co)
 - ✅ **Favicon:** Corrigido
 - ⏳ **Cache:** Precisa ser limpo manualmente
@@ -54,6 +58,7 @@ Após limpar o cache:
 ## 🚨 **SE O PROBLEMA PERSISTIR**
 
 Execute no terminal:
+
 ```powershell
 cd c:\contexto\fastbot
 rm -rf node_modules\.vite

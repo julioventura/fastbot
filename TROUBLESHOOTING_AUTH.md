@@ -7,6 +7,7 @@
 Acesse: `Settings > Auth > SMTP Settings`
 
 Configure as seguintes variáveis:
+
 ```
 ENABLE_SMTP=true
 SMTP_HOST=seu-servidor-smtp.com
@@ -22,12 +23,14 @@ SMTP_ADMIN_EMAIL=noreply@seudominio.com
 ### 2. Configuração de Confirmação de Email
 
 Em `Settings > Auth > Email Templates`:
+
 - ✅ Habilitar "Enable email confirmations"
 - ✅ Configurar template personalizado se necessário
 
 ### 3. Configuração de URL de Confirmação
 
 Em `Settings > Auth > URL Configuration`:
+
 - Site URL: `http://localhost:8080/fastbot/` (desenvolvimento) ou `https://seudominio.com` (produção)
 - Redirect URLs: 
   - `http://localhost:8080/fastbot/**` (desenvolvimento)
@@ -38,6 +41,7 @@ Em `Settings > Auth > URL Configuration`:
 ## ⚠️ CORREÇÃO CRÍTICA - URLs de Redirecionamento
 
 ### Problema Comum: URLs Incorretas nos Emails
+
 Se os links nos emails estão apontando para portas erradas (como 8000 ou 8080), você precisa:
 
 1. **Verificar configuração no Supabase Dashboard:**
@@ -56,10 +60,12 @@ Se os links nos emails estão apontando para portas erradas (como 8000 ou 8080),
    - Teste com novo email de reset
 
 **⚠️ ATENÇÃO:** Seu Vite roda na porta 8080 com base path `/fastbot/`, então configure:
+
 - Site URL: `http://localhost:8080/fastbot/`
 - Redirect URLs: `http://localhost:8080/fastbot/**`
 
 ### URLs Corretas Esperadas
+
 - **Desenvolvimento:** `http://localhost:8080/fastbot/#reset-password?access_token=...`
 - **Produção:** `https://seudominio.com/#reset-password?access_token=...`
 
@@ -70,6 +76,7 @@ Se os links nos emails estão apontando para portas erradas (como 8000 ou 8080),
 **Causa Principal:** Usuário criado mas email não confirmado
 
 **Soluções:**
+
 1. ✅ Verificar caixa de entrada/spam para email de confirmação
 2. ✅ Usar o botão "Reenviar Email de Confirmação" no formulário de login
 3. ✅ Verificar configuração SMTP no Supabase
@@ -78,17 +85,20 @@ Se os links nos emails estão apontando para portas erradas (como 8000 ou 8080),
 ### Erro: "Invalid login credentials"
 
 **Possíveis Causas:**
+
 - Email ou senha incorretos
 - Usuário não existe
 - Usuário existe mas não foi confirmado
 
 **Solução:**
+
 - Verificar se o usuário existe na tabela `auth.users`
 - Verificar campo `email_confirmed_at` (não deve ser NULL)
 
 ### Erro: "Email not confirmed"
 
 **Solução:**
+
 - Confirmar email através do link enviado
 - Usar função "Reenviar confirmação" implementada
 - Verificar configuração SMTP
@@ -97,7 +107,7 @@ Se os links nos emails estão apontando para portas erradas (como 8000 ou 8080),
 
 ### Diagnóstico Completo Realizado (27/01/2025)
 
-#### ✅ Verificações Já Realizadas:
+#### ✅ Verificações Já Realizadas
 
 1. **Foreign Keys com CASCADE DELETE:**
    - `profiles.id` → `auth.users.id` (CASCADE DELETE)
@@ -119,14 +129,16 @@ Se os links nos emails estão apontando para portas erradas (como 8000 ou 8080),
 **CAUSA RAIZ:** O projeto usa ambiente Supabase self-hosted (`supabase.cirurgia.com.br`) ao invés do Supabase Cloud oficial.
 
 **Limitações conhecidas em ambientes self-hosted:**
+
 - Interface de Authentication pode ter bugs específicos
 - Permissões de admin podem estar limitadas
 - APIs de deleção podem ter comportamento diferente
 - Logs de erro limitados ou ausentes
 
-#### 🔧 Soluções Possíveis:
+#### 🔧 Soluções Possíveis
 
 ### 1. **Deleção Manual via SQL (RECOMENDADO)**
+
 ```sql
 -- 1. Identificar o usuário
 SELECT id, email, created_at FROM auth.users WHERE email = 'usuario@email.com';
@@ -145,6 +157,7 @@ SELECT COUNT(*) FROM profiles WHERE id = 'USER_ID_AQUI'; -- Deve retornar 0
 ```
 
 ### 2. **Função Administrativa de Deleção**
+
 ```sql
 -- Criar função para deleção segura de usuários
 CREATE OR REPLACE FUNCTION admin_delete_user(user_email TEXT)
@@ -189,6 +202,7 @@ SELECT admin_delete_user('usuario@email.com');
 ```
 
 ### 3. **Implementar Deleção via Code (Frontend)**
+
 ```typescript
 // No AuthContext ou novo hook
 export const useAdminActions = () => {
@@ -214,12 +228,14 @@ export const useAdminActions = () => {
 ### 4. **Verificação de Configuração Self-Hosted**
 
 **Verificar no painel administrativo do Supabase self-hosted:**
+
 - Logs de erro do servidor
 - Permissões do usuário administrativo
 - Configurações de RLS (Row Level Security)
 - Status dos serviços (Auth, API, etc.)
 
 **Comandos para verificar logs (se tiver acesso ao servidor):**
+
 ```bash
 # Logs do container Supabase
 docker logs supabase-auth
@@ -230,7 +246,8 @@ docker logs supabase-rest
 docker logs supabase-db
 ```
 
-#### 📊 Status Final:
+#### 📊 Status Final
+
 - ✅ Estrutura do banco corrigida (Foreign Keys, CASCADE DELETE)
 - ✅ Registros órfãos limpos
 - ✅ Triggers funcionando
@@ -244,12 +261,15 @@ docker logs supabase-db
 ### 🔧 Implementação Completa Disponível
 
 #### 1. Script SQL Administrativo
+
 Arquivo: `supabase/admin_user_deletion.sql`
+
 - Funções para verificar, deletar e limpar usuários
 - Comandos manuais de emergência
 - Exemplos de uso prático
 
 #### 2. Interface Web Administrativa  
+
 - Página: `/admin` (acesso restrito a emails @cirurgia.com.br)
 - Componente: `AdminUserManagement.tsx`
 - Funcionalidades:
@@ -258,7 +278,8 @@ Arquivo: `supabase/admin_user_deletion.sql`
   - Verificar e limpar registros órfãos
   - Interface amigável com validações
 
-#### 3. Como Usar:
+#### 3. Como Usar
+
 1. **Acesso:** Vá para `https://supabase.cirurgia.com.br/fastbot/admin`
 2. **Login:** Use uma conta com email @cirurgia.com.br
 3. **Buscar:** Digite o email do usuário para ver seus dados
@@ -269,6 +290,7 @@ Arquivo: `supabase/admin_user_deletion.sql`
 ## 🧪 Como Testar o Sistema
 
 ### 1. Teste de Cadastro
+
 ```
 1. Acesse a aba "Cadastro"
 2. Preencha: Nome, Email, WhatsApp, Senha
@@ -278,6 +300,7 @@ Arquivo: `supabase/admin_user_deletion.sql`
 ```
 
 ### 2. Teste de Confirmação
+
 ```
 1. Abra o email de confirmação
 2. Clique no link de confirmação
@@ -286,6 +309,7 @@ Arquivo: `supabase/admin_user_deletion.sql`
 ```
 
 ### 3. Teste de Login
+
 ```
 1. Acesse a aba "Login"
 2. Use email e senha cadastrados
@@ -294,6 +318,7 @@ Arquivo: `supabase/admin_user_deletion.sql`
 ```
 
 ### 4. Teste de Reset de Senha
+
 ```
 1. Acesse a aba "Recuperar"
 2. Digite o email
@@ -306,13 +331,15 @@ Arquivo: `supabase/admin_user_deletion.sql`
 
 Os logs foram adicionados temporariamente para debug:
 
-### Console do Browser:
+### Console do Browser
+
 - Tentativas de login/cadastro
 - Respostas do Supabase
 - Status de confirmação do usuário
 - Erros detalhados
 
-### Como usar os logs:
+### Como usar os logs
+
 ```javascript
 // Abra o console do navegador (F12)
 // Logs aparecerão durante:
@@ -323,14 +350,16 @@ Os logs foram adicionados temporariamente para debug:
 
 ## 📋 Checklist de Verificação
 
-### ✅ Configuração do Supabase:
+### ✅ Configuração do Supabase
+
 - [ ] SMTP configurado e testado
 - [ ] Email confirmations habilitado
 - [ ] Site URL configurada
 - [ ] Redirect URLs configuradas
 - [ ] Templates de email configurados
 
-### ✅ Teste do Fluxo:
+### ✅ Teste do Fluxo
+
 - [ ] Cadastro funciona
 - [ ] Email de confirmação é enviado
 - [ ] Link de confirmação funciona
@@ -338,7 +367,8 @@ Os logs foram adicionados temporariamente para debug:
 - [ ] Reset de senha funciona
 - [ ] Botão de reenvio funciona
 
-### ✅ Verificação no Database:
+### ✅ Verificação no Database
+
 - [ ] Usuário criado em `auth.users`
 - [ ] Profile criado em `profiles`
 - [ ] Campo `email_confirmed_at` preenchido após confirmação
@@ -353,6 +383,7 @@ Após confirmar que tudo está funcionando, remover os logs de debug:
 ## 📞 Suporte
 
 Se os problemas persistirem:
+
 1. Verificar logs do servidor Supabase
 2. Testar SMTP manualmente
 3. Verificar configurações de DNS se usando domínio próprio
@@ -368,6 +399,7 @@ Se os problemas persistirem:
 4. **Depois execute:** `SELECT admin_delete_user('email@usuario.com');`
 
 **Método alternativo (SEM funções):**
+
 ```sql
 -- Deletar usuário diretamente (funciona imediatamente)
 DELETE FROM auth.users WHERE email = 'teste@dentistas.com.br';

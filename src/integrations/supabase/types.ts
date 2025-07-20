@@ -9,6 +9,75 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      chatbot_documents: {
+        Row: {
+          id: string
+          chatbot_user: string
+          filename: string
+          content: string
+          file_size: number
+          upload_date: string
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          chatbot_user: string
+          filename: string
+          content: string
+          file_size: number
+          upload_date?: string
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          chatbot_user?: string
+          filename?: string
+          content?: string
+          file_size?: number
+          upload_date?: string
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      chatbot_embeddings: {
+        Row: {
+          id: string
+          document_id: string
+          chatbot_user: string
+          chunk_text: string
+          chunk_index: number
+          embedding: number[]
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          document_id: string
+          chatbot_user: string
+          chunk_text: string
+          chunk_index: number
+          embedding: number[]
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          document_id?: string
+          chatbot_user?: string
+          chunk_text?: string
+          chunk_index?: number
+          embedding?: number[]
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
       contatos: {
         Row: {
           created_at: string

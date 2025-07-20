@@ -14,6 +14,7 @@ dist-ssr
 .diversos
 .env
 .*
+config.toml
 
 # Editor directories and files
 .vscode/*

@@ -3,6 +3,7 @@
 ## ✅ O que foi feito
 
 ### 1. **Hook personalizado `useIsAdmin`**
+
 - **Arquivo**: `src/hooks/useIsAdmin.ts`
 - **Funcionalidade**: Verifica se o usuário atual é administrador
 - **Recursos**:
@@ -11,6 +12,7 @@
   - Retorna `{ isAdmin, loading }` para uso em componentes
 
 ### 2. **Item "Admin" no DropdownMenu do Header**
+
 - **Arquivo**: `src/components/Header.tsx`
 - **Funcionalidade**: Adiciona opção "Admin" no menu dropdown do usuário
 - **Recursos**:
@@ -20,17 +22,20 @@
   - Estilização consistente com outros itens do menu
 
 ### 3. **Otimização da AdminPage**
+
 - **Arquivo**: `src/pages/AdminPage.tsx`
 - **Melhoria**: Agora usa o hook `useIsAdmin` centralizado
 - **Benefício**: Lógica de verificação de admin reutilizada
 
 ## 🎯 Como funciona
 
-### Para usuários normais:
+### Para usuários normais
+
 - O item "Admin" **não aparece** no dropdown menu
 - Tentativa de acesso direto a `/admin` ainda é bloqueada
 
-### Para administradores:
+### Para administradores
+
 - O item "Admin" **aparece** no dropdown menu
 - Clique leva direto para o painel administrativo
 - Ícone Shield para identificação visual clara

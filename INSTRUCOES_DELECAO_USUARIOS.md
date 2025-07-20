@@ -1,6 +1,7 @@
 # 🔧 Instruções para Executar o Script de Deleção de Usuários
 
 ## 📋 Pré-requisitos
+
 - Acesso ao painel administrativo do Supabase self-hosted
 - Permissões de administrador no banco de dados
 - Backup do banco de dados (recomendado)
@@ -8,11 +9,13 @@
 ## 🚀 Passo a Passo
 
 ### 1. Acessar o Painel do Supabase
+
 1. Acesse: `https://supabase.cirurgia.com.br`
 2. Faça login com suas credenciais de administrador
 3. Vá para o projeto FastBot
 
 ### 2. Executar o Script SQL
+
 1. No painel Supabase, vá para **SQL Editor**
 2. Abra o arquivo `supabase/admin_user_deletion.sql`
 3. Copie TODO o conteúdo do arquivo
@@ -20,7 +23,9 @@
 5. Clique em **Run** ou pressione `Ctrl+Enter`
 
 ### 3. Verificar se as Funções foram Criadas
+
 Execute este comando para verificar:
+
 ```sql
 SELECT proname, prosrc 
 FROM pg_proc 
@@ -36,27 +41,32 @@ Deve retornar 4 funções.
 
 ### 4. Testar as Funções
 
-#### Verificar registros órfãos:
+#### Verificar registros órfãos
+
 ```sql
 SELECT admin_check_orphaned_records();
 ```
 
-#### Limpar registros órfãos (se houver):
+#### Limpar registros órfãos (se houver)
+
 ```sql
 SELECT admin_clean_orphaned_records();
 ```
 
-#### Verificar um usuário específico:
+#### Verificar um usuário específico
+
 ```sql
 SELECT admin_check_user('teste@dentistas.com.br');
 ```
 
-#### Deletar um usuário específico:
+#### Deletar um usuário específico
+
 ```sql
 SELECT admin_delete_user('teste@dentistas.com.br');
 ```
 
 ### 5. Usar a Interface Web
+
 1. Acesse: `https://supabase.cirurgia.com.br/fastbot/admin`
 2. Faça login com uma conta @cirurgia.com.br
 3. Use a interface para gerenciar usuários
@@ -64,17 +74,21 @@ SELECT admin_delete_user('teste@dentistas.com.br');
 ## ⚠️ Importante
 
 ### Problemas Conhecidos
+
 - **Interface padrão do Supabase Authentication não funciona** em ambientes self-hosted
 - **Erro "API error happened while trying to communicate with the server"** é comum
 - **Use sempre as funções SQL ou a interface web customizada**
 
 ### Segurança
+
 - As funções são criadas com `SECURITY DEFINER` (executam com privilégios do criador)
 - Apenas usuários com acesso ao SQL Editor podem executar
 - A interface web tem restrição por domínio de email (@cirurgia.com.br)
 
 ### Backup
+
 Antes de deletar usuários em produção:
+
 ```sql
 -- Backup de usuários
 CREATE TABLE backup_users_$(date +%Y%m%d) AS 
@@ -88,11 +102,13 @@ SELECT * FROM profiles;
 ## 🎯 Resolução do Problema Original
 
 O problema de deleção de usuários foi causado por:
+
 1. **Ambiente self-hosted** com limitações na interface padrão
 2. **Registros órfãos** em tabelas relacionadas
 3. **Foreign keys sem CASCADE DELETE** (corrigido)
 
 **Solução implementada:**
+
 - ✅ Foreign keys com CASCADE DELETE em todas as tabelas
 - ✅ Funções SQL para deleção segura
 - ✅ Interface web administrativa
@@ -104,6 +120,7 @@ O problema de deleção de usuários foi causado por:
 Após limpar o banco e deixar apenas um usuário inicial, execute estas verificações:
 
 ### 1. Verificar Integridade
+
 ```sql
 -- Verificar usuário restante
 SELECT id, email, created_at, email_confirmed_at FROM auth.users;
@@ -118,6 +135,7 @@ WHERE NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.id = p.id);
 ```
 
 ### 2. Verificar Foreign Keys
+
 ```sql
 SELECT 
     tc.table_name, 
@@ -134,6 +152,7 @@ AND tc.table_name = 'profiles';
 ```
 
 ### 3. Verificar Triggers
+
 ```sql
 -- Verificar trigger de criação de profiles
 SELECT tgname, tgrelid::regclass, tgfoid::regproc
@@ -145,6 +164,7 @@ SELECT proname FROM pg_proc WHERE proname = 'handle_new_user';
 ```
 
 ### 4. Comandos de Monitoramento
+
 ```sql
 -- Durante testes, use estes comandos para monitorar:
 SELECT id, email, created_at, email_confirmed_at FROM auth.users ORDER BY created_at DESC;
@@ -165,7 +185,9 @@ SELECT
 7. ⏳ **Verificar CASCADE DELETE** (profile deve ser removido automaticamente)
 
 ## 📞 Suporte
+
 Em caso de problemas:
+
 1. Verificar logs do servidor Supabase
 2. Usar comandos SQL manuais de emergência
 3. Verificar permissões de usuário
@@ -195,6 +217,7 @@ ORDER BY u.created_at;
 ### Como Definir Administradores
 
 #### 1. **Primeira Configuração (Execute UMA vez)**
+
 ```sql
 -- Executar o script admin_roles_system.sql primeiro
 -- Depois conceder admin para o usuário inicial:
@@ -209,6 +232,7 @@ ON CONFLICT (user_id, role) DO NOTHING;
 ```
 
 #### 2. **Adicionar Novos Admins**
+
 ```sql
 -- Via SQL
 SELECT grant_admin_role('novo.admin@cirurgia.com.br');
@@ -218,6 +242,7 @@ SELECT grant_admin_role('novo.admin@cirurgia.com.br');
 ```
 
 #### 3. **Remover Admins**
+
 ```sql
 -- Via SQL
 SELECT revoke_admin_role('usuario@email.com');
@@ -229,18 +254,21 @@ SELECT revoke_admin_role('usuario@email.com');
 ### Estrutura do Sistema
 
 **Tabela `user_roles`:**
+
 - Armazena roles (funções) dos usuários
 - Suporta múltiplas roles por usuário
 - Rastreia quem concedeu a role e quando
 - Protegida por RLS (Row Level Security)
 
 **Funções Disponíveis:**
+
 - `is_admin(user_id)` - Verifica se usuário é admin
 - `get_all_admins()` - Lista todos os administradores
 - `grant_admin_role(email)` - Concede role de admin
 - `revoke_admin_role(email)` - Remove role de admin
 
 **Segurança:**
+
 - Apenas admins podem modificar roles
 - Proteção contra auto-remoção
 - Logs de auditoria (quem concedeu, quando)

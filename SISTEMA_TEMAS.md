@@ -16,22 +16,27 @@ Foi implementado um sistema completo de temas com 6 paletas de cores para o Fast
 ### 🔧 Componentes Implementados
 
 #### 1. Sistema de Contexto (`src/contexts/`)
+
 - **`theme-context.ts`**: Define os tipos e contexto do tema
 - **`ThemeContext.tsx`**: Provider que gerencia o estado global do tema
 
 #### 2. Hook Personalizado (`src/hooks/`)
+
 - **`useTheme.ts`**: Hook para acessar e modificar o tema atual
 
 #### 3. Componente Seletor (`src/components/`)
+
 - **`ThemeSelector.tsx`**: Modal interativo para escolha de temas
 
 #### 4. Estilos CSS (`src/index.css`)
+
 - **6 paletas completas** implementadas com variáveis CSS custom properties
 - **Classes `.theme-*`** para cada paleta
 
 ### 🚀 Como Testar
 
 1. **Executar o projeto:**
+
    ```powershell
    Set-Location "c:\contexto\fastbot"
    npm run dev
@@ -52,17 +57,20 @@ Foi implementado um sistema completo de temas com 6 paletas de cores para o Fast
 ### 🎯 Funcionalidades Principais
 
 #### Seletor de Temas
+
 - **Modal interativo** com preview visual de cada paleta
 - **Indicador visual** da paleta ativa
 - **Descrições claras** de cada tema
 - **Ícones apropriados** (Sol/Lua) para temas claros/escuros
 
 #### Persistência
+
 - **localStorage**: Escolha do usuário salva automaticamente
 - **Carregamento automático**: Tema aplicado na próxima visita
 - **Fallback seguro**: Retorna ao tema padrão se não houver escolha salva
 
 #### Aplicação Global
+
 - **Variáveis CSS**: Sistema baseado em CSS custom properties
 - **Aplicação automática**: Classe adicionada ao `<html>`
 - **Compatibilidade**: Funciona com todos os componentes Tailwind
@@ -70,6 +78,7 @@ Foi implementado um sistema completo de temas com 6 paletas de cores para o Fast
 ### 🔄 Integração Completa
 
 #### No App.tsx
+
 ```tsx
 <ThemeProvider>
   <AuthProvider>
@@ -79,6 +88,7 @@ Foi implementado um sistema completo de temas com 6 paletas de cores para o Fast
 ```
 
 #### No Header.tsx
+
 ```tsx
 {/* No menu dropdown do usuário */}
 <DropdownMenuItem asChild>
@@ -94,6 +104,7 @@ Foi implementado um sistema completo de temas com 6 paletas de cores para o Fast
 ### 📱 Interface do Usuário
 
 O seletor de temas apresenta:
+
 - **Grid responsivo** (1 coluna mobile, 2 colunas desktop)
 - **Preview visual** com 3 cores representativas de cada tema
 - **Hover effects** e **transições suaves**
@@ -103,6 +114,7 @@ O seletor de temas apresenta:
 ### 🎨 Detalhes das Paletas
 
 Cada paleta inclui variáveis para:
+
 - `--background`: Cor de fundo principal
 - `--foreground`: Cor do texto principal
 - `--primary`: Cor primária da marca
@@ -120,6 +132,7 @@ Cada paleta inclui variáveis para:
 ### 🎯 Próximos Passos (Opcionais)
 
 Para expandir o sistema:
+
 1. **Temas personalizados**: Permitir criação de temas próprios
 2. **Sincronização**: Salvar preferência de tema na conta do usuário
 3. **Modo automático**: Detectar preferência do sistema operacional
