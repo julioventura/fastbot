@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import Account from "./pages/Account";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MyChatbot from "@/components/chatbot/MyChatbot";
 import PricingPage from "./pages/PricingPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import MyChatbotPage from "./pages/MyChatbotPage";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
+            <MyChatbot />
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
