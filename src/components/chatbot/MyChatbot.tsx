@@ -161,8 +161,9 @@ const MyChatbot = () => {
    */
   const getInitialMessage = useCallback(() => {
     const pageContext = getPageContext();
-    return `Olá! 👋 Bem-vindo à ${pageContext}. Sou o assistente do FastBot e estou aqui para ajudar você com seu chatbot!`;
-  }, [getPageContext]);
+    const botName = chatbotConfig?.chatbot_name || 'FastBot';
+    return `Olá! 👋 Bem-vindo à ${pageContext}. Sou o assistente ${botName} e estou aqui para ajudar você com seu chatbot!`;
+  }, [getPageContext, chatbotConfig?.chatbot_name]);
 
   /**
    * Inicialização de mensagens
@@ -371,10 +372,11 @@ const MyChatbot = () => {
     }
 
     // Respostas gerais
+    const botName = chatbotConfig?.chatbot_name || 'FastBot';
     const responses = [
       `Estou aqui na ${pageContext} para ajudar. Como posso auxiliar você com seu chatbot hoje?`,
-      `Vejo que você está na ${pageContext}. Em que posso ajudar com o FastBot?`,
-      'Sou o assistente do FastBot! Posso esclarecer dúvidas sobre criação e configuração de chatbots.',
+      `Vejo que você está na ${pageContext}. Em que posso ajudar com o ${botName}?`,
+      `Sou o assistente ${botName}! Posso esclarecer dúvidas sobre criação e configuração de chatbots.`,
       'Precisa de ajuda com seu chatbot? Estou aqui para isso! O que gostaria de saber?',
     ];
 
@@ -605,7 +607,7 @@ const MyChatbot = () => {
         <div className="flex items-center">
           <Bot size={24} style={{ marginRight: '10px', color: chatbotTextColor }} />
           <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: chatbotTextColor }}>
-            FastBot Assistant {isLoading && <span className="animate-pulse">●</span>}
+            {chatbotConfig?.chatbot_name || 'FastBot'} {isLoading && <span className="animate-pulse">●</span>}
           </h3>
         </div>
         <div className="flex items-center space-x-2">
