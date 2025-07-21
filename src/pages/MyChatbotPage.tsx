@@ -71,13 +71,13 @@ const MyChatbotPage: React.FC = () => {
               whatsapp: data[0].whatsapp || "",
             });
           } else {
-            // Nenhum registro encontrado - inicializar com dados vazios
+            // Nenhum registro encontrado - inicializar com valores padrão
             setChatbotData({
-              system_message: "",
+              system_message: "Você é um chatbot assistente de IA e atende respondendo com as diretivas e dados desta instrução e dos arquivos anexados à base de dados.",
               office_address: "",
               office_hours: "",
               specialties: "",
-              chatbot_name: "",
+              chatbot_name: "Meu Chatbot",
               welcome_message: "",
               whatsapp: "",
             });

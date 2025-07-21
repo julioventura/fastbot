@@ -30,6 +30,13 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
   onChange,
   onCancel
 }) => {
+  // Detectar se está em modo escuro
+  const isDarkMode = document.documentElement.classList.contains('dark');
+  
+  // Definir cor da borda baseada no tema com MAIOR CONTRASTE
+  const borderColor = isDarkMode 
+    ? '2px solid rgba(255, 255, 255, 0.6)' // Claro mais intenso para modo escuro
+    : '2px solid rgba(0, 0, 0, 0.5)';      // Escuro mais intenso para modo claro
   return (
     <Card className="bg-card/60 border border-border backdrop-blur-sm text-foreground">
       <CardHeader>
@@ -48,22 +55,27 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="whatsapp"
               value={chatbotData.whatsapp}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Ex: +55 11 91234-5678"
+              style={{ border: borderColor }}
             />
             <p className="mt-1 text-xs text-muted-foreground">Número do WhatsApp do chatbot</p>
           </div>
 
           {/* Campo Nome do Chatbot */}
           <div>
-            <Label htmlFor="chatbot_name" className="text-foreground">Nome do Chatbot (para Homepage)</Label>
+            <Label htmlFor="chatbot_name" className="text-foreground">
+              Nome do Chatbot (para Homepage) <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="chatbot_name"
               name="chatbot_name"
               value={chatbotData.chatbot_name}
               onChange={onChange}
-              className="text-lg mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Ex: Assistente Virtual Dr. Silva"
+              required
+              style={{ border: borderColor }}
             />
           </div>
 
@@ -75,9 +87,10 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="welcome_message"
               value={chatbotData.welcome_message}
               onChange={onChange}
-              className="text-lg mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Olá! Sou o assistente virtual do consultório. Como posso ajudar?"
               rows={3}
+              style={{ border: borderColor }}
             />
           </div>
 
@@ -89,8 +102,9 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="office_address"
               value={chatbotData.office_address}
               onChange={onChange}
-              className="text-lg mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Rua Exemplo, 123, Bairro, Cidade - UF"
+              style={{ border: borderColor }}
             />
           </div>
 
@@ -102,8 +116,9 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="office_hours"
               value={chatbotData.office_hours}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Segunda a Sexta, das 08h às 18h"
+              style={{ border: borderColor }}
             />
           </div>
 
@@ -115,9 +130,10 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="specialties"
               value={chatbotData.specialties}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Clínica Geral, Ortodontia, Implantes..."
               rows={3}
+              style={{ border: borderColor }}
             />
           </div>
 
@@ -129,9 +145,10 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="system_message"
               value={chatbotData.system_message}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Você é um assistente virtual. Seja cordial e ajude com informações sobre..."
               rows={30}
+              style={{ border: borderColor }}
             />
             <p className="mt-1 text-xs text-muted-foreground">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
           </div>
