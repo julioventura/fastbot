@@ -680,6 +680,8 @@ const MyChatbot = () => {
                   style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}
                   dangerouslySetInnerHTML={{
                     __html: msg.text
+                      // Converter URLs em links clicáveis ANTES das quebras de linha
+                      .replace(/(https?:\/\/[^\s<>\n\r]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: underline; cursor: pointer;">$1</a>')
                       .replace(/\n\n/g, '<br/><br/>') // Quebras duplas para parágrafos
                       .replace(/\n/g, '<br/>') // Quebras simples
                       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Negrito
