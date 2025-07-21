@@ -46,7 +46,7 @@ const ViewChatbotConfig: React.FC<ViewChatbotConfigProps> = ({ chatbotData }) =>
           </div>
           {/* Mensagem de Sistema ocupando as duas colunas abaixo para maior visibilidade */}
           <div className="md:col-span-2 space-y-6 p-4 border border-border rounded-lg shadow-md bg-card/30">
-            {renderViewData("Mensagem de Sistema (Prompt do Chatbot)", chatbotData.system_message)}
+            {renderViewData("Mensagem de Sistema", chatbotData.system_message)}
           </div>
         </div>
       </CardContent>
