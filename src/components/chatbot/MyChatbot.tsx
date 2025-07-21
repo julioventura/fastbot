@@ -239,17 +239,51 @@ const MyChatbot = () => {
         throw new Error(`Erro HTTP: ${response.status} - ${errorDetails}`);
       }
 
-      const data = (await response.json()) as { response?: string; message?: string };
+      const data = await response.json();
 
       // Log otimizado da resposta do webhook
       console.log('✅ [MyChatbot] Resposta do N8N:', {
         success: true,
         responseTime: Date.now() - Date.parse(requestTimestamp),
-        hasResponse: !!data.response || !!data.message
+        dataReceived: data
       });
 
-      // Retorna a resposta do webhook ou uma mensagem padrão
-      return data.response ?? data.message ?? 'Obrigado pela sua mensagem! Como posso ajudar você?';
+      // Processar nova estrutura de resposta do N8N
+      // Formato esperado: {"status":"success","message":"...","uuid":"...","response":"..."}
+      if (data && typeof data === 'object') {
+        // Verificar se é o novo formato estruturado
+        if (data.status === 'success' && data.response) {
+          console.log('✅ [MyChatbot] Nova estrutura N8N processada:', {
+            status: data.status,
+            uuid: data.uuid,
+            originalMessage: data.message,
+            responseLength: data.response.length
+          });
+          return data.response;
+        }
+        
+        // Verificar se é array (formato do seu exemplo)
+        if (Array.isArray(data) && data.length > 0) {
+          const responseData = data[0];
+          if (responseData.status === 'success' && responseData.response) {
+            console.log('✅ [MyChatbot] Array N8N processado:', {
+              status: responseData.status,
+              uuid: responseData.uuid,
+              responseLength: responseData.response.length
+            });
+            return responseData.response;
+          }
+        }
+
+        // Fallback para formato antigo
+        if (data.response || data.message) {
+          return data.response || data.message;
+        }
+      }
+
+      // Última opção - resposta padrão
+      console.log('⚠️ [MyChatbot] Formato inesperado, usando fallback');
+      return 'Obrigado pela sua mensagem! Como posso ajudar você?';
 
     } catch (error) {
       const errorTimestamp = new Date().toISOString();

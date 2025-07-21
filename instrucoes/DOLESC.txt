@@ -1,6 +1,5 @@
 # DOLESC - Chatbot de Atendimento  
 Departamento de Odontologia Legal e Saúde Coletiva – Faculdade de Odontologia | UFRJ  
-**Tema exclusivo:** Inscrições para o **Curso de Especialização em Saúde Coletiva – 2025**
 
 
 ## 1 | Dados Essenciais
