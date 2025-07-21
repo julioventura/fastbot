@@ -219,7 +219,7 @@ const Header = () => {
                   <DropdownMenuSeparator className="bg-border" />
                   <DropdownMenuItem
                     onClick={handleSignOut}
-                    className="flex items-center space-x-2 px-3 py-2 text-destructive hover:bg-destructive/10 cursor-pointer"
+                    className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-destructive/10 cursor-pointer"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Sair</span>

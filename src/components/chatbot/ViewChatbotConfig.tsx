@@ -34,7 +34,7 @@ const ViewChatbotConfig: React.FC<ViewChatbotConfigProps> = ({ chatbotData }) =>
         <div className="grid md:grid-cols-2 gap-x-8 gap-y-6">
           {/* Coluna 1 para dados do chatbot */}
           <div className="space-y-6 p-4 border border-border rounded-lg shadow-md bg-card/30">
-            {renderViewData("Nome do Chatbot (Homepage)", chatbotData.chatbot_name)}
+            {renderViewData("Nome do Chatbot", chatbotData.chatbot_name)}
             {renderViewData("Endereço do Consultório", chatbotData.office_address)}
             {renderViewData("Horários de Atendimento", chatbotData.office_hours)}
             {renderViewData("WhatsApp", chatbotData.whatsapp)}
