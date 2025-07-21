@@ -29,7 +29,7 @@ const Hero = () => {
       text: ['Olá!', 'Sou Ana,', 'uma atendente', 'chatbot de IA'],
     },
     {
-      image: '/ana-hero-5.png',
+      image: '/fastbot/ana-hero-5.png',
       text: ['Me clone', 'para você', 'em', '3 minutos!'],
     },
   ];
