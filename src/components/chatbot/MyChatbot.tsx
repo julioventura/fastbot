@@ -200,7 +200,10 @@ const MyChatbot = () => {
 
       const payload = {
         message: userMessage,
-        userId: user?.id
+        userId: user?.id,
+        pageContext: location.pathname,
+        pageName: getPageContext(),
+        timestamp: requestTimestamp
       };
 
       // Log do payload sendo enviado
@@ -311,6 +314,15 @@ const MyChatbot = () => {
    */
   const getBotResponseLocal = (userMessage: string): string => {
     const pageContext = getPageContext();
+
+    // Detectar perguntas sobre contexto da página atual
+    if (userMessage.toLowerCase().includes('que página') || 
+        userMessage.toLowerCase().includes('qual página') ||
+        userMessage.toLowerCase().includes('onde estou') ||
+        userMessage.toLowerCase().includes('página é esta') ||
+        userMessage.toLowerCase().includes('página estou')) {
+      return `Você está atualmente na **${pageContext}**. Esta é a área do FastBot onde você pode gerenciar e configurar seu chatbot!`;
+    }
 
     // Se há configuração personalizada, usar informações do usuário
     if (chatbotConfig) {
@@ -662,7 +674,16 @@ const MyChatbot = () => {
               {msg.isLoading ? (
                 <span className="animate-pulse">Digitando...</span>
               ) : (
-                msg.text
+                <div 
+                  style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}
+                  dangerouslySetInnerHTML={{
+                    __html: msg.text
+                      .replace(/\n\n/g, '<br/><br/>') // Quebras duplas para parágrafos
+                      .replace(/\n/g, '<br/>') // Quebras simples
+                      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Negrito
+                      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Itálico
+                  }}
+                />
               )}
             </div>
           </div>
