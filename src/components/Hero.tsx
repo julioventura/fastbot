@@ -25,7 +25,7 @@ const Hero = () => {
 
   const slides = [
     {
-      image: '/ana-hero.png',
+      image: '/fastbot/ana-hero.png',
       text: ['Olá!', 'Sou Ana,', 'uma atendente', 'chatbot de IA'],
     },
     {

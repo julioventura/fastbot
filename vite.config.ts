@@ -19,6 +19,22 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Comentado temporariamente para desenvolvimento local
-  // base: '/fastbot/', // <-- ESSENCIAL! Define a subpasta como caminho base
+  // Configuração para produção em subdiretório
+  base: mode === 'production' ? '/fastbot/' : '/', // Define base path apenas em produção
+  
+  // Configurações de build otimizadas
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    // Garantir que os assets tenham nomes consistentes
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+      },
+    },
+    // Força regeneração do manifesto
+    manifest: false,
+  },
 }));
