@@ -3,8 +3,22 @@
  * MyChatbot
  * ==================================
  * 
- * Componente de chatbot interativo para o FastBot com assistência contextual baseado na página atual.
- * Suporta múltiplos estados de visualização (minimizado, normal, maximizado) e
+ * Componente de chatbot interativo para o FastBot com assistência contextual baseado na       // Log do payload sendo enviado
+      console.log('🚀 [MyChatbot] Enviando para N8N:', {
+        payload: JSON.stringify(payload),
+        url: webhookUrl,
+        size: JSON.stringify(payload).length
+      });
+
+      const response = await fetch(String(webhookUrl), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const responseTimestamp = new Date().toISOString();uporta múltiplos estados de visualização (minimizado, normal, maximizado) e
  * estilos visuais (alto-relevo ou baixo-relevo). Integra-se com webhook externo
  * para processamento de mensagens, com fallback para respostas locais.
  * 
@@ -28,6 +42,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Bot, Maximize2, Minimize2, X, Send, User } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '@/lib/auth/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
 interface Message {
@@ -37,23 +53,82 @@ interface Message {
   isLoading?: boolean;
 }
 
+interface ChatbotConfig {
+  system_message: string;
+  office_address: string;
+  office_hours: string;
+  specialties: string;
+  chatbot_name: string;
+  welcome_message: string;
+  whatsapp: string;
+}
+
 const MyChatbot = () => {
   // Estados principais do componente
   const [chatState, setChatState] = useState<ChatState>('minimized');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [chatbotConfig, setChatbotConfig] = useState<ChatbotConfig | null>(null);
 
   // Controle de estilo visual (alto-relevo vs baixo-relevo)
   const [isElevated] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
+  const { user } = useAuth();
 
   // Constantes de estilo para o chatbot
   const chatbotBgColor = '#1a1b3a';
   const chatbotTextColor = '#e0e0e0';
   const chatbotShadowLight = 'rgba(147, 51, 234, 0.3)';
   const chatbotShadowDark = 'rgba(0, 0, 0, 0.7)';
+
+  /**
+   * fetchChatbotConfig
+   * Busca as configurações do chatbot do usuário atual no Supabase
+   * Inclui system_message e outras configurações personalizadas
+   */
+  const fetchChatbotConfig = useCallback(async () => {
+    if (!user?.id) return;
+
+    console.log('🔍 [MyChatbot] Iniciando busca de configuração do chatbot...', {
+      timestamp: new Date().toISOString(),
+      userId: user.id,
+      userEmail: user.email
+    });
+
+    try {
+      const { data, error } = await supabase
+        .from('mychatbot_2')
+        .select('*')
+        .eq('chatbot_user', user.id);
+
+      if (error) {
+        console.error('❌ [MyChatbot] Erro ao buscar configuração do chatbot:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setChatbotConfig(data[0]);
+        console.log('✅ [MyChatbot] Configuração carregada com sucesso:', {
+          timestamp: new Date().toISOString(),
+          userId: user.id,
+          configFound: true,
+          chatbotName: data[0].chatbot_name,
+          hasSystemMessage: !!data[0].system_message,
+          systemMessageLength: data[0].system_message?.length || 0
+        });
+      } else {
+        console.log('⚠️ [MyChatbot] Nenhuma configuração encontrada para o usuário:', {
+          timestamp: new Date().toISOString(),
+          userId: user.id,
+          configFound: false
+        });
+      }
+    } catch (error) {
+      console.error('❌ [MyChatbot] Erro inesperado ao buscar configuração:', error);
+    }
+  }, [user?.id, user?.email]);
 
   /**
    * getPageContext
@@ -96,8 +171,10 @@ const MyChatbot = () => {
   useEffect(() => {
     if (chatState === 'normal' && messages.length === 0) {
       setMessages([{ id: 1, text: getInitialMessage(), sender: 'bot' }]);
+      // Buscar configuração do chatbot quando o chat é aberto
+      fetchChatbotConfig();
     }
-  }, [chatState, messages.length, getInitialMessage]);
+  }, [chatState, messages.length, getInitialMessage, fetchChatbotConfig]);
 
   /**
    * sendToWebhook
@@ -106,22 +183,28 @@ const MyChatbot = () => {
    * Em caso de falha, utiliza resposta local como fallback
    */
   const sendToWebhook = async (userMessage: string): Promise<string> => {
+    const requestTimestamp = new Date().toISOString();
+    
     try {
       setIsLoading(true);
 
       const webhookUrl: string | undefined = import.meta.env.VITE_WEBHOOK_N8N_URL as string | undefined;
 
       if (!webhookUrl) {
+        console.log('❌ [MyChatbot] Webhook URL não configurada:', {
+          timestamp: requestTimestamp,
+          error: 'VITE_WEBHOOK_N8N_URL não definida'
+        });
         throw new Error('URL do webhook N8N não configurada');
       }
 
       const payload = {
         message: userMessage,
-        page: location.pathname,
-        pageContext: getPageContext(),
-        timestamp: new Date().toISOString(),
-        sessionId: Date.now() // ID único da sessão
+        userId: user?.id
       };
+
+      // Log do payload sendo enviado
+      console.log('🚀 [MyChatbot] Enviando mensagem:', JSON.stringify(payload, null, 2));
 
       const response = await fetch(String(webhookUrl), {
         method: 'POST',
@@ -131,20 +214,56 @@ const MyChatbot = () => {
         body: JSON.stringify(payload)
       });
 
+      const responseTimestamp = new Date().toISOString();
+
+      // Log simplificado da requisição
+      console.log('� [MyChatbot] Enviando para N8N:', {
+        url: webhookUrl,
+        payloadSize: JSON.stringify(payload).length,
+        message: payload.message
+      });
+
       if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
+        // Tentar ler resposta de erro do N8N
+        let errorDetails;
+        try {
+          errorDetails = await response.text();
+        } catch {
+          errorDetails = 'Não foi possível ler detalhes do erro';
+        }
+
+        console.log('⚠️ [MyChatbot] N8N indisponível, usando fallback:', {
+          status: response.status,
+          fallbackActivated: true
+        });
+        throw new Error(`Erro HTTP: ${response.status} - ${errorDetails}`);
       }
 
       const data = (await response.json()) as { response?: string; message?: string };
+
+      // Log otimizado da resposta do webhook
+      console.log('✅ [MyChatbot] Resposta do N8N:', {
+        success: true,
+        responseTime: Date.now() - Date.parse(requestTimestamp),
+        hasResponse: !!data.response || !!data.message
+      });
 
       // Retorna a resposta do webhook ou uma mensagem padrão
       return data.response ?? data.message ?? 'Obrigado pela sua mensagem! Como posso ajudar você?';
 
     } catch (error) {
-      console.error('Erro ao enviar para webhook:', error);
+      const errorTimestamp = new Date().toISOString();
+      
+      // Log simplificado de erro para fallback
+      console.log('🔄 [MyChatbot] Usando resposta local:', {
+        reason: 'N8N indisponível',
+        fallbackActive: true
+      });
 
       // Fallback para resposta local em caso de erro
-      return getBotResponseLocal(userMessage);
+      const fallbackResponse = getBotResponseLocal(userMessage);
+      
+      return fallbackResponse;
     } finally {
       setIsLoading(false);
     }
@@ -158,6 +277,22 @@ const MyChatbot = () => {
    */
   const getBotResponseLocal = (userMessage: string): string => {
     const pageContext = getPageContext();
+
+    // Se há configuração personalizada, usar informações do usuário
+    if (chatbotConfig) {
+      if (chatbotConfig.chatbot_name) {
+        return `Olá! Sou ${chatbotConfig.chatbot_name}. ${chatbotConfig.welcome_message || 'Como posso ajudar você hoje?'}`;
+      }
+      if (chatbotConfig.office_hours && userMessage.toLowerCase().includes('horário')) {
+        return `Nosso horário de atendimento é: ${chatbotConfig.office_hours}`;
+      }
+      if (chatbotConfig.office_address && userMessage.toLowerCase().includes('endereço')) {
+        return `Estamos localizados em: ${chatbotConfig.office_address}`;
+      }
+      if (chatbotConfig.specialties && userMessage.toLowerCase().includes('especialidade')) {
+        return `Nossas especialidades são: ${chatbotConfig.specialties}`;
+      }
+    }
 
     // Respostas contextualizadas baseadas na página
     if (location.pathname === '/') {
@@ -219,6 +354,18 @@ const MyChatbot = () => {
    */
   const handleSendMessage = async (): Promise<void> => {
     if (inputValue.trim() === '') return;
+
+    const messageTimestamp = new Date().toISOString();
+    const userMessage = inputValue.trim();
+    
+    console.log('📤 [MyChatbot] Iniciando envio de mensagem:', {
+      timestamp: messageTimestamp,
+      userMessage: userMessage,
+      messageLength: userMessage.length,
+      userId: user?.id,
+      chatbotConfigLoaded: !!chatbotConfig,
+      currentPage: location.pathname
+    });
 
     const newMessage: Message = { id: Date.now(), text: inputValue, sender: 'user' };
     setMessages((prev) => [...prev, newMessage]);

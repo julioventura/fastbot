@@ -1,0 +1,180 @@
+{
+  "webhookSpecification": {
+    "title": "FastBot - Webhook N8N Specification",
+    "description": "Especificação completa dos dados enviados pelo MyChatbot para o webhook N8N",
+    "version": "1.0.0",
+    "updated": "2025-07-20T12:00:00Z",
+    "method": "POST",
+    "contentType": "application/json",
+    "url": "https://marte.cirurgia.com.br/webhook/FASTBOT",
+    "payload": {
+      "message": {
+        "type": "string",
+        "required": true,
+        "description": "Mensagem enviada pelo usuário",
+        "example": "Quais são os horários de atendimento?"
+      },
+      "page": {
+        "type": "string",
+        "required": true,
+        "description": "URL da página atual onde o usuário está",
+        "example": "/my-chatbot",
+        "possibleValues": ["/", "/account", "/pricing", "/features", "/my-chatbot", "/admin"]
+      },
+      "pageContext": {
+        "type": "string",
+        "required": true,
+        "description": "Contexto semântico da página atual",
+        "example": "página Meu Chatbot do FastBot"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "ISO 8601",
+        "required": true,
+        "description": "Data e hora exata do envio da mensagem",
+        "example": "2025-07-20T15:30:45.123Z"
+      },
+      "sessionId": {
+        "type": "number",
+        "required": true,
+        "description": "ID único da sessão baseado em timestamp",
+        "example": 1721485845123
+      },
+      "userId": {
+        "type": "string",
+        "format": "UUID",
+        "required": true,
+        "description": "ID único do usuário autenticado",
+        "example": "5e9f5f3d-0cbd-43a7-adfc-a5eead28f69f"
+      },
+      "userEmail": {
+        "type": "string",
+        "format": "email",
+        "required": false,
+        "description": "Email do usuário autenticado",
+        "example": "usuario@exemplo.com"
+      },
+      "systemMessage": {
+        "type": "string",
+        "required": true,
+        "description": "Prompt/instruções personalizadas do chatbot do usuário (CAMPO PRINCIPAL)",
+        "example": "Você é um assistente virtual do Dr. Silva, dentista especialista em ortodontia. Seja cordial, profissional e sempre indique os horários de atendimento quando perguntado.",
+        "note": "Este é o conteúdo do campo system_message da tabela mychatbot_2"
+      },
+      "chatbotConfig": {
+        "type": "object",
+        "required": false,
+        "description": "Configurações completas do chatbot do usuário",
+        "properties": {
+          "chatbot_name": {
+            "type": "string",
+            "description": "Nome personalizado do chatbot",
+            "example": "Assistente Dr. Silva"
+          },
+          "welcome_message": {
+            "type": "string",
+            "description": "Mensagem de boas-vindas personalizada",
+            "example": "Olá! Sou o assistente virtual do consultório Dr. Silva. Como posso ajudar?"
+          },
+          "office_address": {
+            "type": "string",
+            "description": "Endereço do consultório/empresa",
+            "example": "Rua das Flores, 123 - Centro, São Paulo - SP"
+          },
+          "office_hours": {
+            "type": "string",
+            "description": "Horários de atendimento",
+            "example": "Segunda a Sexta: 8h às 18h, Sábado: 8h às 12h"
+          },
+          "specialties": {
+            "type": "string",
+            "description": "Especialidades médicas/serviços oferecidos",
+            "example": "Ortodontia, Clínica Geral, Implantes, Estética Dental"
+          },
+          "whatsapp": {
+            "type": "string",
+            "description": "Número do WhatsApp para contato",
+            "example": "+55 11 99999-9999"
+          },
+          "system_message": {
+            "type": "string",
+            "description": "Cópia do prompt/instruções (mesmo conteúdo de systemMessage)",
+            "example": "Você é um assistente virtual..."
+          }
+        }
+      }
+    }
+  },
+  "exampleRequest": {
+    "message": "Quais são os horários de atendimento?",
+    "page": "/my-chatbot",
+    "pageContext": "página Meu Chatbot do FastBot",
+    "timestamp": "2025-07-20T15:30:45.123Z",
+    "sessionId": 1721485845123,
+    "userId": "5e9f5f3d-0cbd-43a7-adfc-a5eead28f69f",
+    "userEmail": "dr.silva@exemplo.com",
+    "systemMessage": "Você é um assistente virtual do Dr. Silva, dentista especialista em ortodontia. Seja cordial, profissional e sempre indique os horários de atendimento quando perguntado. Responda sempre em português brasileiro.",
+    "chatbotConfig": {
+      "chatbot_name": "Assistente Dr. Silva",
+      "welcome_message": "Olá! Sou o assistente virtual do consultório Dr. Silva. Como posso ajudar?",
+      "office_address": "Rua das Flores, 123 - Centro, São Paulo - SP",
+      "office_hours": "Segunda a Sexta: 8h às 18h, Sábado: 8h às 12h",
+      "specialties": "Ortodontia, Clínica Geral, Implantes, Estética Dental",
+      "whatsapp": "+55 11 99999-9999",
+      "system_message": "Você é um assistente virtual do Dr. Silva, dentista especialista em ortodontia. Seja cordial, profissional e sempre indique os horários de atendimento quando perguntado. Responda sempre em português brasileiro."
+    }
+  },
+  "expectedResponse": {
+    "description": "O webhook deve retornar um JSON com a resposta da IA",
+    "format": {
+      "response": {
+        "type": "string",
+        "required": true,
+        "description": "Resposta gerada pela IA baseada no systemMessage",
+        "example": "Nossos horários de atendimento são de segunda a sexta das 8h às 18h, e aos sábados das 8h às 12h. Gostaria de agendar uma consulta?"
+      },
+      "message": {
+        "type": "string",
+        "required": false,
+        "description": "Mensagem alternativa (fallback)",
+        "example": "Como posso ajudar você hoje?"
+      }
+    }
+  },
+  "implementationNotes": {
+    "systemMessage": {
+      "importance": "CRÍTICO",
+      "description": "Este campo contém as instruções personalizadas que devem ser usadas como 'system prompt' na API do OpenAI",
+      "usage": "Use como parâmetro 'system' na chamada da API OpenAI GPT",
+      "fallback": "Se vazio, use um prompt padrão genérico"
+    },
+    "chatbotConfig": {
+      "importance": "ALTA",
+      "description": "Informações contextuais que podem ser incorporadas nas respostas",
+      "usage": "Use office_hours, office_address, specialties para respostas mais precisas"
+    },
+    "userId": {
+      "importance": "ALTA",  
+      "description": "Use para logging, analytics e personalização adicional",
+      "security": "Não expor em logs públicos"
+    }
+  },
+  "openaiIntegration": {
+    "recommended": {
+      "model": "gpt-4",
+      "messages": [
+        {
+          "role": "system",
+          "content": "{{systemMessage}} (do payload)"
+        },
+        {
+          "role": "user", 
+          "content": "{{message}} (do payload)"
+        }
+      ],
+      "additionalContext": "Incorporar informações de chatbotConfig quando relevante",
+      "temperature": 0.7,
+      "max_tokens": 500
+    }
+  }
+}
