@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import BackgroundDecoration from "@/components/account/BackgroundDecoration";
 import LoadingScreen from "@/components/account/LoadingScreen";
 import ViewChatbotConfig from "@/components/chatbot/ViewChatbotConfig";
-import EditChatbotConfig from "@/components/chatbot/EditChatbotConfig";
+import AdvancedEditChatbotConfig from "@/components/chatbot/AdvancedEditChatbotConfig";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
 interface ChatbotData {
@@ -18,6 +18,33 @@ interface ChatbotData {
   chatbot_name: string;
   welcome_message: string;
   whatsapp: string;
+  // Novos campos do dashboard avançado
+  formality_level?: number;
+  use_emojis?: boolean;
+  memorize_user_name?: boolean;
+  paragraph_size?: number;
+  main_topic?: string;
+  allowed_topics?: string[];
+  source_strictness?: number;
+  allow_internet_search?: boolean;
+  confidence_threshold?: number;
+  fallback_action?: 'human' | 'search' | 'link';
+  response_time_promise?: string;
+  fallback_message?: string;
+  main_link?: string;
+  mandatory_link?: boolean;
+  uploaded_documents?: string[];
+  mandatory_phrases?: string[];
+  auto_link?: boolean;
+  max_list_items?: number;
+  list_style?: 'numbered' | 'bullets' | 'simple';
+  ask_for_name?: boolean;
+  name_usage_frequency?: number;
+  remember_context?: boolean;
+  returning_user_greeting?: string;
+  response_speed?: number;
+  debug_mode?: boolean;
+  chat_color?: string;
 }
 
 const MyChatbotPage: React.FC = () => {
@@ -33,6 +60,33 @@ const MyChatbotPage: React.FC = () => {
     chatbot_name: "",
     welcome_message: "",
     whatsapp: "",
+    // Valores padrão dos novos campos
+    formality_level: 50,
+    use_emojis: false,
+    memorize_user_name: false,
+    paragraph_size: 50,
+    main_topic: "",
+    allowed_topics: [],
+    source_strictness: 50,
+    allow_internet_search: false,
+    confidence_threshold: 70,
+    fallback_action: 'human',
+    response_time_promise: "",
+    fallback_message: "",
+    main_link: "",
+    mandatory_link: false,
+    uploaded_documents: [],
+    mandatory_phrases: [],
+    auto_link: false,
+    max_list_items: 10,
+    list_style: 'numbered',
+    ask_for_name: false,
+    name_usage_frequency: 30,
+    remember_context: false,
+    returning_user_greeting: "",
+    response_speed: 50,
+    debug_mode: false,
+    chat_color: '#3b82f6',
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -96,9 +150,8 @@ const MyChatbotPage: React.FC = () => {
     }
   }, [user, authLoading, navigate, toast]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setChatbotData(prevData => ({ ...prevData, [name]: value }));
+  const handleChange = (field: string, value: string | number | boolean | string[]) => {
+    setChatbotData(prevData => ({ ...prevData, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -188,8 +241,8 @@ const MyChatbotPage: React.FC = () => {
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-secondary/70">
-            <TabsTrigger value="view" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">INSTRUÇÕES</TabsTrigger>
-            <TabsTrigger value="edit" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">EDITAR</TabsTrigger>
+            <TabsTrigger value="view" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">CONFIGURAÇÕES</TabsTrigger>
+            <TabsTrigger value="edit" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">DASHBOARD</TabsTrigger>
             <TabsTrigger value="documents" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">DOCUMENTOS</TabsTrigger>
           </TabsList>
 
@@ -198,7 +251,7 @@ const MyChatbotPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="edit">
-            <EditChatbotConfig
+            <AdvancedEditChatbotConfig
               chatbotData={chatbotData}
               isSaving={isSaving}
               onSubmit={handleSubmit}

@@ -101,10 +101,10 @@ const Header = () => {
           <div className="flex items-center">
             <NavLink to="/" className="flex items-center space-x-2 group">
               <div>
-                <span className="text-lg text-primary/90 font-bold -mt-1">
+                <span className="text-sm text-primary/90 font-bold -mt-1">
                   Dentistas.com.br /&nbsp;
                 </span>
-                <span className="text-2xl md:text-3xl font-black text-primary group-hover:text-primary/95 transition-colors">
+                <span className="text-xl md:text-xl font-black text-primary group-hover:text-primary/95 transition-colors">
                   Fastbot
                 </span>
               </div>
