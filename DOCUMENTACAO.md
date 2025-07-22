@@ -1040,5 +1040,58 @@ Iniciar imediatamente a **Fase 1 do roadmap**, priorizando a integração de IA 
 ---
 
 
+## 🔧 Manutenção e Integridade de Dados
+
+
+### **Rotinas de Limpeza Necessárias**
+
+
+#### **1. Limpeza de Registros Órfãos em `chatbot_embeddings`**
+
+
+**Problema**: Quando um documento é deletado da tabela `chatbot_documents`, podem ficar registros órfãos na tabela `chatbot_embeddings`.
+
+
+**Solução Implementada**: 
+
+- A função `deleteDocument` foi atualizada para fazer delete cascateado automático
+- Remove primeiro os embeddings relacionados, depois o documento
+
+
+**Rotina de Manutenção Recomendada**:
+
+```sql
+-- Limpeza manual de embeddings órfãos (executar periodicamente)
+DELETE FROM chatbot_embeddings 
+WHERE document_id NOT IN (
+  SELECT id FROM chatbot_documents
+);
+```
+
+**Frequência Sugerida**: Semanal ou quando houver suspeita de inconsistência
+
+
+#### **2. Outras Tabelas Relacionadas**
+
+
+- **`chatbot_conversations`**: Verificar se existem conversas órfãs sem chatbot válido
+- **`chatbot_themes`**: Limpar temas não utilizados por nenhum chatbot
+- **`profiles`**: Verificar profiles sem usuário ativo
+
+
+**Monitoramento**: Implementar logs para detectar falhas em deletes cascateados
+
+
+### **Integridade Referencial**
+
+
+- **Foreign Keys**: Garantir que todas as relações tenham constraints apropriados
+- **Triggers**: Considerar triggers automáticos para limpeza em algumas tabelas
+- **Backup antes da limpeza**: Sempre fazer backup antes de executar rotinas de manutenção
+
+
+---
+
+
 > Documento atualizado com implementação de testes automatizados - Junho 2025
 > Análise técnica detalhada da base de código FastBot com 163 testes implementados

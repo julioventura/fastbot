@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Upload,
   File,
-  X,
   AlertCircle,
   CheckCircle,
   Clock,
@@ -22,6 +21,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface DocumentUploadProps {
   onUploadComplete?: (documentId: string) => void;
@@ -42,6 +52,9 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [processingDocuments, setProcessingDocuments] = useState<Set<string>>(
+    new Set()
+  );
+  const [generatingPreviews, setGeneratingPreviews] = useState<Set<string>>(
     new Set()
   );
   const { user } = useAuth();
@@ -79,18 +92,18 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
   const generateSummary = (content: string): string => {
     // Limpar o conteúdo removendo quebras de linha excessivas e espaços
-    const cleanContent = content.replace(/\s+/g, ' ').trim();
-    
+    const cleanContent = content.replace(/\s+/g, " ").trim();
+
     // Pegar as primeiras 50 palavras
-    const words = cleanContent.split(' ').slice(0, 50);
-    let summary = words.join(' ');
-    
+    const words = cleanContent.split(" ").slice(0, 50);
+    let summary = words.join(" ");
+
     // Se o conteúdo original tinha mais de 50 palavras, adicionar "..."
-    if (cleanContent.split(' ').length > 50) {
-      summary += '...';
+    if (cleanContent.split(" ").length > 50) {
+      summary += "...";
     }
-    
-    return summary || 'Resumo não disponível';
+
+    return summary || "Resumo não disponível";
   };
 
   const processFile = async (file: File): Promise<string> => {
@@ -198,6 +211,19 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     if (!user) return;
 
     try {
+      // Primeiro, deletar os embeddings relacionados ao documento
+      const { error: embeddingsError } = await supabase
+        .from("chatbot_embeddings")
+        .delete()
+        .eq("document_id", documentId)
+        .eq("user_id", user.id);
+
+      if (embeddingsError) {
+        console.error("Erro ao deletar embeddings:", embeddingsError);
+        // Continua com a deleção do documento mesmo se houver erro nos embeddings
+      }
+
+      // Depois, deletar o documento principal
       const { error } = await supabase
         .from("chatbot_documents")
         .delete()
@@ -208,7 +234,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
       toast({
         title: "Documento removido",
-        description: "O documento e seus dados foram excluídos.",
+        description: "O documento e seus dados (incluindo embeddings) foram excluídos completamente.",
       });
 
       fetchDocuments(); // Recarregar lista
@@ -217,7 +243,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Não foi possível remover o documento.",
+        description: "Não foi possível remover o documento completamente.",
       });
     }
   };
@@ -353,6 +379,61 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       });
     } finally {
       setProcessingDocuments((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(documentId);
+        return newSet;
+      });
+    }
+  };
+
+  const generatePreview = async (documentId: string) => {
+    if (!user) return;
+
+    try {
+      setGeneratingPreviews((prev) => new Set([...prev, documentId]));
+
+      // Buscar o conteúdo do documento
+      const { data: document, error } = await supabase
+        .from("chatbot_documents")
+        .select("content, filename")
+        .eq("id", documentId)
+        .eq("chatbot_user", user.id)
+        .single();
+
+      if (error || !document) {
+        throw new Error("Documento não encontrado");
+      }
+
+      // Gerar o resumo
+      const summary = generateSummary(document.content);
+
+      // Atualizar o documento com o resumo
+      const { error: updateError } = await supabase
+        .from("chatbot_documents")
+        .update({ summary })
+        .eq("id", documentId);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Preview gerado!",
+        description: `Preview do documento "${document.filename}" foi criado com sucesso.`,
+      });
+
+      // Recarregar a lista para mostrar o novo resumo
+      fetchDocuments();
+    } catch (error) {
+      console.error("Erro ao gerar preview:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Não foi possível gerar o preview.",
+      });
+    } finally {
+      setGeneratingPreviews((prev) => {
         const newSet = new Set(prev);
         newSet.delete(documentId);
         return newSet;
@@ -500,38 +581,43 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       {documents.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+            <CardTitle>
+              <div className="flex items-center gap-2 mb-3">
                 <File className="w-5 h-5" />
                 Documentos Enviados ({documents.length})
               </div>
-              <div className="flex gap-2">
-
-                <span className="text-sm text-green-500">
-                  • &nbsp; Processados: {" "}{documents.filter((d) => d.status === "completed").length} &nbsp; &nbsp;
-                </span>
-                <span className="text-sm text-red-500">
-                  • &nbsp; Com erro: {" "}{documents.filter((d) => d.status === "error").length} &nbsp; &nbsp;
-                </span>
-                <span className="text-sm text-gray-400">
-                  • &nbsp; Processando: {" "}{documents.filter((d) => d.status === "processing").length}
-                </span>
-
-                {documents.filter((d) => d.status === "error").length > 0 && (
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      const errorDocs = documents.filter(
-                        (d) => d.status === "error"
-                      );
-                      errorDocs.forEach((doc) => deleteDocument(doc.id));
-                    }}
-                  >
-                    🗑️ Limpar Erros
-                  </Button>
-                )}
-
+              <div className="space-y-2">
+                {/* Layout responsivo: uma linha no desktop, duas linhas no mobile */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-left">
+                  <span className="text-sm text-green-500">
+                    • Processados:{" "}
+                    {documents.filter((d) => d.status === "completed").length}
+                  </span>
+                  <span className="text-sm text-red-500">
+                    • Com erro:{" "}
+                    {documents.filter((d) => d.status === "error").length}
+                  </span>
+                  <span className="text-sm text-gray-400">
+                    • Processando:{" "}
+                    {documents.filter((d) => d.status === "processing").length}
+                  </span>
+                  
+                  {documents.filter((d) => d.status === "error").length > 0 && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        const errorDocs = documents.filter(
+                          (d) => d.status === "error"
+                        );
+                        errorDocs.forEach((doc) => deleteDocument(doc.id));
+                      }}
+                      className="self-start sm:ml-auto"
+                    >
+                      🗑️ Limpar Erros
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardTitle>
           </CardHeader>
@@ -540,48 +626,120 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             <div className="space-y-3">
               {documents.map((doc) => {
                 const statusInfo = getStatusLabel(doc.status);
-                
+
                 return (
-                <div
-                  key={doc.id}
-                  className="border rounded-lg p-4"
-                >
-                  {/* Layout de duas colunas */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Coluna 1: Informações do documento */}
-                    <div className="flex items-start gap-3">
-                      {getStatusIcon(doc.status)}
-                      <div className="flex-1">
-                        <p className="font-medium text-lg">{doc.filename}</p>
-                        <p className="text-xs text-gray-300 mt-1">
-                          Status: <span className={statusInfo.color}>{statusInfo.label}</span>
-                        </p>
-                        <p className="mt-2 text-sm text-gray-400">
-                          {formatFileSize(doc.file_size)} •{" "}
-                          {new Date(doc.upload_date).toLocaleDateString("pt-BR")}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          ID: {doc.id.slice(0, 8)}...
-                        </p>
+                  <div key={doc.id} className="border rounded-lg p-4">
+                    {/* Layout de duas colunas */}
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Coluna 1: Informações do documento */}
+                      <div className="flex items-start gap-3">
+                        {getStatusIcon(doc.status)}
+
+                        <div className="flex-1">
+                          <p className="font-medium text-lg">{doc.filename}</p>
+                          <p className="text-xs text-gray-300 mt-1">
+                            Status:{" "}
+                            <span className={statusInfo.color}>
+                              {statusInfo.label}
+                            </span>
+                          </p>
+                          <p className="mt-2 text-sm text-gray-400">
+                            {formatFileSize(doc.file_size)} •{" "}
+                            {new Date(doc.upload_date).toLocaleDateString(
+                              "pt-BR"
+                            )}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            ID: {doc.id.slice(0, 8)}...
+                          </p>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                disabled={processingDocuments.has(doc.id)}
+                                className="border border-gray-500 mt-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              >
+                                Excluir
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza de que deseja excluir o documento "{doc.filename}"? 
+                                  Esta ação não pode ser desfeita e removerá permanentemente o documento 
+                                  e todos os seus dados processados.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => deleteDocument(doc.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Excluir documento
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          
+                        </div>
+                      </div>
+
+                      {/* Coluna 2: Resumo do documento */}
+                      <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Preview:
+                        </h4>
+                        {doc.summary ? (
+                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                            {doc.summary}
+                          </p>
+                        ) : (
+                          <div className="flex items-center justify-center py-4">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => generatePreview(doc.id)}
+                              disabled={generatingPreviews.has(doc.id)}
+                              className="text-xs"
+                            >
+                              {generatingPreviews.has(doc.id) ? (
+                                <>
+                                  <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin mr-1" />
+                                  Gerando...
+                                </>
+                              ) : (
+                                <>📄 Gerar Preview</>
+                              )}
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    
-                    {/* Coluna 2: Resumo do documento */}
-                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Resumo do Conteúdo:
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                        {doc.summary || 'Resumo será gerado após o upload...'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Botões de ação - agora embaixo, ocupando toda a largura */}
-                  <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t">
-                    {/* Botão de Processar Individual */}
-                    {doc.status !== "completed" &&
-                      doc.status !== "processing" && (
+
+                    {/* Botões de ação - agora embaixo, ocupando toda a largura */}
+                    <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t">
+                      {/* Botão de Processar Individual */}
+                      {doc.status !== "completed" &&
+                        doc.status !== "processing" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => processDocument(doc.id)}
+                            disabled={
+                              processingDocuments.has(doc.id) || isProcessing
+                            }
+                          >
+                            <Play className="w-4 h-4 mr-1" />
+                            Processar
+                          </Button>
+                        )}
+
+                      {/* Botão de Reprocessar se houve erro */}
+                      {doc.status === "error" && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -590,44 +748,20 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                             processingDocuments.has(doc.id) || isProcessing
                           }
                         >
-                          <Play className="w-4 h-4 mr-1" />
-                          Processar
+                          <RefreshCw className="w-4 h-4 mr-1" />
+                          Tentar Novamente
                         </Button>
                       )}
 
-                    {/* Botão de Reprocessar se houve erro */}
-                    {doc.status === "error" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => processDocument(doc.id)}
-                        disabled={
-                          processingDocuments.has(doc.id) || isProcessing
-                        }
-                      >
-                        <RefreshCw className="w-4 h-4 mr-1" />
-                        Tentar Novamente
-                      </Button>
-                    )}
-
-                    {/* Indicador de processamento individual */}
-                    {processingDocuments.has(doc.id) && (
-                      <div className="flex items-center gap-2 text-blue-600">
-                        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm">Processando...</span>
-                      </div>
-                    )}
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteDocument(doc.id)}
-                      disabled={processingDocuments.has(doc.id)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+                      {/* Indicador de processamento individual */}
+                      {processingDocuments.has(doc.id) && (
+                        <div className="flex items-center gap-2 text-blue-600">
+                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                          <span className="text-sm">Processando...</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
                 );
               })}
             </div>
