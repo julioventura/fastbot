@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,15 +30,34 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
   onChange,
   onCancel
 }) => {
-  // Detectar se está em modo escuro
-  const isDarkMode = document.documentElement.classList.contains('dark');
+  // Estado reativo para cor da borda
+  const [borderColor, setBorderColor] = useState('rgba(0, 0, 0, 0.5)');
   
-  // Definir cor da borda baseada no tema com MAIOR CONTRASTE
-  const borderColor = isDarkMode 
-    ? '2px solid rgba(255, 255, 255, 0.6)' // Claro mais intenso para modo escuro
-    : '2px solid rgba(0, 0, 0, 0.5)';      // Escuro mais intenso para modo claro
+  // Detectar mudanças de tema dinamicamente
+  useEffect(() => {
+    const updateBorderColor = () => {
+      // Detecta o tema atual no documentElement
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      setBorderColor(isDarkMode 
+        ? 'rgba(255, 255, 255, 0.6)' // Claro mais intenso para modo escuro
+        : 'rgba(0, 0, 0, 0.5)');      // Escuro mais intenso para modo claro
+    };
+
+    // Atualiza imediatamente
+    updateBorderColor();
+
+    // Observa mudanças na classe do documentElement
+    const observer = new MutationObserver(updateBorderColor);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Card className="bg-card/60 border border-border backdrop-blur-sm text-foreground">
+    <Card className="bg-transparent border border-border backdrop-blur-sm text-foreground">
       <CardHeader>
         <CardTitle className="text-foreground">Editar Configurações do Chatbot</CardTitle>
         <CardDescription className="text-muted-foreground">
@@ -47,8 +66,42 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-6">
-          {/* Campo WhatsApp */}
+          
+          {/* Campo Nome do Chatbot */}
           <div>
+            <Label htmlFor="chatbot_name" className="text-foreground">
+              Nome do Chatbot<span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="chatbot_name"
+              name="chatbot_name"
+              value={chatbotData.chatbot_name}
+              onChange={onChange}
+              className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary w-1/2"
+              placeholder="Ex: Assistente Virtual Dr. Silva"
+              required
+              style={{ border: `2px solid ${borderColor}` }}
+            />
+          </div>
+          
+          {/* Campo Mensagem de Sistema (Prompt) */}
+          <div>
+            <Label htmlFor="system_message" className="text-foreground">Instruções Gerais do Chatbot</Label>
+            <Textarea
+              id="system_message"
+              name="system_message"
+              value={chatbotData.system_message}
+              onChange={onChange}
+              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              placeholder="Você é um assistente virtual. Seja cordial e ajude com informações sobre..."
+              rows={30}
+              style={{ border: `2px solid ${borderColor}` }}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
+          </div>
+
+          {/* Campo WhatsApp */}
+          {/* <div>
             <Label htmlFor="whatsapp" className="text-foreground">Número do WhatsApp do chatbot</Label>
             <Input
               id="whatsapp"
@@ -57,30 +110,13 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               onChange={onChange}
               className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Ex: +55 11 91234-5678"
-              style={{ border: borderColor }}
+              style={{ border: `2px solid ${borderColor}` }}
             />
             <p className="mt-1 text-xs text-muted-foreground">Número do WhatsApp do chatbot</p>
-          </div>
-
-          {/* Campo Nome do Chatbot */}
-          <div>
-            <Label htmlFor="chatbot_name" className="text-foreground">
-              Nome do Chatbot (para Homepage) <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="chatbot_name"
-              name="chatbot_name"
-              value={chatbotData.chatbot_name}
-              onChange={onChange}
-              className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
-              placeholder="Ex: Assistente Virtual Dr. Silva"
-              required
-              style={{ border: borderColor }}
-            />
-          </div>
+          </div> */}
 
           {/* Campo Mensagem de Boas-vindas */}
-          <div>
+          {/* <div>
             <Label htmlFor="welcome_message" className="text-foreground">Mensagem de Boas-vindas (Chatbot)</Label>
             <Textarea
               id="welcome_message"
@@ -90,12 +126,12 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Olá! Sou o assistente virtual do consultório. Como posso ajudar?"
               rows={3}
-              style={{ border: borderColor }}
+              style={{ border: `2px solid ${borderColor}` }}
             />
-          </div>
+          </div> */}
 
           {/* Campo Endereço do Consultório */}
-          <div>
+          {/* <div>
             <Label htmlFor="office_address" className="text-foreground">Endereço do Consultório</Label>
             <Input
               id="office_address"
@@ -104,12 +140,12 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               onChange={onChange}
               className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Rua Exemplo, 123, Bairro, Cidade - UF"
-              style={{ border: borderColor }}
+              style={{ border: `2px solid ${borderColor}` }}
             />
-          </div>
+          </div> */}
 
           {/* Campo Horários de Atendimento */}
-          <div>
+          {/* <div>
             <Label htmlFor="office_hours" className="text-foreground">Horários de Atendimento</Label>
             <Input
               id="office_hours"
@@ -118,12 +154,12 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               onChange={onChange}
               className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Segunda a Sexta, das 08h às 18h"
-              style={{ border: borderColor }}
+              style={{ border: `2px solid ${borderColor}` }}
             />
-          </div>
+          </div> */}
 
           {/* Campo Especialidades Atendidas */}
-          <div>
+          {/* <div>
             <Label htmlFor="specialties" className="text-foreground">Especialidades Atendidas</Label>
             <Textarea
               id="specialties"
@@ -133,25 +169,10 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
               placeholder="Clínica Geral, Ortodontia, Implantes..."
               rows={3}
-              style={{ border: borderColor }}
+              style={{ border: `2px solid ${borderColor}` }}
             />
-          </div>
+          </div> */}
 
-          {/* Campo Mensagem de Sistema (Prompt) */}
-          <div>
-            <Label htmlFor="system_message" className="text-foreground">Mensagem de Sistema do Chatbot</Label>
-            <Textarea
-              id="system_message"
-              name="system_message"
-              value={chatbotData.system_message}
-              onChange={onChange}
-              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
-              placeholder="Você é um assistente virtual. Seja cordial e ajude com informações sobre..."
-              rows={30}
-              style={{ border: borderColor }}
-            />
-            <p className="mt-1 text-xs text-muted-foreground">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
-          </div>
 
           {/* Botões de Ação do Formulário */}
           <div className="flex justify-end space-x-3 pt-4">
@@ -172,6 +193,7 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               {isSaving ? "Salvando..." : "Salvar Configurações"}
             </Button>
           </div>
+
         </form>
       </CardContent>
     </Card>

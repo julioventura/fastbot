@@ -8,7 +8,6 @@ import BackgroundDecoration from "@/components/account/BackgroundDecoration";
 import LoadingScreen from "@/components/account/LoadingScreen";
 import ViewChatbotConfig from "@/components/chatbot/ViewChatbotConfig";
 import EditChatbotConfig from "@/components/chatbot/EditChatbotConfig";
-import TestChatbot from "@/components/chatbot/TestChatbot";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
 interface ChatbotData {
@@ -188,11 +187,10 @@ const MyChatbotPage: React.FC = () => {
         <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Meu Chatbot</h1>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-secondary/70 border border-border mb-6">
+          <TabsList className="grid w-full grid-cols-3 bg-secondary/70">
             <TabsTrigger value="view" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">INSTRUÇÕES</TabsTrigger>
             <TabsTrigger value="edit" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">EDITAR</TabsTrigger>
             <TabsTrigger value="documents" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">DOCUMENTOS</TabsTrigger>
-            <TabsTrigger value="chat" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">TESTAR</TabsTrigger>
           </TabsList>
 
           <TabsContent value="view">
@@ -213,9 +211,6 @@ const MyChatbotPage: React.FC = () => {
             <DocumentUpload />
           </TabsContent>
 
-          <TabsContent value="chat">
-            <TestChatbot chatbotData={chatbotData} />
-          </TabsContent>
         </Tabs>
       </div>
     </div>

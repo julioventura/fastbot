@@ -313,7 +313,7 @@
     font-weight: 600 !important;
   }
 
-  /* ===== NAVEGAÇÃO ATIVA - GARANTIR NEGRITO ===== */
+  /* ===== NAVEGAÇÃO ATIVA - GARANTIR NEGRITO E CONTRASTE ===== */
   .nav-active-item {
     font-weight: 900 !important;
     font-family: 'Inter', sans-serif !important;
@@ -329,6 +329,18 @@
     backdrop-filter: blur(10px) !important;
     border: px solid rgba(59, 130, 246, 0.3) !important;
     transition: all 0.3s ease !important;
+  }
+
+  /* Contraste específico para modo escuro */
+  .dark .nav-active-item {
+    color: #ffffff !important;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8) !important;
+  }
+
+  /* Contraste específico para modo claro */  
+  .light .nav-active-item {
+    color: #1e293b !important;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.3) !important;
   }
   
   /* Animação pulsante sutil */

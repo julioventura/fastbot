@@ -118,7 +118,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `transition-all duration-300 text-base leading-none flex items-center ${
                   isActive 
-                    ? "text-primary nav-active-item" 
+                    ? "text-white dark:text-white light:text-slate-900 nav-active-item" 
                     : "text-muted-foreground hover:text-primary font-medium"
                 }`
               }
@@ -136,7 +136,7 @@ const Header = () => {
                   className={({ isActive }) => 
                     `transition-all duration-300 text-base leading-none flex items-center ${
                       isActive 
-                        ? "text-primary nav-active-item" 
+                        ? "text-white dark:text-white light:text-slate-900 nav-active-item" 
                         : "text-muted-foreground hover:text-primary font-medium"
                     }`
                   }
@@ -151,7 +151,7 @@ const Header = () => {
                   className={({ isActive }) => 
                     `transition-all duration-300 text-base leading-none flex items-center ${
                       isActive 
-                        ? "text-primary nav-active-item" 
+                        ? "text-white dark:text-white light:text-slate-900 nav-active-item" 
                         : "text-muted-foreground hover:text-primary font-medium"
                     }`
                   }

@@ -364,7 +364,7 @@ const MyChatbot = () => {
     }
 
     if (location.pathname === '/pricing') {
-      return 'O FastBot é 100% gratuito! Todos os recursos estão disponíveis sem custo. Nossa missão é democratizar o acesso à tecnologia de chatbots.';
+      return 'O FastBot é gratuito para uso eventual! E apenas 60 reais para uso profissional mensal.';
     }
 
     if (location.pathname === '/features') {
