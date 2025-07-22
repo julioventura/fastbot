@@ -20,7 +20,8 @@ export default defineConfig(({ mode }) => ({
     },
   },
   // Configuração para produção em subdiretório
-  base: mode === 'production' ? '/fastbot/' : '/', // Define base path apenas em produção
+  // base: mode === 'production' ? '/fastbot/' : '/', // Define base path apenas em produção
+  base: '/fastbot/',
   
   // Configurações de build otimizadas
   build: {

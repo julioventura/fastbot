@@ -49,11 +49,11 @@ const Hero = () => {
   };
 
 
-  // Troca automática de slides a cada 5 segundos
+  // Troca automática de slides a cada 3 segundos
   React.useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [slides.length]);
 

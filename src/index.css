@@ -779,3 +779,32 @@
       font-size: 1rem !important;
     }
   }
+
+/* Estilos específicos para bordas dos inputs no EditChatbotConfig */
+@layer components {
+  .edit-form-input {
+    border: 3px solid #000000 !important;
+    border-color: #000000 !important;
+  }
+  
+  .dark .edit-form-input {
+    border: 3px solid rgba(255, 255, 255, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  .edit-form-input:focus {
+    border-color: hsl(var(--primary)) !important;
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
+  }
+}
+
+/* Especificidade extra para garantir aplicação */
+.bg-transparent .edit-form-input {
+  border: 3px solid #000000 !important;
+  border-color: #000000 !important;
+}
+
+.dark .bg-transparent .edit-form-input {
+  border: 3px solid rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}

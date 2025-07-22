@@ -30,31 +30,30 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
   onChange,
   onCancel
 }) => {
-  // Estado reativo para cor da borda
-  const [borderColor, setBorderColor] = useState('rgba(0, 0, 0, 0.5)');
-  
-  // Detectar mudanças de tema dinamicamente
+  const [isDark, setIsDark] = useState(false);
+
   useEffect(() => {
-    const updateBorderColor = () => {
-      // Detecta o tema atual no documentElement
-      const isDarkMode = document.documentElement.classList.contains('dark');
-      setBorderColor(isDarkMode 
-        ? 'rgba(255, 255, 255, 0.6)' // Claro mais intenso para modo escuro
-        : 'rgba(0, 0, 0, 0.5)');      // Escuro mais intenso para modo claro
+    const checkTheme = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
     };
 
-    // Atualiza imediatamente
-    updateBorderColor();
+    // Check initial theme
+    checkTheme();
 
-    // Observa mudanças na classe do documentElement
-    const observer = new MutationObserver(updateBorderColor);
-    observer.observe(document.documentElement, { 
-      attributes: true, 
-      attributeFilter: ['class'] 
+    // Watch for theme changes
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
     });
-    
+
     return () => observer.disconnect();
   }, []);
+
+  const borderStyle = {
+    border: isDark ? '3px solid rgba(255, 255, 255, 0.6)' : '3px solid #000000',
+    borderColor: isDark ? 'rgba(255, 255, 255, 0.6)' : '#000000'
+  };
 
   return (
     <Card className="bg-transparent border border-border backdrop-blur-sm text-foreground">
@@ -77,10 +76,10 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="chatbot_name"
               value={chatbotData.chatbot_name}
               onChange={onChange}
-              className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary w-1/2"
+              className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary w-1/2 edit-form-input"
               placeholder="Ex: Assistente Virtual Dr. Silva"
               required
-              style={{ border: `2px solid ${borderColor}` }}
+              style={borderStyle}
             />
           </div>
           
@@ -92,10 +91,10 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               name="system_message"
               value={chatbotData.system_message}
               onChange={onChange}
-              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
+              className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary edit-form-input"
               placeholder="Você é um assistente virtual. Seja cordial e ajude com informações sobre..."
               rows={30}
-              style={{ border: `2px solid ${borderColor}` }}
+              style={borderStyle}
             />
             <p className="mt-1 text-xs text-muted-foreground">Esta mensagem instrui a IA sobre como ela deve se comportar e responder.</p>
           </div>
