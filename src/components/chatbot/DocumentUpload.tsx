@@ -33,6 +33,7 @@ interface UploadedDocument {
   status: "processing" | "completed" | "error";
   file_size: number;
   upload_date: string;
+  summary?: string;
 }
 
 const DocumentUpload: React.FC<DocumentUploadProps> = ({
@@ -53,7 +54,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     try {
       const { data, error } = await supabase
         .from("chatbot_documents")
-        .select("id, filename, status, file_size, upload_date")
+        .select("id, filename, status, file_size, upload_date, summary")
         .eq("chatbot_user", user.id)
         .order("upload_date", { ascending: false });
 
@@ -76,6 +77,22 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     }
   }, [user, fetchDocuments]);
 
+  const generateSummary = (content: string): string => {
+    // Limpar o conteúdo removendo quebras de linha excessivas e espaços
+    const cleanContent = content.replace(/\s+/g, ' ').trim();
+    
+    // Pegar as primeiras 50 palavras
+    const words = cleanContent.split(' ').slice(0, 50);
+    let summary = words.join(' ');
+    
+    // Se o conteúdo original tinha mais de 50 palavras, adicionar "..."
+    if (cleanContent.split(' ').length > 50) {
+      summary += '...';
+    }
+    
+    return summary || 'Resumo não disponível';
+  };
+
   const processFile = async (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -96,6 +113,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       try {
         // Ler conteúdo do arquivo
         const content = await processFile(file);
+        const summary = generateSummary(content);
 
         // Inserir documento no banco
         const { data: document, error: insertError } = await supabase
@@ -104,6 +122,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             chatbot_user: user.id,
             filename: file.name,
             content: content,
+            summary: summary,
             file_size: file.size,
             status: "processing",
           })
@@ -525,26 +544,41 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 return (
                 <div
                   key={doc.id}
-                  className="flex items-center justify-between p-3 border rounded-lg"
+                  className="border rounded-lg p-4"
                 >
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(doc.status)}
-                    <div>
-                      <p className="font-medium">{doc.filename}</p>
-                      <p className="text-xs text-gray-300">
-                        Status: <span className={statusInfo.color}>{statusInfo.label}</span>
-                      </p>
-
-                      <p className="mt-2 text-sm text-gray-400">
-                        {formatFileSize(doc.file_size)} •{" "}
-                        {new Date(doc.upload_date).toLocaleDateString("pt-BR")}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        ID: {doc.id.slice(0, 8)}...
+                  {/* Layout de duas colunas */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Coluna 1: Informações do documento */}
+                    <div className="flex items-start gap-3">
+                      {getStatusIcon(doc.status)}
+                      <div className="flex-1">
+                        <p className="font-medium text-lg">{doc.filename}</p>
+                        <p className="text-xs text-gray-300 mt-1">
+                          Status: <span className={statusInfo.color}>{statusInfo.label}</span>
+                        </p>
+                        <p className="mt-2 text-sm text-gray-400">
+                          {formatFileSize(doc.file_size)} •{" "}
+                          {new Date(doc.upload_date).toLocaleDateString("pt-BR")}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          ID: {doc.id.slice(0, 8)}...
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Coluna 2: Resumo do documento */}
+                    <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Resumo do Conteúdo:
+                      </h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {doc.summary || 'Resumo será gerado após o upload...'}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  
+                  {/* Botões de ação - agora embaixo, ocupando toda a largura */}
+                  <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t">
                     {/* Botão de Processar Individual */}
                     {doc.status !== "completed" &&
                       doc.status !== "processing" && (
