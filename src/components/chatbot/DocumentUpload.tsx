@@ -519,7 +519,10 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
           <CardContent>
             <div className="space-y-3">
-              {documents.map((doc) => (
+              {documents.map((doc) => {
+                const statusInfo = getStatusLabel(doc.status);
+                
+                return (
                 <div
                   key={doc.id}
                   className="flex items-center justify-between p-3 border rounded-lg"
@@ -529,7 +532,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                     <div>
                       <p className="font-medium">{doc.filename}</p>
                       <p className="text-xs text-gray-300">
-                        Status: <span className={getStatusLabel(doc.status).color}>{getStatusLabel(doc.status).label}</span>
+                        Status: <span className={statusInfo.color}>{statusInfo.label}</span>
                       </p>
 
                       <p className="mt-2 text-sm text-gray-400">
@@ -591,7 +594,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                     </Button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
