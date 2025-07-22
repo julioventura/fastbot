@@ -20,17 +20,17 @@ const ViewChatbotConfig: React.FC<ViewChatbotConfigProps> = ({ chatbotData }) =>
 
   useEffect(() => {
     const updateBorderColor = () => {
-      // Detecta o tema atual no documentElement
+      // Detecta se o tema escuro está ativo no elemento raiz
       const isDarkMode = document.documentElement.classList.contains('dark');
       setBorderColor(isDarkMode 
-        ? 'rgba(255, 255, 255, 0.6)' // Claro mais intenso para modo escuro
-        : 'rgba(0, 0, 0, 0.5)');      // Escuro mais intenso para modo claro
+        ? 'rgba(255, 255, 255, 0.6)' // Cor clara para bordas no modo escuro
+        : 'rgba(0, 0, 0, 0.5)');      // Cor escura para bordas no modo claro
     };
 
-    // Atualiza imediatamente
+    // Aplica a cor inicial das bordas
     updateBorderColor();
 
-    // Observa mudanças na classe do documentElement
+    // Observa mudanças no atributo class do documentElement para detectar troca de tema
     const observer = new MutationObserver(updateBorderColor);
     observer.observe(document.documentElement, { 
       attributes: true, 
@@ -41,7 +41,7 @@ const ViewChatbotConfig: React.FC<ViewChatbotConfigProps> = ({ chatbotData }) =>
   }, []);
     
   const renderViewData = (label: string, value: string | null | undefined, isRequired: boolean = false) => {
-    // Se o campo não é obrigatório e está vazio, não renderiza nada
+    // Oculta campos opcionais que estão vazios ou contêm apenas espaços
     if (!isRequired && (!value || value.trim() === '' || value.trim() === ' ')) {
       return null;
     }
@@ -56,7 +56,7 @@ const ViewChatbotConfig: React.FC<ViewChatbotConfigProps> = ({ chatbotData }) =>
     );
   };
 
-  // Verifica se deve exibir a segunda coluna
+  // Determina se a segunda coluna deve ser exibida baseado no conteúdo disponível
   const shouldShowSecondColumn = chatbotData.welcome_message && chatbotData.welcome_message.trim() !== '' || 
                                  chatbotData.specialties && chatbotData.specialties.trim() !== '';
 
@@ -66,22 +66,22 @@ const ViewChatbotConfig: React.FC<ViewChatbotConfigProps> = ({ chatbotData }) =>
         <CardTitle className="text-foreground">Configuração do Chatbot</CardTitle>
       </CardHeader>
       <CardContent className="pt-6 text-lg">
-        <div className={`grid gap-x-8 gap-y-6 ${shouldShowSecondColumn ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
-          {/* Coluna 1 para dados do chatbot */}
+        <div className={`grid gap-x-8 gap-y-6 md:grid-cols-2`}>
+          {/* Primeira coluna: informações básicas do chatbot */}
           <div className="space-y-6 p-4 rounded-lg shadow-md bg-card/30" style={{ border: `2px solid ${borderColor}` }}>
             {renderViewData("Nome do Chatbot", chatbotData.chatbot_name, true)}
             {renderViewData("Endereço do Consultório", chatbotData.office_address)}
             {renderViewData("Horários de Atendimento", chatbotData.office_hours)}
             {renderViewData("WhatsApp", chatbotData.whatsapp)}
           </div>
-          {/* Coluna 2 para dados do chatbot - condicionalmente exibida */}
+          {/* Segunda coluna: informações complementares (exibida apenas se houver conteúdo) */}
           {shouldShowSecondColumn && (
             <div className="space-y-6 p-4 rounded-lg shadow-md bg-card/30" style={{ border: `2px solid ${borderColor}` }}>
               {renderViewData("Mensagem de Boas-vindas (Chatbot)", chatbotData.welcome_message, false)}
               {renderViewData("Especialidades Atendidas", chatbotData.specialties)}
             </div>
           )}
-          {/* Mensagem de Sistema ocupando as duas colunas abaixo para maior visibilidade */}
+          {/* Seção de mensagem do sistema: ocupa largura total para melhor visualização */}
           <div className={`space-y-6 p-4 rounded-lg shadow-md bg-card/30 ${shouldShowSecondColumn ? 'md:col-span-2' : 'md:col-span-1'}`} style={{ border: `2px solid ${borderColor}` }}>
             {renderViewData("Mensagem de Sistema", chatbotData.system_message)}
           </div>
