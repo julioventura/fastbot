@@ -24,12 +24,6 @@ import {
   Upload,
   X,
   Plus,
-  Settings,
-  MessageCircle,
-  Brain,
-  FileText,
-  Link,
-  Palette,
 } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
@@ -146,12 +140,12 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
   };
 
   const tabs = [
-    { id: "identity", label: "Identidade", icon: MessageCircle },
-    { id: "behavior", label: "Comportamento", icon: Brain },
-    { id: "messagefooter", label: "Rodapé", icon: FileText },
-    { id: "rules", label: "Regras", icon: Settings },
-    { id: "style", label: "Estilo", icon: Palette },
-    { id: "dataFiles", label: "Anexos", icon: FileText },
+    { id: "identity", label: "Identidade" },
+    { id: "behavior", label: "Comportamento" },
+    { id: "messagefooter", label: "Rodapé" },
+    { id: "rules", label: "Regras" },
+    { id: "style", label: "Estilo" },
+    { id: "dataFiles", label: "Anexos" },
   ];
 
   const addTopic = (topic: string) => {
@@ -207,19 +201,17 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
     <div className="space-y-6">
       {/* Navigation Tabs */}
       <Card className="bg-transparent border border-border backdrop-blur-sm">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-2">
+        <CardContent className="p-6">
+          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
             {tabs.map((tab) => {
-              const Icon = tab.icon;
               return (
                 <Button
                   key={tab.id}
                   variant={activeTab === tab.id ? "default" : "outline"}
-                  size="sm"
+                  size="lg"
                   onClick={() => setActiveTab(tab.id)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 px-6 py-3 min-w-[140px] justify-center font-medium"
                 >
-                  <Icon className="w-4 h-4" />
                   {tab.label}
                 </Button>
               );
@@ -234,7 +226,6 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <MessageCircle className="w-5 h-5" />
                 Identidade & Saudação
               </CardTitle>
               <CardDescription>
@@ -356,7 +347,6 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Brain className="w-5 h-5" />
                 Comportamento & Restrições
               </CardTitle>
             </CardHeader>
@@ -476,7 +466,6 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
                 Rodapé
               </CardTitle>
             </CardHeader>
@@ -610,7 +599,6 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
                 Regras Automáticas
               </CardTitle>
             </CardHeader>
@@ -734,7 +722,6 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Palette className="w-5 h-5" />
                 Estilo & Formatação
               </CardTitle>
             </CardHeader>
@@ -907,7 +894,6 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
                 Anexos
               </CardTitle>
             </CardHeader>

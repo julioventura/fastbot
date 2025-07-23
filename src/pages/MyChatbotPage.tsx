@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth/useAuth";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BackgroundDecoration from "@/components/account/BackgroundDecoration";
 import LoadingScreen from "@/components/account/LoadingScreen";
 import AdvancedEditChatbotConfig from "@/components/chatbot/AdvancedEditChatbotConfig";
-import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
 interface ChatbotData {
   system_message: string;
@@ -92,7 +90,6 @@ const MyChatbotPage: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState("view");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -199,7 +196,6 @@ const MyChatbotPage: React.FC = () => {
         title: "Sucesso!",
         description: "Configurações do chatbot salvas.",
       });
-      setActiveTab("view");
     } catch (error) {
       console.error("Erro ao salvar dados do chatbot:", error);
       toast({
@@ -213,7 +209,7 @@ const MyChatbotPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    setActiveTab("view");
+    // Função mantida para compatibilidade com AdvancedEditChatbotConfig
   };
 
   if (authLoading || isLoading) {
@@ -240,19 +236,14 @@ const MyChatbotPage: React.FC = () => {
       <div className="container mx-auto py-10 px-4 relative z-10">
         <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Meu Chatbot</h1>
         
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsContent value="view">
-            <AdvancedEditChatbotConfig
-              chatbotData={chatbotData}
-              isSaving={isSaving}
-              onSubmit={handleSubmit}
-              onChange={handleChange}
-              onCancel={handleCancel}
-            />
-          </TabsContent>
-        </Tabs>
+        <AdvancedEditChatbotConfig
+          chatbotData={chatbotData}
+          isSaving={isSaving}
+          onSubmit={handleSubmit}
+          onChange={handleChange}
+          onCancel={handleCancel}
+        />
 
-        
       </div>
     </div>
   );
