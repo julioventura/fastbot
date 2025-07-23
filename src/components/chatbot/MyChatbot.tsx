@@ -381,7 +381,9 @@ const MyChatbot = () => {
         fullPrompt += '\n';
       }
       
-      fullPrompt += `PERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:`;
+      // 5. Adicionar contexto da página atual
+      const currentPageContext = getPageContext();
+      fullPrompt += `PERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:\n\nOBS: CONTEXTO DA PÁGINA ATUAL - O usuário está atualmente na ${currentPageContext} (URL: ${location.pathname}). Use essa informação para contextualizar suas respostas quando relevante.`;
       
       // 5. Chamar OpenAI diretamente para gerar resposta
       const openaiResponse = await generateAIResponse(fullPrompt);
@@ -543,6 +545,12 @@ const MyChatbot = () => {
   const generateContextualResponse = (userMessage: string, vectorContext: string, systemMessage: string): string => {
     // Análise básica da intenção do usuário
     const messageLower = userMessage.toLowerCase();
+    const currentPageContext = getPageContext();
+    
+    // Se pergunta sobre página atual, responder diretamente
+    if (messageLower.includes('página') || messageLower.includes('pagina') || messageLower.includes('onde estou') || messageLower.includes('que página')) {
+      return `Você está atualmente na **${currentPageContext}** (${location.pathname}). ${vectorContext ? 'Com base nos documentos disponíveis, posso ajudá-lo com informações específicas sobre o conteúdo desta seção.' : 'Como posso ajudá-lo aqui?'}`;
+    }
     
     // Se é uma pergunta específica, tentar extrair resposta relevante do contexto
     if (messageLower.includes('como') || messageLower.includes('que') || messageLower.includes('qual')) {
@@ -557,7 +565,7 @@ const MyChatbot = () => {
         const matchCount = keywords.filter(keyword => sentenceLower.includes(keyword)).length;
         
         if (matchCount >= 2) {
-          return `Com base nas informações disponíveis: ${sentence.trim()}.`;
+          return `Com base nas informações disponíveis: ${sentence.trim()}.\n\nOBS: Você está na ${currentPageContext}.`;
         }
       }
     }
@@ -566,7 +574,7 @@ const MyChatbot = () => {
     const firstSentences = vectorContext.substring(0, 200).trim();
     const botName = chatbotConfig?.chatbot_name || 'Assistente';
     
-    return `Olá! Sou o ${botName}. Com base nas informações que tenho: ${firstSentences}... Posso ajudar com mais detalhes sobre isso?`;
+    return `Olá! Sou o ${botName}. Com base nas informações que tenho: ${firstSentences}... Posso ajudar com mais detalhes sobre isso?\n\nOBS: Você está atualmente na ${currentPageContext}.`;
   };
 
   /**
@@ -897,9 +905,12 @@ const MyChatbot = () => {
         borderTop: isElevated ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
       }}>
         <input
+          id="chatbot-input"
+          name="chatbot-input"
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          aria-label="Digite sua mensagem para o chatbot"
 
           onKeyDown={e => {
             if (e.key === 'Enter' && !isLoading) {
