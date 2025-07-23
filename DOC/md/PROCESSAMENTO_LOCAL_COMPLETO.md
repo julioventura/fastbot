@@ -1,10 +1,11 @@
-# 🚀 **PROCESSAMENTO LOCAL DE MENSAGENS - DISPENSANDO N8N**
+﻿# 🚀 **PROCESSAMENTO LOCAL DE MENSAGENS - DISPENSANDO N8N**
 
 ## 📊 **RESUMO DA IMPLEMENTAÇÃO**
 
 Agora o FastBot suporta **duas opções** para processamento de mensagens do chatbot:
 
 ### **Opção 1: Processamento Local (IA + Vector Store) - NOVO! 🆕**
+
 - ✅ **Dispensa completamente o N8N**
 - ✅ **IA direta via OpenAI API**
 - ✅ **Busca vetorial automática nos documentos**
@@ -13,6 +14,7 @@ Agora o FastBot suporta **duas opções** para processamento de mensagens do cha
 - ✅ **Informações do chatbot (horários, endereço, etc.) integradas**
 
 ### **Opção 2: N8N (Método Original) - Mantido por compatibilidade**
+
 - ⚙️ Webhook N8N continua funcionando
 - 🔄 Fallback local quando N8N falha
 - 📊 Sistema híbrido para máxima confiabilidade
@@ -53,21 +55,25 @@ npm run dev
 ## 🎯 **VANTAGENS DO PROCESSAMENTO LOCAL**
 
 ### **1. ✅ Simplicidade Arquitetural**
+
 - Elimina dependência do N8N
 - Menos pontos de falha
 - Setup mais simples
 
 ### **2. 🚀 Performance Otimizada**
+
 - Chamada direta para OpenAI
 - Latência reduzida
 - Busca vetorial otimizada
 
 ### **3. 🎛️ Controle Completo**
+
 - Logs detalhados no browser
 - Debug facilitado
 - Customização total do prompt
 
 ### **4. 💰 Economia de Recursos**
+
 - Dispensa servidor N8N
 - Menos complexidade de infraestrutura
 - Menor custo operacional
@@ -195,3 +201,4 @@ Com esta implementação, você pode:
 **Status**: ✅ Implementado e testado  
 **Compatibilidade**: Mantém N8N como opção  
 **Recomendação**: Use processamento local para novos projetos!
+
