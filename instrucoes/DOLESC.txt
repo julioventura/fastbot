@@ -1,113 +1,136 @@
-# DOLESC - Chatbot de Atendimento  
-Departamento de Odontologia Legal e Saúde Coletiva – Faculdade de Odontologia | UFRJ  
+DOLESC - Departamento de Odontologia Legal e Saúde Coletiva – Faculdade de Odontologia | UFRJ
 
+1 | Dados Essenciais
+Vagas: 20
+Inscrições: 12 / 05 / 2025 → 14 / 08 / 2025
+Enviar ficha + documentos: para posgrad@odonto.ufrj.br e pintodoamaral@gmail.com
+Seleção: 18 / 08 / 2025 · 08 h 30 – Prova escrita · Entrevista às 10 h
+Resultado preliminar: 19 / 08 / 2025 · 09 h
+Recursos: 20 / 08 / 2025 · 10 h – 15 h (email)
+Resultado final: 21 / 08 / 2025
+Confirmação de vaga: 22 / 08 / 2025 – email
+Matrícula presencial: 25 / 08 / 2025 · 09 h – 14 h
+Início / Fim do curso: 25 / 08 / 2025 → 10 / 06 / 2026
+Valor: R$ 6000 (em 10× de R$ 600)
+Modelo: Presencial – 1 semana/mês (segunda a sábado)
 
-## 1 | Dados Essenciais
-| Item | Informação |
-|------|------------|
-| **Vagas** | 20 |
-| **Inscrições** | **12 / 05 / 2025 → 14 / 08 / 2025** |
-| ** Enviar Ficha + docs** | **para** `posgrad@odonto.ufrj.br` e `pintodoamaral@gmail.com` |
-| **Seleção** | **18 / 08 / 2025** · das 08 h 30 – Prova escrita · Entrevista às 10 h |
-| **Resultado preliminar** | 19 / 08 / 2025 · 09 h |
-| **Recursos** | 20 / 08 / 2025 · 10 h – 15 h (email) |
-| **Resultado final** | 21 / 08 / 2025 |
-| **Confirmação de vaga** | 22 / 08 / 2025 – email |
-| **Matrícula presencial** | 25 / 08 / 2025 · 09 h – 14 h |
-| **Início / Fim do curso** | 25 / 08 / 2025 → 10 / 06 / 2026 |
-| **Valor** | R$ 6000 (em 10× de R$ 600) |
-| **Modelo** | Presencial – **1 semana/mês (segunda a sábado)** |
+2 | Processo Seletivo – Critérios
 
----
+Histórico escolar (classificatório)
 
-## 2 | Processo Seletivo – Critérios  
-1. Histórico escolar (classificatório)  
-2. Currículo Lattes (classificatório)  
-3. Carta de Intenção (≤ 300 palavras) (classificatório)  
-4. Entrevista (eliminatório + classificatório)  
-5. Prova escrita (eliminatório + classificatório)  
-> Aprovado = média ≥ 7,0  
+Currículo Lattes (classificatório)
 
----
+Carta de Intenção (≤ 300 palavras) (classificatório)
 
-## 3 | Documentos Necessários (cópia simples)  
-1. Ficha de inscrição preenchida  
-2. Histórico Escolar da Graduação  
-3. Currículo Lattes  
-4. RG 
-5. CPF
-6. Título de Eleitor  
-7. CRO (obrigatório na matrícula)  
-8. Diploma / Declaração de conclusão  
-9. Certificado de Reservista (se aplicável)  
-10. Certidão de nascimento ou casamento  
-11. Carta de Intenção (≤ 300 palavras): carta do candidato justificando os motivos pelos quais deseja ser aluno do curso através de uma redação clara e objetiva que exponha seu interesse e a relação da sua trajetória profissional com a temática do curso.
+Entrevista (eliminatório + classificatório)
 
----
+Prova escrita (eliminatório + classificatório)
+Aprovado = média ≥ 7,0
 
-## 4 | Programa / Matérias / Conteúdo da Prova de Seleção (liste quando solicitado)
-1. Conceitos de Saúde e Doença; perfis epidemiológicos no Brasil  
-2. Sistema Único de Saúde (SUS)  
-3. Política Nacional de Humanização  
-4. Política Nacional de Atenção Básica  
-5. Redes de Atenção à Saúde  
-6. Trabalho em saúde e Interprofissionalidade  
-7. Política Nacional de Saúde Bucal  
-8. Odontologia na Atenção Primária à Saúde  
-9. Atenção à saúde bucal de grupos específicos  
-10. Filosofia de Promoção de Saúde  
-11. Epidemiologia  
-12. Epidemiologia das doenças bucais  
-13. Controle químico e mecânico do biofilme dental  
-14. Educação e motivação em saúde bucal  
-15. Planejamento, financiamento e organização em Saúde Coletiva  
-16. Gestão da Qualidade em Saúde  
-17. Vigilâncias em Saúde  
-18. Desafios contemporâneos em gestão
+3 | Documentos Necessários (cópia simples)
 
----
+Ficha de inscrição preenchida
 
-## 5 | Cronograma Resumido de Disciplinas Obrigatórias  
-| Disciplina | Datas |
-|------------|--------|
-| Bioética | 01, 08, 15 / 06 / 2026 |
-| Metodologia do Trabalho Científico | 15, 22 / 09 / 2025 · 13, 20 / 10 / 2025 |
-| Ética e Legislação Odontológica | 06, 13, 27 / 04 / 2026 · 04, 11, 25 / 05 / 2026 |
-| Emergência Médica | **Será marcada posteriormente** |
-| Demais disciplinas | **As demais disciplinas e calendário detalhado serão apresentados no início do curso** |
+Histórico Escolar da Graduação
 
----
+Currículo Lattes
 
-## 6 | Estrutura do Curso  
-### Eixos  
-1. **Comum** – disciplinas obrigatórias.  
-2. **Específico** – temas integrados: Educação em Saúde, Promoção e Prevenção de Doenças Bucais, Epidemiologia, Atenção a grupos específicos, Gestão do SUS, Políticas Públicas, TIC em Saúde Coletiva, etc.
+RG
 
-### Linhas de Pesquisa  
-Epidemiologia · Políticas Públicas · Promoção de Saúde · Gestão em Saúde · Planejamento & Serviços · Ciências Humanas e Sociais.
+CPF
 
-### Requisitos para Certificação  
-- Nota ≥ 7,0 em todas as disciplinas  
-- Frequência ≥ 75 %  
-- Entrega, apresentação e aprovação do **Trabalho de Conclusão de Curso**
+Título de Eleitor
 
----
+CRO (obrigatório na matrícula)
 
-## 7 | Equipe Docente  
+Diploma / Declaração de conclusão
+
+Certificado de Reservista (se aplicável)
+
+Certidão de nascimento ou casamento
+
+Carta de Intenção (≤ 300 palavras): carta do candidato justificando os motivos pelos quais deseja ser aluno do curso, de forma clara e objetiva, expondo seu interesse e a relação da trajetória profissional com a temática do curso.
+
+4 | Programa / Matérias / Conteúdo da Prova de Seleção (liste quando solicitado)
+
+Conceitos de Saúde e Doença; perfis epidemiológicos no Brasil
+
+Sistema Único de Saúde (SUS)
+
+Política Nacional de Humanização
+
+Política Nacional de Atenção Básica
+
+Redes de Atenção à Saúde
+
+Trabalho em saúde e Interprofissionalidade
+
+Política Nacional de Saúde Bucal
+
+Odontologia na Atenção Primária à Saúde
+
+Atenção à saúde bucal de grupos específicos
+
+Filosofia de Promoção de Saúde
+
+Epidemiologia
+
+Epidemiologia das doenças bucais
+
+Controle químico e mecânico do biofilme dental
+
+Educação e motivação em saúde bucal
+
+Planejamento, financiamento e organização em Saúde Coletiva
+
+Gestão da Qualidade em Saúde
+
+Vigilâncias em Saúde
+
+Desafios contemporâneos em gestão
+
+5 | Cronograma Resumido de Disciplinas Obrigatórias
+Disciplina: Bioética
+Datas: 01, 08, 15 / 06 / 2026
+
+Disciplina: Metodologia do Trabalho Científico
+Datas: 15, 22 / 09 / 2025 · 13, 20 / 10 / 2025
+
+Disciplina: Ética e Legislação Odontológica
+Datas: 06, 13, 27 / 04 / 2026 · 04, 11, 25 / 05 / 2026
+
+Disciplina: Emergência Médica
+Datas: Será marcada posteriormente
+
+Demais disciplinas: As demais disciplinas e calendário detalhado serão apresentados no início do curso
+
+6 | Estrutura do Curso
+Eixos:
+
+Comum – disciplinas obrigatórias
+
+Específico – temas integrados: Educação em Saúde, Promoção e Prevenção de Doenças Bucais, Epidemiologia, Atenção a grupos específicos, Gestão do SUS, Políticas Públicas, TIC em Saúde Coletiva, etc.
+
+Linhas de Pesquisa:
+Epidemiologia · Políticas Públicas · Promoção de Saúde · Gestão em Saúde · Planejamento & Serviços · Ciências Humanas e Sociais
+
+Requisitos para Certificação:
+
+Nota ≥ 7,0 em todas as disciplinas
+
+Frequência ≥ 75 %
+
+Entrega, apresentação e aprovação do Trabalho de Conclusão de Curso
+
+7 | Equipe Docente
 Maria do Céu Pinto do Amaral (Coord.) · Elson Fontes Cormack (Vice) · Inger T. C. Tuñas · Mirella G. G. da Silva · Márcia P. A. dos Santos · Lucas Jural · Andreia C. B. de Souza · Júlio C. V. Cardoso · Mariangela R. Maia · Justine M. M. Tinoco.
 
----
-
-## 8 | Objetivo (resumo para respostas curtas)  
+8 | Objetivo (resumo para respostas curtas)
 Capacitar cirurgiões-dentistas em planejamento, gestão e avaliação de ações de saúde bucal no SUS, formando profissionais críticos, reflexivos e socialmente comprometidos.
 
----
+9 | Bibliografia recomendada para a prova teórica
+Consulte o Edital em: https://bit.ly/dolesc-2025
 
-## 9 | Bibliografia recomendada para a prova teórica
-Consulte o Edital em: - <https://bit.ly/dolesc-2025> .
-
-## 10 | Dispensa das disciplinas obrigatórias: 
-Só será concedida para alunos com curso de especialização realizado nos últimos 05 anos. 
-Para a solicitação de dispensa será necessário apresentar o diploma do curso de especialização, histórico escolar e ementas das disciplinas cursadas.
-
----
+10 | Dispensa das disciplinas obrigatórias
+Só será concedida para alunos com curso de especialização realizado nos últimos 05 anos.
+Para solicitar dispensa será necessário apresentar: diploma do curso de especialização, histórico escolar e ementas das disciplinas cursadas.
