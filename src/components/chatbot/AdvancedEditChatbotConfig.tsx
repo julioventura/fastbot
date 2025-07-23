@@ -20,11 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Upload,
-  X,
-  Plus,
-} from "lucide-react";
+import { Upload, X, Plus } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
 interface AdvancedChatbotData extends ChatbotData {
@@ -142,8 +138,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
   const tabs = [
     { id: "identity", label: "Identidade" },
     { id: "behavior", label: "Comportamento" },
-    { id: "messagefooter", label: "Rodapé" },
-    { id: "rules", label: "Regras" },
+    { id: "footer", label: "Rodapé" },
     { id: "style", label: "Estilo" },
     { id: "dataFiles", label: "Anexos" },
   ];
@@ -347,7 +342,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                Comportamento & Restrições
+                Comportamento
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -457,17 +452,135 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Divider para separar seções */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold mb-4">Regras Automáticas</h3>
+                
+                {/* Frases Obrigatórias */}
+                <div className="mb-6">
+                  <Label>Frases Obrigatórias (Finalizações)</Label>
+                  <div className="flex flex-wrap gap-2 mt-2 mb-2">
+                    {(chatbotData.mandatory_phrases || []).map(
+                      (phrase, index) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="flex items-center gap-1 max-w-xs"
+                        >
+                          <span className="truncate">{phrase}</span>
+                          <X
+                            className="w-3 h-3 cursor-pointer flex-shrink-0"
+                            onClick={() => removeMandatoryPhrase(index)}
+                          />
+                        </Badge>
+                      )
+                    )}
+                  </div>
+                  <Textarea
+                    placeholder="Digite uma frase obrigatória e pressione Enter"
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        addMandatoryPhrase(
+                          (e.target as HTMLTextAreaElement).value
+                        );
+                        (e.target as HTMLTextAreaElement).value = "";
+                      }
+                    }}
+                    className="edit-form-input"
+                    style={borderStyle}
+                    rows={2}
+                  />
+                </div>
+
+                {/* Tempo de Retorno */}
+                <div className="mb-6">
+                  <Label htmlFor="response_time_promise">
+                    Prazo de Retorno Humano
+                  </Label>
+                  <Input
+                    id="response_time_promise"
+                    value={chatbotData.response_time_promise || ""}
+                    onChange={(e) =>
+                      onChange("response_time_promise", e.target.value)
+                    }
+                    className="mt-2 edit-form-input"
+                    style={borderStyle}
+                    placeholder="Ex: 1 dia útil"
+                  />
+                </div>
+
+                {/* Mensagem de Encaminhamento */}
+                <div className="mb-6">
+                  <Label htmlFor="fallback_message">
+                    Mensagem para Encaminhamento
+                  </Label>
+                  <Textarea
+                    id="fallback_message"
+                    value={chatbotData.fallback_message || ""}
+                    onChange={(e) =>
+                      onChange("fallback_message", e.target.value)
+                    }
+                    className="mt-2 edit-form-input"
+                    style={borderStyle}
+                    rows={3}
+                    placeholder="Não consegui encontrar essa informação. Vou encaminhar sua dúvida..."
+                  />
+                </div>
+
+                {/* Estilo de Listas */}
+                <div className="mb-6">
+                  <Label>Estilo de Listas</Label>
+                  <Select
+                    value={chatbotData.list_style || "numbered"}
+                    onValueChange={(value) => onChange("list_style", value)}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="numbered">
+                        Numerada (1, 2, 3...)
+                      </SelectItem>
+                      <SelectItem value="bullets">
+                        Com bullets (• • •)
+                      </SelectItem>
+                      <SelectItem value="simple">
+                        Simples (sem marcadores)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Máximo de Itens */}
+                <div>
+                  <Label htmlFor="max_list_items">
+                    Máximo de Itens por Lista
+                  </Label>
+                  <Input
+                    id="max_list_items"
+                    type="number"
+                    value={chatbotData.max_list_items || 10}
+                    onChange={(e) =>
+                      onChange("max_list_items", parseInt(e.target.value))
+                    }
+                    className="mt-2 edit-form-input"
+                    style={borderStyle}
+                    min="1"
+                    max="50"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
 
         {/* Tab: Rodapé */}
-        {activeTab === "messagefooter" && (
+        {activeTab === "footer" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                Rodapé
-              </CardTitle>
+              <CardTitle className="flex items-center gap-2">Rodapé</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Rodapé das mensagens */}
@@ -588,129 +701,6 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   onCheckedChange={(checked) =>
                     onChange("allow_internet_search", checked)
                   }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Tab: Regras Automáticas */}
-        {activeTab === "rules" && (
-          <Card className="bg-transparent border border-border backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                Regras Automáticas
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Frases Obrigatórias */}
-              <div>
-                <Label>Frases Obrigatórias (Finalizações)</Label>
-                <div className="flex flex-wrap gap-2 mt-2 mb-2">
-                  {(chatbotData.mandatory_phrases || []).map(
-                    (phrase, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="flex items-center gap-1 max-w-xs"
-                      >
-                        <span className="truncate">{phrase}</span>
-                        <X
-                          className="w-3 h-3 cursor-pointer flex-shrink-0"
-                          onClick={() => removeMandatoryPhrase(index)}
-                        />
-                      </Badge>
-                    )
-                  )}
-                </div>
-                <Textarea
-                  placeholder="Digite uma frase obrigatória e pressione Enter"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      addMandatoryPhrase(
-                        (e.target as HTMLTextAreaElement).value
-                      );
-                      (e.target as HTMLTextAreaElement).value = "";
-                    }
-                  }}
-                  className="edit-form-input"
-                  style={borderStyle}
-                  rows={2}
-                />
-              </div>
-
-              {/* Tempo de Retorno */}
-              <div>
-                <Label htmlFor="response_time_promise">
-                  Prazo de Retorno Humano
-                </Label>
-                <Input
-                  id="response_time_promise"
-                  value={chatbotData.response_time_promise || ""}
-                  onChange={(e) =>
-                    onChange("response_time_promise", e.target.value)
-                  }
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  placeholder="Ex: 1 dia útil"
-                />
-              </div>
-
-              {/* Mensagem de Encaminhamento */}
-              <div>
-                <Label htmlFor="fallback_message">
-                  Mensagem para Encaminhamento
-                </Label>
-                <Textarea
-                  id="fallback_message"
-                  value={chatbotData.fallback_message || ""}
-                  onChange={(e) => onChange("fallback_message", e.target.value)}
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  rows={3}
-                  placeholder="Não consegui encontrar essa informação. Vou encaminhar sua dúvida..."
-                />
-              </div>
-
-              {/* Estilo de Listas */}
-              <div>
-                <Label>Estilo de Listas</Label>
-                <Select
-                  value={chatbotData.list_style || "numbered"}
-                  onValueChange={(value) => onChange("list_style", value)}
-                >
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="numbered">
-                      Numerada (1, 2, 3...)
-                    </SelectItem>
-                    <SelectItem value="bullets">Com bullets (• • •)</SelectItem>
-                    <SelectItem value="simple">
-                      Simples (sem marcadores)
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Máximo de Itens */}
-              <div>
-                <Label htmlFor="max_list_items">
-                  Máximo de Itens por Lista
-                </Label>
-                <Input
-                  id="max_list_items"
-                  type="number"
-                  value={chatbotData.max_list_items || 10}
-                  onChange={(e) =>
-                    onChange("max_list_items", parseInt(e.target.value))
-                  }
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  min="1"
-                  max="50"
                 />
               </div>
             </CardContent>
@@ -893,9 +883,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
         {activeTab === "dataFiles" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                Anexos
-              </CardTitle>
+              <CardTitle className="flex items-center gap-2">Anexos</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Componente de Upload de Documentos */}

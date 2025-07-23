@@ -1,0 +1,28 @@
+🚨 ERRO: "Could not find the 'uploaded_images' column"
+
+PROBLEMA:
+A coluna 'uploaded_images' não existe na tabela mychatbot_2 do Supabase.
+O formulário está tentando salvar dados nesta coluna, mas ela não foi criada ainda.
+
+SOLUÇÃO URGENTE:
+1. Abra o arquivo: SQL_FINAL_RESOLVER_ERRO_UPLOADED_IMAGES.sql
+2. Acesse: https://supabase.cirurgia.com.br
+3. Faça login no Dashboard
+4. Vá em "SQL Editor" (menu lateral)
+5. Copie TODO o conteúdo do arquivo SQL
+6. Cole no SQL Editor
+7. Clique em "RUN" ou "Executar"
+
+O QUE O SQL FAZ:
+✅ Cria a coluna 'uploaded_images' (que está faltando)
+✅ Cria mais 26 outras colunas avançadas
+✅ Define valores padrão para todas as colunas
+✅ Verifica se foram criadas corretamente
+
+RESULTADO ESPERADO:
+- ✅ Erro "uploaded_images column" será resolvido
+- ✅ Todos os formulários funcionarão
+- ✅ 27 colunas avançadas estarão disponíveis
+- ✅ Salvamento funcionará em todas as tabs
+
+⚠️ IMPORTANTE: Execute o SQL AGORA para resolver o erro!
