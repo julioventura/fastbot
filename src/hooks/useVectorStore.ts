@@ -91,32 +91,40 @@ export const useVectorStore = () => {
   const generateQueryEmbedding = useCallback(async (query: string): Promise<number[]> => {
     console.log('🔧 [DEBUG] Gerando embedding para query:', query.substring(0, 50) + '...');
     
-    // Usar servidor local temporariamente
-    const localServerUrl = 'http://localhost:3001';
+    // Usar OpenAI API diretamente ao invés do servidor local
+    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
     
+    if (!apiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
     try {
-      const response = await fetch(`${localServerUrl}/functions/v1/generate-embedding`, {
+      const response = await fetch('https://api.openai.com/v1/embeddings', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: query })
+        body: JSON.stringify({
+          input: query,
+          model: 'text-embedding-ada-002',
+        }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ [DEBUG] Erro na resposta do servidor:', errorText);
-        throw new Error(`Server error: ${response.status} - ${errorText}`);
+        throw new Error(`OpenAI API error: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('✅ [DEBUG] Embedding gerado com sucesso');
+      const embedding = data.data[0].embedding;
       
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to generate embedding');
-      }
-
-      return data.embedding;
+      console.log('✅ [DEBUG] Embedding gerado com sucesso:', {
+        queryLength: query.length,
+        embeddingDimensions: embedding.length
+      });
+      
+      return embedding;
+      
     } catch (error) {
       console.error('❌ [DEBUG] Erro ao gerar embedding:', error);
       throw error;
@@ -218,19 +226,25 @@ export const useVectorStore = () => {
   // Função para buscar documentos similares
   const searchSimilarDocuments = useCallback(async (
     query: string,
-    threshold: number = 0.78,
+    threshold: number = 0.5, // Reduzido de 0.78 para 0.5
     limit: number = 10
   ): Promise<SearchResult[]> => {
     if (!user) {
       throw new Error('User not authenticated');
     }
 
+    console.log('🔍 [VectorStore] searchSimilarDocuments iniciada');
+    console.log('🔍 [VectorStore] Parâmetros:', { query, threshold, limit, userId: user.id });
+
     setIsSearching(true);
     try {
       // Gerar embedding da query
+      console.log('🔧 [VectorStore] Gerando embedding para a query...');
       const queryEmbedding = await generateQueryEmbedding(query);
+      console.log('✅ [VectorStore] Embedding gerado, dimensões:', queryEmbedding.length);
 
       // Buscar documentos similares usando a função RPC
+      console.log('🔧 [VectorStore] Chamando função match_embeddings no Supabase...');
       const { data, error } = await supabase.rpc('match_embeddings', {
         query_embedding: queryEmbedding,
         user_id: user.id,
@@ -239,10 +253,21 @@ export const useVectorStore = () => {
       });
 
       if (error) {
+        console.error('❌ [VectorStore] Erro na busca RPC:', error);
         throw error;
       }
 
       const results = data as SearchResult[];
+      console.log('✅ [VectorStore] Busca RPC concluída:', {
+        resultCount: results.length,
+        threshold,
+        limit
+      });
+      
+      if (results.length > 0) {
+        console.log('📊 [VectorStore] Primeira similaridade encontrada:', (results[0].similarity * 100).toFixed(1) + '%');
+      }
+      
       setSearchResults(results);
       return results;
     } finally {
@@ -256,11 +281,27 @@ export const useVectorStore = () => {
     maxTokens: number = 3000
   ): Promise<string> => {
     try {
-      const results = await searchSimilarDocuments(userMessage, 0.75, 5);
+      console.log('🔍 [VectorStore] Iniciando busca por contexto relevante...');
+      console.log('🔍 [VectorStore] Query:', userMessage);
+      console.log('🔍 [VectorStore] Threshold: 0.5 (reduzido para melhor matching), Limite: 5 documentos');
+      
+      const results = await searchSimilarDocuments(userMessage, 0.5, 5);
+      
+      console.log('📊 [VectorStore] Resultados encontrados:', results.length);
       
       if (results.length === 0) {
+        console.log('❌ [VectorStore] Nenhum resultado encontrado na busca vetorial');
         return '';
       }
+
+      // Mostrar detalhes dos resultados encontrados
+      results.forEach((result, index) => {
+        console.log(`📄 [VectorStore] Resultado ${index + 1}:`, {
+          filename: result.filename,
+          similarity: (result.similarity * 100).toFixed(1) + '%',
+          chunkPreview: result.chunk_text.substring(0, 100) + '...'
+        });
+      });
 
       // Ordenar por similaridade e construir contexto
       const sortedResults = results.sort((a, b) => b.similarity - a.similarity);

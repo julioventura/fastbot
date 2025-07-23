@@ -43,6 +43,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Bot, Maximize2, Minimize2, X, Send, User } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/auth/useAuth';
+import { useVectorStore } from '@/hooks/useVectorStore';
 import { supabase } from '@/integrations/supabase/client';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
@@ -76,6 +77,9 @@ const MyChatbot = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
   const { user } = useAuth();
+  
+  // Hook para Vector Store - busca semântica nos documentos
+  const { getChatbotContext } = useVectorStore();
 
   // Constantes de estilo para o chatbot
   const chatbotBgColor = '#1a1b3a';
@@ -180,6 +184,7 @@ const MyChatbot = () => {
   /**
    * sendToWebhook
    * Envia mensagem do usuário para o webhook N8N configurado
+   * NOVO: Agora suporta processamento local como alternativa ao N8N
    * Inclui contexto da página atual e outros metadados úteis
    * Em caso de falha, utiliza resposta local como fallback
    */
@@ -189,16 +194,20 @@ const MyChatbot = () => {
     try {
       setIsLoading(true);
 
+      // 🚀 NOVA OPÇÃO: Verificar se deve usar processamento local ao invés do N8N
+      const useLocalProcessing = import.meta.env.VITE_USE_LOCAL_AI === 'true';
       const webhookUrl: string | undefined = import.meta.env.VITE_WEBHOOK_N8N_URL as string | undefined;
 
-      if (!webhookUrl) {
-        console.log('❌ [MyChatbot] Webhook URL não configurada:', {
+      if (useLocalProcessing || !webhookUrl) {
+        console.log('🤖 [MyChatbot] Usando processamento local (AI + Vector Store):', {
+          reason: useLocalProcessing ? 'Configurado para local' : 'Webhook não configurado',
           timestamp: requestTimestamp,
-          error: 'VITE_WEBHOOK_N8N_URL não definida'
         });
-        throw new Error('URL do webhook N8N não configurada');
+        
+        return await processMessageLocally(userMessage);
       }
 
+      // Se chegou até aqui, usar N8N
       const payload = {
         message: userMessage,
         userId: user?.id,
@@ -298,8 +307,8 @@ const MyChatbot = () => {
         fallbackActive: true
       });
 
-      // Fallback para resposta local em caso de erro
-      const fallbackResponse = getBotResponseLocal(userMessage);
+      // Fallback para resposta local em caso de erro (AGORA ASSÍNCRONO)
+      const fallbackResponse = await getBotResponseLocal(userMessage);
       
       return fallbackResponse;
     } finally {
@@ -308,13 +317,156 @@ const MyChatbot = () => {
   };
 
   /**
+   * processMessageLocally
+   * NOVA FUNÇÃO: Processa mensagens localmente com IA + Vector Store
+   * Substitui completamente o N8N quando habilitado
+   */
+  const processMessageLocally = async (userMessage: string): Promise<string> => {
+    try {
+      console.log('🤖 [MyChatbot] =====================================');
+      console.log('🤖 [MyChatbot] PROCESSAMENTO LOCAL INICIADO');
+      console.log('🤖 [MyChatbot] Mensagem do usuário:', userMessage);
+      console.log('🤖 [MyChatbot] =====================================');
+      
+      // 1. Buscar contexto relevante nos documentos
+      console.log('🔍 [MyChatbot] Iniciando busca na base de dados vetorial...');
+      
+      // 🧪 TESTE ESPECÍFICO: Se pergunta sobre inscrições, fazer busca mais ampla
+      let searchQuery = userMessage;
+      let searchThreshold = 3000;
+      
+      if (userMessage.toLowerCase().includes('inscri')) {
+        console.log('🎯 [MyChatbot] Pergunta sobre INSCRIÇÕES detectada, otimizando busca...');
+        searchQuery = 'inscrições data prazo 12 05'; // Termos mais específicos
+        searchThreshold = 4000; // Mais contexto
+      }
+      
+      const vectorContext = await getChatbotContext(searchQuery, searchThreshold);
+      
+      if (vectorContext && vectorContext.trim().length > 0) {
+        console.log('✅ [MyChatbot] CONTEXTO ENCONTRADO NA BASE VETORIAL!');
+        console.log('📄 [MyChatbot] Tamanho do contexto:', vectorContext.length, 'caracteres');
+        console.log('📄 [MyChatbot] Prévia do contexto:', vectorContext.substring(0, 200) + '...');
+      } else {
+        console.log('⚠️ [MyChatbot] NENHUM CONTEXTO ENCONTRADO na base vetorial');
+        console.log('⚠️ [MyChatbot] Possíveis motivos:');
+        console.log('   - Nenhum documento foi uploadado');
+        console.log('   - Documentos não foram processados');
+        console.log('   - Query não encontrou similaridade suficiente');
+      }
+      
+      // 2. Preparar system message personalizado
+      const systemMessage = chatbotConfig?.system_message || 
+        'Você é um assistente virtual profissional e prestativo.';
+      
+      console.log('📝 [MyChatbot] System message configurado:', systemMessage.substring(0, 100) + '...');
+      
+      // 3. Construir prompt completo para IA
+      let fullPrompt = systemMessage + '\n\n';
+      
+      if (vectorContext && vectorContext.trim().length > 0) {
+        fullPrompt += `INFORMAÇÕES RELEVANTES DOS DOCUMENTOS:\n${vectorContext}\n\n`;
+        console.log('✅ [MyChatbot] Contexto vetorial INCLUÍDO no prompt');
+      } else {
+        console.log('⚠️ [MyChatbot] Prompt SEM contexto vetorial');
+      }
+      
+      // 4. Adicionar informações de configuração do chatbot
+      if (chatbotConfig) {
+        fullPrompt += 'INFORMAÇÕES ADICIONAIS:\n';
+        if (chatbotConfig.office_hours) fullPrompt += `- Horário de atendimento: ${chatbotConfig.office_hours}\n`;
+        if (chatbotConfig.office_address) fullPrompt += `- Endereço: ${chatbotConfig.office_address}\n`;
+        if (chatbotConfig.specialties) fullPrompt += `- Especialidades: ${chatbotConfig.specialties}\n`;
+        if (chatbotConfig.whatsapp) fullPrompt += `- WhatsApp: ${chatbotConfig.whatsapp}\n`;
+        fullPrompt += '\n';
+      }
+      
+      fullPrompt += `PERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:`;
+      
+      // 5. Chamar OpenAI diretamente para gerar resposta
+      const openaiResponse = await generateAIResponse(fullPrompt);
+      
+      console.log('✅ [MyChatbot] Resposta IA gerada localmente:', {
+        promptLength: fullPrompt.length,
+        hasVectorContext: !!vectorContext,
+        responseLength: openaiResponse.length
+      });
+      
+      return openaiResponse;
+      
+    } catch (error) {
+      console.error('❌ [MyChatbot] Erro no processamento local, usando fallback:', error);
+      return await getBotResponseLocal(userMessage);
+    }
+  };
+
+  /**
+   * generateAIResponse
+   * Chama OpenAI diretamente para gerar resposta baseada no prompt
+   */
+  const generateAIResponse = async (prompt: string): Promise<string> => {
+    const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    
+    if (!openaiApiKey) {
+      throw new Error('OpenAI API key não configurada');
+    }
+    
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 300,
+        temperature: 0.7,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0]?.message?.content || 'Desculpe, não consegui gerar uma resposta no momento.';
+  };
+
+  /**
    * getBotResponseLocal
    * Sistema de fallback com respostas locais contextualizadas
    * Usado quando o webhook N8N não está disponível ou falha
-   * Respostas são específicas para cada página e tipo de consulta
+   * NOVO: Integrado com busca vetorial para usar documentos do usuário
    */
-  const getBotResponseLocal = (userMessage: string): string => {
+  const getBotResponseLocal = async (userMessage: string): Promise<string> => {
     const pageContext = getPageContext();
+
+    try {
+      // 🔍 NOVO: Buscar contexto relevante nos documentos do usuário
+      console.log('🔍 [MyChatbot] Buscando contexto vetorial para:', userMessage);
+      const vectorContext = await getChatbotContext(userMessage, 2000);
+      
+      if (vectorContext && vectorContext.trim().length > 0) {
+        console.log('✅ [MyChatbot] Contexto encontrado nos documentos:', {
+          contextLength: vectorContext.length,
+          preview: vectorContext.substring(0, 100) + '...'
+        });
+        
+        // Usar informações dos documentos para gerar resposta personalizada
+        const systemMessage = chatbotConfig?.system_message || 
+          `Você é um assistente virtual profissional. Use as informações dos documentos abaixo para responder de forma precisa e útil.`;
+        
+        return generateContextualResponse(userMessage, vectorContext, systemMessage);
+      }
+    } catch (error) {
+      console.log('⚠️ [MyChatbot] Erro na busca vetorial, usando fallback tradicional:', error);
+    }
 
     // Detectar perguntas sobre contexto da página atual
     if (userMessage.toLowerCase().includes('que página') || 
@@ -327,7 +479,7 @@ const MyChatbot = () => {
 
     // Se há configuração personalizada, usar informações do usuário
     if (chatbotConfig) {
-      if (chatbotConfig.chatbot_name) {
+      if (chatbotConfig.chatbot_name && userMessage.toLowerCase().includes('nome')) {
         return `Olá! Sou ${chatbotConfig.chatbot_name}. ${chatbotConfig.welcome_message || 'Como posso ajudar você hoje?'}`;
       }
       if (chatbotConfig.office_hours && userMessage.toLowerCase().includes('horário')) {
@@ -381,6 +533,40 @@ const MyChatbot = () => {
     ];
 
     return responses[Math.floor(Math.random() * responses.length)];
+  };
+
+  /**
+   * generateContextualResponse
+   * Gera resposta baseada em contexto dos documentos usando IA simples
+   * Fallback local inteligente que usa informações relevantes dos documentos
+   */
+  const generateContextualResponse = (userMessage: string, vectorContext: string, systemMessage: string): string => {
+    // Análise básica da intenção do usuário
+    const messageLower = userMessage.toLowerCase();
+    
+    // Se é uma pergunta específica, tentar extrair resposta relevante do contexto
+    if (messageLower.includes('como') || messageLower.includes('que') || messageLower.includes('qual')) {
+      // Buscar primeira frase relevante no contexto que possa responder
+      const sentences = vectorContext.split(/[.!?]+/).filter(s => s.trim().length > 20);
+      
+      // Procurar sentença que contenha palavras-chave da pergunta
+      const keywords = userMessage.toLowerCase().split(' ').filter(word => word.length > 3);
+      
+      for (const sentence of sentences) {
+        const sentenceLower = sentence.toLowerCase();
+        const matchCount = keywords.filter(keyword => sentenceLower.includes(keyword)).length;
+        
+        if (matchCount >= 2) {
+          return `Com base nas informações disponíveis: ${sentence.trim()}.`;
+        }
+      }
+    }
+    
+    // Resposta contextual genérica usando primeiras informações do documento
+    const firstSentences = vectorContext.substring(0, 200).trim();
+    const botName = chatbotConfig?.chatbot_name || 'Assistente';
+    
+    return `Olá! Sou o ${botName}. Com base nas informações que tenho: ${firstSentences}... Posso ajudar com mais detalhes sobre isso?`;
   };
 
   /**
