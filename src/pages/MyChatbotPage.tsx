@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BackgroundDecoration from "@/components/account/BackgroundDecoration";
 import LoadingScreen from "@/components/account/LoadingScreen";
-import ViewChatbotConfig from "@/components/chatbot/ViewChatbotConfig";
 import AdvancedEditChatbotConfig from "@/components/chatbot/AdvancedEditChatbotConfig";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
@@ -34,6 +33,8 @@ interface ChatbotData {
   main_link?: string;
   mandatory_link?: boolean;
   uploaded_documents?: string[];
+  uploaded_images?: string[]; // NOVO: Array de imagens
+  footer_message?: string; // NOVO: Rodapé das mensagens
   mandatory_phrases?: string[];
   auto_link?: boolean;
   max_list_items?: number;
@@ -240,17 +241,7 @@ const MyChatbotPage: React.FC = () => {
         <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Meu Chatbot</h1>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-secondary/70">
-            <TabsTrigger value="view" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">CONFIGURAÇÕES</TabsTrigger>
-            <TabsTrigger value="edit" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">DASHBOARD</TabsTrigger>
-            <TabsTrigger value="documents" className="data-[state=active]:bg-primary/30 data-[state=active]:text-primary-foreground text-muted-foreground">DOCUMENTOS</TabsTrigger>
-          </TabsList>
-
           <TabsContent value="view">
-            <ViewChatbotConfig chatbotData={chatbotData} />
-          </TabsContent>
-
-          <TabsContent value="edit">
             <AdvancedEditChatbotConfig
               chatbotData={chatbotData}
               isSaving={isSaving}
@@ -259,12 +250,9 @@ const MyChatbotPage: React.FC = () => {
               onCancel={handleCancel}
             />
           </TabsContent>
-
-          <TabsContent value="documents">
-            <DocumentUpload />
-          </TabsContent>
-
         </Tabs>
+
+        
       </div>
     </div>
   );

@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -7,24 +13,25 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  Upload, 
-  X, 
-  Plus, 
-  Settings, 
-  MessageCircle, 
-  Brain, 
-  FileText, 
-  Link, 
+import {
+  Upload,
+  X,
+  Plus,
+  Settings,
+  MessageCircle,
+  Brain,
+  FileText,
+  Link,
   Palette,
 } from "lucide-react";
+import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
 interface AdvancedChatbotData extends ChatbotData {
   // Controles de personalidade
@@ -32,36 +39,38 @@ interface AdvancedChatbotData extends ChatbotData {
   use_emojis?: boolean;
   memorize_user_name?: boolean;
   paragraph_size?: number; // 0-100
-  
+
   // Controles de escopo
   main_topic?: string;
   allowed_topics?: string[];
   source_strictness?: number; // 0-100
   allow_internet_search?: boolean;
-  
+
   // Controles de comportamento
   confidence_threshold?: number; // 0-100
-  fallback_action?: 'human' | 'search' | 'link';
+  fallback_action?: "human" | "search" | "link";
   response_time_promise?: string;
   fallback_message?: string;
-  
+
   // Links e documentos
   main_link?: string;
   mandatory_link?: boolean;
   uploaded_documents?: string[];
-  
+  uploaded_images?: string[]; // NOVO: Array de imagens
+  footer_message?: string; // NOVO: Rodapé das mensagens
+
   // Regras automáticas
   mandatory_phrases?: string[];
   auto_link?: boolean;
   max_list_items?: number;
-  list_style?: 'numbered' | 'bullets' | 'simple';
-  
+  list_style?: "numbered" | "bullets" | "simple";
+
   // Interação
   ask_for_name?: boolean;
   name_usage_frequency?: number; // 0-100
   remember_context?: boolean;
   returning_user_greeting?: string;
-  
+
   // Configurações avançadas
   response_speed?: number; // 0-100
   debug_mode?: boolean;
@@ -82,7 +91,10 @@ interface AdvancedEditChatbotConfigProps {
   chatbotData: AdvancedChatbotData;
   isSaving: boolean;
   onSubmit: (e: React.FormEvent) => void;
-  onChange: (field: string, value: string | number | boolean | string[]) => void;
+  onChange: (
+    field: string,
+    value: string | number | boolean | string[]
+  ) => void;
   onCancel: () => void;
 }
 
@@ -91,60 +103,104 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
   isSaving,
   onSubmit,
   onChange,
-  onCancel
+  onCancel,
 }) => {
   const [isDark, setIsDark] = useState(false);
-  const [activeTab, setActiveTab] = useState('identity');
+  const [activeTab, setActiveTab] = useState("identity");
 
   useEffect(() => {
     const checkTheme = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
+      setIsDark(document.documentElement.classList.contains("dark"));
     };
     checkTheme();
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class']
+      attributeFilter: ["class"],
     });
     return () => observer.disconnect();
   }, []);
 
   const borderStyle = {
-    border: isDark ? '3px solid rgba(255, 255, 255, 0.6)' : '3px solid #000000',
-    borderColor: isDark ? 'rgba(255, 255, 255, 0.6)' : '#000000'
+    border: isDark ? "3px solid rgba(255, 255, 255, 0.6)" : "3px solid #000000",
+    borderColor: isDark ? "rgba(255, 255, 255, 0.6)" : "#000000",
   };
 
   // Funções auxiliares para frases obrigatórias
   const addMandatoryPhrase = (phrase: string) => {
-    if (phrase.trim() && !(chatbotData.mandatory_phrases || []).includes(phrase.trim())) {
-      onChange('mandatory_phrases', [...(chatbotData.mandatory_phrases || []), phrase.trim()]);
+    if (
+      phrase.trim() &&
+      !(chatbotData.mandatory_phrases || []).includes(phrase.trim())
+    ) {
+      onChange("mandatory_phrases", [
+        ...(chatbotData.mandatory_phrases || []),
+        phrase.trim(),
+      ]);
     }
   };
 
   const removeMandatoryPhrase = (index: number) => {
     const phrases = [...(chatbotData.mandatory_phrases || [])];
     phrases.splice(index, 1);
-    onChange('mandatory_phrases', phrases);
+    onChange("mandatory_phrases", phrases);
   };
 
   const tabs = [
-    { id: 'identity', label: 'Identidade', icon: MessageCircle },
-    { id: 'behavior', label: 'Comportamento', icon: Brain },
-    { id: 'sources', label: 'Fontes', icon: FileText },
-    { id: 'rules', label: 'Regras', icon: Settings },
-    { id: 'style', label: 'Estilo', icon: Palette },
+    { id: "identity", label: "Identidade", icon: MessageCircle },
+    { id: "behavior", label: "Comportamento", icon: Brain },
+    { id: "messagefooter", label: "Rodapé", icon: FileText },
+    { id: "rules", label: "Regras", icon: Settings },
+    { id: "style", label: "Estilo", icon: Palette },
+    { id: "dataFiles", label: "Anexos", icon: FileText },
   ];
 
   const addTopic = (topic: string) => {
     if (topic.trim()) {
-      onChange('allowed_topics', [...(chatbotData.allowed_topics || []), topic.trim()]);
+      onChange("allowed_topics", [
+        ...(chatbotData.allowed_topics || []),
+        topic.trim(),
+      ]);
     }
   };
 
   const removeTopic = (index: number) => {
     const newTopics = [...(chatbotData.allowed_topics || [])];
     newTopics.splice(index, 1);
-    onChange('allowed_topics', newTopics);
+    onChange("allowed_topics", newTopics);
+  };
+
+  // Funções para upload de imagens
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const imageFiles = Array.from(files).filter((file) => {
+        const allowedTypes = [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/gif",
+        ];
+        return allowedTypes.includes(file.type);
+      });
+
+      imageFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result as string;
+          const currentImages = chatbotData.uploaded_images || [];
+          onChange("uploaded_images", [...currentImages, result]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    // Limpar o input para permitir upload do mesmo arquivo novamente
+    event.target.value = "";
+  };
+
+  const removeUploadedImage = (index: number) => {
+    const images = [...(chatbotData.uploaded_images || [])];
+    images.splice(index, 1);
+    onChange("uploaded_images", images);
   };
 
   return (
@@ -173,9 +229,8 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
       </Card>
 
       <form onSubmit={onSubmit} className="space-y-6">
-        
         {/* Tab: Identidade & Saudação */}
-        {activeTab === 'identity' && (
+        {activeTab === "identity" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -187,16 +242,16 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              
               {/* System Message */}
               <div>
                 <Label htmlFor="system_message">
-                  Instruções Gerais do Sistema<span className="text-red-500">*</span>
+                  Instruções Gerais (System Message){" "}
+                  <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
                   id="system_message"
                   value={chatbotData.system_message}
-                  onChange={(e) => onChange('system_message', e.target.value)}
+                  onChange={(e) => onChange("system_message", e.target.value)}
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   rows={6}
@@ -204,7 +259,8 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   required
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Instruções base para o comportamento do chatbot. Pode ser simplificado conforme você configura o dashboard.
+                  Instruções base para o comportamento do chatbot. Pode ser
+                  simplificado conforme você configura o dashboard.
                 </p>
               </div>
 
@@ -216,7 +272,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                 <Input
                   id="chatbot_name"
                   value={chatbotData.chatbot_name}
-                  onChange={(e) => onChange('chatbot_name', e.target.value)}
+                  onChange={(e) => onChange("chatbot_name", e.target.value)}
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   placeholder="Ex: Assistente Virtual Dr. Silva"
@@ -226,10 +282,14 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
 
               {/* Slider de Formalidade */}
               <div className="space-y-3">
-                <Label>Nível de Formalidade: {chatbotData.formality_level || 50}%</Label>
+                <Label>
+                  Nível de Formalidade: {chatbotData.formality_level || 50}%
+                </Label>
                 <Slider
                   value={[chatbotData.formality_level || 50]}
-                  onValueChange={([value]) => onChange('formality_level', value)}
+                  onValueChange={([value]) =>
+                    onChange("formality_level", value)
+                  }
                   max={100}
                   step={1}
                   className="w-full"
@@ -247,7 +307,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                 <Textarea
                   id="welcome_message"
                   value={chatbotData.welcome_message}
-                  onChange={(e) => onChange('welcome_message', e.target.value)}
+                  onChange={(e) => onChange("welcome_message", e.target.value)}
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   rows={3}
@@ -260,32 +320,39 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <Label>Memorizar Nome do Usuário</Label>
-                    <p className="text-xs text-muted-foreground">Personaliza respostas com o nome</p>
+                    <p className="text-xs text-muted-foreground">
+                      Personaliza respostas com o nome
+                    </p>
                   </div>
                   <Switch
                     checked={chatbotData.memorize_user_name || false}
-                    onCheckedChange={(checked) => onChange('memorize_user_name', checked)}
+                    onCheckedChange={(checked) =>
+                      onChange("memorize_user_name", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <Label>Usar Emojis</Label>
-                    <p className="text-xs text-muted-foreground">Adiciona emoticons nas respostas</p>
+                    <p className="text-xs text-muted-foreground">
+                      Adiciona emoticons nas respostas
+                    </p>
                   </div>
                   <Switch
                     checked={chatbotData.use_emojis || false}
-                    onCheckedChange={(checked) => onChange('use_emojis', checked)}
+                    onCheckedChange={(checked) =>
+                      onChange("use_emojis", checked)
+                    }
                   />
                 </div>
               </div>
-
             </CardContent>
           </Card>
         )}
 
         {/* Tab: Comportamento */}
-        {activeTab === 'behavior' && (
+        {activeTab === "behavior" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -294,14 +361,13 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              
               {/* Tema Principal */}
               <div>
                 <Label htmlFor="main_topic">Tema Principal</Label>
                 <Input
                   id="main_topic"
-                  value={chatbotData.main_topic || ''}
-                  onChange={(e) => onChange('main_topic', e.target.value)}
+                  value={chatbotData.main_topic || ""}
+                  onChange={(e) => onChange("main_topic", e.target.value)}
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   placeholder="Ex: Inscrições para Curso de Especialização"
@@ -313,10 +379,14 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                 <Label>Temas Permitidos</Label>
                 <div className="flex flex-wrap gap-2 mt-2 mb-2">
                   {(chatbotData.allowed_topics || []).map((topic, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       {topic}
-                      <X 
-                        className="w-3 h-3 cursor-pointer" 
+                      <X
+                        className="w-3 h-3 cursor-pointer"
                         onClick={() => removeTopic(index)}
                       />
                     </Badge>
@@ -326,10 +396,10 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   <Input
                     placeholder="Digite um tema e pressione Enter"
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         e.preventDefault();
                         addTopic((e.target as HTMLInputElement).value);
-                        (e.target as HTMLInputElement).value = '';
+                        (e.target as HTMLInputElement).value = "";
                       }
                     }}
                     className="edit-form-input"
@@ -343,10 +413,14 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
 
               {/* Rigidez nas Fontes */}
               <div className="space-y-3">
-                <Label>Rigidez nas Fontes: {chatbotData.source_strictness || 50}%</Label>
+                <Label>
+                  Rigidez nas Fontes: {chatbotData.source_strictness || 50}%
+                </Label>
                 <Slider
                   value={[chatbotData.source_strictness || 50]}
-                  onValueChange={([value]) => onChange('source_strictness', value)}
+                  onValueChange={([value]) =>
+                    onChange("source_strictness", value)
+                  }
                   max={100}
                   step={1}
                 />
@@ -358,10 +432,15 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
 
               {/* Confiança Mínima */}
               <div className="space-y-3">
-                <Label>Confiança Mínima para Resposta: {chatbotData.confidence_threshold || 70}%</Label>
+                <Label>
+                  Confiança Mínima para Resposta:{" "}
+                  {chatbotData.confidence_threshold || 70}%
+                </Label>
                 <Slider
                   value={[chatbotData.confidence_threshold || 70]}
-                  onValueChange={([value]) => onChange('confidence_threshold', value)}
+                  onValueChange={([value]) =>
+                    onChange("confidence_threshold", value)
+                  }
                   max={100}
                   step={1}
                 />
@@ -370,46 +449,62 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               {/* Ação quando não souber */}
               <div>
                 <Label>Ação quando não souber responder</Label>
-                <Select 
-                  value={chatbotData.fallback_action || 'human'} 
-                  onValueChange={(value) => onChange('fallback_action', value)}
+                <Select
+                  value={chatbotData.fallback_action || "human"}
+                  onValueChange={(value) => onChange("fallback_action", value)}
                 >
                   <SelectTrigger className="mt-2">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="human">Encaminhar para humano</SelectItem>
+                    <SelectItem value="human">
+                      Encaminhar para humano
+                    </SelectItem>
                     <SelectItem value="search">Sugerir busca manual</SelectItem>
-                    <SelectItem value="link">Direcionar para link oficial</SelectItem>
+                    <SelectItem value="link">
+                      Direcionar para link oficial
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-
             </CardContent>
           </Card>
         )}
 
-        {/* Tab: Fontes de Dados */}
-        {activeTab === 'sources' && (
+        {/* Tab: Rodapé */}
+        {activeTab === "messagefooter" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
-                Fontes de Dados
+                Rodapé
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              
-              {/* Link Principal */}
+              {/* Rodapé das mensagens */}
               <div>
-                <Label htmlFor="main_link">Link Principal (Edital/Documento Official)</Label>
-                <Input
-                  id="main_link"
-                  value={chatbotData.main_link || ''}
-                  onChange={(e) => onChange('main_link', e.target.value)}
+                <Label htmlFor="footer_message">Rodapé das mensagens</Label>
+                <Textarea
+                  id="footer_message"
+                  value={chatbotData.footer_message || ""}
+                  onChange={(e) => onChange("footer_message", e.target.value)}
                   className="mt-2 edit-form-input"
                   style={borderStyle}
-                  placeholder="https://exemplo.com/edital-2025"
+                  placeholder="Texto que aparecerá no final de cada mensagem do chatbot..."
+                  rows={3}
+                />
+              </div>
+
+              {/* Link adicional */}
+              <div>
+                <Label htmlFor="main_link">Link adicional</Label>
+                <Input
+                  id="main_link"
+                  value={chatbotData.main_link || ""}
+                  onChange={(e) => onChange("main_link", e.target.value)}
+                  className="mt-2 edit-form-input"
+                  style={borderStyle}
+                  placeholder="https://exemplo.com/link-adicional"
                 />
               </div>
 
@@ -417,37 +512,72 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <Label>Link Obrigatório nas Respostas</Label>
-                  <p className="text-xs text-muted-foreground">Inclui o link automaticamente</p>
+                  <p className="text-xs text-muted-foreground">
+                    Inclui o link automaticamente
+                  </p>
                 </div>
                 <Switch
                   checked={chatbotData.mandatory_link || false}
-                  onCheckedChange={(checked) => onChange('mandatory_link', checked)}
+                  onCheckedChange={(checked) =>
+                    onChange("mandatory_link", checked)
+                  }
                 />
               </div>
 
-              {/* Upload de Documentos */}
+              {/* Upload de Imagens */}
               <div>
-                <Label>Documentos Anexados</Label>
+                <Label>Imagens Anexadas</Label>
                 <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center">
                   <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground mb-2">
-                    Arraste documentos ou clique para selecionar
+                    Arraste imagens ou clique para selecionar
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Suportados: .txt, .pdf, .doc, .docx
+                    Suportados: .png, .jpg, .jpeg, .gif
                   </p>
-                  <Button type="button" variant="outline" size="sm" className="mt-2">
-                    Selecionar Arquivos
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() =>
+                      document.getElementById("image-upload")?.click()
+                    }
+                  >
+                    Selecionar Imagens
                   </Button>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    multiple
+                    accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/jpg,image/gif"
+                    style={{ display: "none" }}
+                    onChange={(e) => handleImageUpload(e)}
+                  />
                 </div>
-                
-                {/* Lista de documentos anexados */}
-                {(chatbotData.uploaded_documents || []).length > 0 && (
+
+                {/* Lista de imagens anexadas */}
+                {(chatbotData.uploaded_images || []).length > 0 && (
                   <div className="mt-4 space-y-2">
-                    {(chatbotData.uploaded_documents || []).map((doc, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 border rounded">
-                        <span className="text-sm">{doc}</span>
-                        <Button type="button" variant="ghost" size="sm">
+                    {(chatbotData.uploaded_images || []).map((image, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-2 border rounded"
+                      >
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={image}
+                            alt={`Imagem ${index + 1}`}
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                          <span className="text-sm">Imagem {index + 1}</span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeUploadedImage(index)}
+                        >
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
@@ -460,20 +590,23 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <Label>Permitir Busca na Internet</Label>
-                  <p className="text-xs text-muted-foreground">Quando informações não estiverem nos documentos</p>
+                  <p className="text-xs text-muted-foreground">
+                    Quando informações não estiverem nos documentos
+                  </p>
                 </div>
                 <Switch
                   checked={chatbotData.allow_internet_search || false}
-                  onCheckedChange={(checked) => onChange('allow_internet_search', checked)}
+                  onCheckedChange={(checked) =>
+                    onChange("allow_internet_search", checked)
+                  }
                 />
               </div>
-
             </CardContent>
           </Card>
         )}
 
         {/* Tab: Regras Automáticas */}
-        {activeTab === 'rules' && (
+        {activeTab === "rules" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -482,28 +615,35 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              
               {/* Frases Obrigatórias */}
               <div>
                 <Label>Frases Obrigatórias (Finalizações)</Label>
                 <div className="flex flex-wrap gap-2 mt-2 mb-2">
-                  {(chatbotData.mandatory_phrases || []).map((phrase, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1 max-w-xs">
-                      <span className="truncate">{phrase}</span>
-                      <X 
-                        className="w-3 h-3 cursor-pointer flex-shrink-0" 
-                        onClick={() => removeMandatoryPhrase(index)}
-                      />
-                    </Badge>
-                  ))}
+                  {(chatbotData.mandatory_phrases || []).map(
+                    (phrase, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="flex items-center gap-1 max-w-xs"
+                      >
+                        <span className="truncate">{phrase}</span>
+                        <X
+                          className="w-3 h-3 cursor-pointer flex-shrink-0"
+                          onClick={() => removeMandatoryPhrase(index)}
+                        />
+                      </Badge>
+                    )
+                  )}
                 </div>
                 <Textarea
                   placeholder="Digite uma frase obrigatória e pressione Enter"
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                    if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
-                      addMandatoryPhrase((e.target as HTMLTextAreaElement).value);
-                      (e.target as HTMLTextAreaElement).value = '';
+                      addMandatoryPhrase(
+                        (e.target as HTMLTextAreaElement).value
+                      );
+                      (e.target as HTMLTextAreaElement).value = "";
                     }
                   }}
                   className="edit-form-input"
@@ -514,11 +654,15 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
 
               {/* Tempo de Retorno */}
               <div>
-                <Label htmlFor="response_time_promise">Prazo de Retorno Humano</Label>
+                <Label htmlFor="response_time_promise">
+                  Prazo de Retorno Humano
+                </Label>
                 <Input
                   id="response_time_promise"
-                  value={chatbotData.response_time_promise || ''}
-                  onChange={(e) => onChange('response_time_promise', e.target.value)}
+                  value={chatbotData.response_time_promise || ""}
+                  onChange={(e) =>
+                    onChange("response_time_promise", e.target.value)
+                  }
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   placeholder="Ex: 1 dia útil"
@@ -527,11 +671,13 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
 
               {/* Mensagem de Encaminhamento */}
               <div>
-                <Label htmlFor="fallback_message">Mensagem para Encaminhamento</Label>
+                <Label htmlFor="fallback_message">
+                  Mensagem para Encaminhamento
+                </Label>
                 <Textarea
                   id="fallback_message"
-                  value={chatbotData.fallback_message || ''}
-                  onChange={(e) => onChange('fallback_message', e.target.value)}
+                  value={chatbotData.fallback_message || ""}
+                  onChange={(e) => onChange("fallback_message", e.target.value)}
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   rows={3}
@@ -542,42 +688,49 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               {/* Estilo de Listas */}
               <div>
                 <Label>Estilo de Listas</Label>
-                <Select 
-                  value={chatbotData.list_style || 'numbered'} 
-                  onValueChange={(value) => onChange('list_style', value)}
+                <Select
+                  value={chatbotData.list_style || "numbered"}
+                  onValueChange={(value) => onChange("list_style", value)}
                 >
                   <SelectTrigger className="mt-2">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="numbered">Numerada (1, 2, 3...)</SelectItem>
+                    <SelectItem value="numbered">
+                      Numerada (1, 2, 3...)
+                    </SelectItem>
                     <SelectItem value="bullets">Com bullets (• • •)</SelectItem>
-                    <SelectItem value="simple">Simples (sem marcadores)</SelectItem>
+                    <SelectItem value="simple">
+                      Simples (sem marcadores)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Máximo de Itens */}
               <div>
-                <Label htmlFor="max_list_items">Máximo de Itens por Lista</Label>
+                <Label htmlFor="max_list_items">
+                  Máximo de Itens por Lista
+                </Label>
                 <Input
                   id="max_list_items"
                   type="number"
                   value={chatbotData.max_list_items || 10}
-                  onChange={(e) => onChange('max_list_items', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    onChange("max_list_items", parseInt(e.target.value))
+                  }
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   min="1"
                   max="50"
                 />
               </div>
-
             </CardContent>
           </Card>
         )}
 
         {/* Tab: Estilo & Formatação */}
-        {activeTab === 'style' && (
+        {activeTab === "style" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -586,13 +739,14 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              
               {/* Tamanho dos Parágrafos */}
               <div className="space-y-3">
-                <Label>Tamanho dos Parágrafos: {chatbotData.paragraph_size || 50}%</Label>
+                <Label>
+                  Tamanho dos Parágrafos: {chatbotData.paragraph_size || 50}%
+                </Label>
                 <Slider
                   value={[chatbotData.paragraph_size || 50]}
-                  onValueChange={([value]) => onChange('paragraph_size', value)}
+                  onValueChange={([value]) => onChange("paragraph_size", value)}
                   max={100}
                   step={1}
                 />
@@ -605,10 +759,12 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
 
               {/* Velocidade de Resposta */}
               <div className="space-y-3">
-                <Label>Velocidade de Resposta: {chatbotData.response_speed || 50}%</Label>
+                <Label>
+                  Velocidade de Resposta: {chatbotData.response_speed || 50}%
+                </Label>
                 <Slider
                   value={[chatbotData.response_speed || 50]}
-                  onValueChange={([value]) => onChange('response_speed', value)}
+                  onValueChange={([value]) => onChange("response_speed", value)}
                   max={100}
                   step={1}
                 />
@@ -621,10 +777,15 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
 
               {/* Frequência de Uso do Nome */}
               <div className="space-y-3">
-                <Label>Frequência de Uso do Nome: {chatbotData.name_usage_frequency || 30}%</Label>
+                <Label>
+                  Frequência de Uso do Nome:{" "}
+                  {chatbotData.name_usage_frequency || 30}%
+                </Label>
                 <Slider
                   value={[chatbotData.name_usage_frequency || 30]}
-                  onValueChange={([value]) => onChange('name_usage_frequency', value)}
+                  onValueChange={([value]) =>
+                    onChange("name_usage_frequency", value)
+                  }
                   max={100}
                   step={1}
                 />
@@ -642,14 +803,14 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   <Input
                     id="chat_color"
                     type="color"
-                    value={chatbotData.chat_color || '#3b82f6'}
-                    onChange={(e) => onChange('chat_color', e.target.value)}
+                    value={chatbotData.chat_color || "#3b82f6"}
+                    onChange={(e) => onChange("chat_color", e.target.value)}
                     className="w-16 h-10 p-1 edit-form-input"
                     style={borderStyle}
                   />
                   <Input
-                    value={chatbotData.chat_color || '#3b82f6'}
-                    onChange={(e) => onChange('chat_color', e.target.value)}
+                    value={chatbotData.chat_color || "#3b82f6"}
+                    onChange={(e) => onChange("chat_color", e.target.value)}
                     className="edit-form-input"
                     style={borderStyle}
                     placeholder="#3b82f6"
@@ -662,70 +823,104 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <Label>Solicitar Nome</Label>
-                    <p className="text-xs text-muted-foreground">Pede nome se não informado</p>
+                    <p className="text-xs text-muted-foreground">
+                      Pede nome se não informado
+                    </p>
                   </div>
                   <Switch
                     checked={chatbotData.ask_for_name || false}
-                    onCheckedChange={(checked) => onChange('ask_for_name', checked)}
+                    onCheckedChange={(checked) =>
+                      onChange("ask_for_name", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <Label>Lembrar Contexto</Label>
-                    <p className="text-xs text-muted-foreground">Mantém histórico da conversa</p>
+                    <p className="text-xs text-muted-foreground">
+                      Mantém histórico da conversa
+                    </p>
                   </div>
                   <Switch
                     checked={chatbotData.remember_context || false}
-                    onCheckedChange={(checked) => onChange('remember_context', checked)}
+                    onCheckedChange={(checked) =>
+                      onChange("remember_context", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <Label>Auto-Link</Label>
-                    <p className="text-xs text-muted-foreground">Inclui links automaticamente</p>
+                    <p className="text-xs text-muted-foreground">
+                      Inclui links automaticamente
+                    </p>
                   </div>
                   <Switch
                     checked={chatbotData.auto_link || false}
-                    onCheckedChange={(checked) => onChange('auto_link', checked)}
+                    onCheckedChange={(checked) =>
+                      onChange("auto_link", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
                     <Label>Modo Debug</Label>
-                    <p className="text-xs text-muted-foreground">Mostra fontes das respostas</p>
+                    <p className="text-xs text-muted-foreground">
+                      Mostra fontes das respostas
+                    </p>
                   </div>
                   <Switch
                     checked={chatbotData.debug_mode || false}
-                    onCheckedChange={(checked) => onChange('debug_mode', checked)}
+                    onCheckedChange={(checked) =>
+                      onChange("debug_mode", checked)
+                    }
                   />
                 </div>
               </div>
 
               {/* Saudação para Usuários Retornantes */}
               <div>
-                <Label htmlFor="returning_user_greeting">Saudação para Usuários Retornantes</Label>
+                <Label htmlFor="returning_user_greeting">
+                  Saudação para Usuários Retornantes
+                </Label>
                 <Textarea
                   id="returning_user_greeting"
-                  value={chatbotData.returning_user_greeting || ''}
-                  onChange={(e) => onChange('returning_user_greeting', e.target.value)}
+                  value={chatbotData.returning_user_greeting || ""}
+                  onChange={(e) =>
+                    onChange("returning_user_greeting", e.target.value)
+                  }
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   rows={2}
                   placeholder="Olá novamente! Como posso ajudar hoje?"
                 />
               </div>
-
             </CardContent>
           </Card>
         )}
 
+        {/* Tab: Rodapé */}
+        {activeTab === "dataFiles" && (
+          <Card className="bg-transparent border border-border backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Anexos
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Componente de Upload de Documentos */}
+              <DocumentUpload />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Botões de Ação */}
         <div className="flex justify-end space-x-3 pt-4">
-          <Button 
+          <Button
             type="button"
             variant="outline"
             onClick={onCancel}
@@ -733,14 +928,10 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
           >
             Cancelar
           </Button>
-          <Button 
-            type="submit"
-            disabled={isSaving}
-          >
+          <Button type="submit" disabled={isSaving}>
             {isSaving ? "Salvando..." : "Salvar Configurações"}
           </Button>
         </div>
-
       </form>
     </div>
   );
