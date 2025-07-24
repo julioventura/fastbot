@@ -4,19 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-interface ChatbotData {
-  system_message: string;
-  office_address: string;
-  office_hours: string;
-  specialties: string;
-  chatbot_name: string;
-  welcome_message: string;
-  whatsapp: string;
-}
+import { BaseChatbotData } from "@/interfaces";
 
 interface EditChatbotConfigProps {
-  chatbotData: ChatbotData;
+  chatbotData: BaseChatbotData;
   isSaving: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -83,13 +74,13 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
             />
           </div>
           
-          {/* Campo Mensagem de Sistema (Prompt) */}
+          {/* Campo de instruções gerais para o system_message */}
           <div>
-            <Label htmlFor="system_message" className="text-foreground">Instruções Gerais do Chatbot</Label>
+            <Label htmlFor="system_instructions" className="text-foreground">Instruções Gerais do Chatbot</Label>
             <Textarea
-              id="system_message"
-              name="system_message"
-              value={chatbotData.system_message}
+              id="system_instructions"
+              name="system_instructions"
+              value={chatbotData.system_instructions}
               onChange={onChange}
               className="text-xl mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary edit-form-input"
               placeholder="Você é um assistente virtual. Seja cordial e ajude com informações sobre..."

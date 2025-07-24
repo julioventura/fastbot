@@ -7,7 +7,7 @@
 Seu browser está usando **JavaScript em cache** com as antigas chamadas da API:
 
 
-- `mychatbot?select=*&user_id=eq.` (deveria ser `mychatbot_2` com `chatbot_user`)
+- `mychatbot?select=*&user_id=eq.` (deveria ser `mychatbot` com `chatbot_user`)
 
 - `profiles?select=name&user_id=eq.` (deveria ser `profiles` com `id`)
 

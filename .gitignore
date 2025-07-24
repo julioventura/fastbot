@@ -15,6 +15,9 @@ dist-ssr
 .env
 .*
 config.toml
+*.cjs
+*.sql
+*.ps1
 
 # Editor directories and files
 .vscode/*

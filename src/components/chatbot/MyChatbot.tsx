@@ -55,6 +55,7 @@ interface Message {
 }
 
 interface ChatbotConfig {
+  system_instructions: string;
   system_message: string;
   office_address: string;
   office_hours: string;
@@ -90,7 +91,7 @@ const MyChatbot = () => {
   /**
    * fetchChatbotConfig
    * Busca as configurações do chatbot do usuário atual no Supabase
-   * Inclui system_message e outras configurações personalizadas
+   * Inclui system_instructions e outras configurações personalizadas
    */
   const fetchChatbotConfig = useCallback(async () => {
     if (!user?.id) return;
@@ -103,7 +104,7 @@ const MyChatbot = () => {
 
     try {
       const { data, error } = await supabase
-        .from('mychatbot_2')
+        .from('mychatbot')
         .select('*')
         .eq('chatbot_user', user.id);
 
@@ -119,8 +120,8 @@ const MyChatbot = () => {
           userId: user.id,
           configFound: true,
           chatbotName: data[0].chatbot_name,
-          hasSystemMessage: !!data[0].system_message,
-          systemMessageLength: data[0].system_message?.length || 0
+          hasSystemMessage: !!data[0].system_instructions,
+          systemMessageLength: data[0].system_instructions?.length || 0
         });
       } else {
         console.log('⚠️ [MyChatbot] Nenhuma configuração encontrada para o usuário:', {
@@ -356,7 +357,7 @@ const MyChatbot = () => {
       }
       
       // 2. Preparar system message personalizado
-      const systemMessage = chatbotConfig?.system_message || 
+      const systemMessage = chatbotConfig?.system_instructions || 
         'Você é um assistente virtual profissional e prestativo.';
       
       console.log('📝 [MyChatbot] System message configurado:', systemMessage.substring(0, 100) + '...');
@@ -461,7 +462,7 @@ const MyChatbot = () => {
         });
         
         // Usar informações dos documentos para gerar resposta personalizada
-        const systemMessage = chatbotConfig?.system_message || 
+        const systemMessage = chatbotConfig?.system_instructions || 
           `Você é um assistente virtual profissional. Use as informações dos documentos abaixo para responder de forma precisa e útil.`;
         
         return generateContextualResponse(userMessage, vectorContext, systemMessage);

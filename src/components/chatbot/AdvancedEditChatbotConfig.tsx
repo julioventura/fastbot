@@ -22,73 +22,9 @@ import {
 } from "@/components/ui/select";
 import { Upload, X, Plus } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
+import { ChatbotData, ChatbotConfigProps } from "@/interfaces";
 
-interface AdvancedChatbotData extends ChatbotData {
-  // Controles de personalidade
-  formality_level?: number; // 0-100
-  use_emojis?: boolean;
-  memorize_user_name?: boolean;
-  paragraph_size?: number; // 0-100
-
-  // Controles de escopo
-  main_topic?: string;
-  allowed_topics?: string[];
-  source_strictness?: number; // 0-100
-  allow_internet_search?: boolean;
-
-  // Controles de comportamento
-  confidence_threshold?: number; // 0-100
-  fallback_action?: "human" | "search" | "link";
-  response_time_promise?: string;
-  fallback_message?: string;
-
-  // Links e documentos
-  main_link?: string;
-  mandatory_link?: boolean;
-  uploaded_documents?: string[];
-  uploaded_images?: string[]; // NOVO: Array de imagens
-  footer_message?: string; // NOVO: Rodapé das mensagens
-
-  // Regras automáticas
-  mandatory_phrases?: string[];
-  auto_link?: boolean;
-  max_list_items?: number;
-  list_style?: "numbered" | "bullets" | "simple";
-
-  // Interação
-  ask_for_name?: boolean;
-  name_usage_frequency?: number; // 0-100
-  remember_context?: boolean;
-  returning_user_greeting?: string;
-
-  // Configurações avançadas
-  response_speed?: number; // 0-100
-  debug_mode?: boolean;
-  chat_color?: string;
-}
-
-interface ChatbotData {
-  system_message: string;
-  office_address: string;
-  office_hours: string;
-  specialties: string;
-  chatbot_name: string;
-  welcome_message: string;
-  whatsapp: string;
-}
-
-interface AdvancedEditChatbotConfigProps {
-  chatbotData: AdvancedChatbotData;
-  isSaving: boolean;
-  onSubmit: (e: React.FormEvent) => void;
-  onChange: (
-    field: string,
-    value: string | number | boolean | string[]
-  ) => void;
-  onCancel: () => void;
-}
-
-const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
+const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   chatbotData,
   isSaving,
   onSubmit,
@@ -230,14 +166,14 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
             <CardContent className="space-y-6">
               {/* System Message */}
               <div>
-                <Label htmlFor="system_message">
+                <Label htmlFor="system_instructions">
                   Instruções Gerais (System Message){" "}
                   <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
-                  id="system_message"
-                  value={chatbotData.system_message}
-                  onChange={(e) => onChange("system_message", e.target.value)}
+                  id="system_instructions"
+                  value={chatbotData.system_instructions}
+                  onChange={(e) => onChange("system_instructions", e.target.value)}
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   rows={6}
@@ -302,8 +238,8 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </div>
 
               {/* Switches */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="w-1/4 space-y-4">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                   <div>
                     <Label>Memorizar Nome do Usuário</Label>
                     <p className="text-xs text-muted-foreground">
@@ -318,7 +254,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                   <div>
                     <Label>Usar Emojis</Label>
                     <p className="text-xs text-muted-foreground">
@@ -611,19 +547,21 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </div>
 
               {/* Switch Link Obrigatório */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <Label>Link Obrigatório nas Respostas</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Inclui o link automaticamente
-                  </p>
+              <div className="w-1/4">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                  <div>
+                    <Label>Link Obrigatório nas Respostas</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Inclui o link automaticamente
+                    </p>
+                  </div>
+                  <Switch
+                    checked={chatbotData.mandatory_link || false}
+                    onCheckedChange={(checked) =>
+                      onChange("mandatory_link", checked)
+                    }
+                  />
                 </div>
-                <Switch
-                  checked={chatbotData.mandatory_link || false}
-                  onCheckedChange={(checked) =>
-                    onChange("mandatory_link", checked)
-                  }
-                />
               </div>
 
               {/* Upload de Imagens */}
@@ -689,19 +627,21 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </div>
 
               {/* Switch Permitir Internet */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <Label>Permitir Busca na Internet</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Quando informações não estiverem nos documentos
-                  </p>
+              <div className="w-1/4">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                  <div>
+                    <Label>Permitir Busca na Internet</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Quando informações não estiverem nos documentos
+                    </p>
+                  </div>
+                  <Switch
+                    checked={chatbotData.allow_internet_search || false}
+                    onCheckedChange={(checked) =>
+                      onChange("allow_internet_search", checked)
+                    }
+                  />
                 </div>
-                <Switch
-                  checked={chatbotData.allow_internet_search || false}
-                  onCheckedChange={(checked) =>
-                    onChange("allow_internet_search", checked)
-                  }
-                />
               </div>
             </CardContent>
           </Card>
@@ -796,8 +736,8 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
               </div>
 
               {/* Switches de Configuração */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="w-1/4 space-y-4">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                   <div>
                     <Label>Solicitar Nome</Label>
                     <p className="text-xs text-muted-foreground">
@@ -812,7 +752,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                   <div>
                     <Label>Lembrar Contexto</Label>
                     <p className="text-xs text-muted-foreground">
@@ -827,7 +767,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                   <div>
                     <Label>Auto-Link</Label>
                     <p className="text-xs text-muted-foreground">
@@ -842,7 +782,7 @@ const AdvancedEditChatbotConfig: React.FC<AdvancedEditChatbotConfigProps> = ({
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                   <div>
                     <Label>Modo Debug</Label>
                     <p className="text-xs text-muted-foreground">

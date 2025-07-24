@@ -6,7 +6,7 @@
 
 **Erro especÃ­fico**: `update or delete on table "users" violates foreign key constraint "mychatbot_usuario_fkey" on table "mychatbot"`
 
-**Causa raiz**: Existe uma tabela `mychatbot` (alÃ©m da `mychatbot_2`) que tambÃ©m referencia `auth.users` atravÃ©s da constraint `mychatbot_usuario_fkey`.
+**Causa raiz**: Existe uma tabela `mychatbot` (alÃ©m da `mychatbot`) que tambÃ©m referencia `auth.users` atravÃ©s da constraint `mychatbot_usuario_fkey`.
 
 
 
@@ -20,7 +20,7 @@
 1. `mychatbot.usuario` â†’ `auth.users.id` (constraint: `mychatbot_usuario_fkey`) âš ï¸ **ESTA ESTAVA FALTANDO**
 
 
-2. `mychatbot_2.chatbot_user` â†’ `auth.users.id` 
+2. `mychatbot.chatbot_user` â†’ `auth.users.id` 
 
 
 3. `profiles.id` â†’ `auth.users.id`
@@ -43,7 +43,7 @@
 ```sql
 -- Ordem COMPLETA de exclusÃ£o:
 -- 1. mychatbot (tabela adicional descoberta) - TENTA MÃšLTIPLOS CAMPOS
--- 2. mychatbot_2 (chatbots do usuÃ¡rio)
+-- 2. mychatbot (chatbots do usuÃ¡rio)
 -- 3. user_roles WHERE granted_by = current_user_id (roles concedidos)
 -- 4. user_roles WHERE user_id = current_user_id (roles possuÃ­dos)  
 -- 5. profiles (perfil do usuÃ¡rio)

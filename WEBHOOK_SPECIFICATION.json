@@ -59,7 +59,7 @@
         "required": true,
         "description": "Prompt/instruções personalizadas do chatbot do usuário (CAMPO PRINCIPAL)",
         "example": "Você é um assistente virtual do Dr. Silva, dentista especialista em ortodontia. Seja cordial, profissional e sempre indique os horários de atendimento quando perguntado.",
-        "note": "Este é o conteúdo do campo system_message da tabela mychatbot_2"
+        "note": "Este é o conteúdo do campo system_message da tabela mychatbot"
       },
       "chatbotConfig": {
         "type": "object",

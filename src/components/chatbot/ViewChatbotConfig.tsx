@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface ChatbotData {
-  system_message: string;
-  office_address: string;
-  office_hours: string;
-  specialties: string;
-  chatbot_name: string;
-  welcome_message: string;
-  whatsapp: string;
-}
+import { BaseChatbotData } from "@/interfaces";
 
 interface ViewChatbotConfigProps {
-  chatbotData: ChatbotData;
+  chatbotData: BaseChatbotData;
 }
 
 const ViewChatbotConfig: React.FC<ViewChatbotConfigProps> = ({ chatbotData }) => {

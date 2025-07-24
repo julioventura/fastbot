@@ -5,7 +5,7 @@
 ## ðŸš¨ Problema Identificado
 
 **Data:** 19/07/2025  
-**Erro:** `GET <https://supabase.cirurgia.com.br/rest/v1/mychatbot_2?select=*&chatbot_user=eq.5e9f5f3d-0cbd-43a7-adfc-a5eead28f69f> 406 (Not Acceptable)`
+**Erro:** `GET <https://supabase.cirurgia.com.br/rest/v1/mychatbot?select=*&chatbot_user=eq.5e9f5f3d-0cbd-43a7-adfc-a5eead28f69f> 406 (Not Acceptable)`
 
 
 
@@ -22,7 +22,7 @@
 
 ### Causa Raiz
 
-As polÃ­ticas RLS (Row Level Security) na tabela `mychatbot_2` estavam bloqueando consultas quando:
+As polÃ­ticas RLS (Row Level Security) na tabela `mychatbot` estavam bloqueando consultas quando:
 
 
 - O usuÃ¡rio nÃ£o possui nenhum registro na tabela
@@ -51,7 +51,7 @@ Criado: `supabase/fix_406_error_complete.sql`
 
 
 ```sql
-CREATE POLICY "Users can view own chatbot data" ON mychatbot_2
+CREATE POLICY "Users can view own chatbot data" ON mychatbot
     FOR SELECT TO authenticated
     USING (auth.uid()::text = chatbot_user);
 
@@ -62,12 +62,12 @@ CREATE POLICY "Users can view own chatbot data" ON mychatbot_2
 
 
 ```sql
-CREATE POLICY "Users can view own chatbot data" ON mychatbot_2
+CREATE POLICY "Users can view own chatbot data" ON mychatbot
     FOR SELECT TO authenticated
     USING (
         auth.uid()::text = chatbot_user 
         OR 
-        NOT EXISTS (SELECT 1 FROM mychatbot_2 WHERE chatbot_user = auth.uid()::text)
+        NOT EXISTS (SELECT 1 FROM mychatbot WHERE chatbot_user = auth.uid()::text)
     );
 
 
@@ -159,12 +159,12 @@ CREATE POLICY "Users can view own chatbot data" ON mychatbot_2
 
 ```sql
 -- Testar polÃ­tica para usuÃ¡rio sem chatbot
-SELECT * FROM mychatbot_2 WHERE chatbot_user = '5e9f5f3d-0cbd-43a7-adfc-a5eead28f69f';
+SELECT * FROM mychatbot WHERE chatbot_user = '5e9f5f3d-0cbd-43a7-adfc-a5eead28f69f';
 
 -- Verificar polÃ­ticas aplicadas
 SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual, with_check
 FROM pg_policies 
-WHERE tablename = 'mychatbot_2';
+WHERE tablename = 'mychatbot';
 
 
 ```
@@ -226,4 +226,4 @@ Para evitar problemas futuros, monitore:
 - Logs do Supabase para erros 406/404
 
 
-- Tempos de resposta das consultas na tabela mychatbot_2
+- Tempos de resposta das consultas na tabela mychatbot

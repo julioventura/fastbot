@@ -59,7 +59,7 @@ const fetchChatbotConfig = useCallback(async () => {
 
   try {
     const { data, error } = await supabase
-      .from('mychatbot_2')
+      .from('mychatbot')
       .select('*')
       .eq('chatbot_user', user.id);
 
@@ -132,7 +132,7 @@ const payload = {
 
 - `fetchChatbotConfig()` é chamado
 
-- Busca dados na tabela `mychatbot_2` onde `chatbot_user = user.id`
+- Busca dados na tabela `mychatbot` onde `chatbot_user = user.id`
 
 
 ### **2. Configuração Carregada**

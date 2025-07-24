@@ -19,7 +19,7 @@
 
 ```sql
 -- Ordem correta de exclusÃ£o:
--- 1. mychatbot_2 (chatbots do usuÃ¡rio)
+-- 1. mychatbot (chatbots do usuÃ¡rio)
 -- 2. user_roles WHERE granted_by = current_user_id (roles que ele concedeu)
 -- 3. user_roles WHERE user_id = current_user_id (roles que ele possui)  
 -- 4. profiles (perfil do usuÃ¡rio)

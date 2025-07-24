@@ -99,6 +99,7 @@ describe('useChatbot Hook', () => {
     it('deve buscar dados existentes do chatbot com sucesso', async () => {
       const mockChatbotData = {
         user_id: 'user-123',
+        system_instructions: 'Instruções específicas do sistema',
         system_message: 'Você é um assistente médico',
         office_address: 'Rua das Flores, 123',
         office_hours: '8h às 18h',

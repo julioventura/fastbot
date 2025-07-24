@@ -6,45 +6,8 @@ import { useToast } from "@/hooks/use-toast";
 import BackgroundDecoration from "@/components/account/BackgroundDecoration";
 import LoadingScreen from "@/components/account/LoadingScreen";
 import AdvancedEditChatbotConfig from "@/components/chatbot/AdvancedEditChatbotConfig";
-
-interface ChatbotData {
-  system_message: string;
-  office_address: string;
-  office_hours: string;
-  specialties: string;
-  chatbot_name: string;
-  welcome_message: string;
-  whatsapp: string;
-  // Novos campos do dashboard avançado
-  formality_level?: number;
-  use_emojis?: boolean;
-  memorize_user_name?: boolean;
-  paragraph_size?: number;
-  main_topic?: string;
-  allowed_topics?: string[];
-  source_strictness?: number;
-  allow_internet_search?: boolean;
-  confidence_threshold?: number;
-  fallback_action?: 'human' | 'search' | 'link';
-  response_time_promise?: string;
-  fallback_message?: string;
-  main_link?: string;
-  mandatory_link?: boolean;
-  uploaded_documents?: string[];
-  uploaded_images?: string[]; // NOVO: Array de imagens
-  footer_message?: string; // NOVO: Rodapé das mensagens
-  mandatory_phrases?: string[];
-  auto_link?: boolean;
-  max_list_items?: number;
-  list_style?: 'numbered' | 'bullets' | 'simple';
-  ask_for_name?: boolean;
-  name_usage_frequency?: number;
-  remember_context?: boolean;
-  returning_user_greeting?: string;
-  response_speed?: number;
-  debug_mode?: boolean;
-  chat_color?: string;
-}
+import { ChatbotData } from "@/interfaces";
+import { generateSystemMessage, validateChatbotData } from "@/lib/chatbot-utils";
 
 const MyChatbotPage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
@@ -52,6 +15,7 @@ const MyChatbotPage: React.FC = () => {
   const { toast } = useToast();
 
   const [chatbotData, setChatbotData] = useState<ChatbotData>({
+    system_instructions: "",
     system_message: "",
     office_address: "",
     office_hours: "",
@@ -90,6 +54,7 @@ const MyChatbotPage: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showSystemMessagePreview, setShowSystemMessagePreview] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -102,7 +67,7 @@ const MyChatbotPage: React.FC = () => {
         try {
           // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
           const { data, error } = await supabase
-            .from("mychatbot_2")
+            .from("mychatbot")
             .select("*")
             .eq("chatbot_user", user.id);
 
@@ -113,6 +78,7 @@ const MyChatbotPage: React.FC = () => {
           // Verificar se há registros
           if (data && data.length > 0) {
             setChatbotData({
+              system_instructions: data[0].system_instructions || "",
               system_message: data[0].system_message || "",
               office_address: data[0].office_address || "",
               office_hours: data[0].office_hours || "",
@@ -153,6 +119,7 @@ const MyChatbotPage: React.FC = () => {
           } else {
             // Nenhum registro encontrado - inicializar com valores padrão
             setChatbotData({
+              system_instructions: "",
               system_message: "Você é um chatbot assistente de IA e atende respondendo com as diretivas e dados desta instrução e dos arquivos anexados à base de dados.",
               office_address: "",
               office_hours: "",
@@ -218,7 +185,7 @@ const MyChatbotPage: React.FC = () => {
     try {
       // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
       const { data: existingData, error: fetchError } = await supabase
-        .from("mychatbot_2")
+        .from("mychatbot")
         .select("id")
         .eq("chatbot_user", user.id);
 
@@ -226,8 +193,14 @@ const MyChatbotPage: React.FC = () => {
         throw fetchError;
       }
 
+      // Gerar system_message automaticamente baseado nos dados preenchidos
+      const generatedSystemMessage = validateChatbotData(chatbotData) 
+        ? generateSystemMessage(chatbotData)
+        : chatbotData.system_message; // Manter o original se não houver dados suficientes
+
       const dataToSave = {
         ...chatbotData,
+        system_message: generatedSystemMessage, // Substituir pelo gerado automaticamente
         chatbot_user: user.id,
         updated_at: new Date().toISOString(),
       };
@@ -237,22 +210,28 @@ const MyChatbotPage: React.FC = () => {
       // Verificar se há registros existentes
       if (existingData && existingData.length > 0) {
         const { error } = await supabase
-          .from("mychatbot_2")
+          .from("mychatbot")
           .update(dataToSave)
           .eq("chatbot_user", user.id);
         supabaseError = error;
       } else {
         const { error } = await supabase
-          .from("mychatbot_2")
+          .from("mychatbot")
           .insert({ ...dataToSave, created_at: new Date().toISOString() });
         supabaseError = error;
       }
       
       if (supabaseError) throw supabaseError;
 
+      // Atualizar o estado local com o system_message gerado
+      setChatbotData(prev => ({
+        ...prev,
+        system_message: generatedSystemMessage
+      }));
+
       toast({
         title: "Sucesso!",
-        description: "Configurações do chatbot salvas.",
+        description: "Configurações do chatbot salvas com system_message gerado automaticamente.",
       });
     } catch (error) {
       console.error("Erro ao salvar dados do chatbot:", error);
@@ -269,6 +248,15 @@ const MyChatbotPage: React.FC = () => {
   const handleCancel = () => {
     // Função mantida para compatibilidade com AdvancedEditChatbotConfig
   };
+
+  const handlePreviewSystemMessage = () => {
+    setShowSystemMessagePreview(!showSystemMessagePreview);
+  };
+
+  // Gerar preview do system_message em tempo real
+  const systemMessagePreview = validateChatbotData(chatbotData) 
+    ? generateSystemMessage(chatbotData)
+    : "Preencha pelo menos um campo para gerar o system_message automaticamente.";
 
   if (authLoading || isLoading) {
     return <LoadingScreen />;
@@ -293,6 +281,29 @@ const MyChatbotPage: React.FC = () => {
       
       <div className="container mx-auto py-10 px-4 relative z-10">
         <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Meu Chatbot</h1>
+        
+        {/* Botão para Preview do System Message */}
+        <div className="mb-6 text-center">
+          <button
+            onClick={handlePreviewSystemMessage}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+          >
+            {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
+          </button>
+        </div>
+
+        {/* Preview do System Message */}
+        {showSystemMessagePreview && (
+          <div className="mb-8 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
+            <h3 className="text-lg font-semibold mb-3">Preview do System Message:</h3>
+            <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded border max-h-96 overflow-y-auto">
+              {systemMessagePreview}
+            </pre>
+            <p className="text-sm text-muted-foreground mt-2">
+              💡 Este será o conteúdo gerado automaticamente para o campo "system_message" ao salvar.
+            </p>
+          </div>
+        )}
         
         <AdvancedEditChatbotConfig
           chatbotData={chatbotData}

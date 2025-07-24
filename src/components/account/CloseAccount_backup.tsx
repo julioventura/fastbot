@@ -14,7 +14,7 @@
       }
       
       // Tentar a nova função ULTIMATE de exclusão
-      console.log('🗑️ Executando exclusão ULTIMATE da conta (trata mychatbot + mychatbot_2 + todas as foreign keys)...');
+      console.log('🗑️ Executando exclusão ULTIMATE da conta (trata mychatbot + mychatbot + todas as foreign keys)...');
       const { data, error } = await supabase.rpc('delete_user_account_ultimate');omponente renderiza um card com opção para fechar/excluir permanentemente a conta do usuário.
 // Inclui um modal de confirmação para evitar exclusões acidentais.
 // Utiliza componentes de UI do shadcn/ui para a estrutura do card, botão e modal.

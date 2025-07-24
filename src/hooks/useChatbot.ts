@@ -1,16 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../integrations/supabase/client';
 import { useAuth } from '../lib/auth/useAuth';
-
-interface ChatbotData {
-  system_message: string;
-  office_address: string;
-  office_hours: string;
-  specialties: string;
-  chatbot_name: string;
-  welcome_message: string;
-  whatsapp: string;
-}
+import { BaseChatbotData } from '@/interfaces';
 
 interface SupabaseError {
   message: string;
@@ -22,7 +13,7 @@ const MAX_RETRIES = 3;
 
 export const useChatbot = () => {
   const { user, initializing } = useAuth();
-  const [chatbotData, setChatbotData] = useState<ChatbotData | null>(null);
+  const [chatbotData, setChatbotData] = useState<BaseChatbotData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fetchAttempted = useRef(false);
@@ -40,7 +31,7 @@ export const useChatbot = () => {
     try {
       // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
       const { data, error: fetchError } = await supabase
-        .from('mychatbot_2')
+        .from('mychatbot')
         .select('*')
         .eq('chatbot_user', user.id);
 
@@ -51,8 +42,8 @@ export const useChatbot = () => {
       // Verificar se encontrou registros
       if (!data || data.length === 0) {
         // Nenhum registro encontrado - criar um novo
-        const newChatbot = {
-          chatbot_user: user.id,
+        const newChatbot: BaseChatbotData = {
+          system_instructions: '',
           system_message: '',
           office_address: '',
           office_hours: '',
@@ -63,8 +54,8 @@ export const useChatbot = () => {
         };
 
         const { data: newData, error: insertError } = await supabase
-          .from('mychatbot_2')
-          .insert([newChatbot])
+          .from('mychatbot')
+          .insert([{ ...newChatbot, chatbot_user: user.id }])
           .select()
           .single();
 
@@ -98,7 +89,7 @@ export const useChatbot = () => {
     }
   }, [user?.id, initializing]);
 
-  const updateChatbotData = async (updates: Partial<ChatbotData>) => {
+  const updateChatbotData = async (updates: Partial<BaseChatbotData>) => {
     if (!user?.id || !chatbotData) return;
 
     setLoading(true);
@@ -106,7 +97,7 @@ export const useChatbot = () => {
 
     try {
       const { data, error: updateError } = await supabase
-        .from('mychatbot_2')
+        .from('mychatbot')
         .update(updates)
         .eq('chatbot_user', user.id)
         .select()

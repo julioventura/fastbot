@@ -54,7 +54,7 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
       }
       
       // Tentar a nova função ULTIMATE de exclusão
-      console.log('🗑️ Executando exclusão ULTIMATE da conta (trata mychatbot + mychatbot_2 + todas as foreign keys)...');
+      console.log('🗑️ Executando exclusão ULTIMATE da conta (trata mychatbot + mychatbot + todas as foreign keys)...');
       const { data, error } = await supabase.rpc('delete_user_account_ultimate');
       
       console.log('📤 Resposta da função delete_user_account_ultimate:', { data, error });

@@ -166,7 +166,7 @@
     {
       "parameters": {
         "operation": "get",
-        "tableId": "mychatbot_2",
+        "tableId": "mychatbot",
         "filters": {
           "conditions": [
             {

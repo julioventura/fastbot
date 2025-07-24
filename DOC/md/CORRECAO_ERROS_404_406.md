@@ -20,7 +20,7 @@
 
 ### 2. **Erro 406 - Supabase**
 
-**Problema:** RLS (Row Level Security) configurado incorretamente na tabela `mychatbot_2` do seu Supabase auto-hosted.
+**Problema:** RLS (Row Level Security) configurado incorretamente na tabela `mychatbot` do seu Supabase auto-hosted.
 
 **Soluções:**
 
