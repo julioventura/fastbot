@@ -173,7 +173,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <Textarea
                   id="system_instructions"
                   value={chatbotData.system_instructions}
-                  onChange={(e) => onChange("system_instructions", e.target.value)}
+                  onChange={(e) =>
+                    onChange("system_instructions", e.target.value)
+                  }
                   className="mt-2 edit-form-input"
                   style={borderStyle}
                   rows={6}
@@ -391,8 +393,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
               {/* Divider para separar seções */}
               <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold mb-4">Regras Automáticas</h3>
-                
+                <h3 className="text-lg font-semibold mb-4">
+                  Regras Automáticas
+                </h3>
+
                 {/* Frases Obrigatórias */}
                 <div className="mb-6">
                   <Label>Frases Obrigatórias (Finalizações)</Label>
@@ -564,9 +568,66 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 </div>
               </div>
 
+              {/* Switch Permitir Internet */}
+              <div className="w-1/4">
+                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                  <div>
+                    <Label>Permitir Busca na Internet</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Quando informações não estiverem nos documentos
+                    </p>
+                  </div>
+                  <Switch
+                    checked={chatbotData.allow_internet_search || false}
+                    onCheckedChange={(checked) =>
+                      onChange("allow_internet_search", checked)
+                    }
+                  />
+                </div>
+              </div>
+
+            </CardContent>
+
+            <CardContent className="space-y-0">
+
               {/* Upload de Imagens */}
-              <div>
+
+              {/* Lista de imagens anexadas */}
+              <div className="flex items-center justify-between p-4 border border-gray-600 rounded-t-lg">
                 <Label>Imagens Anexadas</Label>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border border-gray-600 rounded-b-lg">
+                {(chatbotData.uploaded_images || []).length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    {(chatbotData.uploaded_images || []).map((image, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-2 border rounded"
+                      >
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={image}
+                            alt={`Imagem ${index + 1}`}
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                          <span className="text-sm">Imagem {index + 1}</span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeUploadedImage(index)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Upload de imagens */}
+
                 <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center">
                   <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground mb-2">
@@ -595,55 +656,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     onChange={(e) => handleImageUpload(e)}
                   />
                 </div>
-
-                {/* Lista de imagens anexadas */}
-                {(chatbotData.uploaded_images || []).length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    {(chatbotData.uploaded_images || []).map((image, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-2 border rounded"
-                      >
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={image}
-                            alt={`Imagem ${index + 1}`}
-                            className="w-8 h-8 object-cover rounded"
-                          />
-                          <span className="text-sm">Imagem {index + 1}</span>
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeUploadedImage(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Switch Permitir Internet */}
-              <div className="w-1/4">
-                <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
-                  <div>
-                    <Label>Permitir Busca na Internet</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Quando informações não estiverem nos documentos
-                    </p>
-                  </div>
-                  <Switch
-                    checked={chatbotData.allow_internet_search || false}
-                    onCheckedChange={(checked) =>
-                      onChange("allow_internet_search", checked)
-                    }
-                  />
-                </div>
               </div>
             </CardContent>
+
           </Card>
         )}
 
