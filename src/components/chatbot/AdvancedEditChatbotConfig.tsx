@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -20,9 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, Plus } from "lucide-react";
+import { Upload, X, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 import { ChatbotData, ChatbotConfigProps } from "@/interfaces";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   chatbotData,
@@ -33,6 +39,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 }) => {
   const [isDark, setIsDark] = useState(false);
   const [activeTab, setActiveTab] = useState("identity");
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImageIndex, setPreviewImageIndex] = useState<number>(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -127,6 +136,53 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     images.splice(index, 1);
     onChange("uploaded_images", images);
   };
+
+  // Funções para preview de imagem
+  const openImagePreview = (imageSrc: string) => {
+    const imageIndex = (chatbotData.uploaded_images || []).indexOf(imageSrc);
+    setPreviewImage(imageSrc);
+    setPreviewImageIndex(imageIndex);
+    setIsPreviewOpen(true);
+  };
+
+  const closeImagePreview = useCallback(() => {
+    setIsPreviewOpen(false);
+    setPreviewImage(null);
+    setPreviewImageIndex(0);
+  }, []);
+
+  const navigateImage = useCallback((direction: 'prev' | 'next') => {
+    const images = chatbotData.uploaded_images || [];
+    if (images.length <= 1) return;
+
+    let newIndex = previewImageIndex;
+    if (direction === 'prev') {
+      newIndex = previewImageIndex > 0 ? previewImageIndex - 1 : images.length - 1;
+    } else {
+      newIndex = previewImageIndex < images.length - 1 ? previewImageIndex + 1 : 0;
+    }
+
+    setPreviewImageIndex(newIndex);
+    setPreviewImage(images[newIndex]);
+  }, [chatbotData.uploaded_images, previewImageIndex]);
+
+  // Suporte a teclado para navegação
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (!isPreviewOpen) return;
+
+      if (event.key === 'ArrowLeft') {
+        navigateImage('prev');
+      } else if (event.key === 'ArrowRight') {
+        navigateImage('next');
+      } else if (event.key === 'Escape') {
+        closeImagePreview();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [isPreviewOpen, navigateImage, closeImagePreview]);
 
   return (
     <div className="space-y-6">
@@ -609,7 +665,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           <img
                             src={image}
                             alt={`Imagem ${index + 1}`}
-                            className="w-8 h-8 object-cover rounded"
+                            className="w-20 h-20 object-cover rounded cursor-pointer transition-opacity hover:opacity-80"
+                            onClick={() => openImagePreview(image)}
+                            title="Clique para visualizar em tamanho maior"
                           />
                           <span className="text-sm">Imagem {index + 1}</span>
                         </div>
@@ -862,6 +920,65 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           </Button>
         </div>
       </form>
+
+      {/* Modal de Preview de Imagem */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle>
+              Preview da Imagem {(chatbotData.uploaded_images || []).length > 1 && 
+                `(${previewImageIndex + 1} de ${(chatbotData.uploaded_images || []).length})`
+              }
+            </DialogTitle>
+          </DialogHeader>
+          <div className="relative">
+            <div className="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              {previewImage && (
+                <img
+                  src={previewImage}
+                  alt="Preview da imagem"
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg"
+                  style={{ maxWidth: '100%', height: 'auto' }}
+                />
+              )}
+            </div>
+            
+            {/* Botões de navegação */}
+            {(chatbotData.uploaded_images || []).length > 1 && (
+              <>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2"
+                  onClick={() => navigateImage('prev')}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  onClick={() => navigateImage('next')}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+          </div>
+          
+          <div className="flex justify-between items-center pt-4">
+            <p className="text-sm text-muted-foreground">
+              {(chatbotData.uploaded_images || []).length > 1 
+                ? "Use as setas ou clique fora da imagem para fechar" 
+                : "Clique fora da imagem ou no botão para fechar"
+              }
+            </p>
+            <Button variant="outline" onClick={closeImagePreview}>
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
