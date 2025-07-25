@@ -26,7 +26,6 @@ const MyChatbotPage: React.FC = () => {
     // Valores padrão dos novos campos
     formality_level: 50,
     use_emojis: false,
-    memorize_user_name: false,
     paragraph_size: 50,
     main_topic: "",
     allowed_topics: [],
@@ -89,7 +88,6 @@ const MyChatbotPage: React.FC = () => {
               // Campos avançados
               formality_level: data[0].formality_level || 50,
               use_emojis: data[0].use_emojis || false,
-              memorize_user_name: data[0].memorize_user_name || false,
               paragraph_size: data[0].paragraph_size || 50,
               main_topic: data[0].main_topic || "",
               allowed_topics: data[0].allowed_topics || [],
@@ -130,7 +128,6 @@ const MyChatbotPage: React.FC = () => {
               // Valores padrão para campos avançados
               formality_level: 50,
               use_emojis: false,
-              memorize_user_name: false,
               paragraph_size: 50,
               main_topic: "",
               allowed_topics: [],

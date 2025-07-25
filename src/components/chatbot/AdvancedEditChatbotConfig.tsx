@@ -312,20 +312,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
                   {/* Switches */}
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
-                      <div>
-                        <Label>Memorizar Nome do Usuário</Label>
-                        <p className="text-xs text-muted-foreground">
-                          Personaliza respostas com o nome
-                        </p>
-                      </div>
-                      <Switch
-                        checked={chatbotData.memorize_user_name || false}
-                        onCheckedChange={(checked) =>
-                          onChange("memorize_user_name", checked)
-                        }
-                      />
-                    </div>
+
 
                     <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                       <div>

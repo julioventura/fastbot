@@ -45,9 +45,6 @@ export function generateSystemMessage(data: ChatbotData): string {
   if (data.formality_level !== undefined && data.formality_level !== null) {
     personalityItems.push(`- Nível de Formalidade (0-100): ${data.formality_level}`);
   }
-  if (data.memorize_user_name !== undefined && data.memorize_user_name !== null) {
-    personalityItems.push(`- Memorizar nome do usuário: ${data.memorize_user_name ? 'Sim' : 'Não'}`);
-  }
   if (data.use_emojis !== undefined && data.use_emojis !== null) {
     personalityItems.push(`- Uso de emojis nas mensagens: ${data.use_emojis ? 'Sim' : 'Não'}`);
   }

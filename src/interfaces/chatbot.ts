@@ -28,7 +28,6 @@ export interface ChatbotData extends BaseChatbotData {
   // Controles de personalidade
   formality_level?: number; // 0-100
   use_emojis?: boolean;
-  memorize_user_name?: boolean;
   paragraph_size?: number; // 0-100
 
   // Controles de escopo

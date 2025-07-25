@@ -16,7 +16,6 @@ describe('chatbot-utils', () => {
         whatsapp: "11999999999",
         formality_level: 80,
         use_emojis: true,
-        memorize_user_name: true,
         paragraph_size: 60,
         main_topic: "Saúde e Medicina",
         allowed_topics: ["Cardiologia", "Clínica Geral"],
