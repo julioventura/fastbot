@@ -151,37 +151,42 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     setPreviewImageIndex(0);
   }, []);
 
-  const navigateImage = useCallback((direction: 'prev' | 'next') => {
-    const images = chatbotData.uploaded_images || [];
-    if (images.length <= 1) return;
+  const navigateImage = useCallback(
+    (direction: "prev" | "next") => {
+      const images = chatbotData.uploaded_images || [];
+      if (images.length <= 1) return;
 
-    let newIndex = previewImageIndex;
-    if (direction === 'prev') {
-      newIndex = previewImageIndex > 0 ? previewImageIndex - 1 : images.length - 1;
-    } else {
-      newIndex = previewImageIndex < images.length - 1 ? previewImageIndex + 1 : 0;
-    }
+      let newIndex = previewImageIndex;
+      if (direction === "prev") {
+        newIndex =
+          previewImageIndex > 0 ? previewImageIndex - 1 : images.length - 1;
+      } else {
+        newIndex =
+          previewImageIndex < images.length - 1 ? previewImageIndex + 1 : 0;
+      }
 
-    setPreviewImageIndex(newIndex);
-    setPreviewImage(images[newIndex]);
-  }, [chatbotData.uploaded_images, previewImageIndex]);
+      setPreviewImageIndex(newIndex);
+      setPreviewImage(images[newIndex]);
+    },
+    [chatbotData.uploaded_images, previewImageIndex]
+  );
 
   // Suporte a teclado para navegação
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (!isPreviewOpen) return;
 
-      if (event.key === 'ArrowLeft') {
-        navigateImage('prev');
-      } else if (event.key === 'ArrowRight') {
-        navigateImage('next');
-      } else if (event.key === 'Escape') {
+      if (event.key === "ArrowLeft") {
+        navigateImage("prev");
+      } else if (event.key === "ArrowRight") {
+        navigateImage("next");
+      } else if (event.key === "Escape") {
         closeImagePreview();
       }
     };
 
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
   }, [isPreviewOpen, navigateImage, closeImagePreview]);
 
   return (
@@ -289,11 +294,15 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <div className="space-y-6">
                   {/* Saudação Personalizada */}
                   <div>
-                    <Label htmlFor="welcome_message">Mensagem de Saudação</Label>
+                    <Label htmlFor="welcome_message">
+                      Mensagem de Saudação
+                    </Label>
                     <Textarea
                       id="welcome_message"
                       value={chatbotData.welcome_message}
-                      onChange={(e) => onChange("welcome_message", e.target.value)}
+                      onChange={(e) =>
+                        onChange("welcome_message", e.target.value)
+                      }
                       className="mt-2 edit-form-input"
                       style={borderStyle}
                       rows={3}
@@ -367,35 +376,38 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   {/* Temas Permitidos */}
                   <div>
                     <Label>Temas Permitidos</Label>
-                    
+
                     {/* Lista de temas com destaque */}
                     {(chatbotData.allowed_topics || []).length > 0 ? (
                       <div className="grid grid-cols-1 gap-2 mt-4 mb-4">
-                        {(chatbotData.allowed_topics || []).map((topic, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between p-3 border border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
-                          >
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate pr-2">
-                              {topic}
-                            </span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeTopic(index)}
-                              className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
-                              title={`Remover tema: ${topic}`}
+                        {(chatbotData.allowed_topics || []).map(
+                          (topic, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 border border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
                             >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        ))}
+                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate pr-2">
+                                {topic}
+                              </span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeTopic(index)}
+                                className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+                                title={`Remover tema: ${topic}`}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )
+                        )}
                       </div>
                     ) : (
                       <div className="mt-4 mb-4 p-4 border border-dashed border-gray-400 rounded-lg text-center">
                         <p className="text-sm text-muted-foreground">
-                          Nenhum tema adicionado ainda. Use o campo abaixo para adicionar temas permitidos.
+                          Nenhum tema adicionado ainda. Use o campo abaixo para
+                          adicionar temas permitidos.
                         </p>
                       </div>
                     )}
@@ -414,12 +426,15 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         className="edit-form-input"
                         style={borderStyle}
                       />
-                      <Button 
-                        type="button" 
-                        size="sm" 
+                      <Button
+                        type="button"
+                        size="sm"
                         variant="outline"
                         onClick={(e) => {
-                          const input = e.currentTarget.parentElement?.querySelector('input');
+                          const input =
+                            e.currentTarget.parentElement?.querySelector(
+                              "input"
+                            );
                           if (input && input.value.trim()) {
                             addTopic(input.value);
                             input.value = "";
@@ -431,47 +446,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     </div>
                   </div>
 
-                  {/* Rigidez nas Fontes */}
-                  <div className="space-y-3">
-                    <Label>
-                      Rigidez nas Fontes: {chatbotData.source_strictness || 50}%
-                    </Label>
-                    <Slider
-                      value={[chatbotData.source_strictness || 50]}
-                      onValueChange={([value]) =>
-                        onChange("source_strictness", value)
-                      }
-                      max={100}
-                      step={1}
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Flexível</span>
-                      <span>Apenas documentos</span>
-                    </div>
-                  </div>
-
-                  {/* Confiança Mínima */}
-                  <div className="space-y-3">
-                    <Label>
-                      Confiança Mínima para Resposta:{" "}
-                      {chatbotData.confidence_threshold || 70}%
-                    </Label>
-                    <Slider
-                      value={[chatbotData.confidence_threshold || 70]}
-                      onValueChange={([value]) =>
-                        onChange("confidence_threshold", value)
-                      }
-                      max={100}
-                      step={1}
-                    />
-                  </div>
-
                   {/* Ação quando não souber */}
                   <div>
                     <Label>Ação quando não souber responder</Label>
                     <Select
                       value={chatbotData.fallback_action || "human"}
-                      onValueChange={(value) => onChange("fallback_action", value)}
+                      onValueChange={(value) =>
+                        onChange("fallback_action", value)
+                      }
                     >
                       <SelectTrigger className="mt-2">
                         <SelectValue />
@@ -480,12 +462,57 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         <SelectItem value="human">
                           Encaminhar para humano
                         </SelectItem>
-                        <SelectItem value="search">Sugerir busca manual</SelectItem>
+                        <SelectItem value="search">
+                          Sugerir busca manual
+                        </SelectItem>
                         <SelectItem value="link">
                           Direcionar para link oficial
                         </SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  {/* Estilo de Listas */}
+                  <div className="mb-6">
+                    <Label>Estilo de Listas</Label>
+                    <Select
+                      value={chatbotData.list_style || "numbered"}
+                      onValueChange={(value) => onChange("list_style", value)}
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="numbered">
+                          Numerada (1, 2, 3...)
+                        </SelectItem>
+                        <SelectItem value="bullets">
+                          Com bullets (• • •)
+                        </SelectItem>
+                        <SelectItem value="simple">
+                          Simples (sem marcadores)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Máximo de Itens */}
+                  <div>
+                    <Label htmlFor="max_list_items">
+                      Máximo de Itens por Lista
+                    </Label>
+                    <Input
+                      id="max_list_items"
+                      type="number"
+                      value={chatbotData.max_list_items || 10}
+                      onChange={(e) =>
+                        onChange("max_list_items", parseInt(e.target.value))
+                      }
+                      className="mt-2 edit-form-input"
+                      style={borderStyle}
+                      min="1"
+                      max="50"
+                    />
                   </div>
                 </div>
 
@@ -569,46 +596,21 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       />
                     </div>
 
-                    {/* Estilo de Listas */}
-                    <div className="mb-6">
-                      <Label>Estilo de Listas</Label>
-                      <Select
-                        value={chatbotData.list_style || "numbered"}
-                        onValueChange={(value) => onChange("list_style", value)}
-                      >
-                        <SelectTrigger className="mt-2">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="numbered">
-                            Numerada (1, 2, 3...)
-                          </SelectItem>
-                          <SelectItem value="bullets">
-                            Com bullets (• • •)
-                          </SelectItem>
-                          <SelectItem value="simple">
-                            Simples (sem marcadores)
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Máximo de Itens */}
+                    {/* Saudação para Usuários Retornantes */}
                     <div>
-                      <Label htmlFor="max_list_items">
-                        Máximo de Itens por Lista
+                      <Label htmlFor="returning_user_greeting">
+                        Saudação para Usuários Retornantes
                       </Label>
-                      <Input
-                        id="max_list_items"
-                        type="number"
-                        value={chatbotData.max_list_items || 10}
+                      <Textarea
+                        id="returning_user_greeting"
+                        value={chatbotData.returning_user_greeting || ""}
                         onChange={(e) =>
-                          onChange("max_list_items", parseInt(e.target.value))
+                          onChange("returning_user_greeting", e.target.value)
                         }
                         className="mt-2 edit-form-input"
                         style={borderStyle}
-                        min="1"
-                        max="50"
+                        rows={2}
+                        placeholder="Olá novamente! Como posso ajudar hoje?"
                       />
                     </div>
                   </div>
@@ -627,14 +629,17 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Coluna Esquerda */}
-                <div className="space-y-6">
+                {/* <div className="space-y-6 border p-4 border-gray-600 rounded-lg"> */}
+                <div className="space-y-6 border p-4">
                   {/* Rodapé das mensagens */}
                   <div>
                     <Label htmlFor="footer_message">Rodapé das mensagens</Label>
                     <Textarea
                       id="footer_message"
                       value={chatbotData.footer_message || ""}
-                      onChange={(e) => onChange("footer_message", e.target.value)}
+                      onChange={(e) =>
+                        onChange("footer_message", e.target.value)
+                      }
                       className="mt-2 edit-form-input"
                       style={borderStyle}
                       placeholder="Texto que aparecerá no final de cada mensagem do chatbot..."
@@ -654,120 +659,145 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       placeholder="https://Dentistas.com.br"
                     />
                   </div>
+
+                  {/* Switch Link Obrigatório */}
+                  <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                    <div>
+                      <Label>Link Obrigatório nas Respostas</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Inclui o link automaticamente
+                      </p>
+                    </div>
+                    <Switch
+                      checked={chatbotData.mandatory_link || false}
+                      onCheckedChange={(checked) =>
+                        onChange("mandatory_link", checked)
+                      }
+                    />
+                  </div>
+
+                  {/* Switch Permitir Internet */}
+                  <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                    <div>
+                      <Label>Permitir Busca na Internet</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Quando informações não estiverem nos documentos
+                      </p>
+                    </div>
+                    <Switch
+                      checked={chatbotData.allow_internet_search || false}
+                      onCheckedChange={(checked) =>
+                        onChange("allow_internet_search", checked)
+                      }
+                    />
+                  </div>
                 </div>
 
                 {/* Coluna Direita */}
                 <div className="space-y-6">
-                  {/* Switch Link Obrigatório */}
-                  <div>
-                    <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
-                      <div>
-                        <Label>Link Obrigatório nas Respostas</Label>
-                        <p className="text-xs text-muted-foreground">
-                          Inclui o link automaticamente
-                        </p>
-                      </div>
-                      <Switch
-                        checked={chatbotData.mandatory_link || false}
-                        onCheckedChange={(checked) =>
-                          onChange("mandatory_link", checked)
-                        }
-                      />
-                    </div>
-                  </div>
+                  {/* Imagens Anexadas */}
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">
+                        Imagens Anexadas
+                      </h3>
 
-                  {/* Switch Permitir Internet */}
-                  <div>
-                    <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
-                      <div>
-                        <Label>Permitir Busca na Internet</Label>
-                        <p className="text-xs text-muted-foreground">
-                          Quando informações não estiverem nos documentos
-                        </p>
-                      </div>
-                      <Switch
-                        checked={chatbotData.allow_internet_search || false}
-                        onCheckedChange={(checked) =>
-                          onChange("allow_internet_search", checked)
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-
-            <CardContent className="space-y-0">
-              {/* Upload de Imagens */}
-
-              {/* Lista de imagens anexadas */}
-              <div className="flex items-center justify-between p-4 border border-gray-600 rounded-t-lg">
-                <Label>Imagens Anexadas</Label>
-              </div>
-
-              <div className="flex items-center justify-between p-4 border border-gray-600 rounded-b-lg">
-                {(chatbotData.uploaded_images || []).length > 0 && (
-                  <div className="mt-4 space-y-2">
-                    {(chatbotData.uploaded_images || []).map((image, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-2 border rounded"
-                      >
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={image}
-                            alt={`Imagem ${index + 1}`}
-                            className="w-20 h-20 object-cover rounded cursor-pointer transition-opacity hover:opacity-80"
-                            onClick={() => openImagePreview(image)}
-                            title="Clique para visualizar em tamanho maior"
-                          />
-                          <span className="text-sm">Imagem {index + 1}</span>
+                      {/* Lista de imagens anexadas */}
+                      <div className="border border-gray-600 rounded-lg">
+                        <div className="flex items-center justify-between p-4 border-b border-gray-600">
+                          <Label className="font-medium">
+                            Imagens do Chatbot
+                          </Label>
+                          <span className="text-sm text-muted-foreground">
+                            {(chatbotData.uploaded_images || []).length}{" "}
+                            imagem(ns)
+                          </span>
                         </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeUploadedImage(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
 
-                {/* Upload de imagens */}
-                <div className="mt-2 border-2 border-dashed border-border rounded-lg p-6 text-center">
-                  <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Arraste imagens ou clique para selecionar
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Suportados: .png, .jpg, .jpeg, .gif
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                    onClick={() =>
-                      document.getElementById("image-upload")?.click()
-                    }
-                  >
-                    Selecionar Imagens
-                  </Button>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    multiple
-                    accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/jpg,image/gif"
-                    style={{ display: "none" }}
-                    onChange={(e) => handleImageUpload(e)}
-                  />
+                        <div className="p-4">
+                          {(chatbotData.uploaded_images || []).length > 0 ? (
+                            <div className="space-y-3">
+                              {(chatbotData.uploaded_images || []).map(
+                                (image, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center justify-between p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/30"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <img
+                                        src={image}
+                                        alt={`Imagem ${index + 1}`}
+                                        className="w-12 h-12 object-cover rounded cursor-pointer transition-opacity hover:opacity-80"
+                                        onClick={() => openImagePreview(image)}
+                                        title="Clique para visualizar em tamanho maior"
+                                      />
+                                      <div>
+                                        <span className="text-sm font-medium">
+                                          Imagem {index + 1}
+                                        </span>
+                                        <p className="text-xs text-muted-foreground">
+                                          Clique na miniatura para ampliar
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => removeUploadedImage(index)}
+                                      className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
+                                      title="Remover imagem"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-center py-8">
+                              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                              <p className="text-sm text-muted-foreground mb-4">
+                                Nenhuma imagem anexada ainda
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Upload de imagens */}
+                          <div className="mt-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                            <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                            <p className="text-sm text-muted-foreground mb-2">
+                              Arraste imagens ou clique para selecionar
+                            </p>
+                            <p className="text-xs text-muted-foreground mb-3">
+                              Suportados: .png, .jpg, .jpeg, .gif
+                            </p>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                document.getElementById("image-upload")?.click()
+                              }
+                            >
+                              Selecionar Imagens
+                            </Button>
+                            <input
+                              id="image-upload"
+                              type="file"
+                              multiple
+                              accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/jpg,image/gif"
+                              style={{ display: "none" }}
+                              onChange={(e) => handleImageUpload(e)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
-
           </Card>
         )}
 
@@ -786,11 +816,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   {/* Tamanho dos Parágrafos */}
                   <div className="space-y-3">
                     <Label>
-                      Tamanho dos Parágrafos: {chatbotData.paragraph_size || 50}%
+                      Tamanho dos Parágrafos: {chatbotData.paragraph_size || 50}
+                      %
                     </Label>
                     <Slider
                       value={[chatbotData.paragraph_size || 50]}
-                      onValueChange={([value]) => onChange("paragraph_size", value)}
+                      onValueChange={([value]) =>
+                        onChange("paragraph_size", value)
+                      }
                       max={100}
                       step={1}
                     />
@@ -804,11 +837,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   {/* Velocidade de Resposta */}
                   <div className="space-y-3">
                     <Label>
-                      Velocidade de Resposta: {chatbotData.response_speed || 50}%
+                      Velocidade de Resposta: {chatbotData.response_speed || 50}
+                      %
                     </Label>
                     <Slider
                       value={[chatbotData.response_speed || 50]}
-                      onValueChange={([value]) => onChange("response_speed", value)}
+                      onValueChange={([value]) =>
+                        onChange("response_speed", value)
+                      }
                       max={100}
                       step={1}
                     />
@@ -860,24 +896,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         placeholder="#3b82f6"
                       />
                     </div>
-                  </div>
-
-                  {/* Saudação para Usuários Retornantes */}
-                  <div>
-                    <Label htmlFor="returning_user_greeting">
-                      Saudação para Usuários Retornantes
-                    </Label>
-                    <Textarea
-                      id="returning_user_greeting"
-                      value={chatbotData.returning_user_greeting || ""}
-                      onChange={(e) =>
-                        onChange("returning_user_greeting", e.target.value)
-                      }
-                      className="mt-2 edit-form-input"
-                      style={borderStyle}
-                      rows={2}
-                      placeholder="Olá novamente! Como posso ajudar hoje?"
-                    />
                   </div>
                 </div>
 
@@ -951,15 +969,80 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           </Card>
         )}
 
-        {/* Tab: Rodapé */}
+        {/* Tab: Anexos */}
         {activeTab === "dataFiles" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">Anexos</CardTitle>
+              <CardDescription>
+                Gerencie documentos e imagens para enriquecer as respostas do
+                chatbot
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Componente de Upload de Documentos */}
-              <DocumentUpload />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Coluna Esquerda - Upload de Documentos */}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">
+                      Documentos de Texto
+                    </h3>
+                    <DocumentUpload />
+                  </div>
+                </div>
+
+                {/* Coluna Direita - Configurações de Fonte */}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">
+                      Documentos de Texto
+                    </h3>
+
+                    <div className=" justify-between p-4 border border-gray-600 rounded-lg">
+
+                      {/* Rigidez nas Fontes */}
+                      <div className="space-y-3">
+                        <Label>
+                          Rigidez nas Fontes:{" "}
+                          {chatbotData.source_strictness || 50}%
+                        </Label>
+                        <Slider
+                          value={[chatbotData.source_strictness || 50]}
+                          onValueChange={([value]) =>
+                            onChange("source_strictness", value)
+                          }
+                          max={100}
+                          step={1}
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Flexível</span>
+                          <span>Apenas documentos</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        {/* Confiança Mínima */}
+                        <div className="space-y-3">
+                          <Label>
+                            Confiança Mínima para Resposta:{" "}
+                            {chatbotData.confidence_threshold || 70}%
+                          </Label>
+                          <Slider
+                            value={[chatbotData.confidence_threshold || 70]}
+                            onValueChange={([value]) =>
+                              onChange("confidence_threshold", value)
+                            }
+                            max={100}
+                            step={1}
+                          />
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -985,9 +1068,11 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
           <DialogHeader>
             <DialogTitle>
-              Preview da Imagem {(chatbotData.uploaded_images || []).length > 1 && 
-                `(${previewImageIndex + 1} de ${(chatbotData.uploaded_images || []).length})`
-              }
+              Preview da Imagem{" "}
+              {(chatbotData.uploaded_images || []).length > 1 &&
+                `(${previewImageIndex + 1} de ${
+                  (chatbotData.uploaded_images || []).length
+                })`}
             </DialogTitle>
           </DialogHeader>
           <div className="relative">
@@ -997,11 +1082,11 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   src={previewImage}
                   alt="Preview da imagem"
                   className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg"
-                  style={{ maxWidth: '100%', height: 'auto' }}
+                  style={{ maxWidth: "100%", height: "auto" }}
                 />
               )}
             </div>
-            
+
             {/* Botões de navegação */}
             {(chatbotData.uploaded_images || []).length > 1 && (
               <>
@@ -1009,7 +1094,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   variant="outline"
                   size="icon"
                   className="absolute left-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => navigateImage('prev')}
+                  onClick={() => navigateImage("prev")}
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -1017,20 +1102,19 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   variant="outline"
                   size="icon"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => navigateImage('next')}
+                  onClick={() => navigateImage("next")}
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </>
             )}
           </div>
-          
+
           <div className="flex justify-between items-center pt-4">
             <p className="text-sm text-muted-foreground">
-              {(chatbotData.uploaded_images || []).length > 1 
-                ? "Use as setas ou clique fora da imagem para fechar" 
-                : "Clique fora da imagem ou no botão para fechar"
-              }
+              {(chatbotData.uploaded_images || []).length > 1
+                ? "Use as setas ou clique fora da imagem para fechar"
+                : "Clique fora da imagem ou no botão para fechar"}
             </p>
             <Button variant="outline" onClick={closeImagePreview}>
               Fechar
