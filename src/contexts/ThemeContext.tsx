@@ -16,8 +16,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (savedTheme) {
       return savedTheme;
     }
-    // Se não há tema salvo, usa o claro como padrão
-    return 'light';
+    // Se não há tema salvo, usa o ESCURO como padrão
+    return 'dark';
   });
 
   const setTheme = (newTheme: Theme) => {

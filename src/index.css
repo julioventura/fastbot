@@ -4,99 +4,7 @@
 
 @layer base {
   :root {
-    /* MODO CLARO como padrão */
-    --background: 0 0% 100%;
-    --foreground: 222 84% 5%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222 84% 5%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 84% 5%;
-
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 222 84% 5%;
-
-    --muted: 210 40% 98%;
-    --muted-foreground: 215 16% 47%;
-
-    --accent: 262 83% 58%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
-
-    --radius: 0.75rem;
-
-    /* Variáveis personalizadas para o tema claro profissional */
-    --gradient-from: #ffffff;
-    --gradient-to: #f8fafc;
-    --gradient-secondary-to: #f1f5f9;
-    --accent-blue: #3b82f6;
-    --accent-blue-light: #60a5fa;
-    --accent-blue-lighter: #dbeafe;
-    --accent-blue-bg: #eff6ff;
-    --text-muted: #64748b;
-    --border-accent: #e2e8f0;
-    --hover-bg: rgba(59, 130, 246, 0.08);
-    --hover-bg-light: rgba(59, 130, 246, 0.04);
-    --card-bg: rgba(255, 255, 255, 0.95);
-  }
-
-  /* MODO CLARO - Paleta Profissional Azul Redesenhada */
-  .light {
-    --background: 0 0% 100%;
-    --foreground: 222 84% 5%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222 84% 5%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 84% 5%;
-
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 222 84% 5%;
-
-    --muted: 210 40% 98%;
-    --muted-foreground: 215 16% 47%;
-
-    --accent: 262 83% 58%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
-
-    /* Variáveis personalizadas para o tema claro profissional */
-    --gradient-from: #ffffff;
-    --gradient-to: #f8fafc;
-    --gradient-secondary-to: #f1f5f9;
-    --accent-blue: #3b82f6;
-    --accent-blue-light: #60a5fa;
-    --accent-blue-lighter: #dbeafe;
-    --accent-blue-bg: #eff6ff;
-    --text-muted: #64748b;
-    --border-accent: #e2e8f0;
-    --hover-bg: rgba(59, 130, 246, 0.08);
-    --hover-bg-light: rgba(59, 130, 246, 0.04);
-    --card-bg: rgba(255, 255, 255, 0.95);
-  }
-
-  /* MODO ESCURO explícito (garantindo preservação) */
-  .dark {
+    /* MODO ESCURO como padrão */
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
@@ -125,7 +33,9 @@
     --input: 217 32% 17%;
     --ring: 221 83% 53%;
 
-    /* Variáveis personalizadas para o tema azul escuro (PRESERVADAS) */
+    --radius: 0.75rem;
+
+    /* Variáveis personalizadas para o tema escuro (padrão) */
     --gradient-from: #0c203f;
     --gradient-to: #082756;
     --gradient-secondary-to: #0e2d5e;
@@ -140,223 +50,129 @@
     --card-bg: rgba(10, 22, 41, 0.95);
   }
 
-  /* Header no modo escuro */
-  .dark .header-modern,
-  .dark header {
-    background: rgba(12, 32, 63, 0.95) !important;
-    backdrop-filter: blur(12px) !important;
-    border-bottom: 1px solid rgba(42, 73, 128, 0.5) !important;
+  /* MODO CLARO - Override das cores padrões */
+  .light {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 221 68% 81%;
+
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 221 83% 53%;
+
+    /* Variáveis para o tema claro */
+    --gradient-from: #0c203f;
+    --gradient-to: #082756;
+    --gradient-secondary-to: #0e2d5e;
+    --accent-blue: #4f9bff;
+    --accent-blue-light: #60a5fa;
+    --accent-blue-lighter: #7caffd;
+    --accent-blue-bg: #2a4980;
+    --text-muted: #b6b6b6;
+    --border-accent: #2a4980;
+    --hover-bg: rgba(42, 73, 128, 0.3);
+    --hover-bg-light: rgba(79, 155, 255, 0.1);
+    --card-bg: rgba(10, 22, 41, 0.95);
   }
+
 
   /* ===== ESTILOS BASE ===== */
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold tracking-tight;
   }
 
   /* Transições suaves para mudanças de tema */
   * {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-
-  /* ===== MODO CLARO - ESTILOS ESPECÍFICOS ===== */
-  
-  /* Background principal limpo */
-  .light .bg-black {
-    background-color: #ffffff !important;
-  }
-
-  /* Header com glassmorphism sutil */
-  .light header {
-    backdrop-filter: blur(12px) !important;
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-  }
-
-  /* Remoção completa de gradientes - backgrounds limpos */
-  .light .bg-theme-gradient {
-    background: #ffffff !important;
-  }
-
-  .light .bg-theme-gradient-alt {
-    background: #f8fafc !important;
-  }
-
-  /* Hero section com gradiente sutil */
-  .light section:first-of-type {
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
-  }
-
-  /* Cards com elevação moderna */
-  .light .bg-theme-card {
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
-  }
-
-  /* Pricing cards com destaque sutil */
-  .light .bg-theme-card\/90,
-  .light .bg-theme-card\/95,
-  .light .bg-theme-card\/97 {
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-  }
-
-  /* Card popular destacado */
-  .light .border-2.border-\[\#4f9bff\] {
-    border-color: #3b82f6 !important;
-    background-color: #f8fafc !important;
-    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1), 0 4px 6px -2px rgba(59, 130, 246, 0.05) !important;
-  }
-
-  /* Features cards com fundo limpo */
-  .light .bg-background\/70,
-  .light .bg-background\/95 {
-    background-color: #ffffff !important;
-    border: 1px solid #f1f5f9 !important;
-  }
-
-  /* ===== TIPOGRAFIA REFINADA ===== */
-  
-  /* Comentando regras que conflitam com cores fixas do Tailwind */
-  /* Para usar cores fixas (white, black, yellow, etc.), use as classes normais do Tailwind */
-  /* Para usar cores que mudam com o tema, use text-foreground, text-muted-foreground, etc. */
-  
-  /*
-  .light .text-white {
-    color: #1e293b !important;
-  }
-
-  .light .text-gray-300 {
-    color: #475569 !important;
-  }
-  */
-
-  .light .text-muted-foreground {
-    color: #64748b !important;
-  }
-
-  /* Títulos com hierarquia clara */
-  .light h1 {
-    color: #0f172a !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.025em !important;
-  }
-
-  .light h2 {
-    color: #1e293b !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.025em !important;
-  }
-
-  .light h3 {
-    color: #334155 !important;
-    font-weight: 600 !important;
-  }
-
-  /* Parágrafos com boa legibilidade */
-  .light p {
-    color: #475569 !important;
-    line-height: 1.7 !important;
-  }
-
-  /* ===== BOTÕES E INTERAÇÕES ===== */
-  
-  /* Botão primário */
-  .light .bg-primary {
-    background-color: #3b82f6 !important;
-    color: #ffffff !important;
-    border: none !important;
-  }
-
-  .light .bg-primary:hover {
-    background-color: #2563eb !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
-  }
-
-  /* Botões secundários */
-  .light .border-primary {
-    border-color: #3b82f6 !important;
-    color: #3b82f6 !important;
-  }
-
-  .light .border-primary:hover {
-    background-color: #3b82f6 !important;
-    color: #ffffff !important;
-  }
-
-  /* ===== NAVEGAÇÃO ===== */
-  
-  /* Links de navegação */
-  .light nav a {
-    color: #64748b !important;
-    font-weight: 500 !important;
-  }
-
-  .light nav a:hover {
-    color: #3b82f6 !important;
-  }
-
-  .light nav a.active {
-    color: #3b82f6 !important;
-    font-weight: 600 !important;
+    transition: background-color 0.3s ease, color 0.3s ease,
+      border-color 0.3s ease;
   }
 
   /* ===== NAVEGAÇÃO ATIVA - GARANTIR NEGRITO E CONTRASTE ===== */
   .nav-active-item {
     font-weight: 900 !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: "Inter", sans-serif !important;
     text-shadow: 0 0 0.5px currentColor !important;
     position: relative !important;
     padding: 8px 16px !important;
     border-radius: 20px !important;
-    background: linear-gradient(135deg, rgba(66, 120, 207, 0.15) 0%, rgba(67, 103, 180, 0.2) 100%) !important;
-    box-shadow: 
-      0 0 20px rgba(59, 130, 246, 0.3),
-      0 0 40px rgba(59, 130, 246, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    background: linear-gradient(
+      135deg,
+      rgba(66, 120, 207, 0.15) 0%,
+      rgba(67, 103, 180, 0.2) 100%
+    ) !important;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
+      0 0 40px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     backdrop-filter: blur(10px) !important;
-    border: px solid rgba(59, 130, 246, 0.3) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
     transition: all 0.3s ease !important;
   }
 
-  /* Contraste específico para modo escuro */
-  .dark .nav-active-item {
+  /* Contraste - modo escuro é padrão */
+  .nav-active-item {
     color: #ffffff !important;
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.8) !important;
   }
 
-  /* Contraste específico para modo claro */  
-  .light .nav-active-item {
-    color: #1e293b !important;
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.3) !important;
-  }
-  
+  /* Contraste específico para modo claro quando ativo */
+  /* .light .nav-active-item {
+    color: #ffffff !important;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8) !important;
+  } */
+
   /* Animação pulsante sutil */
   .nav-active-item::before {
-    content: '';
+    content: "";
     position: absolute;
     top: -2px;
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(37, 99, 235, 0.6));
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.4),
+      rgba(37, 99, 235, 0.6)
+    );
     border-radius: 22px;
     z-index: -1;
     animation: glow-pulse 2s ease-in-out infinite alternate;
   }
-  
+
   @keyframes glow-pulse {
     0% {
       opacity: 0.5;
@@ -367,70 +183,11 @@
       transform: scale(1.02);
     }
   }
-  
+
   /* Força para navegação ativa */
   nav .nav-active-item,
   header .nav-active-item {
     font-weight: 900 !important;
-  }
-
-  /* ===== SEÇÕES ESPECÍFICAS ===== */
-  
-  /* Testimonials */
-  .light blockquote {
-    border-left: 3px solid #3b82f6 !important;
-    background-color: #f8fafc !important;
-    color: #1e293b !important;
-    padding: 1.5rem !important;
-    border-radius: 0.5rem !important;
-  }
-
-  /* Footer */
-  .light footer {
-    background-color: #f8fafc !important;
-    border-top: 1px solid #e2e8f0 !important;
-  }
-
-  /* Remover text shadows */
-  .light span[class*="text-shadow"],
-  .light h1[class*="text-shadow"],
-  .light h2[class*="text-shadow"],
-  .light h3[class*="text-shadow"] {
-    text-shadow: none !important;
-  }
-
-  /* ===== FORMS E INPUTS ===== */
-  
-  .light input,
-  .light textarea,
-  .light select {
-    background-color: #ffffff !important;
-    border: 1px solid #d1d5db !important;
-    color: #1f2937 !important;
-  }
-
-  .light input:focus,
-  .light textarea:focus,
-  .light select:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-  }
-
-  /* ===== ESTADO DE HOVER GLOBAL ===== */
-  
-  .light .hover\:bg-secondary:hover {
-    background-color: #f1f5f9 !important;
-  }
-
-  .light .hover\:text-primary:hover {
-    color: #3b82f6 !important;
-  }
-
-  /* ===== ACESSIBILIDADE ===== */
-  
-  .light :focus-visible {
-    outline: 2px solid #3b82f6 !important;
-    outline-offset: 2px !important;
   }
 
   /* Estilos para WebKit Autofill */
@@ -438,10 +195,10 @@
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-      -webkit-box-shadow: 0 0 0 30px #101c36 inset !important;
-      -webkit-text-fill-color: white !important;
-      caret-color: white !important;
-      transition: background-color 5000s ease-in-out 0s;
+    -webkit-box-shadow: 0 0 0 30px #101c36 inset !important;
+    -webkit-text-fill-color: white !important;
+    caret-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
   }
 
   /* Opcional: Para Firefox */
@@ -454,7 +211,7 @@
   .gradient-text {
     @apply bg-clip-text text-transparent bg-hero-gradient;
   }
-  
+
   .hero-button {
     @apply px-8 py-4 rounded-full font-medium shadow-button transition-all duration-300 transform hover:scale-105;
   }
@@ -462,18 +219,26 @@
   .section-container {
     @apply container mx-auto px-4 md:px-8 py-16 md:py-24;
   }
-  
+
   .feature-card {
     @apply p-6 rounded-2xl bg-card-gradient shadow-card hover:shadow-lg transition-all duration-300;
   }
 
   /* Classes utilitárias para o sistema de temas */
   .bg-theme-gradient {
-    background: linear-gradient(to bottom, var(--gradient-from), var(--gradient-to));
+    background: linear-gradient(
+      to bottom,
+      var(--gradient-from),
+      var(--gradient-to)
+    );
   }
 
   .bg-theme-gradient-alt {
-    background: linear-gradient(to bottom, var(--gradient-to), var(--gradient-secondary-to));
+    background: linear-gradient(
+      to bottom,
+      var(--gradient-to),
+      var(--gradient-secondary-to)
+    );
   }
 
   .bg-theme-card {
@@ -527,291 +292,298 @@
 
 .bg-gradient-radial {
   background: radial-gradient(ellipse at center, var(--tw-gradient-stops));
-}  /* ===== MODAL DE AUTENTICAÇÃO ===== */
-  
-  /* Modo escuro - preservar gradiente original */
-  .dark [role="dialog"] {
-    background: linear-gradient(to bottom, #0a1629, #0e2d5e) !important;
-  }
+}
 
-  /* Modo claro - fundo limpo */
-  .light [role="dialog"] {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-  }
+/* ===== MODAL DE AUTENTICAÇÃO ===== */
 
-  /* Inputs no modal para modo escuro */
-  .dark [role="dialog"] input {
-    background-color: rgba(31, 41, 55, 0.8) !important;
-    border-color: rgba(42, 73, 128, 0.7) !important;
-    color: #ffffff !important;
-  }
+/* Modal com estilo baseado no tema ativo */
+[role="dialog"] {
+  background: linear-gradient(to bottom, #0a1629, #0e2d5e) !important;
+}
 
-  .dark [role="dialog"] input::placeholder {
-    color: rgba(156, 163, 175, 0.8) !important;
-  }
+/* Override apenas para modo claro */
+.light [role="dialog"] {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
 
-  .dark [role="dialog"] input:focus {
-    background-color: rgba(31, 41, 55, 0.9) !important;
-    border-color: #4f9bff !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 0 3px rgba(79, 155, 255, 0.2) !important;
-  }
+/* Inputs no modal - padrão escuro */
+[role="dialog"] input {
+  background-color: rgba(31, 41, 55, 0.8) !important;
+  border-color: rgba(42, 73, 128, 0.7) !important;
+  color: #ffffff !important;
+}
 
-  /* Inputs no modal para modo claro - maior especificidade */
-  .light [role="dialog"] input,
-  .light [role="dialog"] .bg-background {
-    background-color: #ffffff !important;
-    border-color: #d1d5db !important;
-    color: #1f2937 !important;
-  }
+[role="dialog"] input::placeholder {
+  color: rgba(156, 163, 175, 0.8) !important;
+}
 
-  .light [role="dialog"] input::placeholder {
-    color: #9ca3af !important;
-  }
+[role="dialog"] input:focus {
+  background-color: rgba(31, 41, 55, 0.9) !important;
+  border-color: #4f9bff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(79, 155, 255, 0.2) !important;
+}
 
-  .light [role="dialog"] input:focus {
-    background-color: #ffffff !important;
-    border-color: #3b82f6 !important;
-    color: #1f2937 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-  }
+/* Inputs no modal para modo claro - apenas override quando necessário */
+/* .light [role="dialog"] input,
+.light [role="dialog"] .bg-background {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #1f2937 !important;
+}
 
-  /* Labels no modal */
-  .dark [role="dialog"] label {
-    color: #d1d5db !important;
-  }
+.light [role="dialog"] input::placeholder {
+  color: #9ca3af !important;
+}
 
-  .light [role="dialog"] label {
-    color: #374151 !important;
-    font-weight: 500 !important;
-  }
+.light [role="dialog"] input:focus {
+  background-color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  color: #1f2937 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+} */
 
-  /* Ícones nos inputs do modal */
-  .dark [role="dialog"] .lucide {
-    color: #9ca3af !important;
-  }
+/* Labels no modal - padrão escuro */
+[role="dialog"] label {
+  color: #d1d5db !important;
+}
+/* 
+.light [role="dialog"] label {
+  color: #374151 !important;
+  font-weight: 500 !important;
+} */
 
-  .light [role="dialog"] .lucide {
-    color: #6b7280 !important;
-  }
+/* Ícones nos inputs - padrão escuro */
+[role="dialog"] .lucide {
+  color: #9ca3af !important;
+}
 
-  /* Sobrescrever especificamente classes de tema no modal claro */
-  .light [role="dialog"] .text-foreground {
-    color: #374151 !important;
-  }
+/* .light [role="dialog"] .lucide {
+  color: #6b7280 !important;
+} */
 
-  .light [role="dialog"] .text-muted-foreground {
-    color: #6b7280 !important;
-  }
+/* Classes de tema no modal - padrão escuro */
+[role="dialog"] .text-foreground {
+  color: #d1d5db !important;
+}
 
-  .light [role="dialog"] .border-border {
-    border-color: #d1d5db !important;
-  }
+[role="dialog"] .text-muted-foreground {
+  color: #9ca3af !important;
+}
 
-  /* Botões de toggle de senha */
-  .dark [role="dialog"] button[type="button"] {
-    color: #9ca3af !important;
-  }
 
-  .dark [role="dialog"] button[type="button"]:hover {
-    color: #ffffff !important;
-  }
+/* Botões de toggle de senha */
+[role="dialog"] button[type="button"] {
+  color: #9ca3af !important;
+}
 
-  .light [role="dialog"] button[type="button"] {
-    color: #6b7280 !important;
-  }
+[role="dialog"] button[type="button"]:hover {
+  color: #ffffff !important;
+}
 
-  .light [role="dialog"] button[type="button"]:hover {
-    color: #374151 !important;
-  }
 
-  /* ===== CARDS DE FEATURES - TEMA ESPECÍFICO ===== */
-  
-  /* Modo escuro - manter transparência original */
-  .dark .bg-theme-card {
-    background: rgba(10, 22, 41, 0.5) !important;
-    backdrop-filter: blur(12px) !important;
-  }
 
-  /* Modo claro - fundo sólido */
-  .light .bg-theme-card {
-    background: #ffffff !important;
-    backdrop-filter: none !important;
-  }
+/* ===== CARDS DE FEATURES - TEMA ESPECÍFICO ===== */
 
-  /* ===== NOVO DESIGN HERO ===== */
-  .bg-hero-new {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  }
+/* Modo escuro - manter transparência original */
+.bg-theme-card {
+  background: rgba(10, 22, 41, 0.5) !important;
+  backdrop-filter: blur(12px) !important;
+}
 
-  /* Personagem ilustrativa animada */
-  .character-illustration {
-    animation: float 3s ease-in-out infinite;
-  }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-  }
 
-  /* Efeitos de gradiente para o texto */
-  .gradient-text-blue {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+/* ===== NOVO DESIGN HERO ===== */
+.bg-hero-new {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
 
-  .gradient-text-red {
-    background: linear-gradient(135deg, #f04949 0%, #8f0b0b 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+/* Personagem ilustrativa animada */
+.character-illustration {
+  animation: float 3s ease-in-out infinite;
+}
 
-  .gradient-text-purple {
-    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
   }
-
-  /* Botão CTA melhorado */
-  .hero-cta-button {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    box-shadow: 
-      0 4px 14px 0 rgba(37, 99, 235, 0.4),
-      0 0 0 1px rgba(37, 99, 235, 0.1);
-    transition: all 0.3s ease;
+  50% {
+    transform: translateY(-10px);
   }
+}
 
-  .hero-cta-button:hover {
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-    transform: translateY(-2px);
-    box-shadow: 
-      0 8px 25px 0 rgba(37, 99, 235, 0.5),
-      0 0 0 1px rgba(37, 99, 235, 0.2);
-  }
+/* Efeitos de gradiente para o texto */
+.gradient-text-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-  /* Header limpo e moderno */
-  .header-modern {
-    backdrop-filter: blur(10px);
-  }
+.gradient-text-red {
+  background: linear-gradient(135deg, #f04949 0%, #8f0b0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-  /* Elementos decorativos */
-  .decoration-circle {
-    border-radius: 50%;
+.gradient-text-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Botão CTA melhorado */
+.hero-cta-button {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4),
+    0 0 0 1px rgba(37, 99, 235, 0.1);
+  transition: all 0.3s ease;
+}
+
+.hero-cta-button:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px 0 rgba(37, 99, 235, 0.5),
+    0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+/* Header limpo e moderno */
+.header-modern {
+  backdrop-filter: blur(10px);
+}
+
+/* Elementos decorativos */
+.decoration-circle {
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
     opacity: 0.8;
-    animation: pulse 4s ease-in-out infinite;
+    transform: scale(1);
   }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 0.8; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.05); }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
   }
+}
 
-  /* Animação mais intensa para círculos decorativos */
-  @keyframes floatPulse {
-    0%, 100% { 
-      opacity: 0.8; 
-      transform: scale(1) translateY(0px) rotate(0deg); 
-    }
-    25% { 
-      opacity: 0.9; 
-      transform: scale(1.15) translateY(-8px) rotate(90deg); 
-    }
-    50% { 
-      opacity: 0.5; 
-      transform: scale(1.3) translateY(-15px) rotate(180deg); 
-    }
-    75% { 
-      opacity: 0.7; 
-      transform: scale(1.15) translateY(-8px) rotate(270deg); 
-    }
+/* Animação mais intensa para círculos decorativos */
+@keyframes floatPulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1) translateY(0px) rotate(0deg);
   }
-
-  /* ===== APRIMORAMENTOS ESPECÍFICOS PARA O NOVO DESIGN ===== */
-  
-  /* Forçar fundo branco para o modo claro */
-  .light body,
-  .light .bg-hero-new {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+  25% {
+    opacity: 0.9;
+    transform: scale(1.15) translateY(-8px) rotate(90deg);
   }
-
-  /* Header no modo claro - mais limpo */
-  .light .header-modern,
-  .light header {
-    background: rgba(255, 255, 255, 0.98) !important;
-    backdrop-filter: blur(12px) !important;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+  50% {
+    opacity: 0.5;
+    transform: scale(1.3) translateY(-15px) rotate(180deg);
   }
-
-  /* Typography melhorada */
-  .light .gradient-text-blue {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
+  75% {
+    opacity: 0.7;
+    transform: scale(1.15) translateY(-8px) rotate(270deg);
   }
+}
 
-  .light .gradient-text-purple {
-    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-  }
+/* ===== APRIMORAMENTOS ESPECÍFICOS PARA O NOVO DESIGN ===== */
 
-  /* Garantir que botões mantenham estilo no modo claro */
-  .light .hero-cta-button {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-    color: #ffffff !important;
-    border: none !important;
-  }
+/* Forçar fundo branco para o modo claro */
+.light body,
+.light .bg-hero-new {
+  background: linear-gradient(
+    135deg,
+    /* #ffffff 0%,
+    #f8fafc 50%,
+    #f1f5f9 100% */
+  ) !important;
+}
 
-  .light .hero-cta-button:hover {
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-    color: #ffffff !important;
-  }
+/* Header no modo claro - mais limpo */
+.light .header-modern,
+.light header {
+  /* background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important; */
+}
 
-  /* Personagem - garantir cores corretas */
-  .light .character-illustration {
-    filter: brightness(1.1) contrast(1.05);
-  }
+/* Typography melhorada */
+.light .gradient-text-blue {
+  /* background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important; */
+}
 
-  /* Animações suaves */
+.light .gradient-text-purple {
+  /* background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important; */
+}
+
+/* Garantir que botões mantenham estilo no modo claro */
+.light .hero-cta-button {
+  /* background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+  border: none !important; */
+}
+
+.light .hero-cta-button:hover {
+  /* background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+  color: #ffffff !important; */
+}
+
+/* Personagem - garantir cores corretas */
+.light .character-illustration {
+  /* filter: brightness(1.1) contrast(1.05); */
+}
+
+/* Animações suaves */
+.character-illustration {
+  animation: float 6s ease-in-out infinite;
+}
+
+.decoration-circle {
+  animation: pulse 8s ease-in-out infinite;
+}
+
+/* Mobile responsivo melhorado */
+@media (max-width: 768px) {
   .character-illustration {
-    animation: float 6s ease-in-out infinite;
+    transform: scale(0.8);
   }
 
-  .decoration-circle {
-    animation: pulse 8s ease-in-out infinite;
+  .hero-cta-button {
+    padding: 1rem 2rem !important;
+    font-size: 1rem !important;
   }
-
-  /* Mobile responsivo melhorado */
-  @media (max-width: 768px) {
-    .character-illustration {
-      transform: scale(0.8);
-    }
-    
-    .hero-cta-button {
-      padding: 1rem 2rem !important;
-      font-size: 1rem !important;
-    }
-  }
+}
 
 /* Estilos específicos para bordas dos inputs no EditChatbotConfig */
 @layer components {
   .edit-form-input {
-    border: 3px solid #000000 !important;
-    border-color: #000000 !important;
+    /* border: 3px solid #000000 !important;
+    border-color: #000000 !important; */
+    border: 3px solid rgba(255, 255, 255, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
   }
-  
+
   .dark .edit-form-input {
     border: 3px solid rgba(255, 255, 255, 0.6) !important;
     border-color: rgba(255, 255, 255, 0.6) !important;
   }
-  
+
   .edit-form-input:focus {
     border-color: hsl(var(--primary)) !important;
     box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
@@ -820,8 +592,10 @@
 
 /* Especificidade extra para garantir aplicação */
 .bg-transparent .edit-form-input {
-  border: 3px solid #000000 !important;
-  border-color: #000000 !important;
+  /* border: 3px solid #000000 !important;
+  border-color: #000000 !important; */
+  border: 3px solid rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .dark .bg-transparent .edit-form-input {
