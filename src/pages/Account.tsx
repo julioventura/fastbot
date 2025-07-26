@@ -50,6 +50,8 @@ interface Profile {
   whatsapp: string | null;
   is_student: boolean;
   is_professor: boolean;
+  is_dentist: boolean;
+  is_other: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -205,6 +207,8 @@ const Account = () => {
           whatsapp: updatedProfile.whatsapp,
           is_student: updatedProfile.is_student,
           is_professor: updatedProfile.is_professor,
+          is_dentist: updatedProfile.is_dentist,
+          is_other: updatedProfile.is_other,
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);
@@ -247,7 +251,9 @@ const Account = () => {
       name: updatedProfile.name || '',
       whatsapp: updatedProfile.whatsapp || '',
       is_student: Boolean(updatedProfile.is_student),
-      is_professor: Boolean(updatedProfile.is_professor)
+      is_professor: Boolean(updatedProfile.is_professor),
+      is_dentist: Boolean(updatedProfile.is_dentist),
+      is_other: Boolean(updatedProfile.is_other)
     }));
   };
 
@@ -293,6 +299,8 @@ const Account = () => {
               whatsapp: data.whatsapp || "",
               is_student: Boolean(data.is_student), // Forçar boolean
               is_professor: Boolean(data.is_professor), // Forçar boolean
+              is_dentist: Boolean(data.is_dentist || false), // Forçar boolean
+              is_other: Boolean(data.is_other || false), // Forçar boolean
               created_at: data.created_at,
               updated_at: data.updated_at,
             });
@@ -353,6 +361,8 @@ const Account = () => {
             whatsapp: data.whatsapp || "",
             is_student: Boolean(data.is_student),
             is_professor: Boolean(data.is_professor),
+            is_dentist: Boolean(data.is_dentist || false),
+            is_other: Boolean(data.is_other || false),
             created_at: data.created_at,
             updated_at: data.updated_at
           });
@@ -456,7 +466,7 @@ const Account = () => {
             {/* Informações do Perfil - Colapsável */}
             <CollapsibleCard
               title="Informações do Perfil"
-              description="Detalhes da criação e atualização do seu perfil"
+              description="Detalhes técnicos do seu perfil"
               isExpanded={expandedSections.profileInfo}
               onToggle={() => toggleSection('profileInfo')}
             >
@@ -538,7 +548,7 @@ const Account = () => {
             {/* Fechar Conta - Colapsável */}
             <CollapsibleCard
               title="Fechar Conta"
-              description="Exclua permanentemente sua conta de usuário"
+              description="Exclua permanentemente sua conta"
               isExpanded={expandedSections.closeAccount}
               onToggle={() => toggleSection('closeAccount')}
             >

@@ -364,29 +364,23 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   <div>
                     <Label>Temas Permitidos</Label>
 
-                    {/* Lista de temas com destaque */}
+                    {/* Lista de temas como badges */}
                     {(chatbotData.allowed_topics || []).length > 0 ? (
-                      <div className="grid grid-cols-1 gap-2 mt-4 mb-4">
+                      <div className="flex flex-wrap gap-2 mt-4 mb-4 p-3 border border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                         {(chatbotData.allowed_topics || []).map(
                           (topic, index) => (
-                            <div
+                            <Badge
                               key={index}
-                              className="flex items-center justify-between p-3 border border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                              variant="secondary"
+                              className="flex items-center gap-2 px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors"
                             >
-                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate pr-2">
-                                {topic}
-                              </span>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
+                              <span>{topic}</span>
+                              <X
+                                className="w-3 h-3 cursor-pointer flex-shrink-0 hover:text-red-600 dark:hover:text-red-400"
                                 onClick={() => removeTopic(index)}
-                                className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
                                 title={`Remover tema: ${topic}`}
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>
-                            </div>
+                              />
+                            </Badge>
                           )
                         )}
                       </div>

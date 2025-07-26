@@ -15,6 +15,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { Link } from 'react-router-dom';
 
 // Componente Hero
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
@@ -95,10 +96,11 @@ const Hero = () => {
 
             {/* Botão CTA */}
             <div className="pt-4">
-              <Button className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                <span>COMECE JÁ O PLANO GRATUITO!</span>
-                {/* <ArrowRight className="h-5 w-5" /> */}
-              </Button>
+              <Link to="/account">
+                <Button className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <span>COMECE JÁ O PLANO GRATUITO!</span>
+                </Button>
+              </Link>
             </div>
           </div>
 
