@@ -11,31 +11,32 @@
 //   - Não possui funções ou constantes complexas internas, sendo primariamente JSX para layout e estilo.
 //   - Utiliza o componente Button e o ícone ArrowRight da biblioteca lucide-react.
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
-import { useTheme } from '@/hooks/useTheme';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
+import { useNavigate } from "react-router-dom";
 
 // Componente Hero
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
 const Hero = () => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const [useImageFallback, setUseImageFallback] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
     {
-      image: '/fastbot/ana-hero.png',
-      text: ['Olá!', 'Crie sua', 'atendente virtual', 'de IA.']
-    }
+      image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
+      text: ["Olá!", "Crie sua", "atendente virtual", "de IA","em 3 minutos!"],
+    },
   ];
 
   // Determina qual imagem usar
   const getImageSrc = () => {
-    if (theme === 'dark' && !useImageFallback) {
-      return "/fastbot/ana-hero.png";
-      // return "/fastbot/hero-ana-dark.png";
+    if (theme === "dark" && !useImageFallback) {
+      // return "/fastbot/ana-hero.png";
+      return "/fastbot/hero-ana-dark.png";
     }
     return "/fastbot/ana-hero.png";
   };
@@ -44,7 +45,6 @@ const Hero = () => {
   const handleImageError = () => {
     setUseImageFallback(true);
   };
-
 
   // Troca automática de slides a cada 3 segundos
   React.useEffect(() => {
@@ -63,53 +63,61 @@ const Hero = () => {
   }, [slides.length]);
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex items-center bg-background">
+    <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-background via-background/90 to-primary/5 -mt-10">
       {/* Fundo com gradiente suave responsivo ao tema */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-primary/5"></div>
 
       {/* Container principal ocupando toda a altura disponível */}
-      <div className="container relative z-10 mx-auto px-4 w-full">
-        <div className="grid lg:grid-cols-5 gap-6 lg:gap-12 items-center h-screen max-h-screen">
+      <div className="container relative z-10 mx-auto px-8 w-full">
+        <div className="grid lg:grid-cols-5 gap-4 lg:gap-4 items-center h-screen max-h-screen">
+          
+          {/* Coluna do texto - lado esquerdo) */}
+          <div className="lg:col-span-3 flex flex-col justify-center space-y-6 lg:space-y-8 py-8">
 
-          {/* Coluna do texto - lado esquerdo (40% no desktop) */}
-          <div className="lg:col-span-2 flex flex-col justify-center space-y-6 lg:space-y-8 py-8">
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
               {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
               <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
-                {slides[currentSlide].text[0] || ''}
+                {slides[currentSlide].text[0] || ""}
               </span>
               <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
-                {slides[currentSlide].text[1] || ''}
+                {slides[currentSlide].text[1] || ""}
               </span>
               <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-yellow-400">
-                {slides[currentSlide].text[2] || ''}
+                {slides[currentSlide].text[2] || ""}
               </span>
               <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
-                {slides[currentSlide].text[3] || ''}
+                {slides[currentSlide].text[3] || ""}
+              </span>
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-red-500">
+                {slides[currentSlide].text[4] || ""}
               </span>
             </div>
 
             {/* Botão CTA */}
             <div className="pt-4">
-              <Link to="/account">
-                <Button className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                  <span>COMECE JÁ O PLANO GRATUITO!</span>
-                </Button>
-              </Link>
+              <Button
+                onClick={() => {
+                  navigate('/account');
+                }}
+                className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              >
+                <span>COMECE JÁ O PLANO GRATUITO!</span>
+              </Button>
             </div>
+
           </div>
 
-          {/* Coluna da imagem - lado direito (60% no desktop) */}
-          <div className="lg:col-span-3 flex justify-center lg:justify-end items-stretch h-full">
-            <div className="relative character-illustration w-full h-full flex items-center justify-center">
-              {/* Container da imagem otimizado para altura completa */}
-              <div className="relative h-[85vh] lg:h-[90vh] w-auto max-w-full">
-                {/* Imagem da Fastbot - altura completa, largura automática */}
+          {/* Coluna da imagem - lado direito */}
+          <div className="lg:col-span-2 flex justify-center lg:justify-end items-stretch h-full">
+            <div className="relative w-full h-full flex items-center justify-center lg:justify-end">
+              {/* Container da imagem otimizado para altura completa - sem animação */}
+              <div className="relative h-[85vh] lg:h-[65vh] w-auto max-w-full">
+                {/* Imagem da Fastbot - altura completa, largura automática - FIXA sem movimento */}
                 <img
                   src={slides[currentSlide].image}
                   alt="Fastbot - Assistente Virtual Profissional da Saúde"
-                  className="h-full w-auto object-contain object-center"
+                  className="h-full w-auto object-contain object-center lg:object-right mr-20 rounded-[2rem]"
                   onError={handleImageError}
                 />
 
@@ -117,32 +125,70 @@ const Hero = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
               </div>
 
-              {/* Elementos decorativos externos otimizados */}
-              <div className="absolute -top-6 -right-6 lg:-top-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 decoration-circle bg-yellow-400 opacity-70 dark:opacity-50"></div>
-              <div className="absolute -bottom-6 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 decoration-circle bg-purple-400 opacity-60 dark:opacity-40"></div>
-              <div className="absolute top-1/4 -left-8 lg:-left-12 w-8 h-8 lg:w-12 lg:h-12 decoration-circle bg-primary opacity-50 dark:opacity-30"></div>
+              {/* Elementos decorativos externos otimizados - COM ANIMAÇÃO INTENSA */}
+              <div 
+                className="absolute -top-16 -right-6 lg:-top-10 mt-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 bg-yellow-400 opacity-70 dark:opacity-50 rounded-full"
+                style={{
+                  animation: 'floatPulse 12s ease-in-out infinite',
+                  animationDelay: '0s'
+                }}
+              ></div>
+              <div 
+                className="absolute -bottom-6 mt-2 mb-20 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 bg-purple-400 opacity-60 dark:opacity-40 rounded-full"
+                style={{
+                  animation: 'floatPulse 8s ease-in-out infinite',
+                  animationDelay: '0s'
+                }}
+              ></div>
+              <div 
+                className="absolute top-1/4 -left-8 lg:-left-12 w-12 h-12 lg:w-12 lg:h-12 bg-primary opacity-50 dark:opacity-30 rounded-full"
+                style={{
+                  animation: 'floatPulse 20s ease-in-out infinite',
+                  animationDelay: '0s'
+                }}
+              ></div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Navegação do Carrossel - setas laterais centralizadas verticalmente */}
-      <button
-        onClick={prevSlide}
-        aria-label="Slide anterior"
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-transparent hover:bg-primary/90 text-transparent hover:text-white shadow-lg transition-all duration-200"
-        style={{outline: 'none', border: 'none'}}
-      >
-        <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </button>
-      <button
-        onClick={nextSlide}
-        aria-label="Próximo slide"
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-transparent hover:bg-primary/90 text-primary hover:text-white shadow-lg transition-all duration-200"
-        style={{outline: 'none', border: 'none'}}
-      >
-        <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </button>
+      {/* Navegação do Carrossel - setas laterais centralizadas verticalmente - apenas se houver mais de 1 slide */}
+      {slides.length > 1 && (
+        <>
+          <button
+            onClick={prevSlide}
+            aria-label="Slide anterior"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-transparent hover:bg-primary/90 text-transparent hover:text-white shadow-lg transition-all duration-200"
+            style={{ outline: "none", border: "none" }}
+          >
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+              <path
+                d="M15 19l-7-7 7-7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={nextSlide}
+            aria-label="Próximo slide"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-transparent hover:bg-primary/90 text-primary hover:text-white shadow-lg transition-all duration-200"
+            style={{ outline: "none", border: "none" }}
+          >
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+              <path
+                d="M9 5l7 7-7 7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </>
+      )}
     </section>
   );
 };

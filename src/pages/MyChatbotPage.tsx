@@ -55,6 +55,11 @@ const MyChatbotPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [showSystemMessagePreview, setShowSystemMessagePreview] = useState(false);
 
+  // Efeito para garantir que a página inicie no topo
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/");

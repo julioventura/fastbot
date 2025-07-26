@@ -258,6 +258,12 @@ const Account = () => {
   };
 
 
+  // --- Efeito useEffect para Scroll ao Topo ---
+  // Garante que a página inicie sempre no topo quando acessada
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // --- Efeito useEffect para Carregamento Inicial, Autenticação e Busca de Dados do Perfil ---
   // Executado na montagem do componente e quando 'user', 'loading' ou 'navigate' mudam.
   // Responsável por:

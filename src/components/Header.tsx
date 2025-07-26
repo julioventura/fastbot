@@ -39,6 +39,11 @@ const useScrollDirection = () => {
 };
 
 const Header = () => {
+  // Configuração do comportamento do header
+  // true = header sempre fixo no topo
+  // false = header se esconde quando rola para baixo
+  const header_fixo = true;
+  
   const scrollDirection = useScrollDirection();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "reset">("login");
@@ -62,7 +67,9 @@ const Header = () => {
           }
 
           if (data?.name) {
-            setUserName(data.name);
+            // Extrair apenas o primeiro nome
+            const firstName = data.name.split(' ')[0];
+            setUserName(firstName);
           } else {
             setUserName(user.email?.split('@')[0] || 'Usuário');
           }
@@ -92,7 +99,11 @@ const Header = () => {
   };
 
   return (
-    <header className={`header-modern sticky transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"} top-0 z-50 shadow-sm bg-background/95 backdrop-blur-md border-b border-border`}>
+    <header className={`header-modern sticky top-0 z-50 shadow-sm bg-background/95 backdrop-blur-md border-b border-border ${
+      header_fixo 
+        ? '' // Header fixo - sem animação de transform
+        : `transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"}` // Header com auto-hide
+    }`}>
       
       <div className="container mx-auto px-4 h-16 md:h-20">
         <div className="flex items-center justify-between h-full">

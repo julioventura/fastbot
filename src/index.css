@@ -711,6 +711,26 @@
     50% { opacity: 0.6; transform: scale(1.05); }
   }
 
+  /* Animação mais intensa para círculos decorativos */
+  @keyframes floatPulse {
+    0%, 100% { 
+      opacity: 0.8; 
+      transform: scale(1) translateY(0px) rotate(0deg); 
+    }
+    25% { 
+      opacity: 0.9; 
+      transform: scale(1.15) translateY(-8px) rotate(90deg); 
+    }
+    50% { 
+      opacity: 0.5; 
+      transform: scale(1.3) translateY(-15px) rotate(180deg); 
+    }
+    75% { 
+      opacity: 0.7; 
+      transform: scale(1.15) translateY(-8px) rotate(270deg); 
+    }
+  }
+
   /* ===== APRIMORAMENTOS ESPECÍFICOS PARA O NOVO DESIGN ===== */
   
   /* Forçar fundo branco para o modo claro */

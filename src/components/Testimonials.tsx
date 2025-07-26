@@ -136,8 +136,7 @@ const Testimonials = () => {
                 {/* Título da Seção */}
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
-                        <p><span className="text-theme-accent">O que falam de nossos</span> chatbots...</p>
-                        <p className="text-4xl text-theme-accent"><i>Do TutFop, Manu e Bob e parentes de <span className="text-theme-accent text-5xl">Fastbot...</span></i> <span className="inline-block">😉</span></p>
+                        Depoimentos <span className="text-theme-accent"> de quem </span> <span className="text-yellow-400">já usa!</span>
                     </h2>
 
                 </div>

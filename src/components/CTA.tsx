@@ -12,12 +12,15 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 // import { ArrowRight } from 'lucide-react'; // Ícone ArrowRight importado mas não utilizado no JSX atual.
 
 
 // Componente CTA
 // Define a estrutura e o layout da seção de Chamada para Ação.
 export default function CTA() {
+  const navigate = useNavigate();
+
   return (
     // Elemento <section> principal com estilos de fundo e posicionamento relativo.
     // 'relative' é usado para posicionar o padrão de grade absoluto dentro dele.
@@ -32,22 +35,24 @@ export default function CTA() {
           <div className="text-center mb-12">
             {/* Título da CTA */}
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
-              Pronto em <span className="text-theme-accent">3 minutos!</span>
+              Pronto  <span className="text-theme-accent"> em </span> <span className="text-yellow-400">3 minutos!</span>
             </h2>
+
             {/* Descrição/Subtítulo da CTA */}
-            <p className="text-xl text-muted-foreground font-bold max-w-3xl mx-auto">
-              Fastbot coloca a sua vida profissional em outro patamar!
+            <p className="text-xl text-foreground font-bold max-w-3xl mx-auto">
+              É configurar... e usar!
             </p>
+
             {/* Botão de Chamada para Ação */}
-            <div className="mt-8">
+            <div className="mt-20">
               <Button 
+                onClick={() => navigate('/account')}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-lg"
-                // O ícone ArrowRight poderia ser adicionado aqui se desejado.
-                // Exemplo: <ArrowRight className="ml-2 h-5 w-5" />
               >
-                Comece já! &nbsp; Use o modo gratuito!
+                COMECE JÁ O PLANO GRATUITO!
               </Button>
             </div>
+
           </div>
         </div>
       </div>

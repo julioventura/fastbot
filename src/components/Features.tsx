@@ -289,10 +289,10 @@ const Features = () => {
                 {/* Título da Seção */}
                 <div className="text-center mb-12 md:mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
-                        <span className="text-theme-accent">Tudo que você precisa</span> para seu consultório
+                        <span className="text-yellow-400">Só vantagens</span><br />para o seu consultório!
                     </h2>
                     <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-                        Transforme seu atendimento com tecnologia de ponta. Chatbot inteligente, homepage profissional e ferramentas de marketing digital - tudo em um só lugar.
+                        Atendimento online e de whatsapp com agentes de I.A.
                     </p>
                 </div>
 
