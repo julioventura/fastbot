@@ -27,12 +27,8 @@ const Hero = () => {
   const slides = [
     {
       image: '/fastbot/ana-hero.png',
-      text: ['Olá!', 'Sou Ana,', 'uma atendente', 'chatbot de IA'],
-    },
-    {
-      image: '/fastbot/ana-hero-5.png',
-      text: ['Me clone', 'para você', 'em', '3 minutos!'],
-    },
+      text: ['Olá!', 'Crie sua', 'atendente virtual', 'de IA.']
+    }
   ];
 
   // Determina qual imagem usar
@@ -80,16 +76,16 @@ const Hero = () => {
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
               {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-red">
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
                 {slides[currentSlide].text[0] || ''}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-red">
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
                 {slides[currentSlide].text[1] || ''}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-blue">
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-yellow-400">
                 {slides[currentSlide].text[2] || ''}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight gradient-text-purple">
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
                 {slides[currentSlide].text[3] || ''}
               </span>
             </div>
