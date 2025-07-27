@@ -41,7 +41,7 @@ const Header = () => {
   // Configuração do comportamento do header
   // true = header sempre fixo no topo
   // false = header se esconde quando rola para baixo
-  const header_fixo = true;
+  const header_fixo = false;
   
   const scrollDirection = useScrollDirection();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);

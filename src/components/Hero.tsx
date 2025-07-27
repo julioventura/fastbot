@@ -92,7 +92,14 @@ const Hero = () => {
             <div className="pt-4">
               <Button
                 onClick={() => {
-                  navigate('/account');
+                  // Scroll suave até o componente Pricing
+                  const pricingElement = document.getElementById('pricing');
+                  if (pricingElement) {
+                    pricingElement.scrollIntoView({ 
+                      behavior: 'smooth',
+                      block: 'start'
+                    });
+                  }
                 }}
                 className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
               >

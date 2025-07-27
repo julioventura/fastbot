@@ -1,0 +1,9 @@
+# Ignorar Edge Functions (código Deno, não Node.js)
+supabase/functions/**/*.ts
+supabase/functions/**/*.js
+
+# Outras pastas a ignorar
+node_modules/
+dist/
+build/
+.next/

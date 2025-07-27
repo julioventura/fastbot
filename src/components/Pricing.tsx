@@ -185,10 +185,10 @@ const Pricing = () => {
             <div className="section-container relative z-10" id="pricing-section">
                 {/* Título da Seção */}
                 <div className="text-center mb-12 md:mb-16">
-                    <h2 className="text-3xl md:text-6xl font-bold mb-6">
-                        <p className='block gradient-text-blue pt-5 mt-3'>Assine o Plano Gratuito</p>
-                        <p className='text-5xl md:text-6xl block gradient-text-purple'>E comece a usar JÁ!</p>
-                    </h2>
+                    <div className="text-3xl md:text-6xl font-bold mb-6">
+                        <span className='block text-white pt-5 mt-3'>Assine o </span> <span className="text-yellow-400">Plano Gratuito</span>
+                        <p className='text-5xl md:text-6xl block text-red-500'>E comece a usar JÁ!</p>
+                    </div>
                 </div>
 
                 {/* Grade de Cards de Planos de Preços */}
