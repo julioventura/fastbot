@@ -78,7 +78,6 @@ interface ProfileFormProps {
 const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
   // Estados apenas para campos que existem na tabela
   const [name, setName] = useState(profile.name || "");
-  const [email, setEmail] = useState(profile.email || "");
   const [whatsapp, setWhatsapp] = useState(profile.whatsapp || "");
   const [isStudent, setIsStudent] = useState(profile.is_student || false);
   const [isProfessor, setIsProfessor] = useState(profile.is_professor || false);
@@ -96,7 +95,6 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
     console.log("profile recebido:", profile);
     
     setName(profile.name || "");
-    setEmail(profile.email || "");
     setWhatsapp(profile.whatsapp || "");
     setIsStudent(profile.is_student || false);
     setIsProfessor(profile.is_professor || false);
@@ -169,22 +167,6 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
             disabled={loading} // Desabilita durante o salvamento.
           />
         </div>
-      </div>
-      
-      {/* Campo Email (Somente Leitura) */}
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-foreground text-base">Email</Label>
-        <div className="relative">
-          <Mail className="absolute left-2 top-2.5 h-4 w-4 text-theme-accent" />
-          <Input
-            id="email"
-            value={email}
-            readOnly // Campo não pode ser editado.
-            disabled // Desabilita visualmente o campo.
-            className="pl-8 bg-background border-border text-muted-foreground text-base"
-          />
-        </div>
-        <p className="text-base text-muted-foreground">O email não pode ser alterado.</p>
       </div>
       
       {/* Campo WhatsApp */}

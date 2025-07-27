@@ -38,7 +38,7 @@ import SecurityCard from "@/components/account/SecurityCard";
 import CloseAccount from "@/components/account/CloseAccount"; // Importar o novo componente
 import LoadingScreen from "@/components/account/LoadingScreen";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, AlertCircle, CheckCircle, ChevronDown, ChevronUp, User, Clock, Lock, Copy } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle, ChevronDown, ChevronUp, User, Clock, Lock, Copy, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -477,6 +477,35 @@ const Account = () => {
               onToggle={() => toggleSection('profileInfo')}
             >
               <div className="space-y-4">
+                {/* Seção "Email" */}
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-foreground">
+                    <Mail size={16} className="text-theme-accent" />
+                    <span className="text-sm">Email</span>
+                  </div>
+                  <div className="flex items-center justify-between px-4 py-2 bg-background border border-border rounded">
+                    <span className="text-foreground text-sm flex-1 truncate pr-2">
+                      {user.email}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(user.email || '');
+                        toast({
+                          title: "Email Copiado!",
+                          description: "O email foi copiado para a área de transferência.",
+                        });
+                      }}
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-theme-accent hover:bg-theme-hover"
+                      title="Copiar Email"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-400">Email usado para login na conta</p>
+                </div>
+                
                 {/* Seção "ID do Usuário" */}
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-foreground">

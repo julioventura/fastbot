@@ -175,7 +175,7 @@ const Pricing = () => {
 
       {/* Contêiner do Conteúdo Principal da Seção de Preços */}
       {/* 'relative z-10' garante que este conteúdo fique acima dos elementos decorativos. */}
-      <div className="section-container relative z-10" id="pricing-section">
+      <div className="container mx-auto px-4 relative z-10" id="pricing-section">
         {/* Título da Seção */}
         <div className="text-center mb-12 md:mb-16">
           <div className="text-3xl md:text-6xl font-bold mb-6">
@@ -184,11 +184,11 @@ const Pricing = () => {
           </div>
         </div>
 
-        {/* 2 colunas */}
-        <div className="grid grid-cols-2 gap-8 md:gap-12 lg:gap-16">
+        {/* 2 colunas de largura igual */}
+        <div className="grid grid-cols-2 gap-4 md:gap-6">
 
-          {/* Grade de Cards de Preços */}
-          <div className="grid grid-rows-1 md:grid-rows-1 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
+          {/* Grade de Cards de Preços - 50% da largura */}
+          <div className="flex flex-col gap-8 md:gap-12 lg:gap-16">
             {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
             {pricingPlans.map((plan, index) => (
               <Card
@@ -254,56 +254,119 @@ const Pricing = () => {
             ))}
           </div>
 
-          {/* Cadastro Rápido */}
-          <div className="grid grid-rows-1 md:grid-rows-1 gap-8 md:gap-12 lg:gap-16 max-w-6xl mx-auto">
-            {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
+          {/* Formulário de Cadastro Rápido - 50% da largura */}
+          <div>
               <Card
-                key={1} // Chave única para cada card.
-                // Classes condicionais para destacar o plano popular.
-                // bg-theme-card/95 border-2 border-[#2a4980] shadow-[0_0_60px_rgba(79,155,255,0.5)]
-
-                className={`p-6 md:p-8 relative backdrop-blur-md flex flex-col
-                    bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]
-                `}
+                key={1}
+                className="p-6 md:p-8 relative backdrop-blur-md flex flex-col bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)] w-full"
               >
-                {/* Badge "Popular" (ou texto customizado) para o plano destacado. */}
+                {/* Badge "Cadastro Rápido" */}
                   <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
-                    dsadfsarf brtret erter trt
+                    CADASTRO RÁPIDO
                   </div>
                 
 
-                {/* Cabeçalho do Card (Nome do Plano, Preço, Descrição) */}
+                {/* Cabeçalho do Card */}
                 <div className="text-center mb-6 pt-4">
-                  {" "}
-                  {/* pt-4 para dar espaço ao badge "Popular" */}
                   <h3 className="text-xl sm:text-2xl font-bold mb-6 text-white">
-                    dddsac fbfdg fbfdgdfgg f fg   gfdg fdg fg f fdgfd  gfgfgfdgfgf  fg f sadasd
+                    Seus dados profissionais
                   </h3>
-                  <div className="flex items-baseline justify-center text-white">
-                    <span className="gradient-text text-3xl sm:text-4xl font-bold">
-                      2222222
-                    </span>
-                  </div>
-                  {/* Descrição do plano com altura fixa para alinhamento visual entre cards. */}
-                  <p className="text-lg text-gray-300 mt-2 h-10">
-                    description
+                  <p className="text-lg text-gray-300 mt-2">
+                    Mantenha suas informações atualizadas.
                   </p>
                 </div>
 
-                {/* Lista de Recursos do Plano */}
-                {/* 'flex-grow' permite que esta seção expanda e empurre o botão para baixo. */}
-                <div className="space-y-3 mb-8 ml-8 flex-grow">
-           fggfgfgfgf
+                {/* Formulário de Dados */}
+                <div className="space-y-6 mb-8 flex-grow">
+                  {/* Campo Nome */}
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      Nome
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        👤
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="Dolesc - Departamento de Odontologia Legal e Saúde Coletiva da UFRJ"
+                        className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Campo WhatsApp */}
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">
+                      WhatsApp
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        📱
+                      </span>
+                      <input
+                        type="tel"
+                        placeholder="55-21-24346931"
+                        className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tipo de Perfil */}
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-3">
+                      Tipo de Perfil (pode selecionar múltiplas opções)
+                    </label>
+                    <div className="space-y-3">
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                          defaultChecked
+                        />
+                        <span className="text-white flex items-center">
+                          🎓 Estudante
+                        </span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                          defaultChecked
+                        />
+                        <span className="text-white flex items-center">
+                          👨‍🏫 Professor
+                        </span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                          defaultChecked
+                        />
+                        <span className="text-white flex items-center">
+                          🦷 Dentista
+                        </span>
+                      </label>
+                      <label className="flex items-center space-x-3 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                          defaultChecked
+                        />
+                        <span className="text-white flex items-center">
+                          ⭐ Outro
+                        </span>
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Botão de Chamada para Ação do Plano */}
-                {/* 'mt-auto' ajuda a alinhar o botão na parte inferior do card quando os conteúdos têm alturas diferentes. */}
+                {/* Botão de Salvar */}
                 <Button
-                  className={`w-full mt-auto text-foreground font-semibold py-3 text-base md:text-lg
-                                  bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]"
-                                  transition-all duration-300 ease-in-out transform hover:scale-105`}
+                  className="w-full mt-auto text-white font-semibold py-3 text-base md:text-lg bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)] transition-all duration-300 ease-in-out transform hover:scale-105"
                 >
-                  buttonText
+                  Salvar alterações
                 </Button>
               </Card>
 
