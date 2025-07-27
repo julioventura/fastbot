@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* MODO ESCURO como padrão */
+    /* Variáveis CSS para o tema padrão */
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
 
@@ -35,7 +35,7 @@
 
     --radius: 0.75rem;
 
-    /* Variáveis personalizadas para o tema escuro (padrão) */
+    /* Variáveis personalizadas para o tema */
     --gradient-from: #0c203f;
     --gradient-to: #082756;
     --gradient-secondary-to: #0e2d5e;
@@ -50,50 +50,6 @@
     --card-bg: rgba(10, 22, 41, 0.95);
   }
 
-  /* MODO CLARO - Override das cores padrões */
-  .light {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 217 32% 17%;
-    --secondary-foreground: 221 68% 81%;
-
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 217 32% 17%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
-    --ring: 221 83% 53%;
-
-    /* Variáveis para o tema claro */
-    --gradient-from: #0c203f;
-    --gradient-to: #082756;
-    --gradient-secondary-to: #0e2d5e;
-    --accent-blue: #4f9bff;
-    --accent-blue-light: #60a5fa;
-    --accent-blue-lighter: #7caffd;
-    --accent-blue-bg: #2a4980;
-    --text-muted: #b6b6b6;
-    --border-accent: #2a4980;
-    --hover-bg: rgba(42, 73, 128, 0.3);
-    --hover-bg-light: rgba(79, 155, 255, 0.1);
-    --card-bg: rgba(10, 22, 41, 0.95);
-  }
 
 
   /* ===== ESTILOS BASE ===== */
@@ -143,17 +99,12 @@
     transition: all 0.3s ease !important;
   }
 
-  /* Contraste - modo escuro é padrão */
+  /* Contraste para navegação ativa */
   .nav-active-item {
     color: #ffffff !important;
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.8) !important;
   }
 
-  /* Contraste específico para modo claro quando ativo */
-  /* .light .nav-active-item {
-    color: #ffffff !important;
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8) !important;
-  } */
 
   /* Animação pulsante sutil */
   .nav-active-item::before {
@@ -296,18 +247,12 @@
 
 /* ===== MODAL DE AUTENTICAÇÃO ===== */
 
-/* Modal com estilo baseado no tema ativo */
+/* Modal com estilo padrão */
 [role="dialog"] {
   background: linear-gradient(to bottom, #0a1629, #0e2d5e) !important;
 }
 
-/* Override apenas para modo claro */
-.light [role="dialog"] {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-}
-
-/* Inputs no modal - padrão escuro */
+/* Inputs no modal */
 [role="dialog"] input {
   background-color: rgba(31, 41, 55, 0.8) !important;
   border-color: rgba(42, 73, 128, 0.7) !important;
@@ -325,45 +270,18 @@
   box-shadow: 0 0 0 3px rgba(79, 155, 255, 0.2) !important;
 }
 
-/* Inputs no modal para modo claro - apenas override quando necessário */
-/* .light [role="dialog"] input,
-.light [role="dialog"] .bg-background {
-  background-color: #ffffff !important;
-  border-color: #d1d5db !important;
-  color: #1f2937 !important;
-}
 
-.light [role="dialog"] input::placeholder {
-  color: #9ca3af !important;
-}
-
-.light [role="dialog"] input:focus {
-  background-color: #ffffff !important;
-  border-color: #3b82f6 !important;
-  color: #1f2937 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-} */
-
-/* Labels no modal - padrão escuro */
+/* Labels no modal */
 [role="dialog"] label {
   color: #d1d5db !important;
 }
-/* 
-.light [role="dialog"] label {
-  color: #374151 !important;
-  font-weight: 500 !important;
-} */
 
-/* Ícones nos inputs - padrão escuro */
+/* Ícones nos inputs */
 [role="dialog"] .lucide {
   color: #9ca3af !important;
 }
 
-/* .light [role="dialog"] .lucide {
-  color: #6b7280 !important;
-} */
-
-/* Classes de tema no modal - padrão escuro */
+/* Classes de tema no modal */
 [role="dialog"] .text-foreground {
   color: #d1d5db !important;
 }
@@ -371,7 +289,6 @@
 [role="dialog"] .text-muted-foreground {
   color: #9ca3af !important;
 }
-
 
 /* Botões de toggle de senha */
 [role="dialog"] button[type="button"] {
@@ -382,11 +299,7 @@
   color: #ffffff !important;
 }
 
-
-
-/* ===== CARDS DE FEATURES - TEMA ESPECÍFICO ===== */
-
-/* Modo escuro - manter transparência original */
+/* Cards de features */
 .bg-theme-card {
   background: rgba(10, 22, 41, 0.5) !important;
   backdrop-filter: blur(12px) !important;
@@ -496,58 +409,7 @@
   }
 }
 
-/* ===== APRIMORAMENTOS ESPECÍFICOS PARA O NOVO DESIGN ===== */
 
-/* Forçar fundo branco para o modo claro */
-.light body,
-.light .bg-hero-new {
-  background: linear-gradient(
-    135deg,
-    /* #ffffff 0%,
-    #f8fafc 50%,
-    #f1f5f9 100% */
-  ) !important;
-}
-
-/* Header no modo claro - mais limpo */
-.light .header-modern,
-.light header {
-  /* background: rgba(255, 255, 255, 0.98) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important; */
-}
-
-/* Typography melhorada */
-.light .gradient-text-blue {
-  /* background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important; */
-}
-
-.light .gradient-text-purple {
-  /* background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important; */
-}
-
-/* Garantir que botões mantenham estilo no modo claro */
-.light .hero-cta-button {
-  /* background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-  color: #ffffff !important;
-  border: none !important; */
-}
-
-.light .hero-cta-button:hover {
-  /* background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
-  color: #ffffff !important; */
-}
-
-/* Personagem - garantir cores corretas */
-.light .character-illustration {
-  /* filter: brightness(1.1) contrast(1.05); */
-}
 
 /* Animações suaves */
 .character-illustration {
@@ -572,14 +434,8 @@
 
 /* Estilos específicos para bordas dos inputs no EditChatbotConfig */
 @layer components {
-  .edit-form-input {
-    /* border: 3px solid #000000 !important;
-    border-color: #000000 !important; */
-    border: 3px solid rgba(255, 255, 255, 0.6) !important;
-    border-color: rgba(255, 255, 255, 0.6) !important;
-  }
 
-  .dark .edit-form-input {
+  .edit-form-input {
     border: 3px solid rgba(255, 255, 255, 0.6) !important;
     border-color: rgba(255, 255, 255, 0.6) !important;
   }
@@ -591,14 +447,8 @@
 }
 
 /* Especificidade extra para garantir aplicação */
-.bg-transparent .edit-form-input {
-  /* border: 3px solid #000000 !important;
-  border-color: #000000 !important; */
-  border: 3px solid rgba(255, 255, 255, 0.6) !important;
-  border-color: rgba(255, 255, 255, 0.6) !important;
-}
 
-.dark .bg-transparent .edit-form-input {
+.bg-transparent .edit-form-input {
   border: 3px solid rgba(255, 255, 255, 0.6) !important;
   border-color: rgba(255, 255, 255, 0.6) !important;
 }

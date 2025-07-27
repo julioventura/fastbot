@@ -61,7 +61,6 @@ import {
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '@/lib/auth/AuthContext'
-import { ThemeProvider } from '@/contexts/ThemeContext'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
 // Função para criar wrapper de providers (não é um componente exportado)
@@ -76,15 +75,13 @@ function createWrapper() {
   return function TestWrapper({ children }: { children: React.ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <TooltipProvider>
-            <AuthProvider>
-              <BrowserRouter>
-                {children}
-              </BrowserRouter>
-            </AuthProvider>
-          </TooltipProvider>
-        </ThemeProvider>
+        <TooltipProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              {children}
+            </BrowserRouter>
+          </AuthProvider>
+        </TooltipProvider>
       </QueryClientProvider>
     )
   }

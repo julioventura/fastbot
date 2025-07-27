@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/auth/AuthModal';
 import { useAuth } from "@/lib/auth/useAuth";
 import { NavLink } from 'react-router-dom';
-import ThemeSelector from '@/components/ThemeSelector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -178,8 +177,6 @@ const Header = () => {
 
           {/* Auth Section */}
           <div className="flex items-center space-x-4">
-
-            <ThemeSelector />
             
             {authLoading ? (
               <div className="text-muted-foreground text-sm">Carregando...</div>

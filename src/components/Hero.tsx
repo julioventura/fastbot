@@ -14,13 +14,11 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useTheme } from "@/hooks/useTheme";
 import { useNavigate } from "react-router-dom";
 
 // Componente Hero
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
 const Hero = () => {
-  const { theme } = useTheme();
   const navigate = useNavigate();
   const [useImageFallback, setUseImageFallback] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -32,13 +30,9 @@ const Hero = () => {
     },
   ];
 
-  // Determina qual imagem usar
+  // Determina qual imagem usar - agora sempre usa a mesma imagem
   const getImageSrc = () => {
-    if (theme === "dark" && !useImageFallback) {
-      // return "/fastbot/ana-hero.png";
-      return "/fastbot/hero-ana-dark.png";
-    }
-    return "/fastbot/ana-hero.png";
+    return "/fastbot/hero-ana-dark.png";
   };
 
   // Handler para erro de carregamento da imagem

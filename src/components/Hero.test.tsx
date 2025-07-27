@@ -18,12 +18,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Hero from './Hero';
 
-// Mock do hook useTheme
-const mockUseTheme = vi.fn();
-vi.mock('@/hooks/useTheme', () => ({
-  useTheme: () => mockUseTheme(),
-}));
-
 // Mock do lucide-react
 vi.mock('lucide-react', () => ({
   ArrowRight: ({ className }: { className?: string }) => (
@@ -32,11 +26,6 @@ vi.mock('lucide-react', () => ({
 }));
 
 describe('Hero Component', () => {
-  beforeEach(() => {
-    // Reset do mock antes de cada teste
-    mockUseTheme.mockReturnValue({ theme: 'light' });
-  });
-
   describe('quando renderizado', () => {
     it('deve renderizar a seção hero', () => {
       render(<Hero />);
@@ -69,34 +58,12 @@ describe('Hero Component', () => {
   });
 
   describe('gerenciamento de imagens', () => {
-    it('deve renderizar a imagem da Fastbot com tema light por padrão', () => {
-      mockUseTheme.mockReturnValue({ theme: 'light' });
-      render(<Hero />);
-      
-      const anaImage = screen.getByAltText('Fastbot - Assistente Virtual Profissional da Saúde');
-      expect(anaImage).toBeInTheDocument();
-      expect(anaImage).toHaveAttribute('src', '/fastbot/hero-ana.png');
-    });
-
-    it('deve usar imagem escura quando o tema for dark', () => {
-      mockUseTheme.mockReturnValue({ theme: 'dark' });
+    it('deve renderizar a imagem da Fastbot', () => {
       render(<Hero />);
       
       const anaImage = screen.getByAltText('Fastbot - Assistente Virtual Profissional da Saúde');
       expect(anaImage).toBeInTheDocument();
       expect(anaImage).toHaveAttribute('src', '/fastbot/hero-ana-dark.png');
-    });
-
-    it('deve fazer fallback para imagem light quando imagem dark falha', () => {
-      mockUseTheme.mockReturnValue({ theme: 'dark' });
-      render(<Hero />);
-      
-      const anaImage = screen.getByAltText('Fastbot - Assistente Virtual Profissional da Saúde');
-      
-      // Simula erro de carregamento da imagem
-      fireEvent.error(anaImage);
-      
-      expect(anaImage).toHaveAttribute('src', '/fastbot/hero-ana.png');
     });
 
     it('deve ter atributos de acessibilidade corretos na imagem', () => {
