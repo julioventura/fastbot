@@ -215,43 +215,20 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
       <form onSubmit={onSubmit} className="space-y-6">
         {/* Tab: Identidade & Saudação */}
         {activeTab === "identity" && (
-          <Card className="bg-transparent border border-border backdrop-blur-sm">
+          <Card className="bg-transparent border border-gray-600 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              {/* <CardTitle className="flex items-center gap-2">
                 Identidade & Saudação
               </CardTitle>
               <CardDescription>
                 Configure a personalidade e apresentação do seu chatbot
-              </CardDescription>
+              </CardDescription> */}
             </CardHeader>
+
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Coluna Esquerda */}
                 <div className="space-y-6">
-                  {/* System Message */}
-                  <div>
-                    <Label htmlFor="system_instructions">
-                      Instruções Gerais (System Message){" "}
-                      <span className="text-red-500">*</span>
-                    </Label>
-                    <Textarea
-                      id="system_instructions"
-                      value={chatbotData.system_instructions}
-                      onChange={(e) =>
-                        onChange("system_instructions", e.target.value)
-                      }
-                      className="mt-2 edit-form-input"
-                      style={borderStyle}
-                      rows={6}
-                      placeholder="Você é um assistente virtual especializado em... Suas principais funções são..."
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Instruções base para o comportamento do chatbot. Pode ser
-                      simplificado conforme você configura o dashboard.
-                    </p>
-                  </div>
-
                   {/* Nome do Chatbot */}
                   <div>
                     <Label htmlFor="chatbot_name">
@@ -268,30 +245,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     />
                   </div>
 
-                  {/* Slider de Formalidade */}
-                  <div className="space-y-3">
-                    <Label>
-                      Nível de Formalidade: {chatbotData.formality_level || 50}%
-                    </Label>
-                    <Slider
-                      value={[chatbotData.formality_level || 50]}
-                      onValueChange={([value]) =>
-                        onChange("formality_level", value)
-                      }
-                      max={100}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Casual</span>
-                      <span>Profissional</span>
-                      <span>Acadêmico</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Coluna Direita */}
-                <div className="space-y-6">
                   {/* Saudação Personalizada */}
                   <div>
                     <Label htmlFor="welcome_message">
@@ -312,9 +265,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
                   {/* Switches */}
                   <div className="space-y-4">
-
-
-                    <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                    {/* <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                       <div>
                         <Label>Usar Emojis</Label>
                         <p className="text-xs text-muted-foreground">
@@ -327,7 +278,51 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           onChange("use_emojis", checked)
                         }
                       />
+                    </div> */}
+                  </div>
+
+                  {/* Slider de Formalidade */}
+                  {/* <div className="space-y-3">
+                    <Label>
+                      Nível de Formalidade: {chatbotData.formality_level || 50}%
+                    </Label>
+                    <Slider
+                      value={[chatbotData.formality_level || 50]}
+                      onValueChange={([value]) =>
+                        onChange("formality_level", value)
+                      }
+                      max={100}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Casual</span>
+                      <span>Profissional</span>
+                      <span>Acadêmico</span>
                     </div>
+                  </div> */}
+                </div>
+
+                {/* Coluna Direita */}
+                <div className="space-y-6">
+                  {/* System Message */}
+                  <div>
+                    <Label htmlFor="system_instructions">
+                      Instruções Gerais (System Message){" "}
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="system_instructions"
+                      value={chatbotData.system_instructions}
+                      onChange={(e) =>
+                        onChange("system_instructions", e.target.value)
+                      }
+                      className="mt-2 edit-form-input"
+                      style={borderStyle}
+                      rows={10}
+                      placeholder="Você é um assistente virtual especializado em... Suas principais funções são..."
+                      required
+                    />
                   </div>
                 </div>
               </div>
@@ -980,7 +975,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     </h3>
 
                     <div className=" justify-between p-4 border border-gray-600 rounded-lg">
-
                       {/* Rigidez nas Fontes */}
                       <div className="space-y-3">
                         <Label>
@@ -1018,9 +1012,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           />
                         </div>
                       </div>
-
                     </div>
-
                   </div>
                 </div>
               </div>
