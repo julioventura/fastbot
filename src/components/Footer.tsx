@@ -63,14 +63,15 @@ const Footer = () => {
 
           {/* Seção do Logo/Nome da Aplicação */}
           <div className="flex items-center">
-            <NavLink 
-              to="/" 
-              className="flex flex-col items-start group relative"
-            >
-              {/* "DENTISTAS.COM.BR / FASTBOT" - texto simples sem efeitos */}
-              <span className="font-mono text-xl text-primary font-bold tracking-[0.2em] uppercase">
-                DENTISTAS.COM.BR / FASTBOT  - (Versão Beta)
-              </span>
+            <NavLink to="/" className="flex items-center space-x-2 group">
+              <div>
+                <span className="text-sm text-primary/90 font-bold -mt-1">
+                  Dentistas.com.br /&nbsp;
+                </span>
+                <span className="text-xl md:text-xl font-black text-primary group-hover:text-primary/95 transition-colors">
+                  Fastbot
+                </span>
+              </div>
             </NavLink>
           </div>
         
