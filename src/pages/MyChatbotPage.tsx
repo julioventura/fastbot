@@ -160,43 +160,114 @@ const MyChatbotPage: React.FC = () => {
 
     setIsSaving(true);
     try {
-      // Check for existing records
-      const { data: existingData, error: fetchError } = await supabase
-        .from("mychatbot")
-        .select("id")
-        .eq("chatbot_user", user.id);
-
-      if (fetchError) {
-        throw fetchError;
-      }
+      console.log('💾 [MyChatbotPage] Iniciando salvamento do chatbot...', {
+        userId: user.id,
+        timestamp: new Date().toISOString(),
+        dataFields: Object.keys(chatbotData)
+      });
 
       // Generate system_message automatically based on filled data
       const generatedSystemMessage = validateChatbotData(chatbotData) 
         ? generateSystemMessage(chatbotData)
         : chatbotData.system_message;
 
+      const currentTimestamp = new Date().toISOString();
       const dataToSave = {
         ...chatbotData,
         system_message: generatedSystemMessage,
         chatbot_user: user.id,
-        updated_at: new Date().toISOString(),
+        updated_at: currentTimestamp,
       };
 
-      // Update or insert based on existing records
-      if (existingData && existingData.length > 0) {
-        const { error } = await supabase
+      console.log('📊 [MyChatbotPage] Dados preparados para salvamento:', {
+        hasSystemMessage: !!generatedSystemMessage,
+        systemMessageLength: generatedSystemMessage?.length || 0,
+        chatbotUser: user.id,
+        fieldsToSave: Object.keys(dataToSave)
+      });
+
+      // NOVA ABORDAGEM: Verificar explicitamente se existe e depois decidir
+      console.log('🔍 [MyChatbotPage] Verificando existência de registro...');
+      const { data: existingRecords, error: checkError } = await supabase
+        .from("mychatbot")
+        .select("id, created_at")
+        .eq("chatbot_user", user.id);
+
+      if (checkError) {
+        console.error('❌ [MyChatbotPage] Erro ao verificar registros existentes:', checkError);
+        throw checkError;
+      }
+
+      let operationResult;
+      const recordExists = existingRecords && existingRecords.length > 0;
+
+      console.log('📋 [MyChatbotPage] Status do registro:', {
+        exists: recordExists,
+        recordCount: existingRecords?.length || 0,
+        existingId: recordExists ? existingRecords[0].id : null
+      });
+
+      if (recordExists) {
+        // ATUALIZAR registro existente
+        console.log('🔄 [MyChatbotPage] Atualizando registro existente...');
+        const { data: updateData, error: updateError } = await supabase
           .from("mychatbot")
           .update(dataToSave)
-          .eq("chatbot_user", user.id);
-        
-        if (error) throw error;
+          .eq("chatbot_user", user.id)
+          .select();
+
+        if (updateError) {
+          console.error('❌ [MyChatbotPage] Erro no UPDATE:', updateError);
+          throw updateError;
+        }
+
+        operationResult = { data: updateData, operation: 'UPDATE' };
       } else {
-        const { error } = await supabase
+        // INSERIR novo registro
+        console.log('➕ [MyChatbotPage] Inserindo novo registro...');
+        const insertData = {
+          ...dataToSave,
+          created_at: currentTimestamp,
+        };
+
+        const { data: insertResult, error: insertError } = await supabase
           .from("mychatbot")
-          .insert({ ...dataToSave, created_at: new Date().toISOString() });
-        
-        if (error) throw error;
+          .insert(insertData)
+          .select();
+
+        if (insertError) {
+          console.error('❌ [MyChatbotPage] Erro no INSERT:', insertError);
+          
+          // Se falhou no INSERT, pode ser race condition - tentar UPDATE como fallback
+          if (insertError.message?.includes('duplicate') || insertError.message?.includes('unique') || insertError.code === '23505') {
+            console.log('🔄 [MyChatbotPage] Race condition detectada! Tentando UPDATE como fallback...');
+            
+            const { data: fallbackData, error: fallbackError } = await supabase
+              .from("mychatbot")
+              .update(dataToSave)
+              .eq("chatbot_user", user.id)
+              .select();
+
+            if (fallbackError) {
+              console.error('❌ [MyChatbotPage] Erro no fallback UPDATE:', fallbackError);
+              throw fallbackError;
+            }
+
+            operationResult = { data: fallbackData, operation: 'UPDATE_FALLBACK' };
+            console.log('✅ [MyChatbotPage] Fallback UPDATE realizado com sucesso');
+          } else {
+            throw insertError;
+          }
+        } else {
+          operationResult = { data: insertResult, operation: 'INSERT' };
+        }
       }
+
+      console.log('✅ [MyChatbotPage] Operação realizada com sucesso:', {
+        operation: operationResult.operation,
+        recordsAffected: operationResult.data?.length || 0,
+        success: true
+      });
 
       // Update local state with generated system_message
       setChatbotData(prev => ({
@@ -208,13 +279,45 @@ const MyChatbotPage: React.FC = () => {
         title: "Sucesso!",
         description: "Configurações do chatbot salvas com system_message gerado automaticamente.",
       });
+
+      console.log('🎉 [MyChatbotPage] Salvamento concluído com sucesso');
+
     } catch (error) {
-      console.error("Erro ao salvar dados do chatbot:", error);
+      console.error("❌ [MyChatbotPage] Erro ao salvar dados do chatbot:", error);
+      
+      // Análise detalhada do erro para melhor debug
+      const errorDetails = {
+        type: typeof error,
+        message: error instanceof Error ? error.message : 'Erro desconhecido',
+        userId: user?.id,
+        timestamp: new Date().toISOString(),
+        errorObject: error // Incluir o objeto completo para debug
+      };
+
+      console.error('📋 [MyChatbotPage] Detalhes do erro:', errorDetails);
+
       const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      
+      // Mensagem mais específica para diferentes tipos de erro
+      let userMessage = `Não foi possível salvar as configurações do chatbot: ${errorMessage}`;
+      
+      // Verificar tipos específicos de erro
+      if (errorMessage.includes('409') || errorMessage.includes('conflict') || errorMessage.includes('duplicate')) {
+        userMessage = "Erro de conflito ao salvar (409). Aguarde alguns segundos e tente novamente.";
+      } else if (errorMessage.includes('23505') || errorMessage.includes('unique_violation')) {
+        userMessage = "Erro de violação de constraint única. Recarregue a página e tente novamente.";
+      } else if (errorMessage.includes('permission') || errorMessage.includes('access')) {
+        userMessage = "Erro de permissão. Verifique se você está logado corretamente.";
+      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+        userMessage = "Erro de conexão. Verifique sua internet e tente novamente.";
+      } else if (errorMessage.includes('timeout')) {
+        userMessage = "Timeout na operação. Tente novamente em alguns segundos.";
+      }
+
       toast({
         variant: "destructive",
         title: "Erro ao salvar",
-        description: `Não foi possível salvar as configurações do chatbot: ${errorMessage}`,
+        description: userMessage,
       });
     } finally {
       setIsSaving(false);

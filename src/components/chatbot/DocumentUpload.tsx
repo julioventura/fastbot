@@ -95,11 +95,11 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     const cleanContent = content.replace(/\s+/g, " ").trim();
 
     // Pegar as primeiras 50 palavras
-    const words = cleanContent.split(" ").slice(0, 50);
+    const words = cleanContent.split(" ").slice(0, 20);
     let summary = words.join(" ");
 
-    // Se o conteúdo original tinha mais de 50 palavras, adicionar "..."
-    if (cleanContent.split(" ").length > 50) {
+    // Se o conteúdo original tinha mais de 20 palavras, adicionar "..."
+    if (cleanContent.split(" ").length > 20) {
       summary += "...";
     }
 
@@ -216,7 +216,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         .from("chatbot_embeddings")
         .delete()
         .eq("document_id", documentId)
-        .eq("user_id", user.id);
+        .eq("chatbot_user", user.id);
 
       if (embeddingsError) {
         console.error("Erro ao deletar embeddings:", embeddingsError);
@@ -689,12 +689,12 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                       </div>
 
                       {/* Coluna 2: Resumo do documento */}
-                      <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <div className="bg-gray-800 dark:bg-gray-800 p-3 rounded-lg">
+                        <h4 className="text-sm font-medium text-gray-500 mb-2">
                           Preview:
                         </h4>
                         {doc.summary ? (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                          <p className="text-sm text-gray-400 leading-relaxed">
                             {doc.summary}
                           </p>
                         ) : (

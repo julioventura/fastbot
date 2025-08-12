@@ -217,12 +217,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         {activeTab === "identity" && (
           <Card className="bg-transparent border border-gray-600 backdrop-blur-sm">
             <CardHeader>
-              {/* <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2">
                 Identidade & Saudação
               </CardTitle>
               <CardDescription>
                 Configure a personalidade e apresentação do seu chatbot
-              </CardDescription> */}
+              </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6">
@@ -264,8 +264,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   </div>
 
                   {/* Switches */}
-                  <div className="space-y-4">
-                    {/* <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                  {/* <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                       <div>
                         <Label>Usar Emojis</Label>
                         <p className="text-xs text-muted-foreground">
@@ -278,29 +278,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           onChange("use_emojis", checked)
                         }
                       />
-                    </div> */}
-                  </div>
-
-                  {/* Slider de Formalidade */}
-                  {/* <div className="space-y-3">
-                    <Label>
-                      Nível de Formalidade: {chatbotData.formality_level || 50}%
-                    </Label>
-                    <Slider
-                      value={[chatbotData.formality_level || 50]}
-                      onValueChange={([value]) =>
-                        onChange("formality_level", value)
-                      }
-                      max={100}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Casual</span>
-                      <span>Profissional</span>
-                      <span>Acadêmico</span>
                     </div>
                   </div> */}
+
                 </div>
 
                 {/* Coluna Direita */}
@@ -308,8 +288,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   {/* System Message */}
                   <div>
                     <Label htmlFor="system_instructions">
-                      Instruções Gerais (System Message){" "}
-                      <span className="text-red-500">*</span>
+                      Instruções{" "}
                     </Label>
                     <Textarea
                       id="system_instructions"
@@ -321,7 +300,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       style={borderStyle}
                       rows={10}
                       placeholder="Você é um assistente virtual especializado em... Suas principais funções são..."
-                      required
                     />
                   </div>
                 </div>
@@ -339,7 +317,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
                 {/* Coluna Esquerda */}
                 <div className="space-y-6">
                   {/* Tema Principal */}
@@ -356,7 +334,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   </div>
 
                   {/* Temas Permitidos */}
-                  <div>
+                  <div className="pt-6">
                     <Label>Temas Permitidos</Label>
 
                     {/* Lista de temas como badges */}
@@ -370,11 +348,13 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                               className="flex items-center gap-2 px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors"
                             >
                               <span>{topic}</span>
-                              <X
-                                className="w-3 h-3 cursor-pointer flex-shrink-0 hover:text-red-600 dark:hover:text-red-400"
+                              <div
+                                className="cursor-pointer flex-shrink-0"
                                 onClick={() => removeTopic(index)}
                                 title={`Remover tema: ${topic}`}
-                              />
+                              >
+                                <X className="w-3 h-3 hover:text-red-600 dark:hover:text-red-400" />
+                              </div>
                             </Badge>
                           )
                         )}
@@ -423,7 +403,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   </div>
 
                   {/* Ação quando não souber */}
-                  <div>
+                  {/* <div>
                     <Label>Ação quando não souber responder</Label>
                     <Select
                       value={chatbotData.fallback_action || "human"}
@@ -446,62 +426,22 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> */}
 
-                  {/* Estilo de Listas */}
-                  <div className="mb-6">
-                    <Label>Estilo de Listas</Label>
-                    <Select
-                      value={chatbotData.list_style || "numbered"}
-                      onValueChange={(value) => onChange("list_style", value)}
-                    >
-                      <SelectTrigger className="mt-2">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="numbered">
-                          Numerada (1, 2, 3...)
-                        </SelectItem>
-                        <SelectItem value="bullets">
-                          Com bullets (• • •)
-                        </SelectItem>
-                        <SelectItem value="simple">
-                          Simples (sem marcadores)
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Máximo de Itens */}
-                  <div>
-                    <Label htmlFor="max_list_items">
-                      Máximo de Itens por Lista
-                    </Label>
-                    <Input
-                      id="max_list_items"
-                      type="number"
-                      value={chatbotData.max_list_items || 10}
-                      onChange={(e) =>
-                        onChange("max_list_items", parseInt(e.target.value))
-                      }
-                      className="mt-2 edit-form-input"
-                      style={borderStyle}
-                      min="1"
-                      max="50"
-                    />
-                  </div>
                 </div>
 
                 {/* Coluna Direita */}
-                <div className="space-y-6">
-                  {/* Regras Automáticas */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">
-                      Regras Automáticas
-                    </h3>
+                {/* <div className="space-y-6"> */}
 
-                    {/* Frases Obrigatórias */}
-                    <div className="mb-6">
+                {/* Regras Automáticas */}
+                {/* <div> */}
+
+                {/* <h3 className="text-lg font-semibold mb-4">
+                      Regras Automáticas
+                    </h3> */}
+
+                {/* Frases Obrigatórias */}
+                {/* <div className="mb-6">
                       <Label>Frases Obrigatórias (Finalizações)</Label>
                       <div className="flex flex-wrap gap-2 mt-2 mb-2">
                         {(chatbotData.mandatory_phrases || []).map(
@@ -535,10 +475,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         style={borderStyle}
                         rows={2}
                       />
-                    </div>
+                    </div> */}
 
-                    {/* Tempo de Retorno */}
-                    <div className="mb-6">
+                {/* Tempo de Retorno */}
+                {/* <div className="mb-6">
                       <Label htmlFor="response_time_promise">
                         Prazo de Retorno Humano
                       </Label>
@@ -552,10 +492,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         style={borderStyle}
                         placeholder="Ex: 1 dia útil"
                       />
-                    </div>
+                    </div> */}
 
-                    {/* Mensagem de Encaminhamento */}
-                    <div className="mb-6">
+                {/* Mensagem de Encaminhamento */}
+                {/* <div className="mb-6">
                       <Label htmlFor="fallback_message">
                         Mensagem para Encaminhamento
                       </Label>
@@ -570,10 +510,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         rows={3}
                         placeholder="Não consegui encontrar essa informação. Vou encaminhar sua dúvida..."
                       />
-                    </div>
+                    </div> */}
 
-                    {/* Saudação para Usuários Retornantes */}
-                    <div>
+                {/* Saudação para Usuários Retornantes */}
+                {/* <div>
                       <Label htmlFor="returning_user_greeting">
                         Saudação para Usuários Retornantes
                       </Label>
@@ -588,9 +528,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         rows={2}
                         placeholder="Olá novamente! Como posso ajudar hoje?"
                       />
-                    </div>
-                  </div>
-                </div>
+                    </div> */}
+
+                {/* </div> */}
+
+                {/* </div> */}
+
               </div>
             </CardContent>
           </Card>
@@ -777,20 +720,65 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           </Card>
         )}
 
-        {/* Tab: Estilo & Formatação */}
+        {/* Tab: Estilo */}
         {activeTab === "style" && (
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                Estilo & Formatação
+                Estilo
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
                 {/* Coluna Esquerda */}
                 <div className="space-y-6">
+
+                  {/* Estilo de Listas */}
+                  <div className="pt-6 mb-6">
+                    <Label>Estilo de Listas</Label>
+                    <Select
+                      value={chatbotData.list_style || "numbered"}
+                      onValueChange={(value) => onChange("list_style", value)}
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="numbered">
+                          Numerada (1, 2, 3...)
+                        </SelectItem>
+                        <SelectItem value="bullets">
+                          Com bullets (• • •)
+                        </SelectItem>
+                        <SelectItem value="simple">
+                          Simples (sem marcadores)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Máximo de Itens */}
+                  <div>
+                    <Label htmlFor="max_list_items">
+                      Máximo de Itens por Lista
+                    </Label>
+                    <Input
+                      id="max_list_items"
+                      type="number"
+                      value={chatbotData.max_list_items || 10}
+                      onChange={(e) =>
+                        onChange("max_list_items", parseInt(e.target.value))
+                      }
+                      className="mt-2 edit-form-input"
+                      style={borderStyle}
+                      min="1"
+                      max="50"
+                    />
+                  </div>
+
                   {/* Tamanho dos Parágrafos */}
-                  <div className="space-y-3">
+                  {/* <div className="space-y-3">
                     <Label>
                       Tamanho dos Parágrafos: {chatbotData.paragraph_size || 50}
                       %
@@ -808,10 +796,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       <span>Médios</span>
                       <span>Detalhados</span>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Velocidade de Resposta */}
-                  <div className="space-y-3">
+                  {/* <div className="space-y-3">
                     <Label>
                       Velocidade de Resposta: {chatbotData.response_speed || 50}
                       %
@@ -829,10 +817,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       <span>Normal</span>
                       <span>Instantâneo</span>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Frequência de Uso do Nome */}
-                  <div className="space-y-3">
+                  {/* <div className="space-y-3">
                     <Label>
                       Frequência de Uso do Nome:{" "}
                       {chatbotData.name_usage_frequency || 30}%
@@ -850,10 +838,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       <span>Moderadamente</span>
                       <span>Sempre</span>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Cor do Chat */}
-                  <div>
+                  {/* <div>
                     <Label htmlFor="chat_color">Cor Principal do Chat</Label>
                     <div className="flex gap-2 mt-2">
                       <Input
@@ -872,14 +860,17 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         placeholder="#3b82f6"
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Coluna Direita */}
-                <div className="space-y-6">
+                <div className="mt-10 space-y-6">
+
                   {/* Switches de Configuração */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+
+                      {/* Solicitar Nome     */}
                       <div>
                         <Label>Solicitar Nome</Label>
                         <p className="text-xs text-muted-foreground">
@@ -894,6 +885,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       />
                     </div>
 
+                    {/* Lembrar Contexto */}
                     <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                       <div>
                         <Label>Lembrar Contexto</Label>
@@ -909,7 +901,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                    {/* Auto-Link */}
+                    {/* <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                       <div>
                         <Label>Auto-Link</Label>
                         <p className="text-xs text-muted-foreground">
@@ -922,9 +915,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           onChange("auto_link", checked)
                         }
                       />
-                    </div>
+                    </div> */}
 
-                    <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                    {/* Modo Debug */}
+                    {/* <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                       <div>
                         <Label>Modo Debug</Label>
                         <p className="text-xs text-muted-foreground">
@@ -937,7 +931,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           onChange("debug_mode", checked)
                         }
                       />
-                    </div>
+                    </div> */}
+
                   </div>
                 </div>
               </div>
@@ -1043,8 +1038,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <DialogTitle>
               Preview da Imagem{" "}
               {(chatbotData.uploaded_images || []).length > 1 &&
-                `(${previewImageIndex + 1} de ${
-                  (chatbotData.uploaded_images || []).length
+                `(${previewImageIndex + 1} de ${(chatbotData.uploaded_images || []).length
                 })`}
             </DialogTitle>
           </DialogHeader>
