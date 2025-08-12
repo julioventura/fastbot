@@ -35,10 +35,10 @@ const pricingPlans = [
     description: "",
     features: [
       "100 conversas por mês",
-      "Homepage profissional com chatbot",
-      "Cartão de Visitas Digital com QR-Code",
-      "Poster com QRCODE para a sala de espera",
-      "Link fácil para compartilhar seu chatbot",
+      "Seu chatbot em sua homepage profissional",
+      // "Cartão de Visitas Digital com QR-Code",
+      // "Poster com QRCODE para a sala de espera",
+      "Link fácil para divulgar: dentistas.com.br/voce",
     ],
     isPopular: true, // Destaca este plano como o mais popular.
     popularText: "USO EVENTUAL",
@@ -55,16 +55,16 @@ const pricingPlans = [
     buttonText: "ASSINE JÁ !",
     buttonVariant: "default" as const,
   },
-  {
-    name: "Créditos Avulsos",
-    price: "R$ 120",
-    description: "Créditos para áudio e imagem",
-    features: ["1000 créditos cumulativos"],
-    isPopular: false,
-    popularText: "GRATUITO",
-    buttonText: "COMPRAR CRÉDITOS", // Texto do botão ajustado
-    buttonVariant: "outline" as const, // Variante do botão ajustada para diferenciar
-  },
+  // {
+  //   name: "Créditos Avulsos",
+  //   price: "R$ 120",
+  //   description: "Créditos para áudio e imagem",
+  //   features: ["1000 créditos cumulativos"],
+  //   isPopular: false,
+  //   popularText: "GRATUITO",
+  //   buttonText: "COMPRAR CRÉDITOS", // Texto do botão ajustado
+  //   buttonVariant: "outline" as const, // Variante do botão ajustada para diferenciar
+  // },
 ];
 
 // Componente Pricing
@@ -184,13 +184,10 @@ const Pricing = () => {
           </div>
         </div>
 
-        {/* 2 colunas de largura igual */}
-        <div className="grid grid-cols-2 gap-4 md:gap-6">
-
-          {/* Grade de Cards de Preços - 50% da largura */}
-          <div className="flex flex-col gap-8 md:gap-12 lg:gap-16">
-            {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
-            {pricingPlans.map((plan, index) => (
+        {/* Grade de Cards de Preços - ocupando toda a largura */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-6xl mx-auto">
+          {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
+          {pricingPlans.map((plan, index) => (
               <Card
                 key={index} // Chave única para cada card.
                 // Classes condicionais para destacar o plano popular.
@@ -252,126 +249,6 @@ const Pricing = () => {
                 </Button>
               </Card>
             ))}
-          </div>
-
-          {/* Formulário de Cadastro Rápido - 50% da largura */}
-          <div>
-              <Card
-                key={1}
-                className="p-6 md:p-8 relative backdrop-blur-md flex flex-col bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)] w-full"
-              >
-                {/* Badge "Cadastro Rápido" */}
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
-                    CADASTRO RÁPIDO
-                  </div>
-                
-
-                {/* Cabeçalho do Card */}
-                <div className="text-center mb-6 pt-4">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-6 text-white">
-                    Seus dados profissionais
-                  </h3>
-                  <p className="text-lg text-gray-300 mt-2">
-                    Mantenha suas informações atualizadas.
-                  </p>
-                </div>
-
-                {/* Formulário de Dados */}
-                <div className="space-y-6 mb-8 flex-grow">
-                  {/* Campo Nome */}
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">
-                      Nome
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                        👤
-                      </span>
-                      <input
-                        type="text"
-                        placeholder="Dolesc - Departamento de Odontologia Legal e Saúde Coletiva da UFRJ"
-                        className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Campo WhatsApp */}
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">
-                      WhatsApp
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                        📱
-                      </span>
-                      <input
-                        type="tel"
-                        placeholder="55-21-24346931"
-                        className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Tipo de Perfil */}
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-3">
-                      Tipo de Perfil (pode selecionar múltiplas opções)
-                    </label>
-                    <div className="space-y-3">
-                      <label className="flex items-center space-x-3 cursor-pointer">
-                        <input 
-                          type="checkbox" 
-                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                          defaultChecked
-                        />
-                        <span className="text-white flex items-center">
-                          🎓 Estudante
-                        </span>
-                      </label>
-                      <label className="flex items-center space-x-3 cursor-pointer">
-                        <input 
-                          type="checkbox" 
-                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                          defaultChecked
-                        />
-                        <span className="text-white flex items-center">
-                          👨‍🏫 Professor
-                        </span>
-                      </label>
-                      <label className="flex items-center space-x-3 cursor-pointer">
-                        <input 
-                          type="checkbox" 
-                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                          defaultChecked
-                        />
-                        <span className="text-white flex items-center">
-                          🦷 Dentista
-                        </span>
-                      </label>
-                      <label className="flex items-center space-x-3 cursor-pointer">
-                        <input 
-                          type="checkbox" 
-                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                          defaultChecked
-                        />
-                        <span className="text-white flex items-center">
-                          ⭐ Outro
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Botão de Salvar */}
-                <Button
-                  className="w-full mt-auto text-white font-semibold py-3 text-base md:text-lg bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)] transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                  Salvar alterações
-                </Button>
-              </Card>
-
-          </div>
-
         </div>
       </div>
     </section>

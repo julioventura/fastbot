@@ -26,7 +26,15 @@ const Hero = () => {
   const slides = [
     {
       image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
-      text: ["Olá!", "Crie a sua", "atendente 24H", "", "em 3 minutos!", ""],
+      text: [
+        "Crie a SUA",
+        "atendente virtual",
+        "em 3 minutos!",
+        "",
+        "",
+        "",
+        ""
+      ],
     },
   ];
 
@@ -71,7 +79,7 @@ const Hero = () => {
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
               {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
-              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-yellow-400">
                 {slides[currentSlide].text[0] || ""}
               </span>
               <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
@@ -86,11 +94,18 @@ const Hero = () => {
               <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-red-500">
                 {slides[currentSlide].text[4] || ""}
               </span>
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-green-700">
+                {slides[currentSlide].text[5] || ""}
+              </span>
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-primary">
+                {slides[currentSlide].text[6] || ""}
+              </span>
             </div>
 
             {/* Botão CTA */}
             <div>
 
+              {/* ATENDE NO SEU WHATSAPP */}
               <div className="flex flex-row gap-1 ml-10 mb-4">
                 <Button
                   onClick={() => {
@@ -103,30 +118,13 @@ const Hero = () => {
                       });
                     }
                   }}
-                  className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
                   <span>ATENDE NO SEU WHATSAPP...</span>
                 </Button>
-
-                {/* Instagram */}
-                {/* <Button
-                  onClick={() => {
-                    // Scroll suave até o componente Pricing
-                    const pricingElement = document.getElementById('pricing');
-                    if (pricingElement) {
-                      pricingElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                      });
-                    }
-                  }}
-                   
-                  className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                >
-                  <span>ATENDE NO SEU INSTAGRAM...</span>
-                </Button> */}
               </div>
 
+              {/* ATENDE NO SEU INSTAGRAM... */}
               <div className="flex flex-row gap-1 ml-10 mb-4">
                 <Button
                   onClick={() => {
@@ -139,19 +137,40 @@ const Hero = () => {
                       });
                     }
                   }}
-                  className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <span>ATENDE NO SEU INSTAGRAM...</span>
+                </Button>
+              </div>
+
+              {/* E ATENDE NO SEU SITE... */}
+              <div className="flex flex-row gap-1 ml-10 mb-4">
+                <Button
+                  onClick={() => {
+                    // Scroll suave até o componente Pricing
+                    const pricingElement = document.getElementById('pricing');
+                    if (pricingElement) {
+                      pricingElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                  className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
                   <span>E ATENDE NO SEU SITE...</span>
                 </Button>
-
               </div>
 
-              <div className="flex flex-row gap-1 ml-10 mb-4">
-
+              {/* Não tem site? */}
+              <div className="flex flex-row gap-1 ml-10">
                 <Button
-                  className="bg-transparent py-4 mt-4 rounded-full text-primary text-3xl italic font-bold flex items-center shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  className="bg-transparent py-4 mt-8 text-primary hover:text-blue-400 text-3xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300"
                 >
-                <span>E o site é GRÁTIS !</span>
+                  <span className="text-left">
+                    Não tem site? Agora tem!<br />
+                    Seu SITE com chatbot de IA é GRÁTIS!
+                  </span>
                 </Button>
               </div>
 

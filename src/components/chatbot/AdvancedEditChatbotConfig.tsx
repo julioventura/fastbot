@@ -339,13 +339,13 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
                     {/* Lista de temas como badges */}
                     {(chatbotData.allowed_topics || []).length > 0 ? (
-                      <div className="flex flex-wrap gap-2 mt-4 mb-4 p-3 border border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                      <div className="flex flex-wrap gap-2 mt-4 mb-4 p-3 border border-gray-600 rounded-lg">
                         {(chatbotData.allowed_topics || []).map(
                           (topic, index) => (
                             <Badge
                               key={index}
                               variant="secondary"
-                              className="flex items-center gap-2 px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors"
+                              className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
                             >
                               <span>{topic}</span>
                               <div
@@ -575,12 +575,11 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       onChange={(e) => onChange("main_link", e.target.value)}
                       className="mt-2 edit-form-input"
                       style={borderStyle}
-                      placeholder="https://Dentistas.com.br"
                     />
                   </div>
 
                   {/* Switch Link Obrigatório */}
-                  <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                  {/* <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                     <div>
                       <Label>Link Obrigatório nas Respostas</Label>
                       <p className="text-xs text-muted-foreground">
@@ -593,10 +592,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         onChange("mandatory_link", checked)
                       }
                     />
-                  </div>
+                  </div> */}
 
                   {/* Switch Permitir Internet */}
-                  <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
+                  {/* <div className="flex items-center justify-between p-4 border border-gray-600 rounded-lg">
                     <div>
                       <Label>Permitir Busca na Internet</Label>
                       <p className="text-xs text-muted-foreground">
@@ -609,19 +608,19 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         onChange("allow_internet_search", checked)
                       }
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* Coluna Direita */}
-                <div className="space-y-6">
+                {/* <div className="space-y-6"> */}
+
                   {/* Imagens Anexadas */}
-                  <div className="space-y-6">
+                  {/* <div className="space-y-6">
                     <div>
                       <h3 className="text-lg font-semibold mb-4">
                         Imagens Anexadas
                       </h3>
 
-                      {/* Lista de imagens anexadas */}
                       <div className="border border-gray-600 rounded-lg">
                         <div className="flex items-center justify-between p-4 border-b border-gray-600">
                           <Label className="font-medium">
@@ -632,7 +631,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                             imagem(ns)
                           </span>
                         </div>
-
                         <div className="p-4">
                           {(chatbotData.uploaded_images || []).length > 0 ? (
                             <div className="space-y-3">
@@ -682,8 +680,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                             </div>
                           )}
 
-                          {/* Upload de imagens */}
-                          <div className="mt-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                          <div id="Upload" className="mt-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
                             <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
                             <p className="text-sm text-muted-foreground mb-2">
                               Arraste imagens ou clique para selecionar
@@ -710,11 +707,15 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                               onChange={(e) => handleImageUpload(e)}
                             />
                           </div>
+
                         </div>
                       </div>
+
                     </div>
-                  </div>
-                </div>
+                  </div> */}
+
+                {/* </div>  */}
+
               </div>
             </CardContent>
           </Card>
