@@ -350,8 +350,8 @@
 }
 
 /* Botão CTA melhorado */
-.hero-cta-button, .hero-cta-button-blue {
-  background: linear-gradient(135deg, #55b452 0%, #118811 100%);
+.hero-cta-button, .hero-cta-button-blue, hero-cta-button-pink {
+  background: linear-gradient(135deg, #55b452 0%, #0b680b 100%);
   box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4),
     0 0 0 1px rgba(37, 99, 235, 0.1);
   transition: all 0.3s ease;
@@ -359,7 +359,9 @@
  .hero-cta-button-blue {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
  }
-
+ .hero-cta-button-pink {
+  background: linear-gradient(135deg, #833ab4 0%, #833ab4 100%);
+ }
 
 .hero-cta-button:hover, .hero-cta-button-blue:hover {
   background: linear-gradient(135deg, #165f0c 0%, #196e08 100%);

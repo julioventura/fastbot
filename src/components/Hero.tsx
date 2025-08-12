@@ -26,7 +26,7 @@ const Hero = () => {
   const slides = [
     {
       image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
-      text: ["Olá!", "Crie sua", "atendente", "virtual de IA", "em 3 minutos!",""],
+      text: ["Olá!", "Crie sua", "atendente", "virtual de IA", "em 3 minutos!", ""],
     },
   ];
 
@@ -64,62 +64,100 @@ const Hero = () => {
       {/* Container principal ocupando toda a altura disponível */}
       <div className="container relative z-10 mx-auto px-8 w-full">
         <div className="grid lg:grid-cols-5 gap-4 lg:gap-4 items-center h-screen max-h-screen">
-          
+
           {/* Coluna do texto - lado esquerdo) */}
-          <div className="lg:col-span-3 flex flex-col justify-center space-y-6 lg:space-y-8 py-8">
+          <div className="lg:col-span-3 flex flex-col justify-center space-y-6 lg:space-y-8 py-0">
 
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
               {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
-              <span className="block text-3xl md:text-4xl lg:text-5xl font-black leading-tight text-white">
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
                 {slides[currentSlide].text[0] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-white">
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
                 {slides[currentSlide].text[1] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-yellow-400">
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-yellow-400">
                 {slides[currentSlide].text[2] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-white">
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
                 {slides[currentSlide].text[3] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-red-500">
+              <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-red-500">
                 {slides[currentSlide].text[4] || ""}
               </span>
             </div>
 
             {/* Botão CTA */}
-            <div className="pt-4">
-              <Button
-                onClick={() => {
-                  // Scroll suave até o componente Pricing
-                  const pricingElement = document.getElementById('pricing');
-                  if (pricingElement) {
-                    pricingElement.scrollIntoView({ 
-                      behavior: 'smooth',
-                      block: 'start'
-                    });
-                  }
-                }}
-                className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-              >
-                <span>SUA ATENDENTE ONLINE DE IA</span>
-              </Button>
-                            <Button
-                onClick={() => {
-                  // Scroll suave até o componente Pricing
-                  const pricingElement = document.getElementById('pricing');
-                  if (pricingElement) {
-                    pricingElement.scrollIntoView({ 
-                      behavior: 'smooth',
-                      block: 'start'
-                    });
-                  }
-                }}
-                className="mt-3 hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-              >
-                <span>ATENDE SEU WHATSAPP, SITE E INSTAGRAM!</span>
-              </Button>
+            <div>
+
+              <div className="flex flex-row gap-1 ml-10 mb-4">
+                <Button
+                  onClick={() => {
+                    // Scroll suave até o componente Pricing
+                    const pricingElement = document.getElementById('pricing');
+                    if (pricingElement) {
+                      pricingElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                  className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <span>ATENDE NO SEU WHATSAPP...</span>
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    // Scroll suave até o componente Pricing
+                    const pricingElement = document.getElementById('pricing');
+                    if (pricingElement) {
+                      pricingElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                   
+                  className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <span>ATENDE NO SEU INSTAGRAM...</span>
+                </Button>
+              </div>
+
+            <div className="flex flex-row gap-1 ml-10">
+                <Button
+                  onClick={() => {
+                    // Scroll suave até o componente Pricing
+                    const pricingElement = document.getElementById('pricing');
+                    if (pricingElement) {
+                      pricingElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                  className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <span>E ATENDE NO SEU SITE...</span>
+                </Button>
+                <Button
+                  onClick={() => {
+                    // Scroll suave até o componente Pricing
+                    const pricingElement = document.getElementById('pricing');
+                    if (pricingElement) {
+                      pricingElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                      });
+                    }
+                  }}
+                  className="bg-gradient-to-r from-[#2371ca] via-[#6f00ff] to-[#227de6] hover:from-[#fd4949] hover:via-[#d6249f] hover:to-[#7a0112] px-8 py-4 ml-2 rounded-full text-white hover:text-white text-md font-bold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <span>QUE VOCÊ LEVA GRÁTIS!</span>
+                </Button>
+              </div>
 
             </div>
 
@@ -143,21 +181,21 @@ const Hero = () => {
               </div>
 
               {/* Elementos decorativos externos otimizados - COM ANIMAÇÃO INTENSA */}
-              <div 
+              <div
                 className="absolute -top-16 -right-6 lg:-top-10 mt-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 bg-yellow-400 opacity-70 dark:opacity-50 rounded-full"
                 style={{
                   animation: 'floatPulse 12s ease-in-out infinite',
                   animationDelay: '0s'
                 }}
               ></div>
-              <div 
+              <div
                 className="absolute -bottom-6 mt-2 mb-20 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 bg-purple-400 opacity-60 dark:opacity-40 rounded-full"
                 style={{
                   animation: 'floatPulse 8s ease-in-out infinite',
                   animationDelay: '0s'
                 }}
               ></div>
-              <div 
+              <div
                 className="absolute top-1/4 -left-8 lg:-left-12 w-12 h-12 lg:w-12 lg:h-12 bg-primary opacity-50 dark:opacity-30 rounded-full"
                 style={{
                   animation: 'floatPulse 20s ease-in-out infinite',
