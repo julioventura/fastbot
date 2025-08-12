@@ -86,6 +86,7 @@ Atualizamos `CloseAccount.tsx` com:
 ### **Abordagens Similares**
 
 Ambos implementam:
+
 - ✅ Verificação de existência de tabelas
 - ✅ Ordem correta de exclusão
 - ✅ Tratamento robusto de erros
@@ -128,11 +129,13 @@ Ambos implementam:
 ### **Antes vs Depois**
 
 **ANTES:**
+
 - ❌ Possíveis erros se tabelas não existissem
 - ❌ Mensagens de erro genéricas
 - ❌ Pouco feedback sobre o que foi deletado
 
 **DEPOIS:**
+
 - ✅ Verifica existência de todas as tabelas
 - ✅ Mensagens específicas para cada tipo de erro
 - ✅ Feedback detalhado sobre itens deletados

@@ -9,6 +9,7 @@
 ## 🔍 **Análise do Problema**
 
 ### **Causa Raiz:**
+
 O erro 409 (Conflict) ocorria porque:
 
 1. **Lógica de insert/update separada**: O código anterior verificava se existia um registro e então decidia fazer `INSERT` ou `UPDATE`
@@ -17,6 +18,7 @@ O erro 409 (Conflict) ocorria porque:
 4. **Tentativa de INSERT duplicado**: Resultava em violação da constraint
 
 ### **Código Problemático (ANTES):**
+
 ```typescript
 // Verificação separada - PROBLEMÁTICA
 const { data: existingData } = await supabase
@@ -37,6 +39,7 @@ if (existingData && existingData.length > 0) {
 ## ✅ **Solução Implementada**
 
 ### **1. Uso de UPSERT**
+
 Substituímos a lógica separada por uma operação atômica:
 
 ```typescript
@@ -51,6 +54,7 @@ const { data: upsertData, error: upsertError } = await supabase
 ```
 
 ### **2. Melhor Logging**
+
 Adicionamos logs detalhados para debug:
 
 ```typescript
@@ -62,6 +66,7 @@ console.log('💾 [MyChatbotPage] Iniciando salvamento do chatbot...', {
 ```
 
 ### **3. Tratamento de Erro Aprimorado**
+
 Melhoramos o tratamento e análise de erros:
 
 ```typescript
@@ -78,21 +83,25 @@ const errorDetails = {
 ## 🔧 **Benefícios da Correção**
 
 ### **1. Atomicidade**
+
 - ✅ Operação UPSERT é atômica
 - ✅ Elimina race conditions
 - ✅ Garante consistência dos dados
 
 ### **2. Robustez**
+
 - ✅ Funciona independente do estado atual dos dados
 - ✅ Não falha por conflitos de constraint única
 - ✅ Tratamento robusto de erros
 
 ### **3. Performance**
+
 - ✅ Uma única operação ao invés de verificação + operação
 - ✅ Reduz round-trips ao banco
 - ✅ Mais eficiente
 
 ### **4. Manutenibilidade**
+
 - ✅ Código mais simples e direto
 - ✅ Menos pontos de falha
 - ✅ Logs detalhados para debug

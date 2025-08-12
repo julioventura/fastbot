@@ -39,6 +39,7 @@ O arquivo SQL `fix_signup_database_error.sql` foi criado para corrigir problemas
 ### **Passo 2: Verificar URLs de Redirecionamento**
 
 No Dashboard do Supabase:
+
 1. Vá para **Authentication** → **URL Configuration**
 
 2. Adicione estas URLs:
@@ -79,6 +80,7 @@ SELECT test_profile_creation();
 ## 📝 **Mudanças Implementadas no Código**
 
 ### **1. Cliente Supabase (`src/integrations/supabase/client.ts`)**
+
 ```typescript
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

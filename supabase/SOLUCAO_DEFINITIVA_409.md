@@ -11,6 +11,7 @@
 ### **1. ✅ Solução de Código (MyChatbotPage.tsx)**
 
 #### **Abordagem Robusta com Verificação Explícita:**
+
 ```typescript
 // NOVA ABORDAGEM: Verificar explicitamente + INSERT/UPDATE + Fallback
 const existingRecords = await supabase
@@ -35,6 +36,7 @@ if (existingRecords && existingRecords.length > 0) {
 ```
 
 #### **Melhorias no Tratamento de Erro:**
+
 - ✅ Detecção específica de códigos de erro (409, 23505)
 - ✅ Mensagens de erro mais informativas
 - ✅ Logging detalhado para debug
@@ -45,6 +47,7 @@ if (existingRecords && existingRecords.length > 0) {
 **Arquivo:** `diagnostico_erro_409.sql`
 
 **Funcionalidades:**
+
 - ✅ Análise completa da estrutura da tabela
 - ✅ Identificação de todas as constraints
 - ✅ Verificação de índices únicos
@@ -57,6 +60,7 @@ if (existingRecords && existingRecords.length > 0) {
 **Arquivo:** `corrigir_tabela_mychatbot.sql`
 
 **Recursos:**
+
 - ✅ Backup automático dos dados existentes
 - ✅ Recriação da tabela com estrutura correta
 - ✅ Constraint única apropriada: `UNIQUE (chatbot_user)`
@@ -68,25 +72,30 @@ if (existingRecords && existingRecords.length > 0) {
 ## 📋 **PLANO DE EXECUÇÃO**
 
 ### **Etapa 1: Diagnóstico**
+
 ```sql
 -- Execute no SQL Editor do Supabase:
 -- Script: diagnostico_erro_409.sql
 ```
 
 ### **Etapa 2: Análise dos Resultados**
+
 Procure por:
+
 - ❗ Múltiplas constraints `UNIQUE` 
 - ❗ Registros duplicados por `chatbot_user`
 - ❗ Erros no teste de inserção simulado
 - ❗ Políticas RLS conflitantes
 
 ### **Etapa 3: Correção (Se Necessário)**
+
 ```sql
 -- Execute no SQL Editor do Supabase:
 -- Script: corrigir_tabela_mychatbot.sql
 ```
 
 ### **Etapa 4: Teste da Aplicação**
+
 1. Vá para **"Meu Chatbot"**
 2. Edite as configurações
 3. Clique em **"Salvar Configurações"**
@@ -103,6 +112,7 @@ Procure por:
 ## 🔍 **LOGS DE DEBUG**
 
 ### **Logs Esperados (Sucesso):**
+
 ```
 💾 [MyChatbotPage] Iniciando salvamento do chatbot...
 🔍 [MyChatbotPage] Verificando existência de registro...
@@ -112,6 +122,7 @@ Procure por:
 ```
 
 ### **Logs de Fallback (Race Condition):**
+
 ```
 ➕ [MyChatbotPage] Inserindo novo registro...
 ❌ [MyChatbotPage] Erro no INSERT: duplicate key value
@@ -130,6 +141,7 @@ Procure por:
 5. **Teste novamente**
 
 ### **Possíveis Causas Restantes:**
+
 - 🔍 Constraint única mal configurada
 - 🔍 Múltiplos registros para o mesmo usuário
 - 🔍 Problemas de RLS (Row Level Security)
@@ -139,11 +151,13 @@ Procure por:
 ## 📊 **MONITORAMENTO**
 
 ### **Logs para Acompanhar:**
+
 1. **Console do Navegador**: Logs com `[MyChatbotPage]`
 2. **Network Tab**: Requests para `/rest/v1/mychatbot`
 3. **Supabase Dashboard**: Logs de erro na seção de logs
 
 ### **Métricas de Sucesso:**
+
 - ✅ Status 200/201 nas requisições
 - ✅ Dados salvos corretamente na tabela
 - ✅ Toast de sucesso aparece na interface

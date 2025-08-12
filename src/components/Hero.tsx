@@ -26,7 +26,7 @@ const Hero = () => {
   const slides = [
     {
       image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
-      text: ["Olá!", "Crie sua", "atendente", "virtual de IA", "em 3 minutos!", ""],
+      text: ["Olá!", "Crie a sua", "atendente 24H", "", "em 3 minutos!", ""],
     },
   ];
 
@@ -108,7 +108,8 @@ const Hero = () => {
                   <span>ATENDE NO SEU WHATSAPP...</span>
                 </Button>
 
-                <Button
+                {/* Instagram */}
+                {/* <Button
                   onClick={() => {
                     // Scroll suave até o componente Pricing
                     const pricingElement = document.getElementById('pricing');
@@ -123,10 +124,10 @@ const Hero = () => {
                   className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
                   <span>ATENDE NO SEU INSTAGRAM...</span>
-                </Button>
+                </Button> */}
               </div>
 
-            <div className="flex flex-row gap-1 ml-10">
+              <div className="flex flex-row gap-1 ml-10 mb-4">
                 <Button
                   onClick={() => {
                     // Scroll suave até o componente Pricing
@@ -142,20 +143,15 @@ const Hero = () => {
                 >
                   <span>E ATENDE NO SEU SITE...</span>
                 </Button>
+
+              </div>
+
+              <div className="flex flex-row gap-1 ml-10 mb-4">
+
                 <Button
-                  onClick={() => {
-                    // Scroll suave até o componente Pricing
-                    const pricingElement = document.getElementById('pricing');
-                    if (pricingElement) {
-                      pricingElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                      });
-                    }
-                  }}
-                  className="bg-gradient-to-r from-[#2371ca] via-[#6f00ff] to-[#227de6] hover:from-[#fd4949] hover:via-[#d6249f] hover:to-[#7a0112] px-8 py-4 ml-2 rounded-full text-white hover:text-white text-md font-bold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  className="bg-transparent py-4 mt-4 rounded-full text-primary text-3xl italic font-bold flex items-center shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
-                  <span>QUE VOCÊ LEVA GRÁTIS!</span>
+                <span>E o site é GRÁTIS !</span>
                 </Button>
               </div>
 
