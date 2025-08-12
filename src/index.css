@@ -350,18 +350,25 @@
 }
 
 /* Botão CTA melhorado */
-.hero-cta-button {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+.hero-cta-button, .hero-cta-button-blue {
+  background: linear-gradient(135deg, #55b452 0%, #118811 100%);
   box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4),
     0 0 0 1px rgba(37, 99, 235, 0.1);
   transition: all 0.3s ease;
 }
+ .hero-cta-button-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+ }
 
-.hero-cta-button:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+
+.hero-cta-button:hover, .hero-cta-button-blue:hover {
+  background: linear-gradient(135deg, #165f0c 0%, #196e08 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px 0 rgba(37, 99, 235, 0.5),
-    0 0 0 1px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 8px 25px 0 rgba(15, 77, 3, 0.5), 0 0 0 1px rgba(13, 110, 34, 0.2);
+}
+.hero-cta-button-blue:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  box-shadow: 0 8px 25px 0 rgba(37, 99, 235, 0.5), 0 0 0 1px rgba(37, 99, 235, 0.2);
 }
 
 /* Header limpo e moderno */

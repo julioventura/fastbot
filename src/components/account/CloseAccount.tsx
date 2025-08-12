@@ -46,6 +46,19 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
         if (checkData && checkData.success) {
           console.log('📋 Todas as dependências do usuário encontradas:', checkData);
           console.log('📊 Resumo completo das dependências:', checkData.dependencies);
+          console.log('📝 Tabelas disponíveis:', checkData.tables_available);
+          
+          // Mostrar alerta se houver muitas dependências
+          const deps = checkData.dependencies;
+          const totalDependencies = (deps.profiles_found || 0) + 
+                                  (deps.mychatbot_found || 0) + 
+                                  (deps.mychatbot_2_found || 0) + 
+                                  (deps.user_roles_found || 0) + 
+                                  (deps.roles_granted_found || 0);
+          
+          if (totalDependencies > 10) {
+            console.log('⚠️ ATENÇÃO: Usuário possui muitas dependências:', totalDependencies);
+          }
         } else {
           console.log('⚠️ Erro ao verificar dependências:', checkData || checkError);
         }
@@ -53,8 +66,8 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
         console.log('⚠️ Não foi possível verificar dependências, continuando...', checkErr);
       }
       
-      // Tentar a nova função ULTIMATE de exclusão
-      console.log('🗑️ Executando exclusão ULTIMATE da conta (trata mychatbot + mychatbot + todas as foreign keys)...');
+      // Tentar a nova função ULTIMATE de exclusão (atualizada)
+      console.log('🗑️ Executando exclusão ULTIMATE da conta com verificações robustas...');
       const { data, error } = await supabase.rpc('delete_user_account_ultimate');
       
       console.log('📤 Resposta da função delete_user_account_ultimate:', { data, error });
@@ -67,10 +80,23 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
       if (data && data.success) {
         console.log('✅ Exclusão bem-sucedida:', data);
         console.log('📈 Detalhes da exclusão:', data.details);
+        console.log('📊 Tabelas verificadas:', data.details?.tables_checked);
+        
+        // Construir mensagem detalhada de sucesso
+        const details = data.details || {};
+        const deletedInfo = [];
+        
+        if (details.deleted_profiles > 0) deletedInfo.push(`${details.deleted_profiles} perfil(s)`);
+        if (details.deleted_mychatbot > 0) deletedInfo.push(`${details.deleted_mychatbot} chatbot(s) legado`);
+        if (details.deleted_mychatbot_2 > 0) deletedInfo.push(`${details.deleted_mychatbot_2} chatbot(s)`);
+        if (details.deleted_user_roles > 0) deletedInfo.push(`${details.deleted_user_roles} role(s)`);
+        if (details.deleted_roles_granted > 0) deletedInfo.push(`${details.deleted_roles_granted} role(s) concedidas`);
+        
+        const deletedText = deletedInfo.length > 0 ? ` Removido: ${deletedInfo.join(', ')}.` : '';
         
         toast({
           title: "Conta excluída com sucesso",
-          description: `Sua conta (${data.details?.user_email}) foi permanentemente excluída. Redirecionando...`,
+          description: `Sua conta (${details.user_email}) foi permanentemente excluída.${deletedText} Redirecionando...`,
           variant: "default",
         });
         
@@ -85,17 +111,23 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
         const errorMsg = data?.message || 'Erro desconhecido na exclusão';
         const errorCode = data?.error_code || 'UNKNOWN_ERROR';
         const sqlError = data?.sql_error || '';
+        const tablesChecked = data?.tables_checked || {};
         
         console.error('❌ Falha na exclusão:', data);
+        console.error('📋 Tabelas verificadas:', tablesChecked);
         
         let userFriendlyMessage = errorMsg;
         
-        if (sqlError.includes('mychatbot_usuario_fkey')) {
+        if (sqlError.includes('mychatbot_usuario_fkey') || sqlError.includes('mychatbot')) {
           userFriendlyMessage = 'Erro na exclusão: dependência encontrada na tabela mychatbot. A função ULTIMATE deveria resolver isso automaticamente. Entre em contato com o suporte.';
         } else if (sqlError.includes('user_roles_granted_by_fkey')) {
           userFriendlyMessage = 'Não é possível deletar a conta porque você concedeu permissões para outros usuários. Entre em contato com o administrador.';
-        } else if (sqlError.includes('foreign key')) {
+        } else if (sqlError.includes('foreign key') || sqlError.includes('violates')) {
           userFriendlyMessage = 'Não é possível deletar a conta devido a dependências no sistema. Entre em contato com o suporte.';
+        } else if (errorCode === 'NOT_AUTHENTICATED') {
+          userFriendlyMessage = 'Sessão expirada. Faça login novamente e tente novamente.';
+        } else if (errorCode === 'USER_NOT_FOUND') {
+          userFriendlyMessage = 'Usuário não encontrado no sistema. Entre em contato com o suporte.';
         }
         
         toast({
@@ -114,10 +146,14 @@ const CloseAccount = ({ userEmail, onAccountDeleted }: CloseAccountProps) => {
         errorMessage = error.message;
         
         // Tratar erros específicos
-        if (error.message.includes('mychatbot_usuario_fkey')) {
+        if (error.message.includes('mychatbot_usuario_fkey') || error.message.includes('mychatbot')) {
           errorMessage = 'Erro na exclusão: dependência encontrada na tabela mychatbot. A função ULTIMATE deveria resolver isso automaticamente.';
         } else if (error.message.includes('user_roles_granted_by_fkey')) {
           errorMessage = 'Não é possível deletar a conta porque você concedeu permissões para outros usuários.';
+        } else if (error.message.includes('foreign key') || error.message.includes('violates')) {
+          errorMessage = 'Não é possível deletar a conta devido a dependências no sistema.';
+        } else if (error.message.includes('not authenticated') || error.message.includes('jwt')) {
+          errorMessage = 'Sessão expirada. Faça login novamente e tente novamente.';
         }
       }
       

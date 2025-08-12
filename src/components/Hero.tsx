@@ -26,7 +26,7 @@ const Hero = () => {
   const slides = [
     {
       image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
-      text: ["Olá!", "Crie sua", "atendente virtual", "de IA","em 3 minutos!"],
+      text: ["Olá!", "Crie sua", "atendente", "virtual de IA", "em 3 minutos!",""],
     },
   ];
 
@@ -71,19 +71,19 @@ const Hero = () => {
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
               {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
+              <span className="block text-3xl md:text-4xl lg:text-5xl font-black leading-tight text-white">
                 {slides[currentSlide].text[0] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
+              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-white">
                 {slides[currentSlide].text[1] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-yellow-400">
+              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-yellow-400">
                 {slides[currentSlide].text[2] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white">
+              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-white">
                 {slides[currentSlide].text[3] || ""}
               </span>
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-red-500">
+              <span className="block text-4xl md:text-6xl lg:text-5xl font-black leading-tight text-red-500">
                 {slides[currentSlide].text[4] || ""}
               </span>
             </div>
@@ -101,10 +101,26 @@ const Hero = () => {
                     });
                   }
                 }}
-                className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
               >
-                <span>COMECE JÁ O PLANO GRATUITO!</span>
+                <span>SUA ATENDENTE ONLINE DE IA</span>
               </Button>
+                            <Button
+                onClick={() => {
+                  // Scroll suave até o componente Pricing
+                  const pricingElement = document.getElementById('pricing');
+                  if (pricingElement) {
+                    pricingElement.scrollIntoView({ 
+                      behavior: 'smooth',
+                      block: 'start'
+                    });
+                  }
+                }}
+                className="mt-3 hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground ml-10 px-8 py-4 rounded-full text-md font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              >
+                <span>ATENDE SEU WHATSAPP, SITE E INSTAGRAM!</span>
+              </Button>
+
             </div>
 
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/lib/auth/useAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,11 +16,11 @@ const MyChatbotPage: React.FC = () => {
 
   const [chatbotData, setChatbotData] = useState<ChatbotData>({
     system_instructions: "",
-    system_message: "",
+    system_message: "Você é um chatbot assistente de IA e atende respondendo com as diretivas e dados desta instrução e dos arquivos anexados à base de dados.",
     office_address: "",
     office_hours: "",
     specialties: "",
-    chatbot_name: "",
+    chatbot_name: "Meu Chatbot",
     welcome_message: "",
     whatsapp: "",
     // Valores padrão dos novos campos
@@ -38,6 +38,8 @@ const MyChatbotPage: React.FC = () => {
     main_link: "",
     mandatory_link: false,
     uploaded_documents: [],
+    uploaded_images: [],
+    footer_message: "",
     mandatory_phrases: [],
     auto_link: false,
     max_list_items: 10,
@@ -60,132 +62,105 @@ const MyChatbotPage: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Memoized function to fetch chatbot data
+  const fetchChatbotData = useCallback(async () => {
+    if (!user?.id) return;
+    
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("mychatbot")
+        .select("*")
+        .eq("chatbot_user", user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Verificar se há registros
+      if (data && data.length > 0) {
+        const record = data[0];
+        setChatbotData({
+          system_instructions: record.system_instructions || "",
+          system_message: record.system_message || "Você é um chatbot assistente de IA e atende respondendo com as diretivas e dados desta instrução e dos arquivos anexados à base de dados.",
+          office_address: record.office_address || "",
+          office_hours: record.office_hours || "",
+          specialties: record.specialties || "",
+          chatbot_name: record.chatbot_name || "Meu Chatbot",
+          welcome_message: record.welcome_message || "",
+          whatsapp: record.whatsapp || "",
+          // Campos avançados
+          formality_level: record.formality_level ?? 50,
+          use_emojis: record.use_emojis ?? false,
+          paragraph_size: record.paragraph_size ?? 50,
+          main_topic: record.main_topic || "",
+          allowed_topics: record.allowed_topics || [],
+          source_strictness: record.source_strictness ?? 50,
+          allow_internet_search: record.allow_internet_search ?? false,
+          confidence_threshold: record.confidence_threshold ?? 70,
+          fallback_action: record.fallback_action || 'human',
+          response_time_promise: record.response_time_promise || "",
+          fallback_message: record.fallback_message || "",
+          main_link: record.main_link || "",
+          mandatory_link: record.mandatory_link ?? false,
+          uploaded_documents: record.uploaded_documents || [],
+          uploaded_images: record.uploaded_images || [],
+          footer_message: record.footer_message || "",
+          mandatory_phrases: record.mandatory_phrases || [],
+          auto_link: record.auto_link ?? false,
+          max_list_items: record.max_list_items ?? 10,
+          list_style: record.list_style || 'numbered',
+          ask_for_name: record.ask_for_name ?? false,
+          name_usage_frequency: record.name_usage_frequency ?? 30,
+          remember_context: record.remember_context ?? false,
+          returning_user_greeting: record.returning_user_greeting || "",
+          response_speed: record.response_speed ?? 50,
+          debug_mode: record.debug_mode ?? false,
+          chat_color: record.chat_color || "#3b82f6",
+        });
+      }
+      // If no records found, keep default values already set in state
+    } catch (error) {
+      console.error("Erro ao buscar dados do chatbot:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar dados",
+        description: "Não foi possível carregar as configurações do seu chatbot.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.id, toast]);
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/");
+      return;
     }
 
     if (user) {
-      const fetchChatbotData = async () => {
-        setIsLoading(true);
-        try {
-          // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
-          const { data, error } = await supabase
-            .from("mychatbot")
-            .select("*")
-            .eq("chatbot_user", user.id);
-
-          if (error) {
-            throw error;
-          }
-
-          // Verificar se há registros
-          if (data && data.length > 0) {
-            setChatbotData({
-              system_instructions: data[0].system_instructions || "",
-              system_message: data[0].system_message || "",
-              office_address: data[0].office_address || "",
-              office_hours: data[0].office_hours || "",
-              specialties: data[0].specialties || "",
-              chatbot_name: data[0].chatbot_name || "",
-              welcome_message: data[0].welcome_message || "",
-              whatsapp: data[0].whatsapp || "",
-              // Campos avançados
-              formality_level: data[0].formality_level || 50,
-              use_emojis: data[0].use_emojis || false,
-              paragraph_size: data[0].paragraph_size || 50,
-              main_topic: data[0].main_topic || "",
-              allowed_topics: data[0].allowed_topics || [],
-              source_strictness: data[0].source_strictness || 50,
-              allow_internet_search: data[0].allow_internet_search || false,
-              confidence_threshold: data[0].confidence_threshold || 70,
-              fallback_action: data[0].fallback_action || 'human',
-              response_time_promise: data[0].response_time_promise || "",
-              fallback_message: data[0].fallback_message || "",
-              main_link: data[0].main_link || "",
-              mandatory_link: data[0].mandatory_link || false,
-              uploaded_documents: data[0].uploaded_documents || [],
-              uploaded_images: data[0].uploaded_images || [],
-              footer_message: data[0].footer_message || "",
-              mandatory_phrases: data[0].mandatory_phrases || [],
-              auto_link: data[0].auto_link || false,
-              max_list_items: data[0].max_list_items || 10,
-              list_style: data[0].list_style || 'numbered',
-              ask_for_name: data[0].ask_for_name || false,
-              name_usage_frequency: data[0].name_usage_frequency || 30,
-              remember_context: data[0].remember_context || false,
-              returning_user_greeting: data[0].returning_user_greeting || "",
-              response_speed: data[0].response_speed || 50,
-              debug_mode: data[0].debug_mode || false,
-              chat_color: data[0].chat_color || "#3b82f6",
-            });
-          } else {
-            // Nenhum registro encontrado - inicializar com valores padrão
-            setChatbotData({
-              system_instructions: "",
-              system_message: "Você é um chatbot assistente de IA e atende respondendo com as diretivas e dados desta instrução e dos arquivos anexados à base de dados.",
-              office_address: "",
-              office_hours: "",
-              specialties: "",
-              chatbot_name: "Meu Chatbot",
-              welcome_message: "",
-              whatsapp: "",
-              // Valores padrão para campos avançados
-              formality_level: 50,
-              use_emojis: false,
-              paragraph_size: 50,
-              main_topic: "",
-              allowed_topics: [],
-              source_strictness: 50,
-              allow_internet_search: false,
-              confidence_threshold: 70,
-              fallback_action: 'human',
-              response_time_promise: "",
-              fallback_message: "",
-              main_link: "",
-              mandatory_link: false,
-              uploaded_documents: [],
-              uploaded_images: [],
-              footer_message: "",
-              mandatory_phrases: [],
-              auto_link: false,
-              max_list_items: 10,
-              list_style: 'numbered',
-              ask_for_name: false,
-              name_usage_frequency: 30,
-              remember_context: false,
-              returning_user_greeting: "",
-              response_speed: 50,
-              debug_mode: false,
-              chat_color: "#3b82f6",
-            });
-          }
-        } catch (error) {
-          console.error("Erro ao buscar dados do chatbot:", error);
-          toast({
-            variant: "destructive",
-            title: "Erro ao carregar dados",
-            description: "Não foi possível carregar as configurações do seu chatbot.",
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      };
       fetchChatbotData();
     }
-  }, [user, authLoading, navigate, toast]);
+  }, [user, authLoading, navigate, fetchChatbotData]);
 
-  const handleChange = (field: string, value: string | number | boolean | string[]) => {
+  const handleChange = useCallback((field: string, value: string | number | boolean | string[]) => {
     setChatbotData(prevData => ({ ...prevData, [field]: value }));
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user?.id) {
+      toast({
+        variant: "destructive",
+        title: "Erro de autenticação",
+        description: "Usuário não autenticado.",
+      });
+      return;
+    }
 
     setIsSaving(true);
     try {
-      // CORREÇÃO: Remover .single() para evitar erro 406 quando não há registros
+      // Check for existing records
       const { data: existingData, error: fetchError } = await supabase
         .from("mychatbot")
         .select("id")
@@ -195,37 +170,35 @@ const MyChatbotPage: React.FC = () => {
         throw fetchError;
       }
 
-      // Gerar system_message automaticamente baseado nos dados preenchidos
+      // Generate system_message automatically based on filled data
       const generatedSystemMessage = validateChatbotData(chatbotData) 
         ? generateSystemMessage(chatbotData)
-        : chatbotData.system_message; // Manter o original se não houver dados suficientes
+        : chatbotData.system_message;
 
       const dataToSave = {
         ...chatbotData,
-        system_message: generatedSystemMessage, // Substituir pelo gerado automaticamente
+        system_message: generatedSystemMessage,
         chatbot_user: user.id,
         updated_at: new Date().toISOString(),
       };
 
-      let supabaseError;
-
-      // Verificar se há registros existentes
+      // Update or insert based on existing records
       if (existingData && existingData.length > 0) {
         const { error } = await supabase
           .from("mychatbot")
           .update(dataToSave)
           .eq("chatbot_user", user.id);
-        supabaseError = error;
+        
+        if (error) throw error;
       } else {
         const { error } = await supabase
           .from("mychatbot")
           .insert({ ...dataToSave, created_at: new Date().toISOString() });
-        supabaseError = error;
+        
+        if (error) throw error;
       }
-      
-      if (supabaseError) throw supabaseError;
 
-      // Atualizar o estado local com o system_message gerado
+      // Update local state with generated system_message
       setChatbotData(prev => ({
         ...prev,
         system_message: generatedSystemMessage
@@ -237,31 +210,37 @@ const MyChatbotPage: React.FC = () => {
       });
     } catch (error) {
       console.error("Erro ao salvar dados do chatbot:", error);
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
       toast({
         variant: "destructive",
         title: "Erro ao salvar",
-        description: "Não foi possível salvar as configurações do chatbot.",
+        description: `Não foi possível salvar as configurações do chatbot: ${errorMessage}`,
       });
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleCancel = () => {
-    // Função mantida para compatibilidade com AdvancedEditChatbotConfig
-  };
+  const handleCancel = useCallback(() => {
+    // Function maintained for compatibility with AdvancedEditChatbotConfig
+    // Could implement reset to original values if needed
+  }, []);
 
-  const handlePreviewSystemMessage = () => {
-    setShowSystemMessagePreview(!showSystemMessagePreview);
-  };
+  const handlePreviewSystemMessage = useCallback(() => {
+    setShowSystemMessagePreview(prev => !prev);
+  }, []);
 
-  // Gerar preview do system_message em tempo real
+  // Generate preview of system_message in real time
   const systemMessagePreview = validateChatbotData(chatbotData) 
     ? generateSystemMessage(chatbotData)
     : "Preencha pelo menos um campo para gerar o system_message automaticamente.";
 
   if (authLoading || isLoading) {
     return <LoadingScreen />;
+  }
+
+  if (!user) {
+    return null; // This should not happen due to navigation redirect, but good for safety
   }
 
   return (
@@ -289,6 +268,7 @@ const MyChatbotPage: React.FC = () => {
           <button
             onClick={handlePreviewSystemMessage}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            type="button"
           >
             {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
           </button>
@@ -314,7 +294,6 @@ const MyChatbotPage: React.FC = () => {
           onChange={handleChange}
           onCancel={handleCancel}
         />
-
       </div>
     </div>
   );

@@ -57,13 +57,22 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
     setIsLoading(true);
 
     try {
+      // Limpar qualquer sessão anterior
+      await supabase.auth.signOut();
+      
+      console.log('Tentando criar conta para:', email);
+      
       // Usar método padrão do Supabase (com SMTP configurado)
       const result = await signUp(email, password, {
         name,
         whatsapp
       });
 
+      console.log('Resultado do signUp:', result);
+
       if (result.error) {
+        console.error('Erro no cadastro:', result.error);
+        
         // Tratamento específico de erros
         if (result.error.message?.includes("User already registered")) {
           toast({
@@ -123,7 +132,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSuccess }) => {
         if (profileError) {
           toast({
             title: "Conta criada!",
-            description: "Conta criada com sucesso, mas houve problema ao salvar algumas informações do perfil. Você pode atualizar depois.",
+            description: "Conta criada com sucesso!",
           });
         } else {
           toast({
