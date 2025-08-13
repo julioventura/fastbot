@@ -74,7 +74,7 @@ const Hero = () => {
         <div className="grid lg:grid-cols-5 gap-4 lg:gap-4 items-center h-screen max-h-screen">
 
           {/* Coluna do texto - lado esquerdo) */}
-          <div className="lg:col-span-3 flex flex-col justify-center space-y-6 lg:space-y-8 py-0">
+          <div className="lg:col-span-3 flex flex-col justify-center space-y-8 py-0">
 
             {/* Título Principal */}
             <div className="space-y-2 ml-10">
@@ -159,6 +159,16 @@ const Hero = () => {
                   className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
                   <span>E ATENDA 24h COM I.A.</span>
+                </Button>
+              </div>
+
+              {/* Não tem site? */}
+              <div className="flex flex-row gap-1 ml-10">
+                <Button
+                  className="bg-transparent py-4 mt-8 text-primary hover:text-blue-400 text-3xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300 leading-[140%] text-left"
+                >
+                  Ela responde mensagens, marca, remarca...<br />
+                  24 horas por dia, 7 dias por semana!
                 </Button>
               </div>
 
