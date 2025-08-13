@@ -165,10 +165,10 @@ const Hero = () => {
               {/* Não tem site? */}
               <div className="flex flex-row gap-1 ml-10">
                 <Button
-                  className="bg-transparent py-4 mt-8 text-primary hover:text-blue-400 text-3xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300 leading-[140%] text-left"
+                  className="bg-transparent py-4 mt-8 text-primary hover:text-blue-400 text-2xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300 leading-[140%] text-left"
                 >
-                  Ela responde mensagens, marca, remarca...<br />
-                  24 horas por dia, 7 dias por semana!
+                  Ela responde mensagens, agenda, relembra...<br />
+                  24 horas por dia, 7 dias por semana, o ano todo!<br />
                 </Button>
               </div>
 
