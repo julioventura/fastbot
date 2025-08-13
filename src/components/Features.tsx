@@ -291,8 +291,8 @@ const Features = () => {
                     <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
                         <span className="text-yellow-400">Só vantagens</span><br />para o seu consultório!
                     </h2>
-                    <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-                        Atendimento online e de whatsapp com agentes de I.A.
+                    <p className="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">
+                        Atendimento online 24H com agentes de I.A.
                     </p>
                 </div>
 

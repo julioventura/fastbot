@@ -24,7 +24,8 @@ export default function CTA() {
   return (
     // Elemento <section> principal com estilos de fundo e posicionamento relativo.
     // 'relative' é usado para posicionar o padrão de grade absoluto dentro dele.
-    <section className="relative py-5 md:py-16 bg-theme-gradient">
+    // 'min-h-screen flex items-center justify-center' para ocupar altura da tela e centralizar
+    <section className="relative min-h-screen flex items-center justify-center py-5 md:py-16 bg-theme-gradient">
       
       {/* Contêiner do Conteúdo Principal da Seção CTA */}
       {/* 'relative z-10' garante que este conteúdo fique acima do padrão de grade. */}

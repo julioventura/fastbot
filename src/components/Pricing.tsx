@@ -34,11 +34,11 @@ const pricingPlans = [
     price: "GRÁTIS",
     description: "",
     features: [
-      "100 conversas por mês",
-      "Seu chatbot em sua homepage profissional",
+      "30 conversas por mês",
+      "Você ganha o chatbot e a homepage de contato",
       // "Cartão de Visitas Digital com QR-Code",
       // "Poster com QRCODE para a sala de espera",
-      "Link fácil para divulgar: dentistas.com.br/voce",
+      "Link fácil: Dentistas.com.br/voce",
     ],
     isPopular: true, // Destaca este plano como o mais popular.
     popularText: "USO EVENTUAL",
@@ -49,7 +49,7 @@ const pricingPlans = [
     name: "Plano Plus",
     price: "R$ 40 / mês",
     description: "", // Descrição adicionada
-    features: ["Tudo do plano gratuito mais...", "Conversas ilimitadas"],
+    features: ["Tudo do plano gratuito e mais...", "Conversas ilimitadas"],
     isPopular: true,
     popularText: "USO CONTÍNUO",
     buttonText: "ASSINE JÁ !",
