@@ -152,121 +152,152 @@ const ProfileForm = ({ profile, onSave, loading }: ProfileFormProps) => {
 
   // Renderização do formulário de perfil.
   return (
-    <form onSubmit={handleUpdateProfile} className="space-y-6">
+    <form onSubmit={handleUpdateProfile} className="space-y-8">
+
+      
       {/* Campo Nome */}
-      <div className="space-y-2">
-        <Label htmlFor="name" className="text-foreground text-base">Nome</Label>
+      <div className="space-y-3">
+        <Label htmlFor="name" className="text-foreground text-lg font-medium">Nome</Label>
         <div className="relative">
-          <User className="absolute left-2 top-2.5 h-4 w-4 text-theme-accent" />
+          <User className="absolute left-3 top-3.5 h-5 w-5 text-theme-accent" />
           <Input
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Seu nome"
-            className="pl-8 bg-background border-border text-foreground placeholder:text-muted-foreground text-base"
+            placeholder="Seu nome completo"
+            className="pl-12 py-3 text-lg bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             disabled={loading} // Desabilita durante o salvamento.
           />
         </div>
       </div>
       
       {/* Campo WhatsApp */}
-      <div className="space-y-2">
-        <Label htmlFor="whatsapp" className="text-foreground text-base">WhatsApp</Label>
+      <div className="space-y-3">
+        <Label htmlFor="whatsapp" className="text-foreground text-lg font-medium">WhatsApp</Label>
         <div className="relative">
-          <Phone className="absolute left-2 top-2.5 h-4 w-4 text-theme-accent" />
+          <Phone className="absolute left-3 top-3.5 h-5 w-5 text-theme-accent" />
           <Input
             id="whatsapp"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
-            placeholder="Seu número de WhatsApp"
-            className="pl-8 bg-background border-border text-foreground placeholder:text-muted-foreground text-base"
+            placeholder="(00) 00000-0000"
+            className="pl-12 py-3 text-lg bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             disabled={loading}
           />
         </div>
+        <p className="text-sm text-muted-foreground">Usado para contato e configuração do chatbot</p>
       </div>
       
+      {/* Campo Email (somente leitura) */}
+      <div className="space-y-3">
+        <Label htmlFor="email" className="text-foreground text-lg font-medium">Email</Label>
+        <div className="relative">
+          <Mail className="absolute left-3 top-3.5 h-5 w-5 text-theme-accent" />
+          <Input
+            id="email"
+            value={profile.email}
+            placeholder="Seu email"
+            className="pl-12 py-3 text-lg bg-muted/50 border-border text-foreground placeholder:text-muted-foreground cursor-not-allowed"
+            disabled={true}
+            readOnly
+          />
+        </div>
+        <p className="text-sm text-muted-foreground">Email usado para login na conta (não editável)</p>
+      </div>
+
       {/* Seleção de Tipo de Perfil */}
-      <div className="space-y-4">
-        <Label className="text-foreground text-base">Tipo de Perfil (pode selecionar múltiplas opções)</Label>
+      <div className="space-y-6">
+        <div>
+          <Label className="text-foreground text-lg font-medium">Tipo de Perfil</Label>
+          <p className="text-sm text-muted-foreground mt-1">Selecione uma ou mais opções que descrevem seu perfil</p>
+        </div>
         
-        {/* Checkbox Estudante */}
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="is_student"
-            checked={isStudent}
-            onCheckedChange={(checked) => setIsStudent(Boolean(checked))}
-            className="border-primary data-[state=checked]:bg-primary"
-            disabled={loading}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="is_student" className="text-foreground text-base flex items-center space-x-2">
-              <GraduationCap className="h-4 w-4 text-theme-accent" />
-              <span>Estudante</span>
-            </Label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Checkbox Estudante */}
+          <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
+            <Checkbox
+              id="is_student"
+              checked={isStudent}
+              onCheckedChange={(checked) => setIsStudent(Boolean(checked))}
+              className="border-primary data-[state=checked]:bg-primary w-5 h-5"
+              disabled={loading}
+            />
+            <div className="grid gap-1.5 leading-none flex-1">
+              <Label htmlFor="is_student" className="text-foreground text-base font-medium flex items-center space-x-2 cursor-pointer">
+                <GraduationCap className="h-5 w-5 text-theme-accent" />
+                <span>Estudante</span>
+              </Label>
+              <p className="text-xs text-muted-foreground">Estudante de graduação ou pós-graduação</p>
+            </div>
           </div>
-        </div>
 
-        {/* Checkbox Professor */}
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="is_professor"
-            checked={isProfessor}
-            onCheckedChange={(checked) => setIsProfessor(Boolean(checked))}
-            className="border-primary data-[state=checked]:bg-primary"
-            disabled={loading}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="is_professor" className="text-foreground text-base flex items-center space-x-2">
-              <UserPlus className="h-4 w-4 text-theme-accent" />
-              <span>Professor</span>
-            </Label>
+          {/* Checkbox Professor */}
+          <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
+            <Checkbox
+              id="is_professor"
+              checked={isProfessor}
+              onCheckedChange={(checked) => setIsProfessor(Boolean(checked))}
+              className="border-primary data-[state=checked]:bg-primary w-5 h-5"
+              disabled={loading}
+            />
+            <div className="grid gap-1.5 leading-none flex-1">
+              <Label htmlFor="is_professor" className="text-foreground text-base font-medium flex items-center space-x-2 cursor-pointer">
+                <UserPlus className="h-5 w-5 text-theme-accent" />
+                <span>Professor</span>
+              </Label>
+              <p className="text-xs text-muted-foreground">Professor ou educador</p>
+            </div>
           </div>
-        </div>
 
-        {/* Checkbox Dentista */}
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="is_dentist"
-            checked={isDentist}
-            onCheckedChange={(checked) => setIsDentist(Boolean(checked))}
-            className="border-primary data-[state=checked]:bg-primary"
-            disabled={loading}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="is_dentist" className="text-foreground text-base flex items-center space-x-2">
-              <User className="h-4 w-4 text-theme-accent" />
-              <span>Dentista</span>
-            </Label>
+          {/* Checkbox Dentista */}
+          <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
+            <Checkbox
+              id="is_dentist"
+              checked={isDentist}
+              onCheckedChange={(checked) => setIsDentist(Boolean(checked))}
+              className="border-primary data-[state=checked]:bg-primary w-5 h-5"
+              disabled={loading}
+            />
+            <div className="grid gap-1.5 leading-none flex-1">
+              <Label htmlFor="is_dentist" className="text-foreground text-base font-medium flex items-center space-x-2 cursor-pointer">
+                <User className="h-5 w-5 text-theme-accent" />
+                <span>Dentista</span>
+              </Label>
+              <p className="text-xs text-muted-foreground">Profissional da odontologia</p>
+            </div>
           </div>
-        </div>
 
-        {/* Checkbox Outro */}
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="is_other"
-            checked={isOther}
-            onCheckedChange={(checked) => setIsOther(Boolean(checked))}
-            className="border-primary data-[state=checked]:bg-primary"
-            disabled={loading}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="is_other" className="text-foreground text-base flex items-center space-x-2">
-              <UserPlus className="h-4 w-4 text-theme-accent" />
-              <span>Outro</span>
-            </Label>
+          {/* Checkbox Outro */}
+          <div className="flex items-center space-x-3 p-4 rounded-lg border border-border hover:border-primary/50 transition-colors">
+            <Checkbox
+              id="is_other"
+              checked={isOther}
+              onCheckedChange={(checked) => setIsOther(Boolean(checked))}
+              className="border-primary data-[state=checked]:bg-primary w-5 h-5"
+              disabled={loading}
+            />
+            <div className="grid gap-1.5 leading-none flex-1">
+              <Label htmlFor="is_other" className="text-foreground text-base font-medium flex items-center space-x-2 cursor-pointer">
+                <UserPlus className="h-5 w-5 text-theme-accent" />
+                <span>Outro</span>
+              </Label>
+              <p className="text-xs text-muted-foreground">Outro tipo de profissional</p>
+            </div>
           </div>
         </div>
         
       </div>
       
       {/* Botão de Submissão do Formulário */}
-      <Button 
-        type="submit" 
-        disabled={loading} // Desabilita o botão durante o salvamento.
-        className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_15px_rgba(59,130,246,0.3)] text-base"
-      >
-        {loading ? "Salvando..." : "Salvar alterações"} {/* Texto do botão muda durante o salvamento. */}
-      </Button>
+      <div className="pt-4">
+        <Button 
+          type="submit" 
+          disabled={loading} // Desabilita o botão durante o salvamento.
+          className="w-full py-4 text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_15px_rgba(59,130,246,0.3)] font-medium transition-all hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]"
+        >
+          {loading ? "Salvando..." : "Salvar alterações"} {/* Texto do botão muda durante o salvamento. */}
+        </Button>
+      </div>
     </form>
   );
 };

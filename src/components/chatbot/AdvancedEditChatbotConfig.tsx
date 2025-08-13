@@ -215,7 +215,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
       <form onSubmit={onSubmit} className="space-y-6">
         {/* Tab: Identidade & Saudação */}
         {activeTab === "identity" && (
-          <Card className="bg-transparent border border-gray-600 backdrop-blur-sm">
+          <Card className="bg-transparent backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 Identidade & Saudação

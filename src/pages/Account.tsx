@@ -438,23 +438,23 @@ const Account = () => {
           Minha Conta
         </h1>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          {/* Coluna Principal (Formulário de Perfil) */}
-          <div className="md:col-span-2">
+        <div className="grid gap-8 lg:grid-cols-5">
+          {/* Coluna Principal (Formulário de Perfil) - Ocupa mais espaço */}
+          <div className="lg:col-span-3">
             <Card className="bg-theme-card border border-theme-accent/50 text-foreground shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-foreground">
+              {/* <CardHeader className="pb-6">
+                <CardTitle className="text-foreground text-xl md:text-2xl">
                   Seus dados profissionais
                 </CardTitle>
-                <CardDescription className="text-muted-foreground">
+                <CardDescription className="text-muted-foreground text-base">
                   Mantenha suas informações atualizadas.
                 </CardDescription>
-              </CardHeader>
-              <CardContent>
+              </CardHeader> */}
+              <CardContent className="px-6 md:px-8 py-8">
                 {/* Exibe indicador de carregamento para o formulário ou o formulário em si */}
                 {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="w-8 h-8 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+                  <div className="flex justify-center py-12">
+                    <div className="w-10 h-10 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
                   </div>
                 ) : user && ( // Garante que o usuário exista antes de renderizar o ProfileForm
                   <ProfileForm
@@ -467,8 +467,8 @@ const Account = () => {
             </Card>
           </div>
 
-          {/* Coluna Lateral (Timestamps e Segurança) */}
-          <div>
+          {/* Coluna Lateral (Timestamps e Segurança) - Mais compacta */}
+          <div className="lg:col-span-2">
             {/* Informações do Perfil - Colapsável */}
             <CollapsibleCard
               title="Informações do Perfil"
