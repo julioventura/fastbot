@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, MessageSquare, ChevronDown } from 'lucide-react';
+import { User, LogOut, MessageSquare, ChevronDown, Home } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const useScrollDirection = () => {
@@ -212,26 +212,39 @@ const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg">
+                  
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/" className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-blue-950 hover:text-blue-400">
+                      <Home className="h-4 w-4" />
+                      <span>Início</span>
+                    </NavLink>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator className="bg-border" />
+
                   <DropdownMenuItem asChild>
                     <NavLink to="/account" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <User className="h-4 w-4" />
                       <span>Minha Conta</span>
                     </NavLink>
                   </DropdownMenuItem>
+
                   <DropdownMenuItem asChild>
                     <NavLink to="/my-chatbot" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <MessageSquare className="h-4 w-4" />
                       <span>Meu Chatbot</span>
                     </NavLink>
                   </DropdownMenuItem>
+
                   <DropdownMenuSeparator className="bg-border" />
                   <DropdownMenuItem
                     onClick={handleSignOut}
-                    className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-destructive/10 cursor-pointer"
+                    className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-destructive/10 hover:text-red-700 cursor-pointer"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Sair</span>
                   </DropdownMenuItem>
+
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
