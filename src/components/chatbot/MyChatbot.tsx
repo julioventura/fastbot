@@ -940,7 +940,7 @@ const MyChatbot = () => {
           >
             <div
               style={{
-                maxWidth: '75%',
+                maxWidth: msg.sender === 'user' ? '75%' : '100%',
                 padding: '10px 15px',
                 borderRadius: '18px',
                 color: msg.sender === 'user' ? chatbotBgColor : chatbotTextColor,
