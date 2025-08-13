@@ -44,6 +44,7 @@ import { Bot, Maximize2, Minimize2, X, Send, User } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/auth/useAuth';
 import { useVectorStore } from '@/hooks/useVectorStore';
+import { useConversationMemory } from '@/hooks/useConversationMemory';
 import { supabase } from '@/integrations/supabase/client';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
@@ -63,12 +64,12 @@ interface ChatbotConfig {
   chatbot_name: string;
   welcome_message: string;
   whatsapp: string;
+  remember_context?: boolean; // 🧠 Campo que controla a memória
 }
 
 const MyChatbot = () => {
   // Estados principais do componente
   const [chatState, setChatState] = useState<ChatState>('minimized');
-  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatbotConfig, setChatbotConfig] = useState<ChatbotConfig | null>(null);
@@ -81,6 +82,41 @@ const MyChatbot = () => {
   
   // Hook para Vector Store - busca semântica nos documentos
   const { getChatbotContext } = useVectorStore();
+
+  // 🧠 Hook de memória híbrida (Redis + Supabase)
+  const {
+    conversationHistory,
+    isLoading: memoryLoading,
+    error: memoryError,
+    addMessage,
+    clearSession,
+    getContextForChatbot
+  } = useConversationMemory();
+
+  // Estado local para compatibilidade com interface atual
+  const [localMessages, setLocalMessages] = useState<Message[]>([]);
+
+  // Sincronizar mensagens da memória com interface local
+  useEffect(() => {
+    console.log('🔄 [MyChatbot] ===== EFEITO DE SINCRONIZAÇÃO EXECUTADO =====');
+    console.log('🔄 [MyChatbot] Mensagens na memória:', conversationHistory.length);
+    
+    // Log detalhado das mensagens da memória
+    conversationHistory.forEach((msg, i) => {
+      console.log(`🔄 [MyChatbot] Memória[${i}]: ${msg.role} - "${msg.content.substring(0, 30)}..."`);
+    });
+    
+    const formattedMessages = conversationHistory.map((msg, index) => ({
+      id: index + 1,
+      text: msg.content,
+      sender: msg.role === 'user' ? 'user' as const : 'bot' as const
+    }));
+    
+    console.log('🔄 [MyChatbot] Mensagens formatadas para interface:', formattedMessages.length);
+    setLocalMessages(formattedMessages);
+    
+    console.log('🔄 [MyChatbot] ===== FIM DA SINCRONIZAÇÃO =====');
+  }, [conversationHistory]);
 
   // Constantes de estilo para o chatbot
   const chatbotBgColor = '#1a1b3a';
@@ -175,12 +211,28 @@ const MyChatbot = () => {
    * Carrega a mensagem inicial quando o chat é aberto pela primeira vez
    */
   useEffect(() => {
-    if (chatState === 'normal' && messages.length === 0) {
-      setMessages([{ id: 1, text: getInitialMessage(), sender: 'bot' }]);
+    console.log('🚀 [MyChatbot] useEffect inicialização executado:', {
+      chatState,
+      conversationHistoryLength: conversationHistory.length,
+      timestamp: new Date().toISOString()
+    });
+    
+    if (chatState === 'normal' && conversationHistory.length === 0) {
+      // Adicionar mensagem inicial através da memória híbrida
+      const initialMessage = getInitialMessage();
+      console.log('🤖 [MyChatbot] Adicionando mensagem inicial à memória:', initialMessage.substring(0, 50) + '...');
+      
+      // Chamar de forma assíncrona para não bloquear
+      addMessage('assistant', initialMessage).then(() => {
+        console.log('🤖 [MyChatbot] Mensagem inicial adicionada com sucesso!');
+      }).catch(error => {
+        console.error('❌ [MyChatbot] Erro ao adicionar mensagem inicial:', error);
+      });
+      
       // Buscar configuração do chatbot quando o chat é aberto
       fetchChatbotConfig();
     }
-  }, [chatState, messages.length, getInitialMessage, fetchChatbotConfig]);
+  }, [chatState, conversationHistory.length, getInitialMessage, fetchChatbotConfig, addMessage]);
 
   /**
    * sendToWebhook
@@ -189,7 +241,7 @@ const MyChatbot = () => {
    * Inclui contexto da página atual e outros metadados úteis
    * Em caso de falha, utiliza resposta local como fallback
    */
-  const sendToWebhook = async (userMessage: string): Promise<string> => {
+  const sendToWebhook = async (userMessage: string, preComputedContext?: string): Promise<string> => {
     const requestTimestamp = new Date().toISOString();
     
     try {
@@ -205,7 +257,7 @@ const MyChatbot = () => {
           timestamp: requestTimestamp,
         });
         
-        return await processMessageLocally(userMessage);
+        return await processMessageLocally(userMessage, preComputedContext);
       }
 
       // Se chegou até aqui, usar N8N
@@ -322,14 +374,32 @@ const MyChatbot = () => {
    * NOVA FUNÇÃO: Processa mensagens localmente com IA + Vector Store
    * Substitui completamente o N8N quando habilitado
    */
-  const processMessageLocally = async (userMessage: string): Promise<string> => {
+  const processMessageLocally = async (userMessage: string, preComputedContext?: string): Promise<string> => {
     try {
       console.log('🤖 [MyChatbot] =====================================');
       console.log('🤖 [MyChatbot] PROCESSAMENTO LOCAL INICIADO');
       console.log('🤖 [MyChatbot] Mensagem do usuário:', userMessage);
       console.log('🤖 [MyChatbot] =====================================');
       
-      // 1. Buscar contexto relevante nos documentos
+      // 1. 🧠 Obter contexto da memória de conversa (últimas 10 mensagens)
+      const conversationContext = preComputedContext || getContextForChatbot();
+      console.log('🧠 [MyChatbot] ================================');
+      console.log('🧠 [MyChatbot] VERIFICANDO CONTEXTO DA MEMÓRIA');
+      console.log('🧠 [MyChatbot] Contexto obtido:', {
+        hasContext: !!conversationContext,
+        contextLength: conversationContext.length,
+        isEmpty: conversationContext.trim() === '',
+        isPreComputed: !!preComputedContext
+      });
+      
+      if (conversationContext && conversationContext.trim()) {
+        console.log('🧠 [MyChatbot] ✅ CONTEXTO DISPONÍVEL - Prévia:', conversationContext.substring(0, 80) + '...');
+      } else {
+        console.log('🧠 [MyChatbot] ⚠️ CONTEXTO VAZIO - Primeira mensagem ou erro na memória');
+      }
+      console.log('🧠 [MyChatbot] ================================');
+      
+      // 2. Buscar contexto relevante nos documentos
       console.log('🔍 [MyChatbot] Iniciando busca na base de dados vetorial...');
       
       // 🧪 TESTE ESPECÍFICO: Se pergunta sobre inscrições, fazer busca mais ampla
@@ -356,14 +426,24 @@ const MyChatbot = () => {
         console.log('   - Query não encontrou similaridade suficiente');
       }
       
-      // 2. Preparar system message personalizado
+      // 3. Preparar system message personalizado
       const systemMessage = chatbotConfig?.system_instructions || 
         'Você é um assistente virtual profissional e prestativo.';
       
       console.log('📝 [MyChatbot] System message configurado:', systemMessage.substring(0, 100) + '...');
       
-      // 3. Construir prompt completo para IA
+      // 4. Construir prompt completo para IA
       let fullPrompt = systemMessage + '\n\n';
+      console.log('🏗️ [MyChatbot] ===== CONSTRUINDO PROMPT PARA IA =====');
+      
+      // 🧠 Adicionar contexto da memória de conversa
+      if (conversationContext && conversationContext.trim().length > 0) {
+        fullPrompt += `${conversationContext}\n`;
+        console.log('🧠 [MyChatbot] ✅ CONTEXTO DA MEMÓRIA INCLUÍDO no prompt');
+        console.log('🧠 [MyChatbot] Tamanho do contexto adicionado:', conversationContext.length, 'caracteres');
+      } else {
+        console.log('🧠 [MyChatbot] ❌ CONTEXTO DA MEMÓRIA NÃO INCLUÍDO (vazio ou nulo)');
+      }
       
       if (vectorContext && vectorContext.trim().length > 0) {
         fullPrompt += `INFORMAÇÕES RELEVANTES DOS DOCUMENTOS:\n${vectorContext}\n\n`;
@@ -372,7 +452,10 @@ const MyChatbot = () => {
         console.log('⚠️ [MyChatbot] Prompt SEM contexto vetorial');
       }
       
-      // 4. Adicionar informações de configuração do chatbot
+      console.log('🏗️ [MyChatbot] PROMPT FINAL - Total de caracteres:', fullPrompt.length);
+      console.log('🏗️ [MyChatbot] ===== FIM DA CONSTRUÇÃO DO PROMPT =====');
+      
+      // 5. Adicionar informações de configuração do chatbot
       if (chatbotConfig) {
         fullPrompt += 'INFORMAÇÕES ADICIONAIS:\n';
         if (chatbotConfig.office_hours) fullPrompt += `- Horário de atendimento: ${chatbotConfig.office_hours}\n`;
@@ -382,11 +465,11 @@ const MyChatbot = () => {
         fullPrompt += '\n';
       }
       
-      // 5. Adicionar contexto da página atual
+      // 6. Adicionar contexto da página atual
       const currentPageContext = getPageContext();
       fullPrompt += `PERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:\n\nOBS: CONTEXTO DA PÁGINA ATUAL - O usuário está atualmente na ${currentPageContext} (URL: ${location.pathname}). Use essa informação para contextualizar suas respostas quando relevante.`;
       
-      // 5. Chamar OpenAI diretamente para gerar resposta
+      // 7. Chamar OpenAI diretamente para gerar resposta
       const openaiResponse = await generateAIResponse(fullPrompt);
       
       console.log('✅ [MyChatbot] Resposta IA gerada localmente:', {
@@ -588,7 +671,7 @@ const MyChatbot = () => {
   };
 
   // Aplica scroll automático quando novas mensagens são adicionadas
-  useEffect(scrollToBottom, [messages]);
+  useEffect(scrollToBottom, [localMessages]);
 
   /**
    * handleSendMessage
@@ -610,32 +693,42 @@ const MyChatbot = () => {
       currentPage: location.pathname
     });
 
-    const newMessage: Message = { id: Date.now(), text: inputValue, sender: 'user' };
-    setMessages((prev) => [...prev, newMessage]);
     const currentInput = inputValue;
     setInputValue('');
 
-    // Adicionar mensagem de loading
-    const loadingMessage: Message = {
-      id: Date.now() + 1,
-      text: 'Digitando...',
-      sender: 'bot',
-      isLoading: true
-    };
-    setMessages((prev) => [...prev, loadingMessage]);
+    // 🧠 Adicionar mensagem do usuário à memória híbrida
+    console.log('🧠 [MyChatbot] ===== ADICIONANDO MENSAGEM DO USUÁRIO À MEMÓRIA =====');
+    console.log('🧠 [MyChatbot] Mensagem a ser adicionada:', currentInput.substring(0, 30) + '...');
+    
+    await addMessage('user', currentInput);
+    
+    console.log('🧠 [MyChatbot] ===== MENSAGEM ADICIONADA À MEMÓRIA =====');
 
-    // Enviar para webhook N8N e aguardar resposta
-    const botResponse = await sendToWebhook(currentInput);
+    // 🔧 AGUARDAR UM TEMPO PARA O ESTADO REACT ATUALIZAR
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Remover mensagem de loading e adicionar resposta real
-    setMessages((prev) => {
-      const withoutLoading = prev.filter((msg) => !msg.isLoading);
-      return [...withoutLoading, {
-        id: Date.now() + 2,
-        text: botResponse,
-        sender: 'bot'
-      }];
-    });
+    try {
+      // 🧠 Obter contexto da memória DEPOIS de aguardar a atualização do estado
+      const conversationContext = getContextForChatbot();
+      console.log('🧠 [MyChatbot] Contexto obtido APÓS aguardar atualização:', {
+        hasContext: !!conversationContext,
+        contextLength: conversationContext.length,
+        isEmpty: conversationContext.trim() === ''
+      });
+
+      // Enviar para webhook N8N e aguardar resposta
+      const botResponse = await sendToWebhook(currentInput, conversationContext);
+
+      // 🧠 Adicionar resposta do bot à memória híbrida
+      console.log('🧠 [MyChatbot] ===== ADICIONANDO RESPOSTA DO BOT À MEMÓRIA =====');
+      console.log('🧠 [MyChatbot] Resposta a ser adicionada:', botResponse.substring(0, 30) + '...');
+      
+      await addMessage('assistant', botResponse);
+      
+      console.log('🧠 [MyChatbot] ===== RESPOSTA ADICIONADA À MEMÓRIA =====');
+    } catch (error) {
+      console.error('❌ [MyChatbot] Erro ao processar mensagem:', error);
+    }
   };
 
   /**
@@ -836,7 +929,7 @@ const MyChatbot = () => {
 
       {/* Área de Mensagens - Container de histórico da conversa */}
       <div style={{ flexGrow: 1, overflowY: 'auto', padding: '20px', background: chatbotBgColor }}>
-        {messages.map((msg) => (
+        {localMessages.map((msg) => (
           <div
             key={msg.id}
             style={{

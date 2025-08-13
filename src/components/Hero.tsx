@@ -167,7 +167,7 @@ const Hero = () => {
                 <Button
                   className="bg-transparent py-4 mt-8 text-primary hover:text-blue-400 text-3xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300"
                 >
-                  <span className="text-left">
+                  <span className="text-left mb-12">
                     Não tem site? Agora tem!<br />
                     Seu SITE com chatbot de IA é GRÁTIS!
                   </span>
