@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../integrations/supabase/client';
-import { useAuth } from '../lib/auth/useAuth';
+import { useAuth } from '@/lib/auth/useAuth';
 import { BaseChatbotData } from '@/interfaces';
 
 interface SupabaseError {
