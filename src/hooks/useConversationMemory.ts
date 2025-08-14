@@ -271,13 +271,18 @@ export const useConversationMemory = ({
     setTimeout(async () => {
       try {
         await saveToRedis(currentSession, [newMessage]); // Salvar apenas a nova mensagem
-        console.log('💬 [ConversationMemory] Mensagem salva:', role, content.substring(0, 50) + '...');
+        console.log('💬 [ConversationMemory] Mensagem salva no localStorage:', role, content.substring(0, 50) + '...');
+        
+        // 🆕 ADICIONAR: Salvar também no Supabase para backup persistente
+        const allMessages = [...conversationHistory, newMessage];
+        await saveToSupabase(currentSession, allMessages);
+        console.log('🗄️ [ConversationMemory] Mensagem salva no Supabase:', role);
       } catch (error) {
         console.warn('⚠️ [ConversationMemory] Erro ao salvar mensagem:', error);
       }
     }, 0);
 
-  }, [user?.id, currentSession, maxMessages, saveToRedis]);
+  }, [user?.id, currentSession, maxMessages, saveToRedis, conversationHistory, saveToSupabase]);
 
   // Obter contexto para o chatbot (últimas N mensagens formatadas)
   const getContextForChatbot = useCallback((): string => {

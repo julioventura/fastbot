@@ -76,6 +76,9 @@ export interface ChatbotConfigProps {
   onSubmit?: (e: React.FormEvent) => void;
   onChange?: (field: string, value: string | number | boolean | string[]) => void;
   onCancel?: () => void;
+  showSystemMessagePreview?: boolean;
+  onPreviewSystemMessage?: () => void;
+  systemMessagePreview?: string;
 }
 
 /**

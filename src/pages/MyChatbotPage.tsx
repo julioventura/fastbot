@@ -65,7 +65,7 @@ const MyChatbotPage: React.FC = () => {
   // Memoized function to fetch chatbot data
   const fetchChatbotData = useCallback(async () => {
     if (!user?.id) return;
-    
+
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -167,7 +167,7 @@ const MyChatbotPage: React.FC = () => {
       });
 
       // Generate system_message automatically based on filled data
-      const generatedSystemMessage = validateChatbotData(chatbotData) 
+      const generatedSystemMessage = validateChatbotData(chatbotData)
         ? generateSystemMessage(chatbotData)
         : chatbotData.system_message;
 
@@ -237,11 +237,11 @@ const MyChatbotPage: React.FC = () => {
 
         if (insertError) {
           console.error('❌ [MyChatbotPage] Erro no INSERT:', insertError);
-          
+
           // Se falhou no INSERT, pode ser race condition - tentar UPDATE como fallback
           if (insertError.message?.includes('duplicate') || insertError.message?.includes('unique') || insertError.code === '23505') {
             console.log('🔄 [MyChatbotPage] Race condition detectada! Tentando UPDATE como fallback...');
-            
+
             const { data: fallbackData, error: fallbackError } = await supabase
               .from("mychatbot")
               .update(dataToSave)
@@ -284,7 +284,7 @@ const MyChatbotPage: React.FC = () => {
 
     } catch (error) {
       console.error("❌ [MyChatbotPage] Erro ao salvar dados do chatbot:", error);
-      
+
       // Análise detalhada do erro para melhor debug
       const errorDetails = {
         type: typeof error,
@@ -297,10 +297,10 @@ const MyChatbotPage: React.FC = () => {
       console.error('📋 [MyChatbotPage] Detalhes do erro:', errorDetails);
 
       const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
-      
+
       // Mensagem mais específica para diferentes tipos de erro
       let userMessage = `Não foi possível salvar as configurações do chatbot: ${errorMessage}`;
-      
+
       // Verificar tipos específicos de erro
       if (errorMessage.includes('409') || errorMessage.includes('conflict') || errorMessage.includes('duplicate')) {
         userMessage = "Erro de conflito ao salvar (409). Aguarde alguns segundos e tente novamente.";
@@ -334,7 +334,7 @@ const MyChatbotPage: React.FC = () => {
   }, []);
 
   // Generate preview of system_message in real time
-  const systemMessagePreview = validateChatbotData(chatbotData) 
+  const systemMessagePreview = validateChatbotData(chatbotData)
     ? generateSystemMessage(chatbotData)
     : "Preencha pelo menos um campo para gerar o system_message automaticamente.";
 
@@ -349,7 +349,7 @@ const MyChatbotPage: React.FC = () => {
   return (
     <div className="relative overflow-hidden bg-theme-gradient min-h-screen">
       <BackgroundDecoration />
-      
+
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-theme-gradient"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-60"></div>
@@ -362,40 +362,20 @@ const MyChatbotPage: React.FC = () => {
           }}></div>
         </div>
       </div>
-      
+
       <div className="container mx-auto py-10 px-4 relative z-10">
         <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Meu Chatbot</h1>
-        
-        {/* Botão para Preview do System Message */}
-        <div className="mb-6 text-center">
-          <button
-            onClick={handlePreviewSystemMessage}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-            type="button"
-          >
-            {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
-          </button>
-        </div>
 
-        {/* Preview do System Message */}
-        {showSystemMessagePreview && (
-          <div className="mb-8 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
-            <h3 className="text-lg font-semibold mb-3">Preview do System Message:</h3>
-            <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded border max-h-96 overflow-y-auto">
-              {systemMessagePreview}
-            </pre>
-            <p className="text-sm text-muted-foreground mt-2">
-              💡 Este será o conteúdo gerado automaticamente para o campo "system_message" ao salvar.
-            </p>
-          </div>
-        )}
-        
+        {/* Botão para Preview do System Message */}
         <AdvancedEditChatbotConfig
           chatbotData={chatbotData}
           isSaving={isSaving}
           onSubmit={handleSubmit}
           onChange={handleChange}
           onCancel={handleCancel}
+          showSystemMessagePreview={showSystemMessagePreview}
+          onPreviewSystemMessage={handlePreviewSystemMessage}
+          systemMessagePreview={systemMessagePreview}
         />
       </div>
     </div>
