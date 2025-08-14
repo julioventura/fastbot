@@ -102,8 +102,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
   const tabs = [
     { id: "configuration", label: "Configuração do Chatbot" },
-    { id: "shortMemory", label: "Memória recente" },
     { id: "dataFiles", label: "Base de Dados" },
+    { id: "shortMemory", label: "Memória recente" },
   ];
 
   const addTopic = (topic: string) => {
@@ -588,7 +588,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <div className="mt-6 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
                   <h3 className="text-lg font-semibold ml-2 mb-3">Preview do System Message:</h3>
                   <p className="text-sm text-primary ml-2 mt-3 mb-6">
-                    Este será o conteúdo gerado automaticamente para o campo "system_message" ao salvar.
+                    Conteúdo automático para o "system_message" do chatbot.
                   </p>
                   <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded border max-h-96 overflow-y-auto">
                     {systemMessagePreview}
