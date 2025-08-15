@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '../../integrations/supabase/client';
-import { AuthContextType, AuthResponse } from './authContextDefinition';
-import { AuthContext } from './context';
+import { AuthContextType, AuthResponse, AuthContext } from './authContextDefinition';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -22,7 +21,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Tentar limpar sessões inválidas primeiro
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
-          
+
           if (error) {
             console.warn('Erro ao buscar sessão, limpando:', error);
             // Se há erro na sessão, fazer logout silencioso
@@ -35,7 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
             return;
           }
-          
+
           if (mounted) {
             setSession(session);
             setUser(session?.user ?? null);
@@ -49,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(null);
           }
         }
-        
+
         if (mounted) {
           setInitializing(false);
           setLoading(false);
@@ -91,9 +90,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email,
         password,
       });
-      
+
       console.log('Resposta do login:', { data, error });
-      
+
       if (error) {
         console.log('Erro detalhado do login:', error);
         throw error;
@@ -112,15 +111,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     try {
       console.log('Tentando criar conta para:', email);
-      
+
       // Configurar URL de redirecionamento baseada no ambiente
       const isDevelopment = window.location.hostname === 'localhost';
-      const redirectUrl = isDevelopment 
+      const redirectUrl = isDevelopment
         ? `http://localhost:${window.location.port}/fastbot/`
         : `${window.location.origin}/`;
-      
+
       console.log('URL de redirecionamento configurada:', redirectUrl);
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -133,8 +132,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       });
 
-      console.log('Resposta do signUp:', { 
-        data, 
+      console.log('Resposta do signUp:', {
+        data,
         error,
         userConfirmed: data?.user?.email_confirmed_at,
         userCreated: data?.user?.created_at,
@@ -178,16 +177,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       // Para desenvolvimento, usar localhost:8080 (porta configurada do Vite)
       // Para produção, usar window.location.origin
-      const redirectUrl = window.location.hostname === 'localhost' 
+      const redirectUrl = window.location.hostname === 'localhost'
         ? 'http://localhost:8081/#reset-password'
         : `${window.location.origin}/#reset-password`;
-        
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl,
       });
-      
+
       console.log('Reset password solicitado para:', email, 'Redirect URL:', redirectUrl);
-      
+
       return { error };
     } catch (error) {
       const authError = error as AuthError;
@@ -201,7 +200,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         type: 'signup',
         email: email,
       });
-      
+
       return { error };
     } catch (error) {
       const authError = error as AuthError;

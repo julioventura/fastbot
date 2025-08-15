@@ -1,8 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { useAuth } from './useAuth';
-import { AuthContext } from './context';
-import { AuthContextType } from './authContextDefinition';
+import { AuthContext, AuthContextType } from './authContextDefinition';
 
 // Mock completo do contexto de autenticação
 const mockAuthContext: AuthContextType = {
@@ -20,7 +19,7 @@ const mockAuthContext: AuthContextType = {
 // Wrapper que fornece o contexto de autenticação
 const createAuthWrapper = (contextValue: Partial<AuthContextType> = {}) => {
   const value = { ...mockAuthContext, ...contextValue };
-  
+
   return ({ children }: { children: React.ReactNode }) => (
     <AuthContext.Provider value={value}>
       {children}
@@ -55,10 +54,10 @@ describe('useAuth Hook', () => {
       };
 
       const { result } = renderHook(() => useAuth(), {
-        wrapper: createAuthWrapper({ 
+        wrapper: createAuthWrapper({
           user: mockUser,
           loading: false,
-          initializing: false 
+          initializing: false
         }),
       });
 
@@ -69,9 +68,9 @@ describe('useAuth Hook', () => {
 
     it('deve retornar estado de loading quando carregando', () => {
       const { result } = renderHook(() => useAuth(), {
-        wrapper: createAuthWrapper({ 
+        wrapper: createAuthWrapper({
           loading: true,
-          initializing: false 
+          initializing: false
         }),
       });
 
@@ -81,9 +80,9 @@ describe('useAuth Hook', () => {
 
     it('deve retornar estado de initializing quando inicializando', () => {
       const { result } = renderHook(() => useAuth(), {
-        wrapper: createAuthWrapper({ 
+        wrapper: createAuthWrapper({
           initializing: true,
-          loading: false 
+          loading: false
         }),
       });
 
@@ -115,9 +114,9 @@ describe('useAuth Hook', () => {
       };
 
       const { result } = renderHook(() => useAuth(), {
-        wrapper: createAuthWrapper({ 
+        wrapper: createAuthWrapper({
           session: mockSession,
-          user: mockSession.user 
+          user: mockSession.user
         }),
       });
 
@@ -152,14 +151,14 @@ describe('useAuth Hook', () => {
   describe('quando usado fora do AuthProvider', () => {
     it('deve lançar erro apropriado', () => {
       // Captura console.error para evitar logs desnecessários no teste
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
 
       expect(() => {
         renderHook(() => useAuth());
       }).toThrow('useAuth must be used within an AuthProvider. Make sure AuthProvider is a parent component.');
 
       expect(consoleErrorSpy).toHaveBeenCalledWith('AuthContext é undefined! AuthProvider não está funcionando.');
-      
+
       consoleErrorSpy.mockRestore();
     });
   });

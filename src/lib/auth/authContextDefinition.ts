@@ -19,5 +19,5 @@ export interface AuthContextType {
   resendConfirmation: (email: string) => Promise<{ error: AuthError | null }>;
 }
 
-// Inicialize e exporte o contexto
-export const AuthContext = createContext<AuthContextType | null>(null);
+// Contexto consolidado - tipo undefined para melhor compatibilidade
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
