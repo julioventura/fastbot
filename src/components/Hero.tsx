@@ -165,10 +165,9 @@ const Hero = () => {
               {/* Não tem site? */}
               <div className="flex flex-row gap-1 ml-10">
                 <Button
-                  className="bg-transparent py-4 mt-8 text-primary hover:text-blue-400 text-2xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300 leading-[140%] text-left"
+                  className="bg-transparent py-4 mt-4 text-blue-400 text-2xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300 leading-[140%] text-left"
                 >
-                  <br />
-                  Atenda com Inteligência Artificial<br />
+                  E atenda 24H com <span className="text-yellow-400">Inteligência Artificial!</span><br />
                 </Button>
               </div>
 

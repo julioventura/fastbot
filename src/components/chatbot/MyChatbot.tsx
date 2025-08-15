@@ -811,7 +811,7 @@ const MyChatbot = () => {
         case 'minimized':
           return {
             ...commonChatbotStyles,
-            bottom: '20px',
+            bottom: '102px', // Subiu 2px (de 100px para 102px)
             right: '20px',
             width: '70px',
             height: '70px',
@@ -825,7 +825,7 @@ const MyChatbot = () => {
         case 'normal':
           return {
             ...commonChatbotStyles,
-            bottom: '20px',
+            bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
             right: '20px',
             width: 'clamp(300px, 33vw, 450px)',
             height: '80vh',
@@ -854,7 +854,7 @@ const MyChatbot = () => {
         case 'minimized':
           return {
             ...commonChatbotStyles,
-            bottom: '20px',
+            bottom: '102px', // Subiu 2px (de 100px para 102px)
             right: '20px',
             width: '70px',
             height: '70px',
@@ -867,7 +867,7 @@ const MyChatbot = () => {
         case 'normal':
           return {
             ...commonChatbotStyles,
-            bottom: '20px',
+            bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
             right: '20px',
             width: 'clamp(300px, 33vw, 450px)',
             height: '80vh',
@@ -918,7 +918,7 @@ const MyChatbot = () => {
     <div style={getChatbotStyle()} className="neu-chatbot-container">
       {/* Header do Chatbot */}
       <div style={{
-        padding: '15px 20px',
+        padding: '8px 8px', // 75% da altura original (15px * 0.75 = 11.25px)
         borderTopLeftRadius: chatState === 'normal' ? '24px' : '0px',
         borderTopRightRadius: chatState === 'normal' ? '24px' : '0px',
         background: isElevated

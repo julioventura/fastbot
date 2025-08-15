@@ -8,7 +8,7 @@ const Footer = () => {
     // Elemento <footer> principal com estilos de fundo e borda.
     // 'relative' é usado para posicionar os elementos SVG de decoração absoluta dentro dele.
     <footer className="relative bg-theme-gradient border-t border-theme-accent/30">
-      
+
       {/* Efeito de Brilho SVG (Decorativo) */}
       {/* Este div contém um SVG que cria um efeito de brilho de fundo. */}
       {/* 'absolute inset-0 z-0 overflow-hidden' posiciona o SVG para preencher o footer e ficar atrás do conteúdo. */}
@@ -36,7 +36,7 @@ const Footer = () => {
           </defs>
         </svg>
       </div>
-      
+
       {/* Padrão de Grade Sobreposto (Decorativo) */}
       {/* Este div cria um padrão de grade sutil sobre o fundo. */}
       {/* 'absolute inset-0 z-0 opacity-20' posiciona a grade para preencher o footer e ficar atrás do conteúdo. */}
@@ -52,11 +52,11 @@ const Footer = () => {
           ))}
         </div>
       </div>
-      
+
       {/* Contêiner do Conteúdo Principal do Rodapé */}
       {/* 'relative z-10' garante que este conteúdo fique acima dos elementos decorativos. */}
-      <div className="section-container py-12 relative z-10" id="footer-section">
-        
+      <div className="section-container py-7 relative z-10" id="footer-section">
+
         {/* Layout Flex para alinhar o nome da aplicação e os ícones de redes sociais. */}
         {/* 'flex-col md:flex-row' torna o layout responsivo: coluna em telas pequenas, linha em médias e maiores. */}
         <div className="flex flex-col md:flex-row justify-between items-center">
@@ -74,8 +74,8 @@ const Footer = () => {
               </div>
             </NavLink>
           </div>
-        
-         
+
+
           {/* Ícones de Redes Sociais */}
           {/* 'flex space-x-6' organiza os ícones horizontalmente com espaçamento. */}
           {/* 'mt-4 md:mt-0' adiciona margem superior em telas pequenas, removendo-a em maiores. */}
