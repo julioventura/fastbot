@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { loggers } from '@/lib/utils/logger';
 
 // Interface para Short-Memory
 export interface ShortMemoryMessage {
@@ -29,6 +30,9 @@ export interface ShortMemoryStats {
  * @param userId - ID do usuário (opcional, se não fornecido usa uma chave padrão)
  */
 export const useShortMemory = (userId?: string) => {
+  // Logger centralizado para este hook
+  const logger = loggers.shortMemory;
+
   const [shortMemoryData, setShortMemoryData] = useState<ShortMemoryMessage[]>([]);
   const [shortMemoryStats, setShortMemoryStats] = useState<ShortMemoryStats>({
     totalMessages: 0,
@@ -48,19 +52,22 @@ export const useShortMemory = (userId?: string) => {
       setIsLoading(true);
       const memoryKey = getShortMemoryKey();
       
-      console.log('🔄 [useShortMemory] ===== CARREGANDO DADOS DA SHORT-MEMORY =====');
-      console.log('🔄 [useShortMemory] Chave do LocalStorage:', memoryKey);
+      logger.debug('===== CARREGANDO DADOS DA SHORT-MEMORY =====');
+      logger.debug('Chave do LocalStorage:', { key: memoryKey });
       
       const storedData = localStorage.getItem(memoryKey);
       
-      console.log('🔄 [useShortMemory] Dados brutos do localStorage:', storedData ? storedData.substring(0, 200) + '...' : 'null');
+      logger.debug('Dados brutos do localStorage:', { 
+        hasData: !!storedData,
+        preview: storedData ? storedData.substring(0, 200) + '...' : 'null' 
+      });
       
       if (storedData) {
         const parsedData: ShortMemoryMessage[] = JSON.parse(storedData);
         
-        console.log('🔄 [useShortMemory] Dados parseados:', parsedData.length, 'mensagens');
+        logger.debug('Dados parseados:', { messageCount: parsedData.length });
         parsedData.forEach((msg, i) => {
-          console.log(`🔄 [useShortMemory] Mensagem ${i + 1}: ${msg.role} - "${msg.content.substring(0, 30)}..."`);
+          logger.debug(`Mensagem ${i + 1}: ${msg.role} - "${msg.content.substring(0, 30)}..."`);
         });
         
         setShortMemoryData(parsedData);
@@ -75,7 +82,7 @@ export const useShortMemory = (userId?: string) => {
           memorySize
         });
         
-        console.log('📋 [useShortMemory] Dados carregados:', {
+        logger.info('Dados carregados:', {
           messages: parsedData.length,
           size: `${(memorySize / 1024).toFixed(2)} KB`,
           lastUpdate: lastMessage?.timestamp,
@@ -89,12 +96,12 @@ export const useShortMemory = (userId?: string) => {
           lastUpdate: null,
           memorySize: 0
         });
-        console.log('📋 [useShortMemory] Nenhum dado encontrado para:', getShortMemoryKey());
+        logger.debug('Nenhum dado encontrado para:', { key: getShortMemoryKey() });
       }
       
-      console.log('🔄 [useShortMemory] ===== FIM DO CARREGAMENTO =====');
+      logger.debug('===== FIM DO CARREGAMENTO =====');
     } catch (error) {
-      console.error('❌ [useShortMemory] Erro ao carregar dados:', error);
+      logger.error('Erro ao carregar dados:', error);
       setShortMemoryData([]);
       setShortMemoryStats({
         totalMessages: 0,
@@ -104,7 +111,7 @@ export const useShortMemory = (userId?: string) => {
     } finally {
       setIsLoading(false);
     }
-  }, [getShortMemoryKey]);
+  }, [getShortMemoryKey, logger]);
 
   // Limpa completamente a Short-Memory
   const clearShortMemory = useCallback(async () => {
@@ -155,10 +162,13 @@ export const useShortMemory = (userId?: string) => {
   // Adiciona nova mensagem à Short-Memory
   const addToShortMemory = useCallback(async (role: 'user' | 'assistant', content: string) => {
     try {
-      console.log('🔧 [useShortMemory] ===== ADICIONANDO MENSAGEM À SHORT-MEMORY =====');
-      console.log('🔧 [useShortMemory] Role:', role);
-      console.log('🔧 [useShortMemory] Content:', content.substring(0, 50) + '...');
-      console.log('🔧 [useShortMemory] UserId:', userId);
+      logger.debug('===== ADICIONANDO MENSAGEM À SHORT-MEMORY =====');
+      logger.debug('Parâmetros:', {
+        role,
+        contentLength: content.length,
+        contentPreview: content.substring(0, 50) + '...',
+        userId
+      });
 
       const newMessage: ShortMemoryMessage = {
         id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -168,7 +178,7 @@ export const useShortMemory = (userId?: string) => {
         userId: userId
       };
 
-      console.log('🔧 [useShortMemory] Nova mensagem criada:', newMessage);
+      logger.debug('Nova mensagem criada:', { messageId: newMessage.id, role, timestamp: newMessage.timestamp });
 
       const memoryKey = getShortMemoryKey();
       
@@ -176,28 +186,31 @@ export const useShortMemory = (userId?: string) => {
       const currentStoredData = localStorage.getItem(memoryKey);
       const currentData = currentStoredData ? JSON.parse(currentStoredData) : [];
       
-      console.log('🔧 [useShortMemory] Dados atuais do localStorage:', currentData.length);
+      logger.debug('Estado atual:', { 
+        currentDataLength: currentData.length,
+        memoryKey 
+      });
       
       const updatedData = [...currentData, newMessage];
       
-      console.log('🔧 [useShortMemory] Dados depois de adicionar:', updatedData.length);
+      logger.debug('Após adicionar:', { updatedDataLength: updatedData.length });
       
       // Manter apenas as últimas 50 mensagens para evitar overflow
       const trimmedData = updatedData.slice(-50);
       
-      console.log('🔧 [useShortMemory] Dados após trim:', trimmedData.length);
+      logger.debug('Após trim:', { trimmedDataLength: trimmedData.length });
       
       // Salvar no LocalStorage
       const dataToStore = JSON.stringify(trimmedData);
       localStorage.setItem(memoryKey, dataToStore);
       
-      console.log('🔧 [useShortMemory] Dados salvos no localStorage com chave:', memoryKey);
-      console.log('🔧 [useShortMemory] Dados salvos (preview):', dataToStore.substring(0, 100) + '...');
+      logger.debug('Dados salvos:', { 
+        key: memoryKey,
+        dataSize: `${(new Blob([dataToStore]).size / 1024).toFixed(2)} KB`
+      });
       
       // Atualizar estado local
       setShortMemoryData(trimmedData);
-      
-      console.log('🔧 [useShortMemory] Estado local atualizado');
       
       // Atualizar estatísticas
       const memorySize = new Blob([dataToStore]).size;
@@ -207,22 +220,21 @@ export const useShortMemory = (userId?: string) => {
         memorySize
       });
       
-      console.log('➕ [useShortMemory] Mensagem adicionada com sucesso:', {
+      logger.info('Mensagem adicionada com sucesso:', {
         role,
-        contentLength: content.length,
         totalMessages: trimmedData.length,
         memorySize: `${(memorySize / 1024).toFixed(2)} KB`,
         messageId: newMessage.id
       });
       
-      console.log('🔧 [useShortMemory] ===== FIM DA ADIÇÃO À SHORT-MEMORY =====');
+      logger.debug('===== FIM DA ADIÇÃO À SHORT-MEMORY =====');
       
       return newMessage;
     } catch (error) {
-      console.error('❌ [useShortMemory] Erro ao adicionar mensagem:', error);
+      logger.error('Erro ao adicionar mensagem:', error);
       return null;
     }
-  }, [getShortMemoryKey, userId]); // Removida dependência de shortMemoryData
+  }, [getShortMemoryKey, userId, logger]);
 
   // Carrega dados automaticamente quando o usuário muda
   useEffect(() => {

@@ -3,22 +3,8 @@
  * MyChatbot
  * ==================================
  * 
- * Componente de chatbot interativo para o FastBot com assistência contextual baseado na       // Log do payload sendo enviado
-      console.log('🚀 [MyChatbot] Enviando para N8N:', {
-        payload: JSON.stringify(payload),
-        url: webhookUrl,
-        size: JSON.stringify(payload).length
-      });
-
-      const response = await fetch(String(webhookUrl), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const responseTimestamp = new Date().toISOString();uporta múltiplos estados de visualização (minimizado, normal, maximizado) e
+ * Componente de chatbot interativo para o FastBot com assistência contextual baseada na arquitetura modular.
+ * Suporta múltiplos estados de visualização (minimizado, normal, maximizado) e
  * estilos visuais (alto-relevo ou baixo-relevo). Integra-se com webhook externo
  * para processamento de mensagens, com fallback para respostas locais.
  * 
@@ -47,6 +33,7 @@ import { useVectorStore } from '@/hooks/useVectorStore';
 import { useConversationMemory } from '@/hooks/useConversationMemory';
 import { useShortMemory } from '@/hooks/useShortMemory';
 import { supabase } from '@/integrations/supabase/client';
+import { loggers } from '@/lib/utils/logger';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
 interface Message {
@@ -69,6 +56,9 @@ interface ChatbotConfig {
 }
 
 const MyChatbot = () => {
+  // Logger centralizado para este componente
+  const logger = loggers.chatbot;
+
   // Estados principais do componente
   const [chatState, setChatState] = useState<ChatState>('minimized');
   const [inputValue, setInputValue] = useState('');
@@ -106,12 +96,12 @@ const MyChatbot = () => {
 
   // Sincronizar mensagens da memória com interface local
   useEffect(() => {
-    console.log('🔄 [MyChatbot] ===== EFEITO DE SINCRONIZAÇÃO EXECUTADO =====');
-    console.log('🔄 [MyChatbot] Mensagens na memória:', conversationHistory.length);
+    logger.debug('===== EFEITO DE SINCRONIZAÇÃO EXECUTADO =====');
+    logger.debug('Mensagens na memória:', { count: conversationHistory.length });
 
-    // Log detalhado das mensagens da memória
+    // Log detalhado das mensagens da memória (apenas em desenvolvimento)
     conversationHistory.forEach((msg, i) => {
-      console.log(`🔄 [MyChatbot] Memória[${i}]: ${msg.role} - "${msg.content.substring(0, 30)}..."`);
+      logger.debug(`Memória[${i}]: ${msg.role} - "${msg.content.substring(0, 30)}..."`);
     });
 
     const formattedMessages = conversationHistory.map((msg, index) => ({
@@ -120,11 +110,11 @@ const MyChatbot = () => {
       sender: msg.role === 'user' ? 'user' as const : 'bot' as const
     }));
 
-    console.log('🔄 [MyChatbot] Mensagens formatadas para interface:', formattedMessages.length);
+    logger.debug('Mensagens formatadas para interface:', { count: formattedMessages.length });
     setLocalMessages(formattedMessages);
 
-    console.log('🔄 [MyChatbot] ===== FIM DA SINCRONIZAÇÃO =====');
-  }, [conversationHistory]);
+    logger.debug('===== FIM DA SINCRONIZAÇÃO =====');
+  }, [conversationHistory, logger]);
 
   // Constantes de estilo para o chatbot
   const chatbotBgColor = '#1a1b3a';
@@ -140,7 +130,7 @@ const MyChatbot = () => {
   const fetchChatbotConfig = useCallback(async () => {
     if (!user?.id) return;
 
-    console.log('🔍 [MyChatbot] Iniciando busca de configuração do chatbot...', {
+    logger.info('Iniciando busca de configuração do chatbot', {
       timestamp: new Date().toISOString(),
       userId: user.id,
       userEmail: user.email
@@ -153,13 +143,13 @@ const MyChatbot = () => {
         .eq('chatbot_user', user.id);
 
       if (error) {
-        console.error('❌ [MyChatbot] Erro ao buscar configuração do chatbot:', error);
+        logger.error('Erro ao buscar configuração do chatbot:', error);
         return;
       }
 
       if (data && data.length > 0) {
         setChatbotConfig(data[0]);
-        console.log('✅ [MyChatbot] Configuração carregada com sucesso:', {
+        logger.info('Configuração carregada com sucesso', {
           timestamp: new Date().toISOString(),
           userId: user.id,
           configFound: true,
@@ -168,16 +158,16 @@ const MyChatbot = () => {
           systemMessageLength: data[0].system_instructions?.length || 0
         });
       } else {
-        console.log('⚠️ [MyChatbot] Nenhuma configuração encontrada para o usuário:', {
+        logger.warn('Nenhuma configuração encontrada para o usuário', {
           timestamp: new Date().toISOString(),
           userId: user.id,
           configFound: false
         });
       }
     } catch (error) {
-      console.error('❌ [MyChatbot] Erro inesperado ao buscar configuração:', error);
+      logger.error('Erro inesperado ao buscar configuração:', error);
     }
-  }, [user?.id, user?.email]);
+  }, [user?.id, user?.email, logger]);
 
   /**
    * getPageContext
