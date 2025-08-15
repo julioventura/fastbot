@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { loggers } from '@/lib/utils/logger';
+import { fetchWithRetry, RETRY_CONFIGS } from '@/lib/utils/retry';
 import { useAuth } from '@/lib/auth/useAuth';
 
 interface SearchResult {
@@ -67,7 +69,7 @@ export const useVectorStore = () => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const response = await fetch('https://api.openai.com/v1/embeddings', {
+    const response = await fetchWithRetry('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -77,6 +79,19 @@ export const useVectorStore = () => {
         input: text,
         model: 'text-embedding-ada-002',
       }),
+    }, {
+      ...RETRY_CONFIGS.EXTERNAL_API,
+      retryCondition: (error) => {
+        const message = error.message.toLowerCase();
+        // Retry on network errors, rate limits, or server errors
+        return message.includes('network') ||
+               message.includes('timeout') ||
+               message.includes('429') ||
+               message.includes('rate limit') ||
+               message.includes('500') ||
+               message.includes('502') ||
+               message.includes('503');
+      }
     });
 
     if (!response.ok) {
@@ -99,7 +114,7 @@ export const useVectorStore = () => {
     }
 
     try {
-      const response = await fetch('https://api.openai.com/v1/embeddings', {
+      const response = await fetchWithRetry('https://api.openai.com/v1/embeddings', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -109,6 +124,18 @@ export const useVectorStore = () => {
           input: query,
           model: 'text-embedding-ada-002',
         }),
+      }, {
+        ...RETRY_CONFIGS.EXTERNAL_API,
+        retryCondition: (error) => {
+          const message = error.message.toLowerCase();
+          return message.includes('network') ||
+                 message.includes('timeout') ||
+                 message.includes('429') ||
+                 message.includes('rate limit') ||
+                 message.includes('500') ||
+                 message.includes('502') ||
+                 message.includes('503');
+        }
       });
 
       if (!response.ok) {

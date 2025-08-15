@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '../../integrations/supabase/client';
 import { AuthContextType, AuthResponse, AuthContext } from './authContextDefinition';
+import { withRetry, RETRY_CONFIGS } from '../utils/retry';
+import { loggers } from '../utils/logger';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -18,12 +20,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const getInitialSession = async () => {
       try {
-        // Tentar limpar sessões inválidas primeiro
-        try {
+        // Tentar limpar sessões inválidas primeiro com retry
+        await withRetry(async () => {
           const { data: { session }, error } = await supabase.auth.getSession();
 
           if (error) {
-            console.warn('Erro ao buscar sessão, limpando:', error);
+            loggers.auth.warn('Erro ao buscar sessão, limpando:', error);
             // Se há erro na sessão, fazer logout silencioso
             await supabase.auth.signOut();
             if (mounted) {
@@ -38,29 +40,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (mounted) {
             setSession(session);
             setUser(session?.user ?? null);
-            console.log('Sessão inicial carregada:', session?.user?.id ? 'Usuário logado' : 'Sem usuário');
+            loggers.auth.info('Sessão inicial carregada:', { hasUser: !!session?.user?.id });
           }
-        } catch (sessionError) {
-          console.warn('Erro ao verificar sessão, fazendo logout:', sessionError);
+        }, RETRY_CONFIGS.CRITICAL, 'Initialize auth session');
+      } catch (sessionError) {
+        console.warn('Erro ao verificar sessão, fazendo logout:', sessionError);
+        try {
           await supabase.auth.signOut();
-          if (mounted) {
-            setSession(null);
-            setUser(null);
-          }
+        } catch (logoutError) {
+          console.warn('Erro ao fazer logout:', logoutError);
         }
-
-        if (mounted) {
-          setInitializing(false);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Erro inesperado ao buscar sessão:', error);
         if (mounted) {
           setSession(null);
           setUser(null);
-          setInitializing(false);
-          setLoading(false);
         }
+      }
+
+      if (mounted) {
+        setInitializing(false);
+        setLoading(false);
       }
     };
 

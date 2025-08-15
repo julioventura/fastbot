@@ -6,6 +6,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/lib/auth/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { loggers } from '@/lib/utils/logger';
+import { withRetry, RETRY_CONFIGS } from '@/lib/utils/retry';
 
 export interface ConversationMessage {
   id: string;
@@ -143,7 +145,7 @@ export const useConversationMemory = ({
   const fetchFromSupabase = useCallback(async (sessionId: string): Promise<ConversationMessage[]> => {
     if (!enableSupabase || !user?.id) return [];
 
-    try {
+    return withRetry(async () => {
       const { data, error } = await supabase
         .from('conversation_history')
         .select('messages, last_activity')
@@ -158,10 +160,10 @@ export const useConversationMemory = ({
       }
 
       return data?.messages || [];
-    } catch (error) {
-      console.warn('⚠️ [ConversationMemory] Erro ao buscar do Supabase:', error);
+    }, RETRY_CONFIGS.DATABASE, `Fetch conversation from Supabase (session: ${sessionId})`).catch(error => {
+      loggers.conversationMemory.warn('Erro ao buscar do Supabase:', error);
       return [];
-    }
+    });
   }, [enableSupabase, user?.id]);
 
   // Salvar no Supabase
@@ -171,7 +173,7 @@ export const useConversationMemory = ({
   ): Promise<void> => {
     if (!enableSupabase || !user?.id) return;
 
-    try {
+    return withRetry(async () => {
       const { error } = await supabase
         .from('conversation_history')
         .upsert({
@@ -185,10 +187,10 @@ export const useConversationMemory = ({
 
       if (error) throw error;
 
-      console.log('🗄️ [ConversationMemory] Salvo no Supabase:', messages.length, 'mensagens');
-    } catch (error) {
-      console.warn('⚠️ [ConversationMemory] Erro ao salvar no Supabase:', error);
-    }
+      loggers.conversationMemory.info('Salvo no Supabase:', { messageCount: messages.length, sessionId });
+    }, RETRY_CONFIGS.DATABASE, `Save conversation to Supabase (session: ${sessionId})`).catch(error => {
+      loggers.conversationMemory.warn('Erro ao salvar no Supabase:', error);
+    });
   }, [enableSupabase, user?.id]);
 
   // Carregar histórico da conversação

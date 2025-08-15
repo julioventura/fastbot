@@ -34,6 +34,7 @@ import { useConversationMemory } from '@/hooks/useConversationMemory';
 import { useShortMemory } from '@/hooks/useShortMemory';
 import { supabase } from '@/integrations/supabase/client';
 import { loggers } from '@/lib/utils/logger';
+import { retryOperations, fetchWithRetry } from '@/lib/utils/retry';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
 interface Message {
@@ -270,12 +271,29 @@ const MyChatbot = () => {
       // Log do payload sendo enviado
       console.log('🚀 [MyChatbot] Enviando mensagem:', JSON.stringify(payload, null, 2));
 
-      const response = await fetch(String(webhookUrl), {
+      const response = await fetchWithRetry(String(webhookUrl), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload)
+      }, {
+        maxRetries: 3,
+        baseDelay: 1000,
+        backoffFactor: 2,
+        maxDelay: 10000,
+        jitter: true,
+        retryCondition: (error) => {
+          // Retry on network errors, timeouts, or server errors
+          const message = error.message.toLowerCase();
+          return message.includes('network') ||
+            message.includes('fetch') ||
+            message.includes('timeout') ||
+            message.includes('500') ||
+            message.includes('502') ||
+            message.includes('503') ||
+            message.includes('504');
+        }
       });
 
       const responseTimestamp = new Date().toISOString();
@@ -520,7 +538,7 @@ const MyChatbot = () => {
       throw new Error('OpenAI API key não configurada');
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${openaiApiKey}`,
@@ -537,6 +555,23 @@ const MyChatbot = () => {
         max_tokens: 300,
         temperature: 0.7,
       }),
+    }, {
+      maxRetries: 3,
+      baseDelay: 2000,
+      backoffFactor: 2,
+      maxDelay: 15000,
+      jitter: true,
+      retryCondition: (error) => {
+        const message = error.message.toLowerCase();
+        // Retry on network errors, rate limits, or server errors
+        return message.includes('network') ||
+          message.includes('timeout') ||
+          message.includes('429') ||
+          message.includes('rate limit') ||
+          message.includes('500') ||
+          message.includes('502') ||
+          message.includes('503');
+      }
     });
 
     if (!response.ok) {
