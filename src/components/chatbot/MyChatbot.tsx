@@ -73,6 +73,9 @@ const MyChatbot = () => {
   const [hasDraggedDistance, setHasDraggedDistance] = useState(false);
   const [chatbotVerticalOffset, setChatbotVerticalOffset] = useState(0); // offset em pixels do bottom padrão
 
+  // Estado para controle da animação eletrificada
+  const [isElectrified, setIsElectrified] = useState(false);
+
   // Controle de estilo visual (alto-relevo vs baixo-relevo)
   const [isElevated] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -123,6 +126,34 @@ const MyChatbot = () => {
 
     logger.debug('===== FIM DA SINCRONIZAÇÃO =====');
   }, [conversationHistory, logger]);
+
+  // Efeito da animação eletrificada no chatbot minimizado
+  useEffect(() => {
+    if (chatState !== 'minimized') return;
+
+    // Ativar animação eletrificada a cada 30 segundos
+    const electrifyInterval = setInterval(() => {
+      setIsElectrified(true);
+
+      // Desativar a animação após 3 segundos
+      setTimeout(() => {
+        setIsElectrified(false);
+      }, 3000);
+    }, 30000);
+
+    // Primeira animação após 5 segundos (para dar tempo do usuário ver o chatbot)
+    const initialTimeout = setTimeout(() => {
+      setIsElectrified(true);
+      setTimeout(() => {
+        setIsElectrified(false);
+      }, 3000);
+    }, 5000);
+
+    return () => {
+      clearInterval(electrifyInterval);
+      clearTimeout(initialTimeout);
+    };
+  }, [chatState]);
 
   // Constantes de estilo para o chatbot
   const chatbotBgColor = '#1a1b3a';
@@ -961,6 +992,27 @@ const MyChatbot = () => {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   /**
+   * getElectrifiedStyles
+   * Gera estilos para a animação eletrificada quando o chatbot está minimizado
+   */
+  const getElectrifiedStyles = () => {
+    if (!isElectrified || chatState !== 'minimized') return {};
+
+    return {
+      animation: 'electricBorder 3s ease-in-out',
+      boxShadow: `
+        0 10px 15px -3px ${chatbotShadowDark}, 
+        0 4px 6px -4px ${chatbotShadowDark}, 
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 40px rgba(147, 51, 234, 0.6),
+        inset 0 0 20px rgba(255, 255, 255, 0.2)
+      `,
+      border: '2px solid rgba(255, 255, 255, 0.9)',
+    };
+  };
+
+  /**
    * getChatbotStyle
    * Gera estilos específicos para cada estado do chatbot
    * Suporta dois modos visuais: alto-relevo ou baixo-relevo
@@ -972,8 +1024,8 @@ const MyChatbot = () => {
     if (isElevated) {
       // Estilos para alto-relevo (elevated)
       switch (chatState) {
-        case 'minimized':
-          return {
+        case 'minimized': {
+          const baseMinimizedStyle = {
             ...commonChatbotStyles,
             bottom: `${16 + chatbotVerticalOffset}px`, // Posição base + offset do drag
             right: '20px',
@@ -986,6 +1038,13 @@ const MyChatbot = () => {
             boxShadow: `0 10px 15px -3px ${chatbotShadowDark}, 0 4px 6px -4px ${chatbotShadowDark}, 0 0 0 1px rgba(255, 255, 255, 0.1)`,
             border: '1px solid rgba(255, 255, 255, 0.1)',
           };
+
+          // Aplicar estilos eletrificados se a animação estiver ativa
+          return {
+            ...baseMinimizedStyle,
+            ...getElectrifiedStyles(),
+          };
+        }
         case 'normal':
           return {
             ...commonChatbotStyles,
@@ -1062,17 +1121,86 @@ const MyChatbot = () => {
    */
   if (chatState === 'minimized') {
     return (
-      <div
-        style={getChatbotStyle()}
-        onMouseDown={handleMouseDown}
-        onClick={handleChatbotClick}
-        role="button"
-        aria-label="Abrir chatbot (arraste verticalmente para reposicionar)"
-        className="neu-chatbot-minimized"
-        title="Clique para abrir chatbot • Arraste para reposicionar"
-      >
-        <Bot size={32} color={chatbotTextColor} />
-      </div>
+      <>
+        {/* CSS para animação eletrificada */}
+        <style>{`
+          @keyframes electricBorder {
+            0% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            }
+            
+            10% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 2px rgba(255, 255, 255, 0.9),
+                0 0 10px rgba(255, 255, 255, 0.6),
+                0 0 20px rgba(147, 51, 234, 0.4);
+            }
+            
+            25% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 3px rgba(255, 255, 255, 1),
+                0 0 15px rgba(255, 255, 255, 0.8),
+                0 0 30px rgba(147, 51, 234, 0.6),
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+            }
+            
+            50% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 2px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 1),
+                0 0 40px rgba(147, 51, 234, 0.8),
+                inset 0 0 15px rgba(255, 255, 255, 0.2);
+            }
+            
+            75% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 3px rgba(255, 255, 255, 0.9),
+                0 0 25px rgba(255, 255, 255, 0.9),
+                0 0 35px rgba(147, 51, 234, 0.7),
+                inset 0 0 20px rgba(255, 255, 255, 0.4);
+            }
+            
+            90% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 2px rgba(255, 255, 255, 0.7),
+                0 0 15px rgba(255, 255, 255, 0.5),
+                0 0 25px rgba(147, 51, 234, 0.5);
+            }
+            
+            100% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            }
+          }
+        `}</style>
+
+        <div
+          style={getChatbotStyle()}
+          onMouseDown={handleMouseDown}
+          onClick={handleChatbotClick}
+          role="button"
+          aria-label="Abrir chatbot (arraste verticalmente para reposicionar)"
+          className="neu-chatbot-minimized"
+          title="Clique para abrir chatbot • Arraste para reposicionar"
+        >
+          <Bot size={32} color={chatbotTextColor} />
+        </div>
+      </>
     );
   }
 
