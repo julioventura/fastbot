@@ -49,6 +49,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showShortMemory, setShowShortMemory] = useState(false);
   const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
+  const [showClearConfirmation, setShowClearConfirmation] = useState(false);
 
   const { user } = useAuth();
 
@@ -210,6 +211,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
       loadShortMemoryData();
     }
   }, [showShortMemory, user?.id, loadShortMemoryData]);
+
+  // Função para confirmar limpeza da memória
+  const handleClearMemory = () => {
+    clearShortMemory();
+    setShowClearConfirmation(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -585,32 +592,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </Card>
             </div>
 
-            {/* Controles da Short-Memory */}
-            <div className="flex gap-3 mb-6">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={loadShortMemoryData}
-                className="flex items-center gap-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Recarregar
-              </Button>
-
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={clearShortMemory}
-                className="flex items-center gap-2"
-                disabled={shortMemoryStats.totalMessages === 0 || shortMemoryLoading}
-              >
-                <Trash2 className="w-4 h-4" />
-                Limpar Memória
-              </Button>
-            </div>
-
             {/* Lista de Mensagens da Short-Memory */}
             <div className="mt-6 space-y-4">
               <div className="flex justify-end mr-2">
@@ -690,6 +671,33 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               )}
             </div>
 
+
+            {/* Controles da Short-Memory */}
+            <div className="flex gap-3 my-6">
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={loadShortMemoryData}
+                className="flex items-center gap-2" >
+                <RefreshCw className="w-4 h-4" />
+                Recarregar
+              </Button>
+
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowClearConfirmation(true)}
+                className="flex items-center gap-2"
+                disabled={shortMemoryStats.totalMessages === 0 || shortMemoryLoading} >
+                <Trash2 className="w-4 h-4" />
+                Limpar Memória
+              </Button>
+
+            </div>
+
           </div>
         )}
 
@@ -751,6 +759,46 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <Button variant="outline" onClick={closeImagePreview}>
               Fechar
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Confirmação para Limpar Memória */}
+      <Dialog open={showClearConfirmation} onOpenChange={setShowClearConfirmation}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trash2 className="w-5 h-5 text-red-500" />
+              Confirmar Limpeza da Memória
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Tem certeza que deseja limpar toda a memória recente? Esta ação não pode ser desfeita.
+            </p>
+            <div className="bg-yellow-900/20 border border-yellow-600 rounded-lg p-3">
+              <p className="text-sm text-yellow-400">
+                <strong>Atenção:</strong> Serão removidas {shortMemoryStats.totalMessages} mensagens do contexto de conversa.
+              </p>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowClearConfirmation(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleClearMemory}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Confirmar Limpeza
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
