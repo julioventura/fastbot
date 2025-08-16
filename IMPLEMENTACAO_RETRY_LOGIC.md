@@ -7,6 +7,7 @@ Foi implementado um sistema completo de retry logic inteligente para tornar o Fa
 ### 🔧 Componentes Criados
 
 #### 1. **Utilitário de Retry Logic** (`src/lib/utils/retry.ts`)
+
 - **Exponential backoff** com jitter para evitar thundering herd
 - **Configurações pré-definidas** para diferentes tipos de operação
 - **Retry seletivo** baseado no tipo de erro
@@ -14,6 +15,7 @@ Foi implementado um sistema completo de retry logic inteligente para tornar o Fa
 - **Diferentes estratégias** para API externa, database, operações críticas
 
 #### 2. **Sistema de Logging Centralizado** (`src/lib/utils/logger.ts`)
+
 - **Logging condicional** baseado no ambiente
 - **Diferentes níveis** (debug, info, warn, error)
 - **Loggers específicos** por módulo/contexto
@@ -22,12 +24,15 @@ Foi implementado um sistema completo de retry logic inteligente para tornar o Fa
 ### 🎯 Integrações Implementadas
 
 #### **MyChatbot.tsx** - Operações Críticas
+
 ✅ **Webhook N8N**: Retry com configuração específica para APIs externas
+
 ```typescript
 fetchWithRetry(webhookUrl, requestConfig, RETRY_CONFIGS.EXTERNAL_API)
 ```
 
 ✅ **OpenAI API**: Retry otimizado para rate limits e erros de rede
+
 ```typescript
 fetchWithRetry('https://api.openai.com/v1/chat/completions', config, {
   maxRetries: 3,
@@ -39,7 +44,9 @@ fetchWithRetry('https://api.openai.com/v1/chat/completions', config, {
 ```
 
 #### **useConversationMemory.ts** - Persistência Supabase
+
 ✅ **Busca de histórico**: Retry para operações de leitura
+
 ```typescript
 withRetry(async () => {
   const { data, error } = await supabase.from('conversation_history')...
@@ -47,6 +54,7 @@ withRetry(async () => {
 ```
 
 ✅ **Salvamento de dados**: Retry para operações de escrita
+
 ```typescript
 withRetry(async () => {
   const { error } = await supabase.from('conversation_history').upsert(...)
@@ -54,7 +62,9 @@ withRetry(async () => {
 ```
 
 #### **useVectorStore.ts** - Embeddings OpenAI
+
 ✅ **Geração de embeddings**: Retry para OpenAI embeddings API
+
 ```typescript
 fetchWithRetry('https://api.openai.com/v1/embeddings', config, {
   ...RETRY_CONFIGS.EXTERNAL_API,
@@ -65,7 +75,9 @@ fetchWithRetry('https://api.openai.com/v1/embeddings', config, {
 ```
 
 #### **AuthContext.tsx** - Autenticação Crítica
+
 ✅ **Inicialização de sessão**: Retry para operações críticas de auth
+
 ```typescript
 withRetry(async () => {
   const { data: { session }, error } = await supabase.auth.getSession()
@@ -75,6 +87,7 @@ withRetry(async () => {
 ### ⚙️ Configurações de Retry
 
 #### **CRITICAL** - Operações críticas (auth, config)
+
 - `maxRetries: 3`
 - `baseDelay: 1000ms`
 - `backoffFactor: 2`
@@ -82,6 +95,7 @@ withRetry(async () => {
 - `jitter: true`
 
 #### **EXTERNAL_API** - APIs externas (N8N, OpenAI)
+
 - `maxRetries: 4`
 - `baseDelay: 1500ms`
 - `backoffFactor: 2`
@@ -89,6 +103,7 @@ withRetry(async () => {
 - `jitter: true`
 
 #### **DATABASE** - Operações Supabase
+
 - `maxRetries: 3`
 - `baseDelay: 800ms`
 - `backoffFactor: 1.8`
@@ -96,6 +111,7 @@ withRetry(async () => {
 - `jitter: true`
 
 #### **FAST** - Operações rápidas (cache, localStorage)
+
 - `maxRetries: 2`
 - `baseDelay: 500ms`
 - `backoffFactor: 2`
