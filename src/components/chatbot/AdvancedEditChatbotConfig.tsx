@@ -304,15 +304,15 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           </div> */}
 
           {/* Temas Permitidos */}
-          <div className="pt-6 space-y-6">
-            <Label htmlFor="main_topic">Temas Permitidos</Label>
+          <div className="space-y-2">
+            <Label>Temas Permitidos</Label>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Coluna Esquerda - Input para adicionar temas */}
               <div className="space-y-4">
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Digite um tema e pressione Enter"
+                    placeholder="Digite e pressione Enter para acrescentar na lista"
                     onKeyPress={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -404,7 +404,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
         </div>
 
-        {/* Botões Cancelar e Salvar - Lado Direito */}
+        {/* Botões Cancelar e Salvar */}
         <div className="flex justify-center items-center w-full gap-5">
           <Button
             type="button"
@@ -419,8 +419,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             {isSaving ? "Salvando..." : "Salvar Configurações"}
           </Button>
         </div>
-
-        <div className="space-y-6 border border-gray-600 rounded-lg p-6 bg-blue-950">
+        <div className="pt-6"></div>
+        <div className="mt-6 border border-gray-600 rounded-lg bg-blue-950">
 
           {/* Base de Dados */}
           <Card className="bg-transparent border border-border backdrop-blur-sm">
