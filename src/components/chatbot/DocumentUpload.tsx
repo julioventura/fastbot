@@ -161,9 +161,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
           toast({
             title: "Processamento concluído!",
-            description: `${
-              result.chunks_processed || 0
-            } chunks processados com sucesso.`,
+            description: `${result.chunks_processed || 0
+              } chunks processados com sucesso.`,
           });
         } catch (embeddingError) {
           console.error("Erro ao processar embeddings:", embeddingError);
@@ -343,9 +342,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
         toast({
           title: "Processamento concluído!",
-          description: `"${document.filename}" foi processado com sucesso. ${
-            result.chunks_processed || 0
-          } chunks criados.`,
+          description: `"${document.filename}" foi processado com sucesso. ${result.chunks_processed || 0
+            } chunks criados.`,
         });
       } catch (embeddingError) {
         console.error("Erro ao processar embeddings:", embeddingError);
@@ -553,11 +551,10 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         <CardContent>
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-              isDragActive
-                ? "border-primary bg-primary/10"
-                : "border-gray-300 hover:border-primary"
-            } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive
+              ? "border-primary bg-primary/10"
+              : "border-gray-300 hover:border-primary"
+              } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <input {...getInputProps()} />
             <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
@@ -565,11 +562,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
               <p>Solte os arquivos aqui...</p>
             ) : (
               <div>
-                <p className="mb-2">
-                  Arraste arquivos .txt ou clique para selecionar
-                </p>
-                <Button variant="outline" disabled={isUploading}>
-                  {isUploading ? "Processando..." : "Selecionar Arquivos"}
+                <Button variant="outline" disabled={isUploading} className="text-yellow-500">
+                  {isUploading ? "Processando..." : "Arraste arquivos .txt ou clique para selecionar"}
                 </Button>
               </div>
             )}
@@ -588,7 +582,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
               </div>
               <div className="space-y-2">
                 {/* Layout responsivo: uma linha no desktop, duas linhas no mobile */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-left">
                   <span className="text-sm text-green-500">
                     • Processados:{" "}
                     {documents.filter((d) => d.status === "completed").length}
@@ -601,7 +595,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                     • Processando:{" "}
                     {documents.filter((d) => d.status === "processing").length}
                   </span>
-                  
+
                   {documents.filter((d) => d.status === "error").length > 0 && (
                     <Button
                       variant="destructive"
@@ -628,38 +622,33 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 const statusInfo = getStatusLabel(doc.status);
 
                 return (
-                  <div key={doc.id} className="border rounded-lg p-4">
-                    {/* Layout de duas colunas */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Coluna 1: Informações do documento */}
-                      <div className="flex items-start gap-3">
-                        {getStatusIcon(doc.status)}
+                  <div key={doc.id} className="bg-blue-950 border rounded-lg p-4 pb-0 mb-0">
+                    <div className="pb-0 mb-0">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 flex-1">
+                          {getStatusIcon(doc.status)}
 
-                        <div className="flex-1">
-                          <p className="font-medium text-lg">{doc.filename}</p>
-                          <p className="text-xs text-gray-300 mt-1">
-                            Status:{" "}
-                            <span className={statusInfo.color}>
-                              {statusInfo.label}
-                            </span>
-                          </p>
-                          <p className="mt-2 text-sm text-gray-400">
-                            {formatFileSize(doc.file_size)} •{" "}
-                            {new Date(doc.upload_date).toLocaleDateString(
-                              "pt-BR"
-                            )}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            ID: {doc.id.slice(0, 8)}...
-                          </p>
+                          <div className="flex-1">
+                            <p className="font-medium text-lg">{doc.filename}</p>
 
+                            <p className="text-sm text-gray-400">
+                              {formatFileSize(doc.file_size)} •{" "}
+                              {new Date(doc.upload_date).toLocaleDateString(
+                                "pt-BR"
+                              )}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Botão Excluir movido para a direita, alinhado com o ícone */}
+                        <div className="flex-shrink-0">
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 disabled={processingDocuments.has(doc.id)}
-                                className="border border-gray-500 mt-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="border border-gray-500 hover:border-red-900 text-red-700 hover:bg-red-800"
                               >
                                 Excluir
                               </Button>
@@ -668,8 +657,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Tem certeza de que deseja excluir o documento "{doc.filename}"? 
-                                  Esta ação não pode ser desfeita e removerá permanentemente o documento 
+                                  Tem certeza de que deseja excluir o documento "{doc.filename}"?
+                                  Esta ação não pode ser desfeita e removerá permanentemente o documento
                                   e todos os seus dados processados.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
@@ -684,44 +673,13 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
-                          
                         </div>
                       </div>
 
-                      {/* Coluna 2: Resumo do documento */}
-                      <div className="bg-gray-800 dark:bg-gray-800 p-3 rounded-lg">
-                        <h4 className="text-sm font-medium text-gray-500 mb-2">
-                          Preview:
-                        </h4>
-                        {doc.summary ? (
-                          <p className="text-sm text-gray-400 leading-relaxed">
-                            {doc.summary}
-                          </p>
-                        ) : (
-                          <div className="flex items-center justify-center py-4">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => generatePreview(doc.id)}
-                              disabled={generatingPreviews.has(doc.id)}
-                              className="text-xs"
-                            >
-                              {generatingPreviews.has(doc.id) ? (
-                                <>
-                                  <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin mr-1" />
-                                  Gerando...
-                                </>
-                              ) : (
-                                <>📄 Gerar Preview</>
-                              )}
-                            </Button>
-                          </div>
-                        )}
-                      </div>
                     </div>
 
                     {/* Botões de ação - agora embaixo, ocupando toda a largura */}
-                    <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t">
+                    <div className="flex items-center justify-end gap-2 mt-4 pt-3">
                       {/* Botão de Processar Individual */}
                       {doc.status !== "completed" &&
                         doc.status !== "processing" && (

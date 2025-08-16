@@ -105,7 +105,7 @@ const Hero = () => {
             {/* Botão CTA */}
             <div>
 
-              {/* ATENDE NO SEU WHATSAPP */}
+              {/* BADGE DE DESTAQUE 1 */}
               <div className="flex flex-row gap-1 ml-10 mb-4">
                 <Button
                   onClick={() => {
@@ -120,11 +120,11 @@ const Hero = () => {
                   }}
                   className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
-                  <span>COLE NO WHATSAPP...</span>
+                  <span>ATENDE NO WHATSAPP...</span>
                 </Button>
               </div>
 
-              {/* ATENDE NO SEU INSTAGRAM... */}
+              {/* BADGE DE DESTAQUE 2 */}
               <div className="flex flex-row gap-1 ml-10 mb-4">
                 <Button
                   onClick={() => {
@@ -139,11 +139,11 @@ const Hero = () => {
                   }}
                   className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
-                  <span>COLE NO INSTAGRAM...</span>
+                  <span>ATENDE NO INSTAGRAM...</span>
                 </Button>
               </div>
 
-              {/* E ATENDE NO SEU SITE... */}
+              {/* BADGE DE DESTAQUE 3 */}
               <div className="flex flex-row gap-1 ml-10 mb-4">
                 <Button
                   onClick={() => {
@@ -158,7 +158,7 @@ const Hero = () => {
                   }}
                   className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
-                  <span>COLE NO GMAIL...</span>
+                  <span>ATENDE NO GMAIL...</span>
                 </Button>
               </div>
 
@@ -167,7 +167,7 @@ const Hero = () => {
                 <Button
                   className="bg-transparent py-4 mt-4 text-blue-400 text-2xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300 leading-[140%] text-left"
                 >
-                  E atenda 24H com <span className="text-yellow-400">Inteligência Artificial!</span><br />
+                  ATENDIMENTO 24H <span className="text-red-600"> com </span> <span className="text-yellow-400">Inteligência Artificial!</span><br />
                 </Button>
               </div>
 
