@@ -11,6 +11,8 @@ import {
   Play,
   RefreshCw,
   Download,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,6 +54,15 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 }) => {
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  // Estado da expansão salvo no localStorage, padrão sempre expandido
+  const [isDocumentsExpanded, setIsDocumentsExpanded] = useState(() => {
+    try {
+      const saved = localStorage.getItem('documentsExpanded');
+      return saved !== null ? JSON.parse(saved) : true; // padrão expandido
+    } catch {
+      return true; // padrão expandido em caso de erro
+    }
+  });
   const [processingDocuments, setProcessingDocuments] = useState<Set<string>>(
     new Set()
   );
@@ -61,6 +72,19 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const { user } = useAuth();
   const { toast } = useToast();
   const { processDocumentEmbeddings, isProcessing } = useVectorStore();
+
+  // Função para alternar o estado de expansão e salvar no localStorage
+  const toggleDocumentsExpansion = useCallback(() => {
+    setIsDocumentsExpanded(prev => {
+      const newState = !prev;
+      try {
+        localStorage.setItem('documentsExpanded', JSON.stringify(newState));
+      } catch (error) {
+        console.warn('Erro ao salvar estado de expansão no localStorage:', error);
+      }
+      return newState;
+    });
+  }, []);
 
   const fetchDocuments = useCallback(async () => {
     if (!user) return;
@@ -627,129 +651,172 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         <Card>
           <CardHeader>
             <CardTitle>
-              <div className="flex items-center gap-2 mb-3">
-                <File className="w-5 h-5" />
-                Documentos Enviados ({documents.length})
-              </div>
-              <div className="space-y-2">
-                {/* Layout responsivo: uma linha no desktop, duas linhas no mobile */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-left">
-                  <span className="text-sm text-green-500">
-                    • Processados:{" "}
-                    {documents.filter((d) => d.status === "completed").length}
-                  </span>
-                  <span className="text-sm text-red-500">
-                    • Com erro:{" "}
-                    {documents.filter((d) => d.status === "error").length}
-                  </span>
-                  <span className="text-sm text-gray-400">
-                    • Processando:{" "}
-                    {documents.filter((d) => d.status === "processing").length}
-                  </span>
-
-                  {documents.filter((d) => d.status === "error").length > 0 && (
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        const errorDocs = documents.filter(
-                          (d) => d.status === "error"
-                        );
-                        errorDocs.forEach((doc) => deleteDocument(doc.id));
-                      }}
-                      className="self-start sm:ml-auto"
-                    >
-                      🗑️ Limpar Erros
-                    </Button>
-                  )}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <File className="w-5 h-5" />
+                  Documentos Enviados ({documents.length})
                 </div>
+
+                {/* Botão de recolher/expandir */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleDocumentsExpansion}
+                  className="h-8 w-8 p-0 hover:bg-blue-800"
+                  title={isDocumentsExpanded ? "Recolher lista" : "Expandir lista"}
+                >
+                  {isDocumentsExpanded ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
+
+              {isDocumentsExpanded && (
+                <div className="space-y-2">
+                  {/* Layout responsivo: uma linha no desktop, duas linhas no mobile */}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-left">
+                    <span className="text-sm text-green-500">
+                      • Processados:{" "}
+                      {documents.filter((d) => d.status === "completed").length}
+                    </span>
+                    <span className="text-sm text-red-500">
+                      • Com erro:{" "}
+                      {documents.filter((d) => d.status === "error").length}
+                    </span>
+                    <span className="text-sm text-gray-400">
+                      • Processando:{" "}
+                      {documents.filter((d) => d.status === "processing").length}
+                    </span>
+
+                    {documents.filter((d) => d.status === "error").length > 0 && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          const errorDocs = documents.filter(
+                            (d) => d.status === "error"
+                          );
+                          errorDocs.forEach((doc) => deleteDocument(doc.id));
+                        }}
+                        className="self-start sm:ml-auto"
+                      >
+                        🗑️ Limpar Erros
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <div className="space-y-3">
-              {documents.map((doc) => {
-                const statusInfo = getStatusLabel(doc.status);
+            {isDocumentsExpanded && (
+              <div className="space-y-3">
+                {documents.map((doc) => {
+                  const statusInfo = getStatusLabel(doc.status);
 
-                return (
-                  <div key={doc.id} className="bg-blue-950 border rounded-lg p-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 flex-1">
-                        {getStatusIcon(doc.status)}
+                  return (
+                    <div key={doc.id} className="bg-blue-950 border rounded-lg p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1">
+                          {getStatusIcon(doc.status)}
 
-                        <div className="flex-1">
-                          <p className="font-medium text-lg">{doc.filename}</p>
+                          <div className="flex-1">
+                            <p className="font-medium text-lg">{doc.filename}</p>
 
-                          <p className="pt-1 text-sx text-gray-400">
-                            {new Date(doc.upload_date).toLocaleDateString(
-                              "pt-BR"
-                            )}
-                          </p>
+                            <p className="pt-1 text-sx text-gray-400">
+                              {new Date(doc.upload_date).toLocaleDateString(
+                                "pt-BR"
+                              )}
+                            </p>
 
-                          <p className="pt-1 text-sx text-gray-400">
-                            {formatFileSize(doc.file_size)}
-                          </p>
+                            <p className="pt-1 text-sx text-gray-400">
+                              {formatFileSize(doc.file_size)}
+                            </p>
 
+                          </div>
+                        </div>
+
+                        {/* Botões Download e Excluir centralizados verticalmente */}
+                        <div className="flex-shrink-0 flex flex-col gap-2">
+                          {/* Botão Baixar */}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => downloadDocument(doc.id, doc.filename)}
+                            className="border border-blue-600 hover:border-blue-700 text-blue-400 hover:bg-blue-800"
+                            title="Fazer download do documento original"
+                          >
+                            <Download className="w-4 h-4 mr-1" />
+                            Baixar
+                          </Button>
+
+                          {/* Botão Excluir */}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                disabled={processingDocuments.has(doc.id)}
+                                className="border border-red-800 hover:border-red-900 text-red-700 hover:bg-red-800"
+                              >
+                                Excluir
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza de que deseja excluir o documento "{doc.filename}"?
+                                  Esta ação não pode ser desfeita e removerá permanentemente o documento
+                                  e todos os seus dados processados.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => deleteDocument(doc.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Excluir documento
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
 
-                      {/* Botões Download e Excluir centralizados verticalmente */}
-                      <div className="flex-shrink-0 flex flex-col gap-2">
-                        {/* Botão Baixar */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => downloadDocument(doc.id, doc.filename)}
-                          className="border border-blue-600 hover:border-blue-700 text-blue-400 hover:bg-blue-800"
-                          title="Fazer download do documento original"
-                        >
-                          <Download className="w-4 h-4 mr-1" />
-                          Baixar
-                        </Button>
-
-                        {/* Botão Excluir */}
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              disabled={processingDocuments.has(doc.id)}
-                              className="border border-red-800 hover:border-red-900 text-red-700 hover:bg-red-800"
-                            >
-                              Excluir
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Tem certeza de que deseja excluir o documento "{doc.filename}"?
-                                Esta ação não pode ser desfeita e removerá permanentemente o documento
-                                e todos os seus dados processados.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => deleteDocument(doc.id)}
-                                className="bg-red-600 hover:bg-red-700"
+                      {/* Botões de ação - embaixo, com separação visual */}
+                      {(doc.status === "error" || processingDocuments.has(doc.id) || (doc.status !== "completed" && doc.status !== "processing")) && (
+                        <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-gray-700">
+                          {/* Botão de Processar Individual */}
+                          {doc.status !== "completed" &&
+                            doc.status !== "processing" && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => processDocument(doc.id)}
+                                disabled={
+                                  processingDocuments.has(doc.id) || isProcessing
+                                }
                               >
-                                Excluir documento
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </div>
+                                <Play className="w-4 h-4 mr-1" />
+                                Processar
+                              </Button>
+                            )}
 
-                    {/* Botões de ação - embaixo, com separação visual */}
-                    {(doc.status === "error" || processingDocuments.has(doc.id) || (doc.status !== "completed" && doc.status !== "processing")) && (
-                      <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-gray-700">
-                        {/* Botão de Processar Individual */}
-                        {doc.status !== "completed" &&
-                          doc.status !== "processing" && (
+                          {/* Botão de Reprocessar se houve erro */}
+                          {doc.status === "error" && (
                             <Button
+                              type="button"
                               variant="outline"
                               size="sm"
                               onClick={() => processDocument(doc.id)}
@@ -757,39 +824,25 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                                 processingDocuments.has(doc.id) || isProcessing
                               }
                             >
-                              <Play className="w-4 h-4 mr-1" />
-                              Processar
+                              <RefreshCw className="w-4 h-4 mr-1" />
+                              Tentar Novamente
                             </Button>
                           )}
 
-                        {/* Botão de Reprocessar se houve erro */}
-                        {doc.status === "error" && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => processDocument(doc.id)}
-                            disabled={
-                              processingDocuments.has(doc.id) || isProcessing
-                            }
-                          >
-                            <RefreshCw className="w-4 h-4 mr-1" />
-                            Tentar Novamente
-                          </Button>
-                        )}
-
-                        {/* Indicador de processamento individual */}
-                        {processingDocuments.has(doc.id) && (
-                          <div className="flex items-center gap-2 text-blue-600">
-                            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                            <span className="text-sm">Processando...</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                          {/* Indicador de processamento individual */}
+                          {processingDocuments.has(doc.id) && (
+                            <div className="flex items-center gap-2 text-blue-600">
+                              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                              <span className="text-sm">Processando...</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

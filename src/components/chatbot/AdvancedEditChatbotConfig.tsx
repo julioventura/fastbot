@@ -234,7 +234,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               {/* Nome do Chatbot */}
               <div>
                 <Label htmlFor="chatbot_name">
-                  Nome do Chatbot<span className="text-red-500">*</span>
+                  Nome do Chatbot <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="chatbot_name"
@@ -260,7 +260,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   }
                   className="mt-2 edit-form-input"
                   style={borderStyle}
-                  rows={5}
+                  rows={8}
                   placeholder="Olá! Sou o assistente virtual. Como posso ajudar?"
                 />
               </div>
@@ -281,7 +281,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   }
                   className="mt-2 edit-form-input"
                   style={borderStyle}
-                  rows={10}
+                  rows={13}
                   placeholder="Você é um assistente virtual especializado em... Suas principais funções são..."
                 />
               </div>
