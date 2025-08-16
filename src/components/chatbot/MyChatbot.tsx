@@ -66,6 +66,11 @@ const MyChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chatbotConfig, setChatbotConfig] = useState<ChatbotConfig | null>(null);
 
+  // Estados para controle de drag vertical
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [chatbotVerticalOffset, setChatbotVerticalOffset] = useState(0); // offset em pixels do bottom padrão
+
   // Controle de estilo visual (alto-relevo vs baixo-relevo)
   const [isElevated] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -819,10 +824,11 @@ const MyChatbot = () => {
   /**
    * Estilos base comuns para todos os estados do chatbot
    * Define propriedades consistentes independente do modo
+   * z-index 50 garante que fique acima do conteúdo mas abaixo de modais/alertas
    */
   const commonChatbotStyles = {
     position: 'fixed',
-    zIndex: 1000,
+    zIndex: 50,
     transition: 'all 0.3s ease-in-out',
     display: 'flex',
     flexDirection: 'column',
@@ -830,6 +836,96 @@ const MyChatbot = () => {
     color: chatbotTextColor,
     fontFamily: "'Inter', sans-serif",
   };
+
+  /**
+   * Funções de controle de drag vertical do chatbot
+   */
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (chatState !== 'minimized') return; // Só permite drag quando minimizado
+
+    setIsDragging(true);
+    setDragStartY(e.clientY);
+    e.preventDefault();
+    e.stopPropagation(); // Previne o click do container
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+
+    const deltaY = dragStartY - e.clientY; // Invertido: mover mouse para cima = chatbot sobe
+
+    // Calcular limites baseados na altura da tela
+    const windowHeight = window.innerHeight;
+    const chatbotHeight = isElevated ? 64 : 70; // Altura do chatbot (varia conforme estilo)
+    const baseBottom = isElevated ? 16 : 122; // Posição bottom base
+
+    // Limite superior: pode subir até quase o topo da tela (deixa 20px de margem)
+    const maxUpward = windowHeight - baseBottom - chatbotHeight - 20;
+
+    // Limite inferior: pode descer até quase a parte inferior (deixa 20px de margem)  
+    const maxDownward = -(baseBottom - 20);
+
+    const newOffset = Math.max(maxDownward, Math.min(maxUpward, deltaY));
+    setChatbotVerticalOffset(newOffset);
+  }, [isDragging, dragStartY, isElevated]);
+
+  const handleMouseUp = useCallback(() => {
+    setTimeout(() => setIsDragging(false), 50); // Pequeno delay para evitar click após drag
+  }, []);
+
+  const handleChatbotClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Só abre o chat se não estiver arrastando
+    if (!isDragging) {
+      toggleChatState('normal');
+    }
+  };
+
+  // Reset do offset quando o chatbot não está minimizado
+  useEffect(() => {
+    if (chatState !== 'minimized') {
+      setChatbotVerticalOffset(0);
+    }
+  }, [chatState]);
+
+  // Validar posição quando a janela é redimensionada
+  useEffect(() => {
+    const validatePosition = () => {
+      if (chatState !== 'minimized' || chatbotVerticalOffset === 0) return;
+
+      const windowHeight = window.innerHeight;
+      const chatbotHeight = isElevated ? 64 : 70;
+      const baseBottom = isElevated ? 16 : 122;
+
+      // Recalcular limites
+      const maxUpward = windowHeight - baseBottom - chatbotHeight - 20;
+      const maxDownward = -(baseBottom - 20);
+
+      // Ajustar posição se estiver fora dos novos limites
+      const validOffset = Math.max(maxDownward, Math.min(maxUpward, chatbotVerticalOffset));
+      if (validOffset !== chatbotVerticalOffset) {
+        setChatbotVerticalOffset(validOffset);
+      }
+    };
+
+    window.addEventListener('resize', validatePosition);
+    return () => window.removeEventListener('resize', validatePosition);
+  }, [chatState, chatbotVerticalOffset, isElevated]);
+
+  // Event listeners globais para drag
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = 'none'; // Previne seleção de texto durante drag
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = '';
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   /**
    * getChatbotStyle
@@ -846,13 +942,13 @@ const MyChatbot = () => {
         case 'minimized':
           return {
             ...commonChatbotStyles,
-            bottom: '16px',
+            bottom: `${16 + chatbotVerticalOffset}px`, // Posição base + offset do drag
             right: '20px',
             width: '64px',
             height: '64px',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer',
+            cursor: isDragging ? 'grabbing' : 'grab',
             background: chatbotBgColor,
             boxShadow: `0 10px 15px -3px ${chatbotShadowDark}, 0 4px 6px -4px ${chatbotShadowDark}, 0 0 0 1px rgba(255, 255, 255, 0.1)`,
             border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -889,13 +985,13 @@ const MyChatbot = () => {
         case 'minimized':
           return {
             ...commonChatbotStyles,
-            bottom: '122px', // Movido 20px para baixo (de 102px para 122px)
+            bottom: `${122 + chatbotVerticalOffset}px`, // Posição base + offset do drag
             right: '20px',
             width: '70px',
             height: '70px',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer',
+            cursor: isDragging ? 'grabbing' : 'grab',
             background: `linear-gradient(145deg, ${chatbotBgColor}, ${chatbotShadowLight})`,
             boxShadow: `10px 10px 20px ${chatbotShadowDark}, -10px -10px 20px ${chatbotShadowLight}`,
           };
@@ -935,10 +1031,12 @@ const MyChatbot = () => {
     return (
       <div
         style={getChatbotStyle()}
-        onClick={() => toggleChatState('normal')}
+        onMouseDown={handleMouseDown}
+        onClick={handleChatbotClick}
         role="button"
-        aria-label="Abrir chatbot"
+        aria-label="Abrir chatbot (arraste verticalmente para reposicionar)"
         className="neu-chatbot-minimized"
+        title="Clique para abrir • Arraste para reposicionar"
       >
         <Bot size={32} color={chatbotTextColor} />
       </div>

@@ -93,12 +93,12 @@ const Account = () => {
 
   // --- Componente CollapsibleCard ---
   // Wrapper para cards colapsáveis
-  const CollapsibleCard = ({ 
-    title, 
-    description, 
-    isExpanded, 
-    onToggle, 
-    children 
+  const CollapsibleCard = ({
+    title,
+    description,
+    isExpanded,
+    onToggle,
+    children
   }: {
     title: string;
     description: string;
@@ -505,7 +505,7 @@ const Account = () => {
                   </div>
                   <p className="text-xs text-gray-400">Email usado para login na conta</p>
                 </div>
-                
+
                 {/* Seção "ID do Usuário" */}
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-foreground">
@@ -534,7 +534,7 @@ const Account = () => {
                   </div>
                   <p className="text-xs text-gray-400">Use este ID para automações e configurações do chatbot</p>
                 </div>
-                
+
                 {/* Seção "Criado em" */}
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-foreground">
@@ -545,7 +545,7 @@ const Account = () => {
                     {profileData.created_at ? format(new Date(profileData.created_at), "dd-MM-yyyy (HH:mm)") : "-"}
                   </div>
                 </div>
-                
+
                 {/* Seção "Atualizado em" */}
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-foreground">
@@ -571,8 +571,8 @@ const Account = () => {
                   <Lock size={16} className="text-theme-accent" />
                   <span className="text-sm">Alterar senha</span>
                 </div>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full bg-primary border-border text-primary-foreground hover:bg-primary/90 hover:border-primary"
                 >
                   Alterar senha
