@@ -299,70 +299,75 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           <div className="pt-6 space-y-6">
             <Label htmlFor="main_topic">Temas Permitidos</Label>
 
-            {/* Input para adicionar novos temas */}
-            <div className="flex gap-2">
-              <Input
-                placeholder="Digite um tema e pressione Enter"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addTopic((e.target as HTMLInputElement).value);
-                    (e.target as HTMLInputElement).value = "";
-                  }
-                }}
-                className="edit-form-input"
-                style={borderStyle}
-              />
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={(e) => {
-                  const input =
-                    e.currentTarget.parentElement?.querySelector(
-                      "input"
-                    );
-                  if (input && input.value.trim()) {
-                    addTopic(input.value);
-                    input.value = "";
-                  }
-                }}
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Coluna Esquerda - Input para adicionar temas */}
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Digite um tema e pressione Enter"
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addTopic((e.target as HTMLInputElement).value);
+                        (e.target as HTMLInputElement).value = "";
+                      }
+                    }}
+                    className="edit-form-input"
+                    style={borderStyle}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      const input =
+                        e.currentTarget.parentElement?.querySelector(
+                          "input"
+                        );
+                      if (input && input.value.trim()) {
+                        addTopic(input.value);
+                        input.value = "";
+                      }
+                    }}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
 
-            {/* Lista de temas como badges */}
-            {(chatbotData.allowed_topics || []).length > 0 ? (
-              <div className="flex flex-wrap gap-2 mt-4 mb-4 p-3 border border-gray-600 rounded-lg">
-                {(chatbotData.allowed_topics || []).map(
-                  (topic, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
-                    >
-                      <span>{topic}</span>
-                      <div
-                        className="cursor-pointer flex-shrink-0"
-                        onClick={() => removeTopic(index)}
-                        title={`Remover tema: ${topic}`}
-                      >
-                        <X className="w-3 h-3 hover:text-red-400" />
-                      </div>
-                    </Badge>
-                  )
+              {/* Coluna Direita - Lista de temas como badges */}
+              <div className="space-y-4">
+                {(chatbotData.allowed_topics || []).length > 0 ? (
+                  <div className="flex flex-wrap gap-2 p-3 border border-gray-600 rounded-lg">
+                    {(chatbotData.allowed_topics || []).map(
+                      (topic, index) => (
+                        <Badge
+                          key={index}
+                          variant="secondary"
+                          className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
+                        >
+                          <span>{topic}</span>
+                          <div
+                            className="cursor-pointer flex-shrink-0"
+                            onClick={() => removeTopic(index)}
+                            title={`Remover tema: ${topic}`}
+                          >
+                            <X className="w-3 h-3 hover:text-red-400" />
+                          </div>
+                        </Badge>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <div className="p-4 border border-dashed border-gray-400 rounded-lg text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Nenhum tema adicionado ainda. Use o campo ao lado para
+                      adicionar temas permitidos.
+                    </p>
+                  </div>
                 )}
               </div>
-            ) : (
-              <div className="mt-4 mb-4 p-4 border border-dashed border-gray-400 rounded-lg text-center">
-                <p className="text-sm text-muted-foreground">
-                  Nenhum tema adicionado ainda. Use o campo abaixo para
-                  adicionar temas permitidos.
-                </p>
-              </div>
-            )}
-
+            </div>
           </div>
 
           {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
