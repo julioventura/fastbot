@@ -34,7 +34,7 @@ import { useConversationMemory } from '@/hooks/useConversationMemory';
 import { useShortMemory } from '@/hooks/useShortMemory';
 import { supabase } from '@/integrations/supabase/client';
 import { loggers } from '@/lib/utils/logger';
-import { retryOperations, fetchWithRetry } from '@/lib/utils/retry';
+import { fetchWithRetry } from '@/lib/utils/retry';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
 interface Message {
@@ -459,14 +459,14 @@ const MyChatbot = () => {
       }
 
       // 3. Preparar system message personalizado
-      const systemMessage = chatbotConfig?.system_instructions ||
+      const systemMessage = chatbotConfig?.system_message ||
         'Você é um assistente virtual profissional e prestativo.';
 
       console.log('📝 [MyChatbot] System message configurado:', systemMessage.substring(0, 100) + '...');
 
-      // 4. Construir prompt completo para IA
-      let fullPrompt = systemMessage + '\n\n';
-      console.log('🏗️ [MyChatbot] ===== CONSTRUINDO PROMPT PARA IA =====');
+      // 4. Construir prompt contextual para IA (sem system message, que será enviado separadamente)
+      let fullPrompt = '';
+      console.log('🏗️ [MyChatbot] ===== CONSTRUINDO PROMPT CONTEXTUAL PARA IA =====');
 
       // 🧠 Adicionar contexto da memória híbrida (Redis + Supabase)
       if (conversationContext && conversationContext.trim().length > 0) {
@@ -508,13 +508,18 @@ const MyChatbot = () => {
 
       // 6. Adicionar contexto da página atual
       const currentPageContext = getPageContext();
-      fullPrompt += `PERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:\n\nOBS: CONTEXTO DA PÁGINA ATUAL - O usuário está atualmente na ${currentPageContext} (URL: ${location.pathname}). Use essa informação para contextualizar suas respostas quando relevante.`;
+      if (fullPrompt.trim()) {
+        fullPrompt += `\n\nOBS: CONTEXTO DA PÁGINA ATUAL - O usuário está atualmente na ${currentPageContext} (URL: ${location.pathname}). Use essa informação para contextualizar suas respostas quando relevante.`;
+      } else {
+        fullPrompt = `CONTEXTO DA PÁGINA ATUAL - O usuário está atualmente na ${currentPageContext} (URL: ${location.pathname}). Use essa informação para contextualizar suas respostas quando relevante.`;
+      }
 
       // 7. Chamar OpenAI diretamente para gerar resposta
-      const openaiResponse = await generateAIResponse(fullPrompt);
+      const openaiResponse = await generateAIResponse(systemMessage, fullPrompt, userMessage);
 
       console.log('✅ [MyChatbot] Resposta IA gerada localmente:', {
-        promptLength: fullPrompt.length,
+        systemMessageLength: systemMessage.length,
+        contextualPromptLength: fullPrompt.length,
         hasVectorContext: !!vectorContext,
         responseLength: openaiResponse.length
       });
@@ -530,8 +535,9 @@ const MyChatbot = () => {
   /**
    * generateAIResponse
    * Chama OpenAI diretamente para gerar resposta baseada no prompt
+   * Usa estrutura otimizada com roles 'system' e 'user'
    */
-  const generateAIResponse = async (prompt: string): Promise<string> => {
+  const generateAIResponse = async (systemMessage: string, contextualPrompt: string, userMessage: string): Promise<string> => {
     const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
     if (!openaiApiKey) {
@@ -548,8 +554,12 @@ const MyChatbot = () => {
         model: 'gpt-3.5-turbo',
         messages: [
           {
+            role: 'system',
+            content: systemMessage
+          },
+          {
             role: 'user',
-            content: prompt
+            content: `${contextualPrompt}\n\nPERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:`
           }
         ],
         max_tokens: 300,
@@ -836,10 +846,10 @@ const MyChatbot = () => {
         case 'minimized':
           return {
             ...commonChatbotStyles,
-            bottom: '102px', // Subiu 2px (de 100px para 102px)
+            bottom: '16px',
             right: '20px',
-            width: '70px',
-            height: '70px',
+            width: '64px',
+            height: '64px',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
@@ -879,7 +889,7 @@ const MyChatbot = () => {
         case 'minimized':
           return {
             ...commonChatbotStyles,
-            bottom: '102px', // Subiu 2px (de 100px para 102px)
+            bottom: '122px', // Movido 20px para baixo (de 102px para 122px)
             right: '20px',
             width: '70px',
             height: '70px',
