@@ -131,35 +131,33 @@ const MyChatbot = () => {
   useEffect(() => {
     if (chatState !== 'minimized') return;
 
-    // Ativar animação eletrificada a cada 30 segundos
+    // Ativar animação eletrificada a cada 10 segundos
     const electrifyInterval = setInterval(() => {
       setIsElectrified(true);
 
-      // Desativar a animação após 3 segundos
+      // Desativar a animação após 2 segundos
       setTimeout(() => {
         setIsElectrified(false);
-      }, 3000);
-    }, 30000);
+      }, 2000);
+    }, 10000);
 
-    // Primeira animação após 5 segundos (para dar tempo do usuário ver o chatbot)
+    // Primeira animação após 3 segundos (para dar tempo do usuário ver o chatbot)
     const initialTimeout = setTimeout(() => {
       setIsElectrified(true);
       setTimeout(() => {
         setIsElectrified(false);
-      }, 3000);
-    }, 5000);
+      }, 2000);
+    }, 3000);
 
     return () => {
       clearInterval(electrifyInterval);
       clearTimeout(initialTimeout);
     };
-  }, [chatState]);
-
-  // Constantes de estilo para o chatbot
+  }, [chatState]);  // Constantes de estilo para o chatbot
   const chatbotBgColor = '#1a1b3a';
   const chatbotTextColor = '#e0e0e0';
-  const chatbotShadowLight = 'rgba(147, 51, 234, 0.3)';
-  const chatbotShadowDark = 'rgba(0, 0, 0, 0.7)';
+  const chatbotShadowLight = 'rgba(147, 51, 234, 0.2)';
+  const chatbotShadowDark = 'rgba(0, 0, 0, 0.4)';
 
   /**
    * fetchChatbotConfig
@@ -999,7 +997,7 @@ const MyChatbot = () => {
     if (!isElectrified || chatState !== 'minimized') return {};
 
     return {
-      animation: 'electricBorder 3s ease-in-out',
+      animation: 'electricBorder 2s ease-in-out',
       boxShadow: `
         0 10px 15px -3px ${chatbotShadowDark}, 
         0 4px 6px -4px ${chatbotShadowDark}, 
@@ -1136,48 +1134,48 @@ const MyChatbot = () => {
               box-shadow: 
                 0 10px 15px -3px ${chatbotShadowDark}, 
                 0 4px 6px -4px ${chatbotShadowDark}, 
-                0 0 0 2px rgba(255, 255, 255, 0.9),
-                0 0 10px rgba(255, 255, 255, 0.6),
-                0 0 20px rgba(147, 51, 234, 0.4);
-            }
-            
-            25% {
-              box-shadow: 
-                0 10px 15px -3px ${chatbotShadowDark}, 
-                0 4px 6px -4px ${chatbotShadowDark}, 
-                0 0 0 3px rgba(255, 255, 255, 1),
-                0 0 15px rgba(255, 255, 255, 0.8),
-                0 0 30px rgba(147, 51, 234, 0.6),
-                inset 0 0 10px rgba(255, 255, 255, 0.3);
+                0 0 0 2px rgba(255, 255, 255, 0.7),
+                0 0 8px rgba(255, 255, 255, 0.4),
+                0 0 15px rgba(147, 51, 234, 0.3);
             }
             
             50% {
               box-shadow: 
                 0 10px 15px -3px ${chatbotShadowDark}, 
                 0 4px 6px -4px ${chatbotShadowDark}, 
-                0 0 0 2px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 1),
-                0 0 40px rgba(147, 51, 234, 0.8),
-                inset 0 0 15px rgba(255, 255, 255, 0.2);
+                0 0 0 3px rgba(255, 255, 255, 0.9),
+                0 0 15px rgba(255, 255, 255, 0.7),
+                0 0 25px rgba(147, 51, 234, 0.5),
+                inset 0 0 12px rgba(255, 255, 255, 0.25);
             }
             
-            75% {
+            70% {
               box-shadow: 
                 0 10px 15px -3px ${chatbotShadowDark}, 
                 0 4px 6px -4px ${chatbotShadowDark}, 
-                0 0 0 3px rgba(255, 255, 255, 0.9),
-                0 0 25px rgba(255, 255, 255, 0.9),
-                0 0 35px rgba(147, 51, 234, 0.7),
-                inset 0 0 20px rgba(255, 255, 255, 0.4);
+                0 0 0 4px rgba(255, 255, 255, 1),
+                0 0 20px rgba(255, 255, 255, 1),
+                0 0 35px rgba(147, 51, 234, 0.8),
+                inset 0 0 18px rgba(255, 255, 255, 0.4);
+            }
+            
+            80% {
+              box-shadow: 
+                0 10px 15px -3px ${chatbotShadowDark}, 
+                0 4px 6px -4px ${chatbotShadowDark}, 
+                0 0 0 3px rgba(255, 255, 255, 0.8),
+                0 0 15px rgba(255, 255, 255, 0.8),
+                0 0 25px rgba(147, 51, 234, 0.6),
+                inset 0 0 12px rgba(255, 255, 255, 0.3);
             }
             
             90% {
               box-shadow: 
                 0 10px 15px -3px ${chatbotShadowDark}, 
                 0 4px 6px -4px ${chatbotShadowDark}, 
-                0 0 0 2px rgba(255, 255, 255, 0.7),
-                0 0 15px rgba(255, 255, 255, 0.5),
-                0 0 25px rgba(147, 51, 234, 0.5);
+                0 0 0 2px rgba(255, 255, 255, 0.5),
+                0 0 8px rgba(255, 255, 255, 0.4),
+                0 0 15px rgba(147, 51, 234, 0.3);
             }
             
             100% {
