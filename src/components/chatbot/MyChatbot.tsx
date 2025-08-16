@@ -69,6 +69,8 @@ const MyChatbot = () => {
   // Estados para controle de drag vertical
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
+  const [dragStartTime, setDragStartTime] = useState(0);
+  const [hasDraggedDistance, setHasDraggedDistance] = useState(false);
   const [chatbotVerticalOffset, setChatbotVerticalOffset] = useState(0); // offset em pixels do bottom padrão
 
   // Controle de estilo visual (alto-relevo vs baixo-relevo)
@@ -845,6 +847,8 @@ const MyChatbot = () => {
 
     setIsDragging(true);
     setDragStartY(e.clientY);
+    setDragStartTime(Date.now());
+    setHasDraggedDistance(false);
     e.preventDefault();
     e.stopPropagation(); // Previne o click do container
   };
@@ -853,6 +857,12 @@ const MyChatbot = () => {
     if (!isDragging) return;
 
     const deltaY = dragStartY - e.clientY; // Invertido: mover mouse para cima = chatbot sobe
+    const dragDistance = Math.abs(deltaY);
+
+    // Considera como drag se moveu mais que 5 pixels
+    if (dragDistance > 5) {
+      setHasDraggedDistance(true);
+    }
 
     // Calcular limites baseados na altura da tela
     const windowHeight = window.innerHeight;
@@ -870,14 +880,35 @@ const MyChatbot = () => {
   }, [isDragging, dragStartY, isElevated]);
 
   const handleMouseUp = useCallback(() => {
-    setTimeout(() => setIsDragging(false), 50); // Pequeno delay para evitar click após drag
-  }, []);
+    const dragDuration = Date.now() - dragStartTime;
+
+    // Reset drag state após um pequeno delay apenas se realmente houve drag
+    if (hasDraggedDistance || dragDuration > 200) {
+      setTimeout(() => {
+        setIsDragging(false);
+        setHasDraggedDistance(false);
+      }, 50);
+    } else {
+      // Se foi um click rápido, reset imediatamente
+      setIsDragging(false);
+      setHasDraggedDistance(false);
+    }
+  }, [dragStartTime, hasDraggedDistance]);
 
   const handleChatbotClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    // Só abre o chat se não estiver arrastando
-    if (!isDragging) {
+    e.stopPropagation();
+
+    const clickDuration = Date.now() - dragStartTime;
+
+    // Só abre o chat se:
+    // 1. Não está arrastando OU
+    // 2. Foi um clique muito rápido (menos de 200ms) E não moveu distância significativa
+    if (!isDragging || (!hasDraggedDistance && clickDuration < 200)) {
+      console.log('🖱️ [MyChatbot] Clique válido detectado, abrindo chat');
       toggleChatState('normal');
+    } else {
+      console.log('🖱️ [MyChatbot] Clique ignorado - foi um drag');
     }
   };
 
@@ -918,12 +949,14 @@ const MyChatbot = () => {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       document.body.style.userSelect = 'none'; // Previne seleção de texto durante drag
+      document.body.style.cursor = 'grabbing'; // Cursor visual global durante drag
     }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
       document.body.style.userSelect = '';
+      document.body.style.cursor = '';
     };
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
@@ -948,7 +981,7 @@ const MyChatbot = () => {
             height: '64px',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: isDragging ? 'grabbing' : 'grab',
+            cursor: isDragging ? 'grabbing' : (hasDraggedDistance ? 'grab' : 'pointer'),
             background: chatbotBgColor,
             boxShadow: `0 10px 15px -3px ${chatbotShadowDark}, 0 4px 6px -4px ${chatbotShadowDark}, 0 0 0 1px rgba(255, 255, 255, 0.1)`,
             border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -991,7 +1024,7 @@ const MyChatbot = () => {
             height: '70px',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: isDragging ? 'grabbing' : 'grab',
+            cursor: isDragging ? 'grabbing' : (hasDraggedDistance ? 'grab' : 'pointer'),
             background: `linear-gradient(145deg, ${chatbotBgColor}, ${chatbotShadowLight})`,
             boxShadow: `10px 10px 20px ${chatbotShadowDark}, -10px -10px 20px ${chatbotShadowLight}`,
           };
@@ -1036,7 +1069,7 @@ const MyChatbot = () => {
         role="button"
         aria-label="Abrir chatbot (arraste verticalmente para reposicionar)"
         className="neu-chatbot-minimized"
-        title="Clique para abrir • Arraste para reposicionar"
+        title="Clique para abrir chatbot • Arraste para reposicionar"
       >
         <Bot size={32} color={chatbotTextColor} />
       </div>
