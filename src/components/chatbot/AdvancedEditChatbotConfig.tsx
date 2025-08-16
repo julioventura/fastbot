@@ -226,7 +226,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
 
         {/* Seção: Identidade do chatbot */}
-        <div className="space-y-6 border border-gray-600 rounded-lg p-6">
+        <div className="space-y-6 border border-gray-600 rounded-lg p-6 bg-blue-950">
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Coluna Esquerda */}
@@ -404,8 +404,23 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
         </div>
 
+        {/* Botões Cancelar e Salvar - Lado Direito */}
+        <div className="flex justify-center items-center w-full gap-5">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSaving}
+          >
+            Cancelar
+          </Button>
 
-        <div className="space-y-6 border border-gray-600 rounded-lg p-6">
+          <Button type="submit" disabled={isSaving}>
+            {isSaving ? "Salvando..." : "Salvar Configurações"}
+          </Button>
+        </div>
+
+        <div className="space-y-6 border border-gray-600 rounded-lg p-6 bg-blue-950">
 
           {/* Base de Dados */}
           <Card className="bg-transparent border border-border backdrop-blur-sm">
@@ -480,14 +495,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
         {/* Botões de Ação - Apenas no tab de Configuração */}
         <div className="flex justify-between items-center pt-6">
-          {/* Botões auxiliares - Lado Esquerdo */}
-          <div className="flex space-x-3">
+          {/* Botões auxiliares */}
+          <div className="flex justify-center items-center w-full gap-5">
             <Button
               type="button"
               variant="outline"
               onClick={onPreviewSystemMessage}
               disabled={isSaving}
-              className="bg-purple-900 border border-purple-600 px-4 py-2"
+              className="hover:bg-purple-900 border border-purple-600 px-4 py-2"
             >
               {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
             </Button>
@@ -497,26 +512,13 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               variant="outline"
               onClick={() => setShowShortMemory(prev => !prev)}
               disabled={isSaving}
-              className="bg-purple-900 border border-purple-600 px-4 py-2"
+              className="hover:bg-purple-900 border border-purple-600 px-4 py-2"
             >
               {showShortMemory ? 'Ocultar' : 'Visualizar'} Memória Recente
             </Button>
           </div>
 
-          {/* Botões Cancelar e Salvar - Lado Direito */}
-          <div className="flex space-x-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              disabled={isSaving}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSaving}>
-              {isSaving ? "Salvando..." : "Salvar Configurações"}
-            </Button>
-          </div>
+
         </div>
 
         {/* Preview do System Message */}

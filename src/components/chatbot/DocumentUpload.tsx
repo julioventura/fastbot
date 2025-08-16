@@ -10,6 +10,7 @@ import {
   Clock,
   Play,
   RefreshCw,
+  Download,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -243,6 +244,56 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         variant: "destructive",
         title: "Erro",
         description: "Não foi possível remover o documento completamente.",
+      });
+    }
+  };
+
+  const downloadDocument = async (documentId: string, filename: string) => {
+    if (!user) return;
+
+    try {
+      // Buscar o conteúdo do documento
+      const { data: documentData, error } = await supabase
+        .from("chatbot_documents")
+        .select("content, filename")
+        .eq("id", documentId)
+        .eq("chatbot_user", user.id)
+        .single();
+
+      if (error || !documentData) {
+        throw new Error("Documento não encontrado ou você não tem permissão para acessá-lo.");
+      }
+
+      // Criar um blob com o conteúdo do documento
+      const blob = new Blob([documentData.content], { type: 'text/plain;charset=utf-8' });
+
+      // Criar URL temporária para download
+      const url = window.URL.createObjectURL(blob);
+
+      // Criar elemento link temporário para download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename; // Usar o nome original do arquivo
+
+      // Adicionar ao DOM, clicar e remover
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Limpar URL temporária
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Download concluído!",
+        description: `O arquivo "${filename}" foi baixado com sucesso.`,
+      });
+
+    } catch (error) {
+      console.error("Erro ao fazer download do documento:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro no download",
+        description: error instanceof Error ? error.message : "Não foi possível baixar o documento.",
       });
     }
   };
@@ -622,67 +673,97 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 const statusInfo = getStatusLabel(doc.status);
 
                 return (
-                  <div key={doc.id} className="bg-blue-950 border rounded-lg p-4 pb-0 mb-0">
-                    <div className="pb-0 mb-0">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3 flex-1">
-                          {getStatusIcon(doc.status)}
+                  <div key={doc.id} className="bg-blue-950 border rounded-lg p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-1">
+                        {getStatusIcon(doc.status)}
 
-                          <div className="flex-1">
-                            <p className="font-medium text-lg">{doc.filename}</p>
+                        <div className="flex-1">
+                          <p className="font-medium text-lg">{doc.filename}</p>
 
-                            <p className="text-sm text-gray-400">
-                              {formatFileSize(doc.file_size)} •{" "}
-                              {new Date(doc.upload_date).toLocaleDateString(
-                                "pt-BR"
-                              )}
-                            </p>
-                          </div>
-                        </div>
+                          <p className="pt-1 text-sx text-gray-400">
+                            {new Date(doc.upload_date).toLocaleDateString(
+                              "pt-BR"
+                            )}
+                          </p>
 
-                        {/* Botão Excluir movido para a direita, alinhado com o ícone */}
-                        <div className="flex-shrink-0">
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                disabled={processingDocuments.has(doc.id)}
-                                className="border border-gray-500 hover:border-red-900 text-red-700 hover:bg-red-800"
-                              >
-                                Excluir
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Tem certeza de que deseja excluir o documento "{doc.filename}"?
-                                  Esta ação não pode ser desfeita e removerá permanentemente o documento
-                                  e todos os seus dados processados.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => deleteDocument(doc.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  Excluir documento
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          <p className="pt-1 text-sx text-gray-400">
+                            {formatFileSize(doc.file_size)}
+                          </p>
+
                         </div>
                       </div>
 
+                      {/* Botões Download e Excluir centralizados verticalmente */}
+                      <div className="flex-shrink-0 flex flex-col gap-2">
+                        {/* Botão Baixar */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => downloadDocument(doc.id, doc.filename)}
+                          className="border border-blue-600 hover:border-blue-700 text-blue-400 hover:bg-blue-800"
+                          title="Fazer download do documento original"
+                        >
+                          <Download className="w-4 h-4 mr-1" />
+                          Baixar
+                        </Button>
+
+                        {/* Botão Excluir */}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={processingDocuments.has(doc.id)}
+                              className="border border-red-800 hover:border-red-900 text-red-700 hover:bg-red-800"
+                            >
+                              Excluir
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Tem certeza de que deseja excluir o documento "{doc.filename}"?
+                                Esta ação não pode ser desfeita e removerá permanentemente o documento
+                                e todos os seus dados processados.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteDocument(doc.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Excluir documento
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
 
-                    {/* Botões de ação - agora embaixo, ocupando toda a largura */}
-                    <div className="flex items-center justify-end gap-2 mt-4 pt-3">
-                      {/* Botão de Processar Individual */}
-                      {doc.status !== "completed" &&
-                        doc.status !== "processing" && (
+                    {/* Botões de ação - embaixo, com separação visual */}
+                    {(doc.status === "error" || processingDocuments.has(doc.id) || (doc.status !== "completed" && doc.status !== "processing")) && (
+                      <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-gray-700">
+                        {/* Botão de Processar Individual */}
+                        {doc.status !== "completed" &&
+                          doc.status !== "processing" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => processDocument(doc.id)}
+                              disabled={
+                                processingDocuments.has(doc.id) || isProcessing
+                              }
+                            >
+                              <Play className="w-4 h-4 mr-1" />
+                              Processar
+                            </Button>
+                          )}
+
+                        {/* Botão de Reprocessar se houve erro */}
+                        {doc.status === "error" && (
                           <Button
                             variant="outline"
                             size="sm"
@@ -691,34 +772,20 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                               processingDocuments.has(doc.id) || isProcessing
                             }
                           >
-                            <Play className="w-4 h-4 mr-1" />
-                            Processar
+                            <RefreshCw className="w-4 h-4 mr-1" />
+                            Tentar Novamente
                           </Button>
                         )}
 
-                      {/* Botão de Reprocessar se houve erro */}
-                      {doc.status === "error" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => processDocument(doc.id)}
-                          disabled={
-                            processingDocuments.has(doc.id) || isProcessing
-                          }
-                        >
-                          <RefreshCw className="w-4 h-4 mr-1" />
-                          Tentar Novamente
-                        </Button>
-                      )}
-
-                      {/* Indicador de processamento individual */}
-                      {processingDocuments.has(doc.id) && (
-                        <div className="flex items-center gap-2 text-blue-600">
-                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                          <span className="text-sm">Processando...</span>
-                        </div>
-                      )}
-                    </div>
+                        {/* Indicador de processamento individual */}
+                        {processingDocuments.has(doc.id) && (
+                          <div className="flex items-center gap-2 text-blue-600">
+                            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                            <span className="text-sm">Processando...</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
