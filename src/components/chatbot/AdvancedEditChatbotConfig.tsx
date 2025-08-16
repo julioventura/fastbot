@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot } from "lucide-react";
+import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot, Info } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 // import { ChatbotData } from "@/interfaces";
 import { ChatbotConfigProps } from "@/interfaces";
@@ -48,6 +48,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [previewImageIndex, setPreviewImageIndex] = useState<number>(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showShortMemory, setShowShortMemory] = useState(false);
+  const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
 
   const { user } = useAuth();
 
@@ -536,20 +537,23 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <Card className="border border-blue-800">
                 <CardContent className="p-4">
+
                   <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-blue-600" />
+                    <MessageSquare className="w-8 h-8 mr-2 text-blue-600" />
                     <div>
                       <p className="text-md font-bold text-blue-600">Total de Mensagens</p>
                       <p className="text-lg font-bold">{shortMemoryStats.totalMessages}</p>
                     </div>
                   </div>
+
                 </CardContent>
               </Card>
 
               <Card className="border border-green-800">
                 <CardContent className="p-4">
+
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-green-600" />
+                    <Clock className="w-8 h-8 mr-2 text-green-600" />
                     <div>
                       <p className="text-md font-bold text-green-600">Última Atualização</p>
                       <p className="text-lg font-bold">
@@ -560,13 +564,15 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       </p>
                     </div>
                   </div>
+
                 </CardContent>
               </Card>
 
               <Card className="border border-purple-800">
                 <CardContent className="p-4">
+
                   <div className="flex items-center gap-2">
-                    <Upload className="w-4 h-4 text-purple-600" />
+                    <Upload className="w-8 h-8 mr-2 text-purple-600" />
                     <div>
                       <p className="text-md font-bold text-purple-600">Tamanho da Memória</p>
                       <p className="text-lg font-bold">
@@ -574,6 +580,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       </p>
                     </div>
                   </div>
+
                 </CardContent>
               </Card>
             </div>
@@ -605,9 +612,35 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             </div>
 
             {/* Lista de Mensagens da Short-Memory */}
-            <div className="space-y-4">
-              <h4 className="text-md font-semibold">Contexto da Conversa</h4>
+            <div className="mt-6 space-y-4">
+              <div className="flex justify-end mr-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTechnicalInfo(prev => !prev)}
+                  className="ml-2 flex items-center gap-2 text-orange-600 hover:text-yellow-400 transition-colors"
+                  title="Detalhes da memória recente (short-memory)"
+                >
+                  <Info className="w-4 h-4" />
+                  <span className="text-sm">Detalhes</span>
+                </button>
+              </div>
 
+
+              {/* Informações Técnicas */}
+              {showTechnicalInfo && (
+                <div className="mt-12 space-y-4">
+                  <div className="border border-orange-600 bg-orange-950 rounded-lg p-4">
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p><strong>Chave do LocalStorage:</strong> {getShortMemoryKey()}</p>
+                      <p><strong>Limite de Mensagens:</strong> 50 mensagens (mantém as mais recentes)</p>
+                      <p><strong>Contexto Enviado ao Chatbot:</strong> Últimas 10 mensagens</p>
+                      <p><strong>Integração:</strong> O contexto da short-memory é automaticamente incluído nas consultas ao chatbot</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Lista da short-memory */}
               {shortMemoryData.length > 0 ? (
                 <div className="space-y-3 max-h-96 overflow-y-auto bg-background border border-gray-600 rounded-lg p-4">
                   {shortMemoryData.map((message, index) => (
@@ -657,18 +690,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               )}
             </div>
 
-            {/* Informações Técnicas */}
-            <div className="mt-6">
-              <h4 className="text-md font-semibold mb-3">Informações Técnicas</h4>
-              <div className="border border-gray-600 bg-background rounded-lg p-4">
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p><strong>Chave do LocalStorage:</strong> {getShortMemoryKey()}</p>
-                  <p><strong>Limite de Mensagens:</strong> 50 mensagens (mantém as mais recentes)</p>
-                  <p><strong>Contexto Enviado ao Chatbot:</strong> Últimas 10 mensagens</p>
-                  <p><strong>Integração:</strong> O contexto da short-memory é automaticamente incluído nas consultas ao chatbot</p>
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
