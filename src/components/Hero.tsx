@@ -66,51 +66,64 @@ const Hero = () => {
 
   return (
     <>
-      {/* Estilos CSS para animações dinâmicas das bolhas */}
+      {/* Estilos CSS para animações dinâmicas das bolhas e ocultar barras de rolagem */}
       <style>{`
-        @keyframes floatRandomly1 {
-          0% { transform: translate(0px, 0px) rotate(0deg); }
-          25% { transform: translate(30px, -50px) rotate(90deg); }
-          50% { transform: translate(-20px, -30px) rotate(180deg); }
-          75% { transform: translate(-40px, 20px) rotate(270deg); }
-          100% { transform: translate(0px, 0px) rotate(360deg); }
+        /* Ocultar barras de rolagem mantendo funcionalidade de scroll */
+        html, body {
+          overflow: auto;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* Internet Explorer 10+ */
         }
         
-        @keyframes floatRandomly2 {
-          0% { transform: translate(0px, 0px) rotate(0deg); }
-          20% { transform: translate(-25px, 40px) rotate(72deg); }
-          40% { transform: translate(35px, -25px) rotate(144deg); }
-          60% { transform: translate(-15px, -45px) rotate(216deg); }
-          80% { transform: translate(25px, 30px) rotate(288deg); }
-          100% { transform: translate(0px, 0px) rotate(360deg); }
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+          display: none; /* Safari and Chrome */
         }
         
-        @keyframes floatRandomly3 {
-          0% { transform: translate(0px, 0px) rotate(0deg); }
-          30% { transform: translate(45px, 25px) rotate(108deg); }
-          60% { transform: translate(-30px, -40px) rotate(216deg); }
-          100% { transform: translate(0px, 0px) rotate(360deg); }
+        /* Animações diagonais verdadeiras - ângulos intermediários */
+        @keyframes floatDiagonal1 {
+          0% { transform: translate(-120vw, -80vh) rotate(23deg); }
+          100% { transform: translate(120vw, 80vh) rotate(383deg); }
         }
         
-        @keyframes floatRandomly4 {
-          0% { transform: translate(0px, 0px) rotate(0deg); }
-          16% { transform: translate(-35px, -20px) rotate(60deg); }
-          33% { transform: translate(20px, -35px) rotate(120deg); }
-          50% { transform: translate(40px, 15px) rotate(180deg); }
-          66% { transform: translate(-10px, 45px) rotate(240deg); }
-          83% { transform: translate(-25px, -10px) rotate(300deg); }
-          100% { transform: translate(0px, 0px) rotate(360deg); }
+        @keyframes floatDiagonal2 {
+          0% { transform: translate(120vw, -90vh) rotate(47deg); }
+          100% { transform: translate(-120vw, 90vh) rotate(-313deg); }
         }
         
-        @keyframes floatRandomly5 {
-          0% { transform: translate(0px, 0px) rotate(0deg); }
-          40% { transform: translate(-40px, 30px) rotate(144deg); }
-          80% { transform: translate(30px, -35px) rotate(288deg); }
-          100% { transform: translate(0px, 0px) rotate(360deg); }
+        @keyframes floatDiagonal3 {
+          0% { transform: translate(-110vw, 85vh) rotate(67deg); }
+          100% { transform: translate(110vw, -85vh) rotate(427deg); }
+        }
+        
+        @keyframes floatDiagonal4 {
+          0% { transform: translate(115vw, 75vh) rotate(37deg); }
+          100% { transform: translate(-115vw, -75vh) rotate(-323deg); }
+        }
+        
+        @keyframes floatDiagonal5 {
+          0% { transform: translate(-125vw, -70vh) rotate(53deg); }
+          50% { transform: translate(50vw, 40vh) rotate(233deg); }
+          100% { transform: translate(125vw, -70vh) rotate(413deg); }
+        }
+        
+        @keyframes floatDiagonal6 {
+          0% { transform: translate(100vw, 60vh) rotate(73deg); }
+          100% { transform: translate(-100vw, -60vh) rotate(-287deg); }
+        }
+        
+        @keyframes floatDiagonal7 {
+          0% { transform: translate(-105vw, 45vh) rotate(29deg); }
+          100% { transform: translate(105vw, -45vh) rotate(389deg); }
+        }
+        
+        @keyframes floatDiagonal8 {
+          0% { transform: translate(95vw, -55vh) rotate(61deg); }
+          100% { transform: translate(-95vw, 55vh) rotate(-299deg); }
         }
       `}</style>
 
-      <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-background via-background/90 to-primary/5 -mt-10">
+      <section className="relative overflow-hidden min-h-screen flex items-center bg-gradient-to-br from-background via-background/90 to-primary/5">
         {/* Fundo com gradiente suave responsivo ao tema */}
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-primary/5"></div>
 
@@ -237,61 +250,61 @@ const Hero = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
                 </div>
 
-                {/* Elementos decorativos externos otimizados - COM ANIMAÇÃO INTENSA */}
-                {/* Bolha amarela - 20% de opacidade com movimento aleatório */}
+                {/* Elementos decorativos externos otimizados - COM ANIMAÇÃO DIAGONAL INTENSA */}
+                {/* Bolha amarela - movimento diagonal verdadeiro */}
                 <div
                   className="absolute -top-16 -right-6 lg:-top-10 mt-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 rounded-full bg-gradient-to-t from-yellow-800 to-transparent"
                   style={{
-                    animation: 'floatRandomly1 12s ease-in-out infinite',
+                    animation: 'floatDiagonal1 34s linear infinite',
                     animationDelay: '0s',
                     opacity: 0.6
                   }}
                 ></div>
-                {/* Bolha roxa - 20% de opacidade com movimento aleatório */}
+                {/* Bolha roxa - movimento diagonal verdadeiro */}
                 <div
                   className="absolute -bottom-6 mt-2 mb-20 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 rounded-full bg-gradient-to-t from-purple-800 to-transparent"
                   style={{
-                    animation: 'floatRandomly2 8s ease-in-out infinite',
+                    animation: 'floatDiagonal2 23s linear infinite',
                     animationDelay: '0s',
                     opacity: 0.6
                   }}
                 ></div>
-                {/* Bolha azul - 20% de opacidade com movimento aleatório */}
+                {/* Bolha azul - movimento diagonal verdadeiro */}
                 <div
                   className="absolute top-1/4 -left-8 lg:-left-12 w-12 h-12 lg:w-12 lg:h-12 rounded-full bg-gradient-to-t from-primary/40 to-transparent"
                   style={{
-                    animation: 'floatRandomly3 20s ease-in-out infinite',
+                    animation: 'floatDiagonal3 57s linear infinite',
                     animationDelay: '0s',
                     opacity: 0.6
                   }}
                 ></div>
 
-                {/* Nova bolha cinza - apenas borda com movimento aleatório */}
+                {/* Nova bolha cinza - apenas borda com movimento diagonal */}
                 <div
                   className="absolute top-1/3 -right-4 lg:top-1/3 lg:-right-8 w-14 h-14 lg:w-18 lg:h-18 border-4 rounded-full border-gradient-to-t from-white to-gray-500"
                   style={{
-                    animation: 'floatRandomly4 10s ease-in-out infinite',
+                    animation: 'floatDiagonal4 29s linear infinite',
                     animationDelay: '2s',
                     opacity: 0.7
                   }}
                 ></div>
 
-                {/* Nova bolha verde - apenas borda com movimento aleatório */}
+                {/* Nova bolha verde - apenas borda com movimento diagonal */}
                 <div
                   className="absolute bottom-1/3 left-2 lg:bottom-1/3 lg:left-0 w-10 h-10 lg:w-16 lg:h-16 rounded-full border-4 border-gradient-to-t from-green-500 to-transparent"
                   style={{
-                    animation: 'floatRandomly5 18s ease-in-out infinite',
+                    animation: 'floatDiagonal5 51s linear infinite',
                     animationDelay: '4s',
                     opacity: 0.7
                   }}
                 ></div>
 
-                {/* Bolhas adicionais para a área do texto (lado esquerdo) */}
+                {/* Bolhas adicionais para a área do texto (lado esquerdo) - movimento diagonal */}
                 {/* Bolha laranja na área dos títulos */}
                 <div
                   className="absolute top-20 left-10 lg:top-24 lg:left-16 w-8 h-8 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-orange-400 to-transparent"
                   style={{
-                    animation: 'floatRandomly1 15s ease-in-out infinite',
+                    animation: 'floatDiagonal6 43s linear infinite',
                     animationDelay: '1s',
                     opacity: 0.5
                   }}
@@ -301,7 +314,7 @@ const Hero = () => {
                 <div
                   className="absolute top-1/2 left-1/4 lg:top-1/2 lg:left-1/3 w-6 h-6 lg:w-10 lg:h-10 rounded-full border-3 border-pink-400"
                   style={{
-                    animation: 'floatRandomly3 22s ease-in-out infinite',
+                    animation: 'floatDiagonal7 63s linear infinite',
                     animationDelay: '6s',
                     opacity: 0.6
                   }}
@@ -311,7 +324,7 @@ const Hero = () => {
                 <div
                   className="absolute bottom-1/4 left-8 lg:bottom-1/4 lg:left-12 w-7 h-7 lg:w-11 lg:h-11 rounded-full bg-gradient-to-t from-teal-500 to-transparent"
                   style={{
-                    animation: 'floatRandomly2 16s ease-in-out infinite',
+                    animation: 'floatDiagonal8 46s linear infinite',
                     animationDelay: '3s',
                     opacity: 0.5
                   }}
@@ -321,7 +334,7 @@ const Hero = () => {
                 <div
                   className="absolute top-16 left-1/3 lg:top-20 lg:left-1/4 w-5 h-5 lg:w-8 lg:h-8 rounded-full border-2 border-violet-400"
                   style={{
-                    animation: 'floatRandomly4 14s ease-in-out infinite',
+                    animation: 'floatDiagonal1 40s linear infinite',
                     animationDelay: '7s',
                     opacity: 0.7
                   }}

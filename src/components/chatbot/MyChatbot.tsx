@@ -1051,7 +1051,7 @@ const MyChatbot = () => {
     if (!isElectrified || chatState !== 'minimized') return {};
 
     return {
-      animation: 'electricBorder 2s ease-in-out',
+      animation: 'electricBorder 1s ease-in',
       boxShadow: `
         0 10px 15px -3px ${chatbotShadowDark}, 
         0 4px 6px -4px ${chatbotShadowDark}, 
