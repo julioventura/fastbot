@@ -193,25 +193,46 @@ const Hero = () => {
               </div>
 
               {/* Elementos decorativos externos otimizados - COM ANIMAÇÃO INTENSA */}
+              {/* Bolha amarela - 20% de opacidade */}
               <div
-                className="absolute -top-16 -right-6 lg:-top-10 mt-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 bg-yellow-400 opacity-70 dark:opacity-50 rounded-full"
+                className="absolute -top-16 -right-6 lg:-top-10 mt-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 rounded-full bg-gradient-to-t from-yellow-800 to-transparent"
                 style={{
                   animation: 'floatPulse 12s ease-in-out infinite',
                   animationDelay: '0s'
                 }}
               ></div>
+              {/* Bolha roxa - 20% de opacidade */}
               <div
-                className="absolute -bottom-6 mt-2 mb-20 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 bg-purple-400 opacity-60 dark:opacity-40 rounded-full"
+                className="absolute -bottom-6 mt-2 mb-20 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 rounded-full bg-gradient-to-t from-purple-800 to-transparent"
                 style={{
                   animation: 'floatPulse 8s ease-in-out infinite',
                   animationDelay: '0s'
                 }}
               ></div>
+              {/* Bolha azul - 20% de opacidade */}
               <div
-                className="absolute top-1/4 -left-8 lg:-left-12 w-12 h-12 lg:w-12 lg:h-12 bg-primary opacity-50 dark:opacity-30 rounded-full"
+                className="absolute top-1/4 -left-8 lg:-left-12 w-12 h-12 lg:w-12 lg:h-12 rounded-full bg-gradient-to-t from-primary/40 to-transparent"
                 style={{
                   animation: 'floatPulse 20s ease-in-out infinite',
                   animationDelay: '0s'
+                }}
+              ></div>
+
+              {/* Nova bolha cinza - apenas borda */}
+              <div
+                className="absolute top-1/3 -right-4 lg:top-1/3 lg:-right-8 w-14 h-14 lg:w-18 lg:h-18 border-4 rounded-full border-gradient-to-t from-white to-gray-500"
+                style={{
+                  animation: 'floatPulse 10s ease-in-out infinite',
+                  animationDelay: '2s'
+                }}
+              ></div>
+
+              {/* Nova bolha verde - apenas borda */}
+              <div
+                className="absolute bottom-1/3 left-2 lg:bottom-1/3 lg:left-0 w-10 h-10 lg:w-16 lg:h-16 rounded-full border-4 border-gradient-to-t from-green-500 to-transparent"
+                style={{
+                  animation: 'floatPulse 18s ease-in-out infinite',
+                  animationDelay: '4s'
                 }}
               ></div>
             </div>
