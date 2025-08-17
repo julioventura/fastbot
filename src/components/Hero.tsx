@@ -255,7 +255,7 @@ const Hero = () => {
                 <div
                   className="absolute -top-16 -right-6 lg:-top-10 mt-10 lg:-right-10 w-16 h-16 lg:w-24 lg:h-24 rounded-full bg-gradient-to-t from-yellow-800 to-transparent"
                   style={{
-                    animation: 'floatDiagonal1 34s linear infinite',
+                    animation: 'floatDiagonal1 68s linear infinite',
                     animationDelay: '0s',
                     opacity: 0.6
                   }}
@@ -264,7 +264,7 @@ const Hero = () => {
                 <div
                   className="absolute -bottom-6 mt-2 mb-20 -left-6 lg:-bottom-10 lg:-left-10 w-12 h-12 lg:w-20 lg:h-20 rounded-full bg-gradient-to-t from-purple-800 to-transparent"
                   style={{
-                    animation: 'floatDiagonal2 23s linear infinite',
+                    animation: 'floatDiagonal2 46s linear infinite',
                     animationDelay: '0s',
                     opacity: 0.6
                   }}
@@ -273,29 +273,29 @@ const Hero = () => {
                 <div
                   className="absolute top-1/4 -left-8 lg:-left-12 w-12 h-12 lg:w-12 lg:h-12 rounded-full bg-gradient-to-t from-primary/40 to-transparent"
                   style={{
-                    animation: 'floatDiagonal3 57s linear infinite',
+                    animation: 'floatDiagonal3 114s linear infinite',
                     animationDelay: '0s',
                     opacity: 0.6
                   }}
                 ></div>
 
-                {/* Nova bolha cinza - apenas borda com movimento diagonal */}
+                {/* Nova bolha cinza - com fundo gradiente e movimento diagonal */}
                 <div
-                  className="absolute top-1/3 -right-4 lg:top-1/3 lg:-right-8 w-14 h-14 lg:w-18 lg:h-18 border-4 rounded-full border-gradient-to-t from-white to-gray-500"
+                  className="absolute top-1/3 -right-4 lg:top-1/3 lg:-right-8 w-14 h-14 lg:w-18 lg:h-18 border-1 rounded-full bg-gradient-to-t from-white to-gray-500 border-white"
                   style={{
-                    animation: 'floatDiagonal4 29s linear infinite',
+                    animation: 'floatDiagonal4 58s linear infinite',
                     animationDelay: '2s',
-                    opacity: 0.7
+                    opacity: 0.35
                   }}
                 ></div>
 
-                {/* Nova bolha verde - apenas borda com movimento diagonal */}
+                {/* Nova bolha verde - com fundo gradiente e movimento diagonal */}
                 <div
-                  className="absolute bottom-1/3 left-2 lg:bottom-1/3 lg:left-0 w-10 h-10 lg:w-16 lg:h-16 rounded-full border-4 border-gradient-to-t from-green-500 to-transparent"
+                  className="absolute bottom-1/3 left-2 lg:bottom-1/3 lg:left-0 w-10 h-10 lg:w-16 lg:h-16 rounded-full border-1 bg-gradient-to-t from-green-500 to-transparent border-green-500"
                   style={{
-                    animation: 'floatDiagonal5 51s linear infinite',
+                    animation: 'floatDiagonal5 102s linear infinite',
                     animationDelay: '4s',
-                    opacity: 0.7
+                    opacity: 0.35
                   }}
                 ></div>
 
@@ -304,7 +304,7 @@ const Hero = () => {
                 <div
                   className="absolute top-20 left-10 lg:top-24 lg:left-16 w-8 h-8 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-orange-400 to-transparent"
                   style={{
-                    animation: 'floatDiagonal6 43s linear infinite',
+                    animation: 'floatDiagonal6 86s linear infinite',
                     animationDelay: '1s',
                     opacity: 0.5
                   }}
@@ -312,11 +312,11 @@ const Hero = () => {
 
                 {/* Bolha rosa no meio da área de texto */}
                 <div
-                  className="absolute top-1/2 left-1/4 lg:top-1/2 lg:left-1/3 w-6 h-6 lg:w-10 lg:h-10 rounded-full border-3 border-pink-400"
+                  className="absolute top-1/2 left-1/4 lg:top-1/2 lg:left-1/3 w-6 h-6 lg:w-10 lg:h-10 rounded-full border-1 bg-gradient-to-br from-pink-400 to-pink-200 border-pink-400"
                   style={{
-                    animation: 'floatDiagonal7 63s linear infinite',
+                    animation: 'floatDiagonal7 126s linear infinite',
                     animationDelay: '6s',
-                    opacity: 0.6
+                    opacity: 0.3
                   }}
                 ></div>
 
@@ -324,7 +324,7 @@ const Hero = () => {
                 <div
                   className="absolute bottom-1/4 left-8 lg:bottom-1/4 lg:left-12 w-7 h-7 lg:w-11 lg:h-11 rounded-full bg-gradient-to-t from-teal-500 to-transparent"
                   style={{
-                    animation: 'floatDiagonal8 46s linear infinite',
+                    animation: 'floatDiagonal8 92s linear infinite',
                     animationDelay: '3s',
                     opacity: 0.5
                   }}
@@ -332,11 +332,11 @@ const Hero = () => {
 
                 {/* Bolha violeta sutil no topo esquerdo */}
                 <div
-                  className="absolute top-16 left-1/3 lg:top-20 lg:left-1/4 w-5 h-5 lg:w-8 lg:h-8 rounded-full border-2 border-violet-400"
+                  className="absolute top-16 left-1/3 lg:top-20 lg:left-1/4 w-5 h-5 lg:w-8 lg:h-8 rounded-full border-1 bg-gradient-to-br from-violet-400 to-violet-200 border-violet-400"
                   style={{
-                    animation: 'floatDiagonal1 40s linear infinite',
+                    animation: 'floatDiagonal1 80s linear infinite',
                     animationDelay: '7s',
-                    opacity: 0.7
+                    opacity: 0.35
                   }}
                 ></div>
               </div>
