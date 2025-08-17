@@ -32,13 +32,11 @@ const pricingPlans = [
   {
     name: "Plano Gratuito",
     price: "GRÁTIS",
-    description: "",
+    description: "Ideal para uso ocasional ou teste",
     features: [
       "30 conversas por mês",
-      "Você ganha o chatbot e a homepage de contato",
-      // "Cartão de Visitas Digital com QR-Code",
-      // "Poster com QRCODE para a sala de espera",
-      "Link fácil: Dentistas.com.br/voce",
+      "Homepage com chatbot de atendimento",
+      "Cartão de Visitas Digital com QR-Code",
     ],
     isPopular: true, // Destaca este plano como o mais popular.
     popularText: "USO EVENTUAL",
@@ -48,8 +46,11 @@ const pricingPlans = [
   {
     name: "Plano Plus",
     price: "R$ 40 / mês",
-    description: "", // Descrição adicionada
-    features: ["Tudo do plano gratuito e mais...", "Conversas ilimitadas"],
+    description: "Para o uso constante e diário", // Descrição adicionada
+    features: [
+      "Tudo do plano gratuito e mais...",
+      "Conversas ilimitadas",
+    ],
     isPopular: true,
     popularText: "USO CONTÍNUO",
     buttonText: "ASSINE JÁ !",
@@ -188,67 +189,65 @@ const Pricing = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-6xl mx-auto">
           {/* Mapeamento do array 'pricingPlans' para renderizar cada card de plano. */}
           {pricingPlans.map((plan, index) => (
-              <Card
-                key={index} // Chave única para cada card.
-                // Classes condicionais para destacar o plano popular.
-                className={`p-6 md:p-8 relative backdrop-blur-md flex flex-col ${
-                  plan.isPopular
-                    ? "bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]"
-                    : "bg-theme-card/95 border-2 border-[#2a4980] shadow-[0_0_60px_rgba(79,155,255,0.5)]"
+            <Card
+              key={index} // Chave única para cada card.
+              // Classes condicionais para destacar o plano popular.
+              className={`p-6 md:p-8 relative backdrop-blur-md flex flex-col ${plan.isPopular
+                ? "bg-theme-card/95 border-2 border-[#4f9bff] shadow-[0_0_25px_rgba(79,155,255,0.5)]"
+                : "bg-theme-card/95 border-2 border-[#2a4980] shadow-[0_0_60px_rgba(79,155,255,0.5)]"
                 }`}
+            >
+              {/* Badge "Popular" (ou texto customizado) para o plano destacado. */}
+              {plan.isPopular && (
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
+                  {plan.popularText}
+                </div>
+              )}
+
+              {/* Cabeçalho do Card (Nome do Plano, Preço, Descrição) */}
+              <div className="text-center mb-6 pt-4">
+                {" "}
+                {/* pt-4 para dar espaço ao badge "Popular" */}
+                <h3 className="text-xl sm:text-2xl font-bold mb-6 text-white">
+                  {plan.name}
+                </h3>
+                <div className="flex items-baseline justify-center text-white">
+                  <span className="gradient-text text-3xl sm:text-4xl font-bold">
+                    {plan.price}
+                  </span>
+                </div>
+                {/* Descrição do plano com altura fixa para alinhamento visual entre cards. */}
+                <p className="text-lg text-gray-300 mt-2 h-10">
+                  {plan.description}
+                </p>
+              </div>
+
+              {/* Lista de Recursos do Plano */}
+              {/* 'flex-grow' permite que esta seção expanda e empurre o botão para baixo. */}
+              <div className="space-y-3 mb-8 ml-8 flex-grow">
+                {plan.features.map((feature, i) => (
+                  <div key={i} className="flex items-start">
+                    <Check className="h-5 w-5 text-theme-accent mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-foreground text-lg">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Botão de Chamada para Ação do Plano */}
+              {/* 'mt-auto' ajuda a alinhar o botão na parte inferior do card quando os conteúdos têm alturas diferentes. */}
+              <Button
+                variant={plan.buttonVariant}
+                // Classes condicionais para estilizar o botão do plano popular de forma diferente.
+                className={`w-full mt-auto text-foreground font-semibold py-3 text-base md:text-lg
+                                  ${plan.isPopular
+                    ? "bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]"
+                    : "bg-theme-accent-bg hover:bg-theme-accent-bg border border-theme-accent/50 hover:border-theme-accent" // Estilo para botão default não popular
+                  } transition-all duration-300 ease-in-out transform hover:scale-105`}
               >
-                {/* Badge "Popular" (ou texto customizado) para o plano destacado. */}
-                {plan.isPopular && (
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold shadow-lg">
-                    {plan.popularText}
-                  </div>
-                )}
-
-                {/* Cabeçalho do Card (Nome do Plano, Preço, Descrição) */}
-                <div className="text-center mb-6 pt-4">
-                  {" "}
-                  {/* pt-4 para dar espaço ao badge "Popular" */}
-                  <h3 className="text-xl sm:text-2xl font-bold mb-6 text-white">
-                    {plan.name}
-                  </h3>
-                  <div className="flex items-baseline justify-center text-white">
-                    <span className="gradient-text text-3xl sm:text-4xl font-bold">
-                      {plan.price}
-                    </span>
-                  </div>
-                  {/* Descrição do plano com altura fixa para alinhamento visual entre cards. */}
-                  <p className="text-lg text-gray-300 mt-2 h-10">
-                    {plan.description}
-                  </p>
-                </div>
-
-                {/* Lista de Recursos do Plano */}
-                {/* 'flex-grow' permite que esta seção expanda e empurre o botão para baixo. */}
-                <div className="space-y-3 mb-8 ml-8 flex-grow">
-                  {plan.features.map((feature, i) => (
-                    <div key={i} className="flex items-start">
-                      <Check className="h-5 w-5 text-theme-accent mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-foreground text-lg">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Botão de Chamada para Ação do Plano */}
-                {/* 'mt-auto' ajuda a alinhar o botão na parte inferior do card quando os conteúdos têm alturas diferentes. */}
-                <Button
-                  variant={plan.buttonVariant}
-                  // Classes condicionais para estilizar o botão do plano popular de forma diferente.
-                  className={`w-full mt-auto text-foreground font-semibold py-3 text-base md:text-lg
-                                  ${
-                                    plan.isPopular
-                                      ? "bg-primary hover:bg-primary/90 drop-shadow-[0_0_10px_rgba(79,155,255,0.5)] hover:drop-shadow-[0_0_15px_rgba(79,155,255,0.7)]"
-                                      : "bg-theme-accent-bg hover:bg-theme-accent-bg border border-theme-accent/50 hover:border-theme-accent" // Estilo para botão default não popular
-                                  } transition-all duration-300 ease-in-out transform hover:scale-105`}
-                >
-                  {plan.buttonText}
-                </Button>
-              </Card>
-            ))}
+                {plan.buttonText}
+              </Button>
+            </Card>
+          ))}
         </div>
       </div>
     </section>
