@@ -94,7 +94,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         .from("chatbot_documents")
         .select("id, filename, status, file_size, upload_date, summary")
         .eq("chatbot_user", user.id)
-        .order("upload_date", { ascending: false });
+        .order("filename", { ascending: true }); // Ordenação alfabética por nome do arquivo
 
       if (error) throw error;
       setDocuments(data || []);

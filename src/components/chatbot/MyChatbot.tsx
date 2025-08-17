@@ -65,6 +65,7 @@ const MyChatbot = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatbotConfig, setChatbotConfig] = useState<ChatbotConfig | null>(null);
+  const [initialMessageAdded, setInitialMessageAdded] = useState(false); // Controle para evitar duplicação da mensagem inicial
 
   // Estados para controle de drag vertical
   const [isDragging, setIsDragging] = useState(false);
@@ -79,6 +80,7 @@ const MyChatbot = () => {
   // Controle de estilo visual (alto-relevo vs baixo-relevo)
   const [isElevated] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null); // Referência para o campo de input
   const location = useLocation();
   const { user } = useAuth();
 
@@ -237,8 +239,12 @@ const MyChatbot = () => {
    */
   const getInitialMessage = useCallback(() => {
     const pageContext = getPageContext();
-    const botName = chatbotConfig?.chatbot_name || 'FastBot';
-    return `Olá! 👋 Bem-vindo à ${pageContext}. Sou o assistente ${botName} e estou aqui para ajudar você com seu chatbot!`;
+    // Usar o nome do chatbot da configuração ou fallback 
+    const botName = chatbotConfig?.chatbot_name || 'virtual';
+    console.log("=====================")
+    console.log("botName = ", botName)
+    console.log("=====================")
+    return `Olá! 👋 Bem-vindo à ${pageContext}. \n\nNesta conversa eu sigo as suas configurações do seu chatbot e uso a base de dados que você anexou por upload.\n\n Qual o seu nome?\n\nOu como devo te chamar?`;
   }, [getPageContext, chatbotConfig?.chatbot_name]);
 
   /**
@@ -249,25 +255,40 @@ const MyChatbot = () => {
     console.log('🚀 [MyChatbot] useEffect inicialização executado:', {
       chatState,
       conversationHistoryLength: conversationHistory.length,
+      initialMessageAdded,
       timestamp: new Date().toISOString()
     });
 
-    if (chatState === 'normal' && conversationHistory.length === 0) {
-      // Adicionar mensagem inicial através da memória híbrida
-      const initialMessage = getInitialMessage();
-      console.log('🤖 [MyChatbot] Adicionando mensagem inicial à memória:', initialMessage.substring(0, 50) + '...');
+    if (chatState === 'normal' && conversationHistory.length === 0 && !initialMessageAdded) {
+      // Primeiro buscar configuração do chatbot, depois adicionar mensagem inicial
+      const initializeChat = async () => {
+        try {
+          // Marcar que a mensagem inicial está sendo processada
+          setInitialMessageAdded(true);
 
-      // Chamar de forma assíncrona para não bloquear
-      addMessage('assistant', initialMessage).then(() => {
-        console.log('🤖 [MyChatbot] Mensagem inicial adicionada com sucesso!');
-      }).catch(error => {
-        console.error('❌ [MyChatbot] Erro ao adicionar mensagem inicial:', error);
-      });
+          // Buscar configuração primeiro
+          await fetchChatbotConfig();
 
-      // Buscar configuração do chatbot quando o chat é aberto
-      fetchChatbotConfig();
+          // Aguardar um pouco para garantir que o estado foi atualizado
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          // Criar mensagem inicial com a configuração carregada
+          const initialMessage = getInitialMessage();
+          console.log('🤖 [MyChatbot] Adicionando mensagem inicial à memória:', initialMessage.substring(0, 50) + '...');
+
+          await addMessage('assistant', initialMessage);
+          console.log('🤖 [MyChatbot] Mensagem inicial adicionada com sucesso!');
+        } catch (error) {
+          console.error('❌ [MyChatbot] Erro ao inicializar chat:', error);
+          // Fallback: adicionar mensagem mesmo sem configuração
+          const fallbackMessage = getInitialMessage();
+          await addMessage('assistant', fallbackMessage);
+        }
+      };
+
+      initializeChat();
     }
-  }, [chatState, conversationHistory.length, getInitialMessage, fetchChatbotConfig, addMessage]);
+  }, [chatState, conversationHistory.length, initialMessageAdded, getInitialMessage, fetchChatbotConfig, addMessage]);
 
   /**
    * sendToWebhook
@@ -587,7 +608,7 @@ const MyChatbot = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4.1-nano',
         messages: [
           {
             role: 'system',
@@ -598,8 +619,8 @@ const MyChatbot = () => {
             content: `${contextualPrompt}\n\nPERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:`
           }
         ],
-        max_tokens: 300,
-        temperature: 0.7,
+        max_tokens: 1000,
+        temperature: 0.5,
       }),
     }, {
       maxRetries: 3,
@@ -777,6 +798,19 @@ const MyChatbot = () => {
   // Aplica scroll automático quando novas mensagens são adicionadas
   useEffect(scrollToBottom, [localMessages]);
 
+  // 🎯 Focar no input quando o chat é aberto
+  useEffect(() => {
+    if (chatState === 'normal' || chatState === 'maximized') {
+      // Pequeno delay para garantir que o input esteja renderizado
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    } else if (chatState === 'minimized') {
+      // Reset do controle de mensagem inicial quando minimizado
+      setInitialMessageAdded(false);
+    }
+  }, [chatState]);
+
   /**
    * handleSendMessage
    * Processa o envio de mensagens do usuário e obtenção de respostas
@@ -799,6 +833,11 @@ const MyChatbot = () => {
 
     const currentInput = inputValue;
     setInputValue('');
+
+    // 🎯 Manter foco no input imediatamente após limpar
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
 
     // 🧠 Adicionar mensagem do usuário à memória híbrida
     console.log('🧠 [MyChatbot] ===== ADICIONANDO MENSAGEM DO USUÁRIO À MEMÓRIA =====');
@@ -838,8 +877,23 @@ const MyChatbot = () => {
       await addToShortMemory('assistant', botResponse);
 
       console.log('🧠📋 [MyChatbot] ===== RESPOSTA ADICIONADA ÀS MEMÓRIAS =====');
+
+      // 🎯 Refocar no campo de input após processar a resposta
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 200);
     } catch (error) {
       console.error('❌ [MyChatbot] Erro ao processar mensagem:', error);
+
+      // 🎯 Refocar no input mesmo em caso de erro
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 200);
+    } finally {
+      // 🎯 Garantir foco no input sempre, independentemente do resultado
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
     }
   };
 
@@ -1228,7 +1282,7 @@ const MyChatbot = () => {
         <div className="flex items-center">
           <Bot size={24} style={{ marginRight: '10px', color: chatbotTextColor }} />
           <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: chatbotTextColor }}>
-            {chatbotConfig?.chatbot_name || 'FastBot'} {isLoading && <span className="animate-pulse">●</span>}
+            {chatbotConfig?.chatbot_name || 'Assistente Virtual'} {isLoading && <span className="animate-pulse">●</span>}
           </h3>
         </div>
         <div className="flex items-center space-x-2">
@@ -1293,7 +1347,6 @@ const MyChatbot = () => {
               }}
             >
               {msg.sender === 'bot' && <Bot size={16} className="inline mr-2 mb-0.5" />}
-              {msg.sender === 'user' && <User size={16} className="inline mr-2 mb-0.5" />}
               {msg.isLoading ? (
                 <span className="animate-pulse">Digitando...</span>
               ) : (
@@ -1332,6 +1385,7 @@ const MyChatbot = () => {
         borderTop: isElevated ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
       }}>
         <input
+          ref={inputRef}
           id="chatbot-input"
           name="chatbot-input"
           type="text"
@@ -1341,7 +1395,12 @@ const MyChatbot = () => {
 
           onKeyDown={e => {
             if (e.key === 'Enter' && !isLoading) {
+              e.preventDefault(); // Previne comportamento padrão
               void handleSendMessage();
+              // 🎯 Manter foco após pressionar Enter
+              setTimeout(() => {
+                inputRef.current?.focus();
+              }, 100);
             }
           }}
 
