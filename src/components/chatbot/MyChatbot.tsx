@@ -74,6 +74,11 @@ const MyChatbot = () => {
   const [hasDraggedDistance, setHasDraggedDistance] = useState(false);
   const [chatbotVerticalOffset, setChatbotVerticalOffset] = useState(0); // offset em pixels do bottom padrão
 
+  // Estados para controle de drag horizontal (redimensionamento de largura)
+  const [isResizing, setIsResizing] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [chatbotWidth, setChatbotWidth] = useState(450); // largura inicial em pixels
+
   // Estado para controle da animação eletrificada
   const [isElectrified, setIsElectrified] = useState(false);
 
@@ -936,6 +941,36 @@ const MyChatbot = () => {
     e.stopPropagation(); // Previne o click do container
   };
 
+  /**
+   * Funções de controle de redimensionamento horizontal (largura)
+   */
+  const handleResizeMouseDown = (e: React.MouseEvent) => {
+    if (chatState !== 'normal') return; // Só permite redimensionar no modo normal
+
+    setIsResizing(true);
+    setDragStartX(e.clientX);
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleResizeMouseMove = useCallback((e: MouseEvent) => {
+    if (!isResizing) return;
+
+    const deltaX = dragStartX - e.clientX; // Movimento do mouse para a esquerda aumenta a largura
+
+    // Calcular limites de largura
+    const minWidth = 300; // Largura mínima
+    const maxWidth = Math.min(window.innerWidth * 0.6, 800); // Máximo 60% da tela ou 800px
+
+    const newWidth = Math.max(minWidth, Math.min(maxWidth, chatbotWidth + deltaX));
+    setChatbotWidth(newWidth);
+    setDragStartX(e.clientX); // Atualizar posição de referência
+  }, [isResizing, dragStartX, chatbotWidth]);
+
+  const handleResizeMouseUp = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
 
@@ -1002,6 +1037,13 @@ const MyChatbot = () => {
     }
   }, [chatState]);
 
+  // Reset da largura quando não está no modo normal
+  useEffect(() => {
+    if (chatState !== 'normal') {
+      setChatbotWidth(450); // Volta para largura padrão
+    }
+  }, [chatState]);
+
   // Validar posição quando a janela é redimensionada
   useEffect(() => {
     const validatePosition = () => {
@@ -1022,9 +1064,27 @@ const MyChatbot = () => {
       }
     };
 
-    window.addEventListener('resize', validatePosition);
-    return () => window.removeEventListener('resize', validatePosition);
-  }, [chatState, chatbotVerticalOffset, isElevated]);
+    const validateChatbotWidth = () => {
+      if (chatState !== 'normal') return;
+
+      const minWidth = 300;
+      const maxWidth = Math.min(window.innerWidth * 0.6, 800);
+
+      // Ajustar largura se estiver fora dos novos limites
+      const validWidth = Math.max(minWidth, Math.min(maxWidth, chatbotWidth));
+      if (validWidth !== chatbotWidth) {
+        setChatbotWidth(validWidth);
+      }
+    };
+
+    const handleResize = () => {
+      validatePosition();
+      validateChatbotWidth();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [chatState, chatbotVerticalOffset, chatbotWidth, isElevated]);
 
   // Event listeners globais para drag
   useEffect(() => {
@@ -1042,6 +1102,23 @@ const MyChatbot = () => {
       document.body.style.cursor = '';
     };
   }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  // Event listeners globais para redimensionamento
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResizeMouseMove);
+      document.addEventListener('mouseup', handleResizeMouseUp);
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'col-resize';
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMouseMove);
+      document.removeEventListener('mouseup', handleResizeMouseUp);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+  }, [isResizing, handleResizeMouseMove, handleResizeMouseUp]);
 
   /**
    * getElectrifiedStyles
@@ -1102,7 +1179,7 @@ const MyChatbot = () => {
             ...commonChatbotStyles,
             bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
             right: '20px',
-            width: 'clamp(300px, 33vw, 450px)',
+            width: `${chatbotWidth}px`, // Usa largura dinâmica
             height: '80vh',
             maxHeight: '650px',
             background: chatbotBgColor,
@@ -1144,7 +1221,7 @@ const MyChatbot = () => {
             ...commonChatbotStyles,
             bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
             right: '20px',
-            width: 'clamp(300px, 33vw, 450px)',
+            width: `${chatbotWidth}px`, // Usa largura dinâmica
             height: '80vh',
             maxHeight: '650px',
             background: chatbotBgColor,
@@ -1262,6 +1339,41 @@ const MyChatbot = () => {
    */
   return (
     <div style={getChatbotStyle()} className="neu-chatbot-container">
+      {/* Borda de redimensionamento - apenas no modo normal */}
+      {chatState === 'normal' && (
+        <div
+          onMouseDown={handleResizeMouseDown}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: '8px',
+            cursor: 'col-resize',
+            backgroundColor: 'transparent',
+            zIndex: 10,
+            borderTopLeftRadius: '24px',
+            borderBottomLeftRadius: '24px',
+          }}
+          title="Arraste para redimensionar a largura do chatbot"
+        >
+          {/* Indicador visual sutil da área de redimensionamento */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '2px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '3px',
+              height: '30px',
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '2px',
+              opacity: isResizing ? 1 : 0.3,
+              transition: 'opacity 0.2s ease',
+            }}
+          />
+        </div>
+      )}
       {/* Header do Chatbot */}
       <div style={{
         padding: '8px 8px', // 75% da altura original (15px * 0.75 = 11.25px)

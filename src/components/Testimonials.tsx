@@ -16,6 +16,7 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
+import { Bot } from 'lucide-react';
 
 
 // Constante testimonials
@@ -142,8 +143,8 @@ const Testimonials = () => {
                 </div>
 
                 {/* Grade de Cards de Depoimentos */}
-                {/* Layout responsivo: 1 coluna em telas pequenas, 3 colunas em médias e grandes. */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Layout responsivo */}
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
                     {/* Mapeamento do array 'testimonials' para renderizar cada card de depoimento. */}
                     {testimonials.map((testimonial, index) => (
                         <Card
@@ -151,26 +152,31 @@ const Testimonials = () => {
                             // Estilos do card, incluindo fundo, borda, sombra e efeito de hover.
                             className="p-8 bg-theme-card backdrop-blur-sm border border-theme-accent/50 shadow-md hover:shadow-lg transition-shadow duration-300"
                         >
-                            {/* Layout flexível interno para o conteúdo do card. */}
-                            <div className="flex flex-col h-full">
-                                {/* Ícone de Aspas (Citação) */}
-                                <div className="mb-6 text-brightpurple-500 font-bold"> {/* Cor ajustada para 'brightpurple-500' */}
-                                    <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                                    </svg>
-                                <span className='text-4xl text-brightpurple-500'>{testimonial.name}</span>
-                                <p><span className='text-sm ml-1 text-brightpurple-500'>{testimonial.local}</span></p>
+                            {/* Layout em grid de 3 colunas */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 h-full">
+
+                                {/* Coluna 1: Ícone de Aspas + Nome + Local + Autor + Cargo */}
+                                <div className="text-brightpurple-500 font-bold">
+                                    {/* SVG e nome na mesma linha */}
+                                    <div className="flex items-center mb-1">
+                                        <Bot className="w-8 h-8 flex-shrink-0" />
+                                        <span className='ml-2 text-2xl text-brightpurple-500'>{testimonial.name}</span>
+                                    </div>
+                                    {/* Local em linha separada */}
+                                    <p className='text-sm text-brightpurple-500 mb-4'>{testimonial.local}</p>
+
+                                    {/* Autor e Cargo */}
+                                    <div className="mt-4">
+                                        <p className="font-bold gradient-text">{testimonial.author}</p>
+                                        <p className="text-sm gradient-text">{testimonial.role}</p>
+                                    </div>
                                 </div>
 
-
-                                {/* Texto do Depoimento (Citação) */}
-                                {/* 'flex-grow' permite que esta seção expanda e alinhe o autor/cargo na parte inferior. */}
-                                <p className="text-gray-400 text-lg mb-6 flex-grow">{testimonial.quote}</p>
-                                {/* Informações do Autor do Depoimento */}
-                                <div>
-                                    <p className="font-bold gradient-text">{testimonial.author}</p>
-                                    <p className="text-sm gradient-text">{testimonial.role}</p>
+                                {/* Colunas 2 e 3 mescladas: Texto do Depoimento */}
+                                <div className="md:col-span-2">
+                                    <p className="text-gray-400 text-lg">{testimonial.quote}</p>
                                 </div>
+
                             </div>
                         </Card>
                     ))}
