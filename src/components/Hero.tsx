@@ -202,7 +202,7 @@ const Hero = () => {
                 </div>
 
                 {/* BADGE DE DESTAQUE 3 */}
-                <div className="flex flex-row gap-1 ml-10 mb-4">
+                {/* <div className="flex flex-row gap-1 ml-10 mb-4">
                   <Button
                     onClick={() => {
                       // Scroll suave até o componente Pricing
@@ -218,7 +218,7 @@ const Hero = () => {
                   >
                     <span>ATENDE NO GMAIL...</span>
                   </Button>
-                </div>
+                </div> */}
 
                 {/* Não tem site? */}
                 <div className="flex flex-row gap-1 ml-10">
