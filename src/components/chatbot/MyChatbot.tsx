@@ -79,6 +79,11 @@ const MyChatbot = () => {
   const [dragStartX, setDragStartX] = useState(0);
   const [chatbotWidth, setChatbotWidth] = useState(450); // largura inicial em pixels
 
+  // Estados para controle de movimento lateral (pelo header)
+  const [isMovingLaterally, setIsMovingLaterally] = useState(false);
+  const [moveStartX, setMoveStartX] = useState(0);
+  const [chatbotHorizontalOffset, setChatbotHorizontalOffset] = useState(0); // offset em pixels da posição right padrão
+
   // Estado para controle da animação eletrificada
   const [isElectrified, setIsElectrified] = useState(false);
 
@@ -971,6 +976,49 @@ const MyChatbot = () => {
     setIsResizing(false);
   }, []);
 
+  /**
+   * Funções de controle de movimento lateral (pelo header)
+   */
+  const handleMoveMouseDown = (e: React.MouseEvent) => {
+    if (chatState !== 'normal') return; // Só permite mover no modo normal
+
+    setIsMovingLaterally(true);
+    setMoveStartX(e.clientX);
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleMoveMouseMove = useCallback((e: MouseEvent) => {
+    if (!isMovingLaterally) return;
+
+    const deltaX = e.clientX - moveStartX; // Movimento normal do mouse
+
+    // Calcular limites horizontais
+    const windowWidth = window.innerWidth;
+    const chatbotWidthPx = chatbotWidth;
+    const baseRight = 20; // Margem direita original
+
+    // O offset aumenta quando move para a ESQUERDA (direção positiva do offset)
+    // offset = 0: posição original (20px da direita)
+    // offset > 0: mais para a esquerda
+
+    // Limite mínimo: não pode mover para a direita além da posição original
+    const minOffset = 0;
+
+    // Limite máximo: pode ir até ter 20px da borda esquerda
+    // Quando right = windowWidth - chatbotWidth - 20, o chatbot fica com 20px da esquerda
+    // Como right = 20 - offset, então: 20 - offset = windowWidth - chatbotWidth - 20
+    // Portanto: offset = 20 - (windowWidth - chatbotWidth - 20) = chatbotWidth + 40 - windowWidth
+    const maxOffset = Math.max(0, windowWidth - chatbotWidthPx - 40); // 40 = 20px margem esquerda + 20px margem direita original
+
+    // Inverter deltaX para que movimento para esquerda seja positivo no offset
+    const newOffset = Math.max(minOffset, Math.min(maxOffset, chatbotHorizontalOffset - deltaX));
+    setChatbotHorizontalOffset(newOffset);
+    setMoveStartX(e.clientX); // Atualizar posição de referência
+  }, [isMovingLaterally, moveStartX, chatbotHorizontalOffset, chatbotWidth]); const handleMoveMouseUp = useCallback(() => {
+    setIsMovingLaterally(false);
+  }, []);
+
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
 
@@ -1041,6 +1089,7 @@ const MyChatbot = () => {
   useEffect(() => {
     if (chatState !== 'normal') {
       setChatbotWidth(450); // Volta para largura padrão
+      setChatbotHorizontalOffset(0); // Volta para posição horizontal padrão
     }
   }, [chatState]);
 
@@ -1077,14 +1126,32 @@ const MyChatbot = () => {
       }
     };
 
+    const validateHorizontalOffset = () => {
+      if (chatState !== 'normal') return;
+
+      const windowWidth = window.innerWidth;
+      const chatbotWidthPx = chatbotWidth;
+
+      // Recalcular limites horizontais usando a mesma lógica
+      const minOffset = 0; // Posição original
+      const maxOffset = Math.max(0, windowWidth - chatbotWidthPx - 40); // 40 = margens esquerda e direita
+
+      // Ajustar posição horizontal se estiver fora dos novos limites
+      const validOffset = Math.max(minOffset, Math.min(maxOffset, chatbotHorizontalOffset));
+      if (validOffset !== chatbotHorizontalOffset) {
+        setChatbotHorizontalOffset(validOffset);
+      }
+    };
+
     const handleResize = () => {
       validatePosition();
       validateChatbotWidth();
+      validateHorizontalOffset();
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [chatState, chatbotVerticalOffset, chatbotWidth, isElevated]);
+  }, [chatState, chatbotVerticalOffset, chatbotWidth, chatbotHorizontalOffset, isElevated]);
 
   // Event listeners globais para drag
   useEffect(() => {
@@ -1119,6 +1186,23 @@ const MyChatbot = () => {
       document.body.style.cursor = '';
     };
   }, [isResizing, handleResizeMouseMove, handleResizeMouseUp]);
+
+  // Event listeners globais para movimento lateral
+  useEffect(() => {
+    if (isMovingLaterally) {
+      document.addEventListener('mousemove', handleMoveMouseMove);
+      document.addEventListener('mouseup', handleMoveMouseUp);
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'grabbing';
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMoveMouseMove);
+      document.removeEventListener('mouseup', handleMoveMouseUp);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+  }, [isMovingLaterally, handleMoveMouseMove, handleMoveMouseUp]);
 
   /**
    * getElectrifiedStyles
@@ -1178,7 +1262,7 @@ const MyChatbot = () => {
           return {
             ...commonChatbotStyles,
             bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
-            right: '20px',
+            right: `${20 + chatbotHorizontalOffset}px`, // Usa posição horizontal dinâmica
             width: `${chatbotWidth}px`, // Usa largura dinâmica
             height: '80vh',
             maxHeight: '650px',
@@ -1220,7 +1304,7 @@ const MyChatbot = () => {
           return {
             ...commonChatbotStyles,
             bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
-            right: '20px',
+            right: `${20 + chatbotHorizontalOffset}px`, // Usa posição horizontal dinâmica
             width: `${chatbotWidth}px`, // Usa largura dinâmica
             height: '80vh',
             maxHeight: '650px',
@@ -1375,22 +1459,27 @@ const MyChatbot = () => {
         </div>
       )}
       {/* Header do Chatbot */}
-      <div style={{
-        padding: '8px 8px', // 75% da altura original (15px * 0.75 = 11.25px)
-        borderTopLeftRadius: chatState === 'normal' ? '24px' : '0px',
-        borderTopRightRadius: chatState === 'normal' ? '24px' : '0px',
-        background: isElevated
-          ? `rgba(255, 255, 255, 0.05)`
-          : `linear-gradient(145deg, ${chatbotShadowLight}, ${chatbotBgColor})`,
-        boxShadow: isElevated
-          ? 'none'
-          : `inset 5px 5px 10px ${chatbotShadowDark}, inset -5px -5px 10px ${chatbotShadowLight}`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        userSelect: 'none',
-        borderBottom: isElevated ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
-      }}>
+      <div
+        onMouseDown={handleMoveMouseDown}
+        style={{
+          padding: '8px 8px', // 75% da altura original (15px * 0.75 = 11.25px)
+          borderTopLeftRadius: chatState === 'normal' ? '24px' : '0px',
+          borderTopRightRadius: chatState === 'normal' ? '24px' : '0px',
+          background: isElevated
+            ? `rgba(255, 255, 255, 0.05)`
+            : `linear-gradient(145deg, ${chatbotShadowLight}, ${chatbotBgColor})`,
+          boxShadow: isElevated
+            ? 'none'
+            : `inset 5px 5px 10px ${chatbotShadowDark}, inset -5px -5px 10px ${chatbotShadowLight}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          userSelect: 'none',
+          borderBottom: isElevated ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+          cursor: chatState === 'normal' ? (isMovingLaterally ? 'grabbing' : 'grab') : 'default',
+        }}
+        title={chatState === 'normal' ? 'Arraste para mover o chatbot lateralmente' : undefined}
+      >
         <div className="flex items-center">
           <Bot size={24} style={{ marginRight: '10px', color: chatbotTextColor }} />
           <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: chatbotTextColor }}>
@@ -1401,6 +1490,7 @@ const MyChatbot = () => {
           {chatState === 'normal' && (
             <button
               onClick={() => toggleChatState('maximized')}
+              onMouseDown={(e) => e.stopPropagation()}
               style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '5px' }}
               aria-label="Maximizar chatbot"
             >
@@ -1410,6 +1500,7 @@ const MyChatbot = () => {
           {chatState === 'maximized' && (
             <button
               onClick={() => toggleChatState('normal')}
+              onMouseDown={(e) => e.stopPropagation()}
               style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '5px' }}
               aria-label="Restaurar chatbot"
             >
@@ -1418,6 +1509,7 @@ const MyChatbot = () => {
           )}
           <button
             onClick={() => toggleChatState('minimized')}
+            onMouseDown={(e) => e.stopPropagation()}
             style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '5px' }}
             aria-label="Minimizar chatbot"
           >
