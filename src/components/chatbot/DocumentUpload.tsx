@@ -548,9 +548,9 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       case "error":
         return { label: "Erro", color: "text-red-500" };
       case "processing":
-        return { label: "Processando", color: "text-gray-400" };
+        return { label: "Processando", color: "text-blue-500 font-semibold" };
       default:
-        return { label: "Carregando", color: "text-gray-600" };
+        return { label: "CARREGANDO", color: "text-blue-500 font-bold text-lg" };
     }
   };
 
@@ -589,7 +589,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <Clock className="w-4 h-4 text-blue-500 animate-pulse" />
+                <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Processando embeddings... Aguarde</p>
@@ -602,10 +602,10 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <RefreshCw className="w-6 h-6 text-blue-500 animate-spin font-bold" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Carregando...</p>
+                <p>CARREGANDO... Sincronizando arquivo</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -632,14 +632,25 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
               } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <input {...getInputProps()} />
-            <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            {isUploading ? (
+              <RefreshCw className="w-16 h-16 mx-auto mb-4 text-blue-500 animate-spin" />
+            ) : (
+              <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            )}
             {isDragActive ? (
               <p>Solte os arquivos aqui...</p>
             ) : (
               <div>
-                <Button variant="outline" disabled={isUploading} className="text-yellow-500">
-                  {isUploading ? "Processando..." : "Arraste arquivos .txt ou clique para selecionar"}
-                </Button>
+                {isUploading ? (
+                  <div className="space-y-3">
+                    <p className="text-2xl font-bold text-blue-500">CARREGANDO...</p>
+                    <p className="text-lg text-blue-400">Processando seu arquivo, aguarde...</p>
+                  </div>
+                ) : (
+                  <Button variant="outline" disabled={isUploading} className="text-yellow-500">
+                    Arraste arquivos .txt ou clique para selecionar
+                  </Button>
+                )}
               </div>
             )}
           </div>
