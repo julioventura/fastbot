@@ -36,11 +36,48 @@ const Hero = () => {
         ""
       ],
     },
+    // {
+    //   image: "https://dentistas.com.br/fastbot/fale_comigo_03_t.png",
+    //   text: [
+    //     "Crie o SEU",
+    //     "CHATBOT DE I.A.",
+    //     "em 3 minutos!",
+    //     "",
+    //     "",
+    //     "",
+    //     ""
+    //   ],
+    // },
+    // {
+    //   image: "https://dentistas.com.br/fastbot/fale_comigo_01.png",
+    //   text: [
+    //     "Crie o SEU",
+    //     "CHATBOT DE I.A.",
+    //     "em 3 minutos!",
+    //     "",
+    //     "",
+    //     "",
+    //     ""
+    //   ],
+    // },
+    {
+      image: "https://dentistas.com.br/fastbot/fale_comigo_02.png",
+      text: [
+        "Crie o SEU",
+        "CHATBOT DE I.A.",
+        "em 3 minutos!",
+        "",
+        "",
+        "",
+        ""
+      ],
+    },
   ];
 
   // Determina qual imagem usar - agora sempre usa a mesma imagem
   const getImageSrc = () => {
-    return "/fastbot/hero-ana-dark.png";
+    // return "/fastbot/hero-ana-dark.png";
+    return "/fastbot/fale_comigo_03_t.png";
   };
 
   // Handler para erro de carregamento da imagem

@@ -59,7 +59,7 @@ export default function CTA() {
                 <img
                   src="https://dentistas.com.br/fastbot/GPT-5.png"
                   alt="Powered by GPT-5"
-                  className="h-[250px] w-[250px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-[600ms]"
+                  className="h-[280px] w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-[600ms]"
                 />
               </div>
 
