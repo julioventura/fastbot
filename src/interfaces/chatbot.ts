@@ -65,6 +65,13 @@ export interface ChatbotData extends BaseChatbotData {
   response_speed?: number; // 0-100
   debug_mode?: boolean;
   chat_color?: string;
+
+  // Novos campos obrigatórios para configuração avançada
+  personality?: string; // padrão: "Profissional, empático e prestativo"
+  behavior?: string; // padrão: "Sempre busque entender a necessidade específica do usuário antes de responder. Seja claro e direto, mas mantenha um tom acolhedor"
+  style?: string; // padrão: "Comunicação clara e objetiva, evitando jargões técnicos desnecessários"
+  interaction?: string; // padrão: "Faça uma pergunta por vez quando precisar de esclarecimentos. Use emojis moderadamente para humanizar a conversa"
+  footer?: string; // padrão: "Posso ajudar com mais alguma coisa? 😊"
 }
 
 /**

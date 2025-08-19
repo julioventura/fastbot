@@ -41,7 +41,7 @@ export default function CTA() {
           {/* Contêiner para centralizar o texto e limitar a largura máxima. */}
           <div className="max-w-4xl mx-auto text-center">
             {/* Bloco de texto principal da CTA. */}
-            <div className="text-center mb-12">
+            <div className="text-center mt-32 mb-12">
               {/* Título da CTA */}
               <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
                 Pronto  <span className="text-theme-accent"> em </span> <span className="text-yellow-400">3 minutos!</span>
@@ -59,7 +59,7 @@ export default function CTA() {
                 <img
                   src="https://dentistas.com.br/fastbot/GPT-5.png"
                   alt="Powered by GPT-5"
-                  className="h-[280px] w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-[600ms]"
+                  className="h-[280px] w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-700"
                 />
               </div>
 

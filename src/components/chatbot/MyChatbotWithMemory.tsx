@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/auth/useAuth';
 import { useVectorStore } from '@/hooks/useVectorStore';
 import { useConversationMemory } from '@/hooks/useConversationMemory';
+import { generateSystemMessage } from '@/lib/chatbot-utils';
 import { supabase } from '@/integrations/supabase/client';
 
 type ChatState = 'minimized' | 'normal' | 'maximized';
@@ -44,10 +45,10 @@ const MyChatbotWithMemory = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
   const { user } = useAuth();
-  
+
   // Hooks
   const { getChatbotContext } = useVectorStore();
-  
+
   // 🧠 Hook de memória de conversação
   const {
     conversationHistory,
@@ -116,7 +117,7 @@ const MyChatbotWithMemory = () => {
    */
   const getBotResponseLocal = useCallback(async (userMessage: string): Promise<string> => {
     const botName = chatbotConfig?.chatbot_name || 'FastBot';
-    
+
     // Usar dados personalizados se disponível
     if (chatbotConfig) {
       if (chatbotConfig.office_hours && userMessage.toLowerCase().includes('horário')) {
@@ -138,14 +139,14 @@ const MyChatbotWithMemory = () => {
    * Enviar mensagem para webhook N8N com contexto de memória
    */
   const sendToWebhook = useCallback(async (userMessage: string): Promise<string> => {
-    const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 
-                      'https://n8n.cirurgia.com.br/webhook/fastbot-webhook';
+    const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL ||
+      'https://n8n.cirurgia.com.br/webhook/fastbot-webhook';
 
     try {
       // 🧠 Obter contexto da memória se habilitado
       let conversationContext = '';
       const useMemory = chatbotConfig?.remember_context ?? false;
-      
+
       if (useMemory && conversationHistory.length > 0) {
         conversationContext = getContextForChatbot();
         console.log('🧠 [MyChatbot] Usando contexto da memória:', conversationContext.substring(0, 100) + '...');
@@ -160,13 +161,13 @@ const MyChatbotWithMemory = () => {
         sessionId: currentSession,
         userId: user?.id,
         userEmail: user?.email,
-        systemMessage: chatbotConfig?.system_message || '',
-        
+        systemMessage: chatbotConfig ? generateSystemMessage(chatbotConfig) : '',
+
         // 🧠 Novo: Contexto de memória
         conversationContext: useMemory ? conversationContext : '',
         memoryEnabled: useMemory,
         conversationStats: useMemory ? getConversationStats() : null,
-        
+
         chatbotConfig: chatbotConfig ? {
           chatbot_name: chatbotConfig.chatbot_name,
           welcome_message: chatbotConfig.welcome_message,
@@ -175,7 +176,7 @@ const MyChatbotWithMemory = () => {
           specialties: chatbotConfig.specialties,
           whatsapp: chatbotConfig.whatsapp,
           remember_context: chatbotConfig.remember_context,
-          system_message: chatbotConfig.system_message
+          system_message: generateSystemMessage(chatbotConfig)
         } : null
       };
 
@@ -225,12 +226,12 @@ const MyChatbotWithMemory = () => {
       return await getBotResponseLocal(userMessage);
     }
   }, [
-    chatbotConfig, 
-    conversationHistory, 
-    getContextForChatbot, 
-    currentSession, 
-    user, 
-    location.pathname, 
+    chatbotConfig,
+    conversationHistory,
+    getContextForChatbot,
+    currentSession,
+    user,
+    location.pathname,
     addMessage,
     getConversationStats,
     getBotResponseLocal,
@@ -244,7 +245,7 @@ const MyChatbotWithMemory = () => {
     if (inputValue.trim() === '') return;
 
     const userMessage = inputValue.trim();
-    
+
     // Adicionar mensagem do usuário
     const newMessage: Message = { id: Date.now(), text: userMessage, sender: 'user' };
     setMessages((prev) => [...prev, newMessage]);
@@ -281,7 +282,7 @@ const MyChatbotWithMemory = () => {
    */
   const toggleChatState = (newState: ChatState) => {
     setChatState(newState);
-    
+
     // Inicializar sessão quando chat é aberto
     if (newState === 'normal' && !currentSession) {
       initializeSession();
@@ -329,7 +330,7 @@ const MyChatbotWithMemory = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: isElevated 
+            boxShadow: isElevated
               ? `0 8px 25px ${chatbotShadowLight}, 0 0 0 1px rgba(255,255,255,0.1) inset`
               : `0 2px 10px ${chatbotShadowDark}`,
             transition: 'all 0.3s ease',
@@ -354,7 +355,7 @@ const MyChatbotWithMemory = () => {
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
-        boxShadow: isElevated 
+        boxShadow: isElevated
           ? `0 20px 60px ${chatbotShadowLight}, 0 0 0 1px rgba(255,255,255,0.1) inset`
           : `0 10px 30px ${chatbotShadowDark}`,
         transition: 'all 0.3s ease',
@@ -375,9 +376,9 @@ const MyChatbotWithMemory = () => {
           </span>
           {/* 🧠 Indicador de memória */}
           {chatbotConfig?.remember_context && (
-            <span style={{ 
-              fontSize: '10px', 
-              color: '#10b981', 
+            <span style={{
+              fontSize: '10px',
+              color: '#10b981',
               backgroundColor: 'rgba(16, 185, 129, 0.2)',
               padding: '2px 6px',
               borderRadius: '4px'
@@ -386,16 +387,16 @@ const MyChatbotWithMemory = () => {
             </span>
           )}
         </div>
-        
+
         <div style={{ display: 'flex', gap: '5px' }}>
           {/* Botão para limpar conversa */}
           {conversationHistory.length > 0 && (
             <button
               onClick={handleClearConversation}
-              style={{ 
-                background: 'transparent', 
-                border: 'none', 
-                cursor: 'pointer', 
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
                 padding: '5px',
                 fontSize: '12px',
                 color: chatbotTextColor,
@@ -406,7 +407,7 @@ const MyChatbotWithMemory = () => {
               🧹
             </button>
           )}
-          
+
           {chatState === 'normal' && (
             <button
               onClick={() => toggleChatState('maximized')}
@@ -415,7 +416,7 @@ const MyChatbotWithMemory = () => {
               <Maximize2 size={18} color={chatbotTextColor} />
             </button>
           )}
-          
+
           {chatState === 'maximized' && (
             <button
               onClick={() => toggleChatState('normal')}
@@ -424,7 +425,7 @@ const MyChatbotWithMemory = () => {
               <Minimize2 size={18} color={chatbotTextColor} />
             </button>
           )}
-          
+
           <button
             onClick={() => toggleChatState('minimized')}
             style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '5px' }}
@@ -446,8 +447,8 @@ const MyChatbotWithMemory = () => {
             backgroundColor: 'rgba(255,255,255,0.05)',
             borderRadius: '4px'
           }}>
-            📊 Sessão: {currentSession?.substring(0, 8)}... | 
-            Mensagens na memória: {conversationHistory.length} | 
+            📊 Sessão: {currentSession?.substring(0, 8)}... |
+            Mensagens na memória: {conversationHistory.length} |
             Stats: {JSON.stringify(getConversationStats(), null, 0)}
           </div>
         )}
@@ -477,8 +478,8 @@ const MyChatbotWithMemory = () => {
               {msg.isLoading ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <span>Digitando</span>
-                  <div style={{ 
-                    display: 'flex', 
+                  <div style={{
+                    display: 'flex',
                     gap: '2px',
                     animation: 'pulse 1.5s infinite'
                   }}>

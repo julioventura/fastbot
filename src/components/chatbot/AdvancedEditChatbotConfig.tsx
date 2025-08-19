@@ -221,7 +221,17 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   return (
     <div className="space-y-6">
 
-      <form onSubmit={onSubmit} className="space-y-6">
+      <form onSubmit={onSubmit} onKeyDown={(e) => {
+        // Permite Enter apenas para submissão quando for no botão de submit
+        // Bloqueia Enter para evitar submissões acidentais de outros campos
+        if (e.key === "Enter" && e.target !== e.currentTarget) {
+          const target = e.target as HTMLElement;
+          // Permite Enter apenas em botões de submit ou se for Ctrl+Enter
+          if (!('type' in target && target.type === "submit") && !e.ctrlKey) {
+            e.preventDefault();
+          }
+        }
+      }} className="space-y-6">
 
 
 
@@ -288,95 +298,92 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             </div>
           </div>
 
+          <div className="border-1 border-gray-500">
 
+            {/* Temas Permitidos */}
+            <div className="space-y-2">
+              <Label>Temas Permitidos</Label>
 
-          {/* Tema Principal */}
-          {/* <div>
-            <Label htmlFor="main_topic">Tema Principal</Label>
-            <Input
-              id="main_topic"
-              value={chatbotData.main_topic || ""}
-              onChange={(e) => onChange("main_topic", e.target.value)}
-              className="mt-2 edit-form-input"
-              style={borderStyle}
-              placeholder="Ex: Inscrições para Curso de Especialização"
-            />
-          </div> */}
-
-          {/* Temas Permitidos */}
-          <div className="space-y-2">
-            <Label>Temas Permitidos</Label>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Coluna Esquerda - Input para adicionar temas */}
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Digite e pressione Enter para acrescentar na lista"
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addTopic((e.target as HTMLInputElement).value);
-                        (e.target as HTMLInputElement).value = "";
-                      }
-                    }}
-                    className="edit-form-input"
-                    style={borderStyle}
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      const input =
-                        e.currentTarget.parentElement?.querySelector(
-                          "input"
-                        );
-                      if (input && input.value.trim()) {
-                        addTopic(input.value);
-                        input.value = "";
-                      }
-                    }}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
+              <div>
+                {/* Coluna Esquerda - Input para adicionar temas */}
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Digite e pressione Enter para adicionar à lista"
+                      size={30}
+                      onKeyDown={(e) => {
+                        // Só processa se for Enter sem modificadores (Ctrl, Shift, Alt)
+                        if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const target = e.target as HTMLInputElement;
+                          if (target.value.trim()) {
+                            addTopic(target.value);
+                            target.value = "";
+                          }
+                        }
+                      }}
+                      className="edit-form-input"
+                      style={borderStyle}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        const input =
+                          e.currentTarget.parentElement?.querySelector(
+                            "input"
+                          );
+                        if (input && input.value.trim()) {
+                          addTopic(input.value);
+                          input.value = "";
+                        }
+                      }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Coluna Direita - Lista de temas como badges */}
-              <div className="space-y-4">
-                {(chatbotData.allowed_topics || []).length > 0 ? (
-                  <div className="flex flex-wrap gap-2 p-3 border border-gray-600 rounded-lg">
-                    {(chatbotData.allowed_topics || []).map(
-                      (topic, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
-                        >
-                          <span>{topic}</span>
-                          <div
-                            className="cursor-pointer flex-shrink-0"
-                            onClick={() => removeTopic(index)}
-                            title={`Remover tema: ${topic}`}
+                {/* Coluna Direita - Lista de temas como badges */}
+                <div className="space-y-4">
+                  {(chatbotData.allowed_topics || []).length > 0 ? (
+                    <div className="flex flex-wrap gap-2 p-3 border border-gray-600 rounded-lg">
+                      {(chatbotData.allowed_topics || []).map(
+                        (topic, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
                           >
-                            <X className="w-3 h-3 hover:text-red-400" />
-                          </div>
-                        </Badge>
-                      )
-                    )}
-                  </div>
-                ) : (
-                  <div className="p-4 border border-dashed border-gray-400 rounded-lg text-center">
-                    <p className="text-sm text-muted-foreground">
-                      Nenhum tema adicionado ainda. Use o campo ao lado para
-                      adicionar temas permitidos.
-                    </p>
-                  </div>
-                )}
+                            <span>{topic}</span>
+                            <div
+                              className="cursor-pointer flex-shrink-0"
+                              onClick={() => removeTopic(index)}
+                              title={`Remover tema: ${topic}`}
+                            >
+                              <X className="w-3 h-3 hover:text-red-400" />
+                            </div>
+                          </Badge>
+                        )
+                      )}
+                    </div>
+                  ) : (
+                    <div className="p-4 border border-dashed border-gray-400 rounded-lg text-center">
+                      <p className="text-sm text-muted-foreground">
+                        Nenhum tema adicionado ainda. Use o campo ao lado para
+                        adicionar temas permitidos.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
+
+
+
 
           {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
@@ -402,6 +409,101 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             </div>
           </div> */}
 
+        </div>
+
+        {/* Seção: Configurações Avançadas */}
+        <div className="space-y-6 border border-gray-600 rounded-lg p-6 bg-blue-950">
+          <h3 className="text-xl font-semibold mb-4 text-primary">
+            ⚙️ Configurações Avançadas
+          </h3>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Coluna Esquerda */}
+            <div className="space-y-6">
+              {/* Personalidade */}
+              <div>
+                <Label htmlFor="personality">
+                  Personalidade do Chatbot
+                </Label>
+                <Textarea
+                  id="personality"
+                  value={chatbotData.personality || ""}
+                  onChange={(e) => onChange("personality", e.target.value)}
+                  className="mt-2 edit-form-input"
+                  style={borderStyle}
+                  rows={4}
+                  placeholder="Descreva a personalidade do chatbot (ex: amigável, profissional, empático, direto...)"
+                />
+              </div>
+
+              {/* Comportamento */}
+              <div>
+                <Label htmlFor="behavior">
+                  Comportamento Específico
+                </Label>
+                <Textarea
+                  id="behavior"
+                  value={chatbotData.behavior || ""}
+                  onChange={(e) => onChange("behavior", e.target.value)}
+                  className="mt-2 edit-form-input"
+                  style={borderStyle}
+                  rows={4}
+                  placeholder="Instruções específicas sobre como o chatbot deve se comportar em diferentes situações..."
+                />
+              </div>
+
+              {/* Estilo de Comunicação */}
+              <div>
+                <Label htmlFor="style">
+                  Estilo de Comunicação
+                </Label>
+                <Textarea
+                  id="style"
+                  value={chatbotData.style || ""}
+                  onChange={(e) => onChange("style", e.target.value)}
+                  className="mt-2 edit-form-input"
+                  style={borderStyle}
+                  rows={4}
+                  placeholder="Defina o estilo de comunicação (formal/informal, técnico/simples, longo/conciso...)"
+                />
+              </div>
+            </div>
+
+            {/* Coluna Direita */}
+            <div className="space-y-6">
+              {/* Interação */}
+              <div>
+                <Label htmlFor="interaction">
+                  Forma de Interação
+                </Label>
+                <Textarea
+                  id="interaction"
+                  value={chatbotData.interaction || ""}
+                  onChange={(e) => onChange("interaction", e.target.value)}
+                  className="mt-2 edit-form-input"
+                  style={borderStyle}
+                  rows={4}
+                  placeholder="Como o chatbot deve interagir com o usuário (fazer perguntas, usar emojis, formato das respostas...)"
+                />
+              </div>
+
+              {/* Rodapé das Mensagens */}
+              <div>
+                <Label htmlFor="footer">
+                  Rodapé das Mensagens
+                </Label>
+                <Textarea
+                  id="footer"
+                  value={chatbotData.footer || ""}
+                  onChange={(e) => onChange("footer", e.target.value)}
+                  className="mt-2 edit-form-input"
+                  style={borderStyle}
+                  rows={4}
+                  placeholder="Texto que aparecerá no final de cada mensagem do chatbot..."
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Botões Cancelar e Salvar */}
@@ -502,7 +604,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               variant="outline"
               onClick={onPreviewSystemMessage}
               disabled={isSaving}
-              className="hover:bg-purple-900 border border-purple-600 px-4 py-2"
+              className={`${showSystemMessagePreview
+                  ? 'bg-purple-900 text-white hover:bg-purple-900'
+                  : 'hover:bg-purple-900'
+                } border border-purple-600 px-4 py-2 transition-colors`}
             >
               {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
             </Button>
@@ -512,7 +617,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               variant="outline"
               onClick={() => setShowShortMemory(prev => !prev)}
               disabled={isSaving}
-              className="hover:bg-purple-900 border border-purple-600 px-4 py-2"
+              className={`${showShortMemory
+                  ? 'bg-purple-900 text-white hover:bg-purple-900'
+                  : 'hover:bg-purple-900'
+                } border border-purple-600 px-4 py-2 transition-colors`}
             >
               {showShortMemory ? 'Ocultar' : 'Visualizar'} Memória Recente
             </Button>

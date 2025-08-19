@@ -40,7 +40,7 @@ const Index = () => {
       const params = new URLSearchParams(hash.substring(1));
       const accessToken = params.get('access_token');
       const type = params.get('type');
-      
+
       if (accessToken && type === 'recovery') {
         // Redirecionar para a página de reset com os parâmetros como query string
         navigate(`/reset-password?access_token=${accessToken}&type=${type}&refresh_token=${params.get('refresh_token') || ''}`);
@@ -52,7 +52,7 @@ const Index = () => {
     // Contêiner principal da página, define um layout de coluna e um fundo preto.
     // O fundo preto pode ser sobreposto pelos gradientes das seções internas.
     <div className="flex flex-col bg-black">
-      
+
       {/* O componente Header é renderizado globalmente em App.tsx, 
           portanto, está comentado aqui para evitar duplicação. 
           Se fosse específico desta página, seria descomentado. */}
@@ -64,13 +64,13 @@ const Index = () => {
         <Hero />
 
         {/* Seção Pricing: Apresenta os planos e preços. */}
-        <Pricing />
+        {/* <Pricing /> */}
 
         {/* Seção Features: Destaca as funcionalidades chave. */}
-        <Features />
+        {/* <Features /> */}
 
         {/* Seção Testimonials: Exibe depoimentos de usuários. */}
-        <Testimonials />
+        {/* <Testimonials /> */}
 
         {/* Seção CTA (Call to Action): Incentiva o usuário a tomar uma ação. */}
         <CTA />

@@ -27,12 +27,25 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    // Aumenta o limite de chunk para evitar warnings desnecessários
+    chunkSizeWarningLimit: 1000,
     // Garantir que os assets tenham nomes consistentes
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
+        // Configuração de chunks manuais para otimizar o bundle
+        manualChunks: {
+          // Separar React e ReactDOM em chunk próprio
+          'react-vendor': ['react', 'react-dom'],
+          // Separar bibliotecas UI em chunk próprio
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-slot', '@radix-ui/react-toast', 'lucide-react'],
+          // Separar bibliotecas de roteamento
+          'router-vendor': ['react-router-dom'],
+          // Separar Supabase em chunk próprio
+          'supabase-vendor': ['@supabase/supabase-js'],
+        },
       },
     },
     // Força regeneração do manifesto

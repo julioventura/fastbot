@@ -2,14 +2,73 @@
  * Utilitários para geração automática de system_message
  */
 
-import { ChatbotData } from '@/interfaces';
+// Interface local para ChatbotConfig
+interface ChatbotConfig {
+  system_instructions?: string;
+  system_message?: string;
+  office_address?: string;
+  office_hours?: string;
+  specialties?: string;
+  chatbot_name?: string;
+  welcome_message?: string;
+  whatsapp?: string;
+  remember_context?: boolean;
+  
+  // Configurações de personalidade
+  formality_level?: number;
+  use_emojis?: boolean;
+  paragraph_size?: number;
+  
+  // Configurações de comportamento
+  main_topic?: string;
+  allowed_topics?: string[];
+  source_strictness?: number;
+  confidence_threshold?: number;
+  fallback_action?: string;
+  fallback_message?: string;
+  list_style?: string;
+  allow_internet_search?: boolean;
+  mandatory_phrases?: string[];
+  
+  // Configurações de rodapé
+  mandatory_link?: boolean;
+  footer_message?: string;
+  main_link?: string;
+  uploaded_images?: string[];
+  
+  // Configurações de estilo e interação
+  response_speed?: number;
+  name_usage_frequency?: number;
+  ask_for_name?: boolean;
+  returning_user_greeting?: string;
+  response_time_promise?: string;
+
+  // Novos campos obrigatórios para configuração avançada
+  personality?: string;
+  behavior?: string;
+  style?: string;
+  interaction?: string;
+  footer?: string;
+}
 
 /**
- * Gera o system_message automaticamente baseado nos dados do chatbot
- * @param data - Dados do chatbot
+ * Gera o system_message automaticamente baseado nos dados do chatbot com valores padrão
+ * @param data - Dados do chatbot (ChatbotConfig)
  * @returns string - System message formatado
  */
-export function generateSystemMessage(data: ChatbotData): string {
+export function generateSystemMessage(data: ChatbotConfig): string {
+  // Aplicar valores padrão
+  const config = {
+    ...data,
+    personality: data.personality || "Profissional, empático e prestativo",
+    behavior: data.behavior || "Sempre busque entender a necessidade específica do usuário antes de responder. Seja claro e direto, mas mantenha um tom acolhedor",
+    style: data.style || "Comunicação clara e objetiva, evitando jargões técnicos desnecessários", 
+    interaction: data.interaction || "Faça uma pergunta por vez quando precisar de esclarecimentos. Use emojis moderadamente para humanizar a conversa",
+    footer: data.footer || "Posso ajudar com mais alguma coisa? 😊",
+    ask_for_name: data.ask_for_name !== undefined ? data.ask_for_name : true,
+    remember_context: data.remember_context !== undefined ? data.remember_context : true
+  };
+
   const sections: string[] = [];
 
   // Cabeçalho obrigatório
@@ -18,11 +77,11 @@ export function generateSystemMessage(data: ChatbotData): string {
 
   // 1. IDENTIDADE E BOAS VINDAS
   const identityItems: string[] = [];
-  if (data.chatbot_name?.trim()) {
-    identityItems.push(`- Seu nome é: ${data.chatbot_name}`);
+  if (config.chatbot_name?.trim()) {
+    identityItems.push(`- Seu nome é: ${config.chatbot_name}`);
   }
-  if (data.welcome_message?.trim()) {
-    identityItems.push(`- Use como mensagem de boas-vindas, onde conveniente: ${data.welcome_message}`);
+  if (config.welcome_message?.trim()) {
+    identityItems.push(`- Use como mensagem de boas-vindas, onde conveniente: ${config.welcome_message}`);
   }
 
   if (identityItems.length > 0) {
@@ -32,151 +91,152 @@ export function generateSystemMessage(data: ChatbotData): string {
   }
 
   // 2. INSTRUÇÕES GERAIS
-  if (data.system_instructions?.trim()) {
+  if (config.system_instructions?.trim()) {
     sections.push("2. INSTRUÇÕES GERAIS:");
     sections.push('""""');
-    sections.push(data.system_instructions);
+    sections.push(config.system_instructions);
     sections.push('""""');
     sections.push("");
   }
 
   // 3. PERSONALIDADE
+  sections.push("3. PERSONALIDADE:");
+  sections.push(`- Personalidade: ${config.personality}`);
+  
   const personalityItems: string[] = [];
-  if (data.formality_level !== undefined && data.formality_level !== null) {
-    personalityItems.push(`- Nível de Formalidade (0-100): ${data.formality_level}`);
+  if (config.formality_level !== undefined && config.formality_level !== null) {
+    personalityItems.push(`- Nível de Formalidade (0-100): ${config.formality_level}`);
   }
-  if (data.use_emojis !== undefined && data.use_emojis !== null) {
-    personalityItems.push(`- Uso de emojis nas mensagens: ${data.use_emojis ? 'Sim' : 'Não'}`);
+  if (config.use_emojis !== undefined && config.use_emojis !== null) {
+    personalityItems.push(`- Uso de emojis nas mensagens: ${config.use_emojis ? 'Sim' : 'Não'}`);
   }
-  if (data.paragraph_size !== undefined && data.paragraph_size !== null) {
-    personalityItems.push(`- Tamanho de parágrafos (0-100): ${data.paragraph_size}`);
+  if (config.paragraph_size !== undefined && config.paragraph_size !== null) {
+    personalityItems.push(`- Tamanho de parágrafos (0-100): ${config.paragraph_size}`);
   }
-
+  
   if (personalityItems.length > 0) {
-    sections.push("3. PERSONALIDADE:");
     sections.push(...personalityItems);
-    sections.push("");
   }
+  sections.push("");
 
   // 4. COMPORTAMENTO
+  sections.push("4. COMPORTAMENTO:");
+  sections.push(`- Comportamento Específico: ${config.behavior}`);
+  
   const behaviorItems: string[] = [];
-  if (data.main_topic?.trim()) {
-    behaviorItems.push(`- Tema principal: ${data.main_topic}`);
+  if (config.main_topic?.trim()) {
+    behaviorItems.push(`- Tema principal: ${config.main_topic}`);
   }
-  if (data.allowed_topics && data.allowed_topics.length > 0) {
-    behaviorItems.push(`- Temas permitidos: ${data.allowed_topics.join(', ')}`);
+  if (config.allowed_topics && config.allowed_topics.length > 0) {
+    behaviorItems.push(`- Temas permitidos: ${config.allowed_topics.join(', ')}`);
   }
-  if (data.source_strictness !== undefined && data.source_strictness !== null) {
-    behaviorItems.push(`- Rigidez nas fontes (0-100): ${data.source_strictness}`);
+  if (config.source_strictness !== undefined && config.source_strictness !== null) {
+    behaviorItems.push(`- Rigidez nas fontes (0-100): ${config.source_strictness}`);
   }
-  if (data.confidence_threshold !== undefined && data.confidence_threshold !== null) {
-    behaviorItems.push(`- Confiança mínima para resposta: ${data.confidence_threshold}%`);
+  if (config.confidence_threshold !== undefined && config.confidence_threshold !== null) {
+    behaviorItems.push(`- Confiança mínima para resposta: ${config.confidence_threshold}%`);
   }
-  if (data.fallback_action) {
-    const actionText = data.fallback_action === 'human' ? 'Encaminhar para humano' : 
-                       data.fallback_action === 'search' ? 'Buscar na internet' : 'Enviar link de ajuda';
+  if (config.fallback_action) {
+    const actionText = config.fallback_action === 'human' ? 'Encaminhar para humano' : 
+                       config.fallback_action === 'search' ? 'Buscar na internet' : 'Enviar link de ajuda';
     behaviorItems.push(`- Ação quando não souber responder: ${actionText}`);
   }
-  if (data.mandatory_phrases && data.mandatory_phrases.length > 0) {
-    behaviorItems.push(`- Frases obrigatórias (finalizações): ${data.mandatory_phrases.join(', ')}`);
+  if (config.mandatory_phrases && config.mandatory_phrases.length > 0) {
+    behaviorItems.push(`- Frases obrigatórias (finalizações): ${config.mandatory_phrases.join(', ')}`);
   }
-  if (data.fallback_message?.trim()) {
-    behaviorItems.push(`- Mensagem para encaminhamento: ${data.fallback_message}`);
+  if (config.fallback_message?.trim()) {
+    behaviorItems.push(`- Mensagem para encaminhamento: ${config.fallback_message}`);
   }
-  if (data.list_style) {
-    const styleText = data.list_style === 'numbered' ? 'Numerada' : 
-                      data.list_style === 'bullets' ? 'Marcadores' : 'Simples';
+  if (config.list_style) {
+    const styleText = config.list_style === 'numbered' ? 'Numerada' : 
+                      config.list_style === 'bullets' ? 'Marcadores' : 'Simples';
     behaviorItems.push(`- Estilo de listas: ${styleText}`);
   }
-  if (data.max_list_items !== undefined && data.max_list_items !== null) {
-    behaviorItems.push(`- Máximo de itens por lista: ${data.max_list_items}`);
-  }
-  if (data.allow_internet_search !== undefined && data.allow_internet_search !== null) {
-    behaviorItems.push(`- Permitir busca na internet: ${data.allow_internet_search ? 'Sim' : 'Não'}`);
+  if (config.allow_internet_search !== undefined && config.allow_internet_search !== null) {
+    behaviorItems.push(`- Permitir busca na internet: ${config.allow_internet_search ? 'Sim' : 'Não'}`);
   }
 
   if (behaviorItems.length > 0) {
-    sections.push("4. COMPORTAMENTO:");
     sections.push(...behaviorItems);
-    sections.push("");
   }
+  sections.push("");
 
-  // 5. RODAPÉ
+  // 5. ESTILO DE COMUNICAÇÃO
+  sections.push("5. ESTILO DE COMUNICAÇÃO:");
+  sections.push(`- Estilo: ${config.style}`);
+  
+  const styleItems: string[] = [];
+  if (config.response_speed !== undefined && config.response_speed !== null) {
+    styleItems.push(`- Velocidade de resposta (1-100): ${config.response_speed}`);
+  }
+  if (config.name_usage_frequency !== undefined && config.name_usage_frequency !== null) {
+    styleItems.push(`- Frequência de uso do nome (1-100): ${config.name_usage_frequency}`);
+  }
+  // Estes campos sempre terão valores devido aos padrões aplicados
+  styleItems.push(`- Solicitar o nome: ${config.ask_for_name ? 'Sim' : 'Não'}`);
+  styleItems.push(`- Lembrar contexto: ${config.remember_context ? 'Sim' : 'Não'}`);
+  if (config.returning_user_greeting?.trim()) {
+    styleItems.push(`- Saudação para usuários retornantes: ${config.returning_user_greeting}`);
+  }
+  
+  if (styleItems.length > 0) {
+    sections.push(...styleItems);
+  }
+  sections.push("");
+
+  // 6. FORMA DE INTERAÇÃO
+  sections.push("6. FORMA DE INTERAÇÃO:");
+  sections.push(`- Interação: ${config.interaction}`);
+  sections.push("");
+
+  // 7. RODAPÉ DAS MENSAGENS
+  sections.push("7. RODAPÉ DAS MENSAGENS:");
+  sections.push(`- Rodapé padrão: ${config.footer}`);
+  
   const footerItems: string[] = [];
-  if (data.footer_message?.trim()) {
-    footerItems.push(`- Rodapé das mensagens: ${data.footer_message}`);
+  if (config.footer_message?.trim()) {
+    footerItems.push(`- Rodapé adicional: ${config.footer_message}`);
   }
-  if (data.main_link?.trim()) {
-    footerItems.push(`- Link adicional para o rodapé: ${data.main_link}`);
+  if (config.main_link?.trim()) {
+    footerItems.push(`- Link adicional para o rodapé: ${config.main_link}`);
   }
-  if (data.mandatory_link !== undefined && data.mandatory_link !== null) {
-    footerItems.push(`- Link obrigatório nas respostas: ${data.mandatory_link ? 'Sim' : 'Não'}`);
+  if (config.mandatory_link !== undefined && config.mandatory_link !== null) {
+    footerItems.push(`- Link obrigatório nas respostas: ${config.mandatory_link ? 'Sim' : 'Não'}`);
   }
-  if (data.uploaded_images && data.uploaded_images.length > 0) {
-    footerItems.push(`- Imagens anexadas ao rodapé: ${data.uploaded_images.length} imagem(ns)`);
+  if (config.uploaded_images && config.uploaded_images.length > 0) {
+    footerItems.push(`- Imagens anexadas ao rodapé: ${config.uploaded_images.length} imagem(ns)`);
   }
 
   if (footerItems.length > 0) {
-    sections.push("5. RODAPÉ:");
     sections.push(...footerItems);
-    sections.push("");
   }
+  sections.push("");
 
-  // 6. ESTILO E INTERAÇÃO
-  const styleItems: string[] = [];
-  if (data.response_speed !== undefined && data.response_speed !== null) {
-    styleItems.push(`- Velocidade de resposta (1-100): ${data.response_speed}`);
-  }
-  if (data.name_usage_frequency !== undefined && data.name_usage_frequency !== null) {
-    styleItems.push(`- Frequência de uso do nome (1-100): ${data.name_usage_frequency}`);
-  }
-  if (data.ask_for_name !== undefined && data.ask_for_name !== null) {
-    styleItems.push(`- Solicitar o nome: ${data.ask_for_name ? 'Sim' : 'Não'}`);
-  }
-  if (data.remember_context !== undefined && data.remember_context !== null) {
-    styleItems.push(`- Lembrar contexto: ${data.remember_context ? 'Sim' : 'Não'}`);
-  }
-  if (data.auto_link !== undefined && data.auto_link !== null) {
-    styleItems.push(`- Auto-link (inclui links automaticamente): ${data.auto_link ? 'Sim' : 'Não'}`);
-  }
-  if (data.debug_mode !== undefined && data.debug_mode !== null) {
-    styleItems.push(`- Modo debug (mostra fontes das respostas): ${data.debug_mode ? 'Sim' : 'Não'}`);
-  }
-  if (data.returning_user_greeting?.trim()) {
-    styleItems.push(`- Saudação para usuários retornantes: ${data.returning_user_greeting}`);
-  }
-
-  if (styleItems.length > 0) {
-    sections.push("6. ESTILO E INTERAÇÃO:");
-    sections.push(...styleItems);
-    sections.push("");
-  }
-
-  // 7. INFORMAÇÕES DE CONTATO (se disponível)
+  // 8. INFORMAÇÕES DE CONTATO (se disponível)
   const contactItems: string[] = [];
-  if (data.office_address?.trim()) {
-    contactItems.push(`- Endereço do consultório: ${data.office_address}`);
+  if (config.office_address?.trim()) {
+    contactItems.push(`- Endereço do consultório: ${config.office_address}`);
   }
-  if (data.office_hours?.trim()) {
-    contactItems.push(`- Horário de funcionamento: ${data.office_hours}`);
+  if (config.office_hours?.trim()) {
+    contactItems.push(`- Horário de funcionamento: ${config.office_hours}`);
   }
-  if (data.specialties?.trim()) {
-    contactItems.push(`- Especialidades: ${data.specialties}`);
+  if (config.specialties?.trim()) {
+    contactItems.push(`- Especialidades: ${config.specialties}`);
   }
-  if (data.whatsapp?.trim()) {
-    contactItems.push(`- WhatsApp: ${data.whatsapp}`);
+  if (config.whatsapp?.trim()) {
+    contactItems.push(`- WhatsApp: ${config.whatsapp}`);
   }
 
   if (contactItems.length > 0) {
-    sections.push("7. INFORMAÇÕES DE CONTATO:");
+    sections.push("8. INFORMAÇÕES DE CONTATO:");
     sections.push(...contactItems);
     sections.push("");
   }
 
   // Adiciona instruções finais se houver promessa de resposta
-  if (data.response_time_promise?.trim()) {
+  if (config.response_time_promise?.trim()) {
     sections.push("IMPORTANTE:");
-    sections.push(`- Tempo de resposta prometido: ${data.response_time_promise}`);
+    sections.push(`- Tempo de resposta prometido: ${config.response_time_promise}`);
     sections.push("");
   }
 
@@ -188,7 +248,7 @@ export function generateSystemMessage(data: ChatbotData): string {
  * @param data - Dados do chatbot
  * @returns boolean - True se válido
  */
-export function validateChatbotData(data: ChatbotData): boolean {
+export function validateChatbotData(data: ChatbotConfig): boolean {
   // Pelo menos um campo deve estar preenchido além do system_message
   const hasContent = data.chatbot_name?.trim() || 
                     data.system_instructions?.trim() || 

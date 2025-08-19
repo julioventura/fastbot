@@ -54,6 +54,33 @@ interface ChatbotConfig {
   welcome_message: string;
   whatsapp: string;
   remember_context?: boolean; // 🧠 Campo que controla a memória
+
+  // Configurações de personalidade com valores padrão
+  formality_level?: number; // 0-100, padrão: 50
+  use_emojis?: boolean; // padrão: false
+  paragraph_size?: number; // 0-100, padrão: 20
+
+  // Configurações de comportamento com valores padrão
+  source_strictness?: number; // 0-100, padrão: 90
+  confidence_threshold?: number; // 0-100, padrão: 80
+  fallback_action?: string; // padrão: "human"
+  list_style?: string; // padrão: "bullets"
+  allow_internet_search?: boolean; // padrão: false
+
+  // Configurações de rodapé com valores padrão
+  mandatory_link?: boolean; // padrão: false
+
+  // Configurações de estilo e interação com valores padrão
+  response_speed?: number; // 1-100, padrão: 50
+  name_usage_frequency?: number; // 1-100, padrão: 30
+  ask_for_name?: boolean; // padrão: true
+
+  // Novos campos obrigatórios para configuração avançada
+  personality?: string; // padrão: "Profissional, empático e prestativo"
+  behavior?: string; // padrão: "Sempre busque entender a necessidade específica do usuário antes de responder. Seja claro e direto, mas mantenha um tom acolhedor"
+  style?: string; // padrão: "Comunicação clara e objetiva, evitando jargões técnicos desnecessários"
+  interaction?: string; // padrão: "Faça uma pergunta por vez quando precisar de esclarecimentos. Use emojis moderadamente para humanizar a conversa"
+  footer?: string; // padrão: "Posso ajudar com mais alguma coisa? 😊"
 }
 
 const MyChatbot = () => {
@@ -217,6 +244,124 @@ const MyChatbot = () => {
       logger.error('Erro inesperado ao buscar configuração:', error);
     }
   }, [user?.id, user?.email, logger]);
+
+  /**
+   * generateSystemMessage
+   * Gera o system_message final aplicando configurações padrão
+   */
+  const generateSystemMessage = (config: ChatbotConfig | null): string => {
+    // Valores padrão das configurações
+    const defaults = {
+      formality_level: 50,
+      use_emojis: false,
+      paragraph_size: 20,
+      source_strictness: 90,
+      confidence_threshold: 80,
+      fallback_action: "human",
+      list_style: "bullets",
+      allow_internet_search: false,
+      mandatory_link: false,
+      response_speed: 50,
+      name_usage_frequency: 30,
+      ask_for_name: true,
+      remember_context: true
+    };
+
+    // Aplicar valores padrão às configurações
+    const formalityLevel = config?.formality_level ?? defaults.formality_level;
+    const useEmojis = config?.use_emojis ?? defaults.use_emojis;
+    const paragraphSize = config?.paragraph_size ?? defaults.paragraph_size;
+    const sourceStrictness = config?.source_strictness ?? defaults.source_strictness;
+    const confidenceThreshold = config?.confidence_threshold ?? defaults.confidence_threshold;
+    const fallbackAction = config?.fallback_action ?? defaults.fallback_action;
+    const listStyle = config?.list_style ?? defaults.list_style;
+    const allowInternetSearch = config?.allow_internet_search ?? defaults.allow_internet_search;
+    const mandatoryLink = config?.mandatory_link ?? defaults.mandatory_link;
+    const responseSpeed = config?.response_speed ?? defaults.response_speed;
+    const nameUsageFrequency = config?.name_usage_frequency ?? defaults.name_usage_frequency;
+    const askForName = config?.ask_for_name ?? defaults.ask_for_name;
+    const rememberContext = config?.remember_context ?? defaults.remember_context;
+
+    // System message base
+    const baseMessage = config?.system_instructions ||
+      'Você é um assistente virtual profissional e prestativo.';
+
+    // Construir system message completo
+    let systemMessage = baseMessage + '\n\nCONFIGURAÇÕES DE COMPORTAMENTO:\n';
+
+    // 1. Personalidade
+    systemMessage += `- Nível de formalidade: ${formalityLevel}/100 (`;
+    if (formalityLevel <= 30) systemMessage += 'casual e descontraído';
+    else if (formalityLevel <= 70) systemMessage += 'equilibrado entre formal e casual';
+    else systemMessage += 'formal e profissional';
+    systemMessage += ')\n';
+
+    systemMessage += `- Uso de emojis: ${useEmojis ? 'Sim, use emojis adequados nas respostas' : 'Não use emojis nas respostas'}\n`;
+
+    systemMessage += `- Tamanho de parágrafos: ${paragraphSize}/100 (`;
+    if (paragraphSize <= 30) systemMessage += 'respostas concisas e diretas';
+    else if (paragraphSize <= 70) systemMessage += 'respostas de tamanho médio';
+    else systemMessage += 'respostas detalhadas e explicativas';
+    systemMessage += ')\n';
+
+    // 2. Comportamento
+    systemMessage += `- Rigidez nas fontes: ${sourceStrictness}/100 (`;
+    if (sourceStrictness >= 80) systemMessage += 'utilize APENAS informações dos documentos fornecidos';
+    else if (sourceStrictness >= 50) systemMessage += 'priorize documentos fornecidos, mas pode usar conhecimento geral';
+    else systemMessage += 'use conhecimento geral quando necessário';
+    systemMessage += ')\n';
+
+    systemMessage += `- Confiança mínima: ${confidenceThreshold}% (só responda se tiver pelo menos ${confidenceThreshold}% de certeza)\n`;
+
+    systemMessage += `- Ação quando não souber: `;
+    switch (fallbackAction) {
+      case 'human':
+        systemMessage += 'Encaminhe para atendimento humano dizendo "Vou transferir você para um atendente humano"\n';
+        break;
+      case 'search':
+        systemMessage += 'Faça uma busca mais ampla nos documentos\n';
+        break;
+      default:
+        systemMessage += 'Encaminhe para atendimento humano\n';
+    }
+
+    systemMessage += `- Estilo de listas: `;
+    switch (listStyle) {
+      case 'bullets':
+        systemMessage += 'Use listas com bullets (•)\n';
+        break;
+      case 'numbered':
+        systemMessage += 'Use listas numeradas (1., 2., 3.)\n';
+        break;
+      default:
+        systemMessage += 'Use listas simples sem marcadores\n';
+    }
+
+    systemMessage += `- Busca na internet: ${allowInternetSearch ? 'Permitida quando necessário' : 'Não permitida, use apenas documentos fornecidos'}\n`;
+
+    // 3. Interação
+    systemMessage += `- Velocidade de resposta: ${responseSpeed}/100 (`;
+    if (responseSpeed <= 30) systemMessage += 'responda de forma muito rápida e direta';
+    else if (responseSpeed <= 70) systemMessage += 'responda em velocidade normal';
+    else systemMessage += 'tome tempo para respostas mais elaboradas';
+    systemMessage += ')\n';
+
+    systemMessage += `- Frequência de uso do nome: ${nameUsageFrequency}/100 (`;
+    if (nameUsageFrequency <= 30) systemMessage += 'use o nome do usuário raramente';
+    else if (nameUsageFrequency <= 70) systemMessage += 'use o nome do usuário ocasionalmente';
+    else systemMessage += 'use o nome do usuário frequentemente';
+    systemMessage += ')\n';
+
+    systemMessage += `- Solicitar nome: ${askForName ? 'Sim, pergunte o nome do usuário se não souber' : 'Não solicite o nome do usuário'}\n`;
+    systemMessage += `- Lembrar contexto: ${rememberContext ? 'Sim, mantenha o contexto da conversa' : 'Não mantenha contexto entre mensagens'}\n`;
+
+    // 4. Rodapé
+    if (!mandatoryLink) {
+      systemMessage += '- Não inclua links obrigatórios nas respostas\n';
+    }
+
+    return systemMessage;
+  };
 
   /**
    * getPageContext
@@ -525,9 +670,8 @@ const MyChatbot = () => {
         console.log('   - Query não encontrou similaridade suficiente');
       }
 
-      // 3. Preparar system message personalizado
-      const systemMessage = chatbotConfig?.system_message ||
-        'Você é um assistente virtual profissional e prestativo.';
+      // 3. Preparar system message personalizado com configurações padrão aplicadas
+      const systemMessage = generateSystemMessage(chatbotConfig);
 
       console.log('📝 [MyChatbot] System message configurado:', systemMessage.substring(0, 100) + '...');
 
@@ -680,8 +824,7 @@ const MyChatbot = () => {
         });
 
         // Usar informações dos documentos para gerar resposta personalizada
-        const systemMessage = chatbotConfig?.system_instructions ||
-          `Você é um assistente virtual profissional. Use as informações dos documentos abaixo para responder de forma precisa e útil.`;
+        const systemMessage = generateSystemMessage(chatbotConfig);
 
         return generateContextualResponse(userMessage, vectorContext, systemMessage);
       }
@@ -1598,17 +1741,22 @@ const MyChatbot = () => {
           aria-label="Digite sua mensagem para o chatbot"
 
           onKeyDown={e => {
-            if (e.key === 'Enter' && !isLoading) {
+            // Só envia mensagem com Ctrl+Enter
+            if (e.key === 'Enter' && e.ctrlKey && !isLoading) {
               e.preventDefault(); // Previne comportamento padrão
               void handleSendMessage();
-              // 🎯 Manter foco após pressionar Enter
+              // 🎯 Manter foco após pressionar Ctrl+Enter
               setTimeout(() => {
                 inputRef.current?.focus();
               }, 100);
             }
+            // Para Enter simples ou Shift+Enter, apenas previne o comportamento padrão
+            else if (e.key === 'Enter') {
+              e.preventDefault();
+            }
           }}
 
-          placeholder={isLoading ? "Aguardando resposta..." : "Digite sua mensagem..."}
+          placeholder={isLoading ? "Aguardando resposta..." : "Digite sua mensagem... (Ctrl+Enter para enviar)"}
           disabled={isLoading}
           style={{
             flexGrow: 1,

@@ -169,7 +169,7 @@ const MyChatbotPage: React.FC = () => {
       // Generate system_message automatically based on filled data
       const generatedSystemMessage = validateChatbotData(chatbotData)
         ? generateSystemMessage(chatbotData)
-        : chatbotData.system_message;
+        : "Você é um chatbot assistente de IA e atende respondendo com as diretivas e dados desta instrução e dos arquivos anexados à base de dados.";
 
       const currentTimestamp = new Date().toISOString();
       const dataToSave = {
