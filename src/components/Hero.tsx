@@ -25,7 +25,7 @@ const Hero = () => {
 
   const slides = [
     {
-      image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
+      image: "https://dentistas.com.br/fastbot/fale_comigo_02.png",
       text: [
         "Crie a SUA",
         "atendente virtual",
@@ -61,7 +61,7 @@ const Hero = () => {
     //   ],
     // },
     {
-      image: "https://dentistas.com.br/fastbot/fale_comigo_02.png",
+      image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
       text: [
         "Crie o SEU",
         "CHATBOT DE I.A.",
@@ -85,11 +85,11 @@ const Hero = () => {
     setUseImageFallback(true);
   };
 
-  // Troca automática de slides a cada 3 segundos
+  // Troca automática de slides a cada 6 segundos
   React.useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 3000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [slides.length]);
 
