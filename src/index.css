@@ -439,6 +439,208 @@
     padding: 1rem 2rem !important;
     font-size: 1rem !important;
   }
+
+  /* Header mobile improvements */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Hero section mobile improvements */
+  .section-container {
+    padding: 1rem 1rem 2rem 1rem;
+  }
+
+  /* Mobile text adjustments */
+  h1, h2, h3 {
+    line-height: 1.2;
+  }
+
+  /* Button spacing on mobile */
+  .space-y-4 > * + * {
+    margin-top: 0.75rem;
+  }
+
+  .space-y-2 > * + * {
+    margin-top: 0.375rem;
+  }
+
+  /* Mobile-friendly font sizes */
+  .text-4xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  .text-5xl {
+    font-size: 2.25rem;
+    line-height: 2.75rem;
+  }
+
+  .text-6xl {
+    font-size: 2.75rem;
+    line-height: 3.25rem;
+  }
+
+  /* Hero buttons mobile adjustments */
+  .hero-cta-button,
+  .bg-gradient-to-r {
+    font-size: 0.875rem !important;
+    padding: 0.75rem 1.5rem !important;
+    line-height: 1.25rem;
+  }
+
+  /* Chatbot mobile improvements */
+  .neu-chatbot-minimized {
+    bottom: 1rem !important;
+    right: 1rem !important;
+  }
+
+  /* Chatbot container mobile adjustments */
+  .neu-chatbot-container {
+    border-radius: 1rem !important;
+  }
+
+  /* Mobile chatbot header */
+  .neu-chatbot-container > div:first-child {
+    padding: 0.5rem !important;
+  }
+
+  /* Mobile chatbot messages */
+  .chatbot-messages-container {
+    padding: 1rem !important;
+  }
+
+  /* Mobile chatbot input area */
+  .neu-chatbot-container > div:last-child {
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* MyChatbot page specific mobile improvements */
+  .space-y-6 > * + * {
+    margin-top: 1rem !important;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 0.75rem !important;
+  }
+
+  /* Card content mobile padding */
+  .p-6 {
+    padding: 0.75rem !important;
+  }
+
+  .p-3 {
+    padding: 0.5rem !important;
+  }
+
+  /* Textarea mobile height adjustments */
+  textarea {
+    min-height: 80px !important;
+  }
+
+  /* Button mobile adjustments */
+  .w-full {
+    width: 100% !important;
+  }
+
+  /* Input and textarea mobile font size */
+  input, textarea {
+    font-size: 14px !important;
+  }
+
+  /* Label mobile font size */
+  label {
+    font-size: 13px !important;
+  }
+
+  /* Badge mobile adjustments */
+  .text-xs {
+    font-size: 11px !important;
+  }
+
+  /* Upload area mobile adjustments */
+  .border-dashed {
+    min-height: 120px !important;
+  }
+
+  /* GPT-5 selo mobile positioning */
+  .gpt5-mobile {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .text-2xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .text-3xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .text-4xl {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+
+  /* Very small mobile - even more compact */
+  .hero-cta-button,
+  .bg-gradient-to-r {
+    font-size: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+
+  /* Container padding for very small screens */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .section-container {
+    padding: 0.75rem 0.75rem 1.5rem 0.75rem;
+  }
+
+  /* MyChatbot specific for very small screens */
+  .space-y-6 > * + * {
+    margin-top: 0.75rem !important;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 0.5rem !important;
+  }
+
+  .p-6, .p-3 {
+    padding: 0.5rem !important;
+  }
+
+  /* Button stack on very small screens */
+  .flex-col {
+    gap: 0.5rem !important;
+  }
+
+  /* Input/textarea even smaller on tiny screens */
+  input, textarea {
+    font-size: 12px !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Labels even smaller */
+  label {
+    font-size: 12px !important;
+  }
+
+  /* Upload area very compact */
+  .border-dashed {
+    min-height: 100px !important;
+    padding: 1rem !important;
+  }
 }
 
 /* Estilos específicos para bordas dos inputs no EditChatbotConfig */

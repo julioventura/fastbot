@@ -363,8 +363,8 @@ const MyChatbotPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto py-10 px-4 relative z-10">
-        <h1 className="text-center text-3xl md:text-4xl font-bold mb-8 gradient-text">Meu Chatbot</h1>
+      <div className="container mx-auto py-4 md:py-10 px-2 md:px-4 relative z-10">
+        <h1 className="text-center text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-8 gradient-text">Meu Chatbot</h1>
 
         {/* Botão para Preview do System Message */}
         <AdvancedEditChatbotConfig

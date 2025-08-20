@@ -33,42 +33,39 @@ export default function CTA() {
       {/* Elemento <section> principal com estilos de fundo e posicionamento relativo. */}
       {/* 'relative' é usado para posicionar o padrão de grade absoluto dentro dele. */}
       {/* 'min-h-screen flex items-center justify-center' para ocupar altura da tela e centralizar */}
-      <section className="relative min-h-screen flex items-center justify-center py-5 md:py-16 bg-theme-gradient">
+      <section className="relative min-h-screen flex items-center justify-center py-8 md:py-16 bg-theme-gradient">
 
         {/* Contêiner do Conteúdo Principal da Seção CTA */}
         {/* 'relative z-10' garante que este conteúdo fique acima do padrão de grade. */}
-        <div className="section-container relative z-10" id="cta-section">
+        <div className="section-container relative z-10 px-4 md:px-8" id="cta-section">
           {/* Contêiner para centralizar o texto e limitar a largura máxima. */}
           <div className="max-w-4xl mx-auto text-center">
             {/* Bloco de texto principal da CTA. */}
-            <div className="text-center mt-32 mb-12">
+            <div className="text-center mt-16 md:mt-32 mb-8 md:mb-12">
               {/* Título da CTA */}
-              <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
+              <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold mb-4 md:mb-6 text-foreground">
                 Pronto  <span className="text-theme-accent"> em </span> <span className="text-yellow-400">3 minutos!</span>
               </h2>
 
               {/* Descrição/Subtítulo da CTA */}
-              <p className="text-xl text-foreground font-bold max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-foreground font-bold max-w-3xl mx-auto">
                 É configurar... e usar!
               </p>
 
-
-
               {/* Imagem GPT-5 - Badge de destaque */}
-              <div className="flex justify-center my-6">
+              <div className="flex justify-center my-4 md:my-6">
                 <img
                   src="https://dentistas.com.br/fastbot/GPT-5.png"
                   alt="Powered by GPT-5"
-                  className="h-[280px] w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-700"
+                  className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-700"
                 />
               </div>
 
-
               {/* Botão de Chamada para Ação */}
-              <div className="mt-10">
+              <div className="mt-6 md:mt-10">
                 <Button
                   onClick={() => navigate('/account')}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg w-full md:w-auto"
                 >
                   COMECE JÁ O PLANO GRATUITO!
                 </Button>

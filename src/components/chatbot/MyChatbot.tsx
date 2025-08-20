@@ -1404,6 +1404,9 @@ const MyChatbot = () => {
    * Suporta dois modos visuais: alto-relevo ou baixo-relevo
    */
   const getChatbotStyle = () => {
+    // Verificar se está em dispositivo móvel
+    const isMobile = window.innerWidth < 768;
+
     // Estilos específicos para cada estado do chat (minimizado, normal, maximizado)
     // com suporte para os dois modos: alto-relevo (elevated) e baixo-relevo (carved)
 
@@ -1414,9 +1417,9 @@ const MyChatbot = () => {
           const baseMinimizedStyle = {
             ...commonChatbotStyles,
             bottom: `${16 + chatbotVerticalOffset}px`, // Posição base + offset do drag
-            right: '20px',
-            width: '64px',
-            height: '64px',
+            right: isMobile ? '16px' : '20px', // Ajuste para mobile
+            width: isMobile ? '56px' : '64px', // Menor no mobile
+            height: isMobile ? '56px' : '64px', // Menor no mobile
             alignItems: 'center',
             justifyContent: 'center',
             cursor: isDragging ? 'grabbing' : (hasDraggedDistance ? 'grab' : 'pointer'),
@@ -1434,11 +1437,11 @@ const MyChatbot = () => {
         case 'normal':
           return {
             ...commonChatbotStyles,
-            bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
-            right: `${20 + chatbotHorizontalOffset}px`, // Usa posição horizontal dinâmica
-            width: `${chatbotWidth}px`, // Usa largura dinâmica
-            height: '80vh',
-            maxHeight: '650px',
+            bottom: isMobile ? '16px' : '100px', // Ajuste para mobile
+            right: isMobile ? '16px' : `${20 + chatbotHorizontalOffset}px`, // Mobile fixo, desktop dinâmico
+            width: isMobile ? 'calc(100vw - 32px)' : `${chatbotWidth}px`, // Mobile full width com margem
+            height: isMobile ? '60vh' : '80vh', // Menor altura no mobile
+            maxHeight: isMobile ? '500px' : '650px', // Menor altura máxima no mobile
             background: chatbotBgColor,
             boxShadow: `0 20px 25px -5px ${chatbotShadowDark}, 0 8px 10px -6px ${chatbotShadowDark}, 0 0 0 1px rgba(255, 255, 255, 0.1)`,
             border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -1464,9 +1467,9 @@ const MyChatbot = () => {
           return {
             ...commonChatbotStyles,
             bottom: `${122 + chatbotVerticalOffset}px`, // Posição base + offset do drag
-            right: '20px',
-            width: '70px',
-            height: '70px',
+            right: isMobile ? '16px' : '20px', // Ajuste para mobile
+            width: isMobile ? '56px' : '70px', // Menor no mobile
+            height: isMobile ? '56px' : '70px', // Menor no mobile
             alignItems: 'center',
             justifyContent: 'center',
             cursor: isDragging ? 'grabbing' : (hasDraggedDistance ? 'grab' : 'pointer'),
@@ -1476,11 +1479,11 @@ const MyChatbot = () => {
         case 'normal':
           return {
             ...commonChatbotStyles,
-            bottom: '100px', // Mudado de 20px para 100px para ficar acima do footer
-            right: `${20 + chatbotHorizontalOffset}px`, // Usa posição horizontal dinâmica
-            width: `${chatbotWidth}px`, // Usa largura dinâmica
-            height: '80vh',
-            maxHeight: '650px',
+            bottom: isMobile ? '16px' : '100px', // Ajuste para mobile
+            right: isMobile ? '16px' : `${20 + chatbotHorizontalOffset}px`, // Mobile fixo, desktop dinâmico
+            width: isMobile ? 'calc(100vw - 32px)' : `${chatbotWidth}px`, // Mobile full width com margem
+            height: isMobile ? '60vh' : '80vh', // Menor altura no mobile
+            maxHeight: isMobile ? '500px' : '650px', // Menor altura máxima no mobile
             background: chatbotBgColor,
             boxShadow: `12px 12px 25px ${chatbotShadowDark}, -12px -12px 25px ${chatbotShadowLight}`,
           };
@@ -1630,7 +1633,7 @@ const MyChatbot = () => {
           className="neu-chatbot-minimized"
           title="Clique para abrir chatbot • Arraste para reposicionar"
         >
-          <Bot size={32} color={chatbotTextColor} />
+          <Bot size={window.innerWidth < 768 ? 24 : 32} color={chatbotTextColor} />
         </div>
       </>
     );

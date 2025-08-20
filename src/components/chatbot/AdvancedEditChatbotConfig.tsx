@@ -349,21 +349,21 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
 
         {/* Seção: Identidade do chatbot */}
-        <div className="space-y-6 border border-gray-600 rounded-lg p-6 bg-blue-950">
+        <div className="space-y-4 md:space-y-6 border border-gray-600 rounded-lg p-3 md:p-6 bg-blue-950">
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             {/* Coluna Esquerda */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Nome do Chatbot */}
               <div>
-                <Label htmlFor="chatbot_name">
+                <Label htmlFor="chatbot_name" className="text-sm md:text-base">
                   Nome do Chatbot <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="chatbot_name"
                   value={chatbotData.chatbot_name}
                   onChange={(e) => onChange("chatbot_name", e.target.value)}
-                  className="mt-2 edit-form-input"
+                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                   style={borderStyle}
                   placeholder="Ex: Assistente Virtual Dr. Silva"
                   required
@@ -372,7 +372,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
               {/* Saudação Personalizada */}
               <div>
-                <Label htmlFor="welcome_message">
+                <Label htmlFor="welcome_message" className="text-sm md:text-base">
                   Mensagem de Saudação
                 </Label>
                 <Textarea
@@ -381,19 +381,19 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   onChange={(e) =>
                     onChange("welcome_message", e.target.value)
                   }
-                  className="mt-2 edit-form-input"
+                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                   style={borderStyle}
-                  rows={8}
+                  rows={6}
                   placeholder="Olá! Sou o assistente virtual. Como posso ajudar?"
                 />
               </div>
             </div>
 
             {/* Coluna Direita */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* System Message */}
               <div>
-                <Label htmlFor="system_instructions">
+                <Label htmlFor="system_instructions" className="text-sm md:text-base">
                   Instruções Gerais{" "}
                 </Label>
                 <Textarea
@@ -402,9 +402,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   onChange={(e) =>
                     onChange("system_instructions", e.target.value)
                   }
-                  className="mt-2 edit-form-input"
+                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                   style={borderStyle}
-                  rows={13}
+                  rows={10}
                   placeholder="Você é um assistente virtual especializado em... Suas principais funções são..."
                 />
               </div>
@@ -415,14 +415,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
             {/* Temas Permitidos */}
             <div className="space-y-2">
-              <Label>Temas Permitidos</Label>
+              <Label className="text-sm md:text-base">Temas Permitidos</Label>
 
-              {/* Dividido em duas colunas */}
-              <div className="grid grid-cols-2 gap-6">
-                {/* Coluna Esquerda - Input e Botão */}
-                <div>
+              {/* Layout responsivo para mobile */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+                {/* Seção de Input - Full width no mobile */}
+                <div className="md:col-span-1">
                   {/* Input para adicionar temas */}
-                  <div className="space-y-4">
+                  <div className="space-y-2 md:space-y-4">
                     <div className="flex gap-2">
                       <Input
                         placeholder="Digite e pressione Enter para adicionar à lista"
@@ -439,7 +439,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                             }
                           }
                         }}
-                        className="edit-form-input"
+                        className="edit-form-input text-sm md:text-base"
                         style={borderStyle}
                       />
                       <Button
@@ -456,25 +456,26 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                             input.value = "";
                           }
                         }}
+                        className="flex-shrink-0"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3 h-3 md:w-4 md:h-4" />
                       </Button>
                     </div>
                   </div>
                 </div>
 
-                {/* Coluna Direita - Lista de temas como badges */}
-                <div>
+                {/* Lista de temas - Full width no mobile */}
+                <div className="md:col-span-1">
                   {(chatbotData.allowed_topics || []).length > 0 ? (
-                    <div className="flex flex-wrap gap-2 p-3 border border-gray-600 rounded-lg">
+                    <div className="flex flex-wrap gap-1 md:gap-2 p-2 md:p-3 border border-gray-600 rounded-lg">
                       {(chatbotData.allowed_topics || []).map(
                         (topic, index) => (
                           <Badge
                             key={index}
                             variant="secondary"
-                            className="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
+                            className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
                           >
-                            <span>{topic}</span>
+                            <span className="break-words">{topic}</span>
                             <div
                               className="cursor-pointer flex-shrink-0"
                               onClick={() => removeTopic(index)}
@@ -508,30 +509,35 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             variant="outline"
             onClick={onCancel}
             disabled={isSaving}
+            className="w-full md:w-auto text-sm md:text-base px-4 py-2"
           >
             Cancelar
           </Button>
 
-          <Button type="submit" disabled={isSaving}>
+          <Button
+            type="submit"
+            disabled={isSaving}
+            className="w-full md:w-auto text-sm md:text-base px-4 py-2"
+          >
             {isSaving ? "Salvando..." : "Salvar Configurações"}
           </Button>
         </div>
-        <div className="pt-6"></div>
-        <div className="mt-6 border border-gray-600 rounded-lg bg-blue-950">
+        <div className="pt-3 md:pt-6"></div>
+        <div className="mt-3 md:mt-6 border border-gray-600 rounded-lg bg-blue-950">
 
           {/* Base de Dados */}
           <Card className="bg-transparent border border-border backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center">Base de Dados</CardTitle>
-              <CardDescription>
+            <CardHeader className="p-3 md:p-6">
+              <CardTitle className="flex items-center text-lg md:text-xl">Base de Dados</CardTitle>
+              <CardDescription className="text-sm md:text-base">
                 Gerencie documentos e imagens para enriquecer as respostas do
                 chatbot
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-3 md:space-y-6 p-3 md:p-6">
 
               {/* Upload de Documentos */}
-              <div className="space-y-6 lg p-6">
+              <div className="space-y-3 md:space-y-6 lg p-2 md:p-6">
                 <DocumentUpload />
               </div>
 
@@ -591,9 +597,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </div> */}
 
         {/* Botões de Ação - Apenas no tab de Configuração */}
-        <div className="flex justify-between items-center pt-6">
+        <div className="flex justify-between items-center pt-3 md:pt-6">
           {/* Botões auxiliares */}
-          <div className="flex justify-center items-center w-full gap-5">
+          <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2 md:gap-5">
             <Button
               type="button"
               variant="outline"
@@ -602,7 +608,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               className={`${showSystemMessagePreview
                 ? 'bg-purple-900 text-white hover:bg-purple-900'
                 : 'hover:bg-purple-900'
-                } border border-purple-600 px-4 py-2 transition-colors`}
+                } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
             >
               {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
             </Button>
@@ -615,7 +621,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               className={`${showShortMemory
                 ? 'bg-purple-900 text-white hover:bg-purple-900'
                 : 'hover:bg-purple-900'
-                } border border-purple-600 px-4 py-2 transition-colors`}
+                } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
             >
               {showShortMemory ? 'Ocultar' : 'Visualizar'} histórico das conversas
             </Button>
@@ -626,12 +632,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
         {/* Preview do System Message */}
         {showSystemMessagePreview && (
-          <div className="mt-6 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
-            <h3 className="text-lg font-semibold ml-2 mb-3">Preview do System Message:</h3>
-            <p className="text-sm text-primary ml-2 mt-3 mb-6">
+          <div className="mt-3 md:mt-6 p-3 md:p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
+            <h3 className="text-base md:text-lg font-semibold ml-2 mb-3">Preview do System Message:</h3>
+            <p className="text-xs md:text-sm text-primary ml-2 mt-3 mb-6">
               Conteúdo automático para o "system_message" do chatbot.
             </p>
-            <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded border max-h-96 overflow-y-auto">
+            <pre className="whitespace-pre-wrap text-xs md:text-sm bg-muted p-3 md:p-4 rounded border max-h-64 md:max-h-96 overflow-y-auto">
               {systemMessagePreview}
             </pre>
           </div>

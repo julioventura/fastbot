@@ -60,18 +60,18 @@ const Hero = () => {
     //     ""
     //   ],
     // },
-    {
-      image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
-      text: [
-        "Crie o SEU",
-        "CHATBOT DE I.A.",
-        "em 3 minutos!",
-        "",
-        "",
-        "",
-        ""
-      ],
-    },
+    // {
+    //   image: "https://dentistas.com.br/fastbot/avatar-estou-ocupada.png",
+    //   text: [
+    //     "Crie o SEU",
+    //     "CHATBOT DE I.A.",
+    //     "em 3 minutos!",
+    //     "",
+    //     "",
+    //     "",
+    //     ""
+    //   ],
+    // },
   ];
 
   // Determina qual imagem usar - agora sempre usa a mesma imagem
@@ -165,43 +165,59 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-primary/5"></div>
 
         {/* Container principal ocupando toda a altura disponível */}
-        <div className="container relative z-10 mx-auto px-8 w-full">
-          <div className="grid lg:grid-cols-5 gap-4 lg:gap-4 items-center h-screen max-h-screen">
+        <div className="container relative z-10 mx-auto px-4 md:px-8 w-full">
+          <div className="grid lg:grid-cols-5 gap-4 lg:gap-4 items-center md:min-h-screen">
 
             {/* Coluna do texto - lado esquerdo) */}
             <div className="lg:col-span-3 flex flex-col justify-center space-y-8 py-0">
 
-              {/* Título Principal */}
-              <div className="space-y-2 ml-10">
-                {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-yellow-400">
-                  {slides[currentSlide].text[0] || ""}
-                </span>
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
-                  {slides[currentSlide].text[1] || ""}
-                </span>
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-yellow-400">
-                  {slides[currentSlide].text[2] || ""}
-                </span>
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white">
-                  {slides[currentSlide].text[3] || ""}
-                </span>
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-red-500">
-                  {slides[currentSlide].text[4] || ""}
-                </span>
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-green-700">
-                  {slides[currentSlide].text[5] || ""}
-                </span>
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-primary">
-                  {slides[currentSlide].text[6] || ""}
-                </span>
+              {/* Container flex para título e selo GPT-5 no mobile */}
+              <div className="flex flex-col lg:block relative">
+                {/* Container flex horizontal para mobile - lado a lado */}
+                <div className="flex flex-row items-start lg:block gap-2">
+
+                  {/* Título Principal */}
+                  <div className="space-y-2 mt-4 md:mt-0 md:space-y-2 ml-2 md:ml-10 flex-1">
+                    {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-yellow-400">
+                      {slides[currentSlide].text[0] || ""}
+                    </span>
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-white">
+                      {slides[currentSlide].text[1] || ""}
+                    </span>
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-yellow-400">
+                      {slides[currentSlide].text[2] || ""}
+                    </span>
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-white">
+                      {slides[currentSlide].text[3] || ""}
+                    </span>
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-red-500">
+                      {slides[currentSlide].text[4] || ""}
+                    </span>
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-green-700">
+                      {slides[currentSlide].text[5] || ""}
+                    </span>
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-primary">
+                      {slides[currentSlide].text[6] || ""}
+                    </span>
+                  </div>
+
+                  {/* Selo GPT-5 - mobile: lado direito maior, desktop: centralizado depois */}
+                  <div className="flex justify-center items-start lg:justify-center mt-0 pt-0 lg:mt-6 mr-2 lg:mr-0">
+                    <img
+                      src="https://dentistas.com.br/fastbot/GPT-5.png"
+                      alt="Powered by GPT-5"
+                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-700"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Botão CTA */}
               <div>
 
                 {/* BADGE DE DESTAQUE 1 */}
-                <div className="flex flex-row gap-1 ml-10 mb-4">
+                <div className="flex flex-row gap-1 justify-center md:justify-start ml-0 md:ml-2 lg:ml-10 mb-2 md:mb-4">
                   <Button
                     onClick={() => {
                       // Scroll suave até o componente Pricing
@@ -213,14 +229,14 @@ const Hero = () => {
                         });
                       }
                     }}
-                    className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                    className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-4 md:px-8 py-2 md:py-4 rounded-full text-sm md:text-xl lg:text-2xl font-semibold flex items-center gap-2 md:gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                   >
                     <span>ATENDE NO WHATSAPP...</span>
                   </Button>
                 </div>
 
                 {/* BADGE DE DESTAQUE 2 */}
-                <div className="flex flex-row gap-1 ml-10 mb-4">
+                <div className="flex flex-row gap-1 justify-center md:justify-start ml-0 md:ml-2 lg:ml-10 mb-2 md:mb-4">
                   <Button
                     onClick={() => {
                       // Scroll suave até o componente Pricing
@@ -232,54 +248,32 @@ const Hero = () => {
                         });
                       }
                     }}
-                    className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                    className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-4 md:px-8 py-2 md:py-4 rounded-full text-sm md:text-xl lg:text-2xl font-semibold flex items-center gap-2 md:gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                   >
                     <span>ATENDE NO INSTAGRAM...</span>
                   </Button>
                 </div>
 
-                {/* BADGE DE DESTAQUE 3 */}
-                {/* <div className="flex flex-row gap-1 ml-10 mb-4">
-                  <Button
-                    onClick={() => {
-                      // Scroll suave até o componente Pricing
-                      const pricingElement = document.getElementById('pricing');
-                      if (pricingElement) {
-                        pricingElement.scrollIntoView({
-                          behavior: 'smooth',
-                          block: 'start'
-                        });
-                      }
-                    }}
-                    className="hero-cta-button-blue bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-full text-2xl font-semibold flex items-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                  >
-                    <span>ATENDE NO GMAIL...</span>
-                  </Button>
+                {/* <div className="ml-2 md:ml-10">
+                  <span className="block md:inline">ATENDIMENTO 24H</span>{" "}
+                  <span className="text-red-600 block md:inline"> com </span>
+                  <span className="text-yellow-400 block md:inline">Inteligência Artificial!</span>
                 </div> */}
-
-                {/* Não tem site? */}
-                <div className="flex flex-row gap-1 ml-10">
-                  <Button
-                    className="bg-transparent py-4 mt-4 text-blue-400 text-2xl italic font-bold transform hover:scale-105 hover:bg-transparent transition-all duration-300 leading-[140%] text-left"
-                  >
-                    ATENDIMENTO 24H <span className="text-red-600"> com </span> <span className="text-yellow-400">Inteligência Artificial!</span><br />
-                  </Button>
-                </div>
 
               </div>
 
             </div>
 
             {/* Coluna da imagem - lado direito */}
-            <div className="lg:col-span-2 flex justify-center lg:justify-end items-stretch h-full">
-              <div className="relative w-full h-full flex items-center justify-center lg:justify-end">
+            <div className="lg:col-span-2 flex justify-center lg:justify-end items-center order-last">
+              <div className="relative w-full h-[40vh] md:h-[60vh] lg:h-full flex items-center justify-center lg:justify-end">
                 {/* Container da imagem otimizado para altura completa - sem animação */}
-                <div className="relative h-[85vh] lg:h-[65vh] w-auto max-w-full">
+                <div className="relative h-full w-auto max-w-full">
                   {/* Imagem da Fastbot - altura completa, largura automática - FIXA sem movimento */}
                   <img
                     src={slides[currentSlide].image}
                     alt="Fastbot - Assistente Virtual Profissional da Saúde"
-                    className="h-full w-auto object-contain object-center lg:object-right mr-20 rounded-[2rem]"
+                    className="h-full w-auto object-contain object-center lg:object-right mr-0 lg:mr-20 rounded-[2rem]"
                     onError={handleImageError}
                   />
 

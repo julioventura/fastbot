@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, MessageSquare, ChevronDown, Home } from 'lucide-react';
+import { User, LogOut, MessageSquare, ChevronDown, Home, Menu, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const useScrollDirection = () => {
@@ -42,10 +42,11 @@ const Header = () => {
   // true = header sempre fixo no topo
   // false = header se esconde quando rola para baixo
   const header_fixo = false;
-  
+
   const scrollDirection = useScrollDirection();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "reset">("login");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut, loading: authLoading } = useAuth();
   const [userName, setUserName] = useState("");
 
@@ -98,59 +99,56 @@ const Header = () => {
   };
 
   return (
-    <header className={`header-modern sticky top-0 z-50 shadow-sm bg-background/95 backdrop-blur-md border-b border-border ${
-      header_fixo 
+    <header className={`header-modern sticky top-0 z-50 shadow-sm bg-background/95 backdrop-blur-md border-b border-border ${header_fixo
         ? '' // Header fixo - sem animação de transform
         : `transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"}` // Header com auto-hide
-    }`}>
-      
+      }`}>
+
       <div className="container mx-auto px-4 h-16 md:h-20">
         <div className="flex items-center justify-between h-full">
-          
+
           {/* Logo Section */}
           <div className="flex items-center">
             <NavLink to="/" className="flex items-center space-x-2 group">
               <div>
-                <span className="text-sm text-primary/90 font-bold -mt-1">
+                <span className="text-xs md:text-sm text-primary/90 font-bold -mt-1">
                   Dentistas.com.br /&nbsp;
                 </span>
-                <span className="text-xl md:text-xl font-black text-primary group-hover:text-primary/95 transition-colors">
+                <span className="text-lg md:text-xl font-black text-primary group-hover:text-primary/95 transition-colors">
                   Fastbot
                 </span>
               </div>
             </NavLink>
           </div>
 
-          {/* Navigation Menu - Center */}
+          {/* Navigation Menu - Center - Desktop Only */}
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink
               to="/"
-              className={({ isActive }) => 
-                `transition-all duration-300 text-base leading-none flex items-center ${
-                  isActive 
-                    ? "text-white nav-active-item" 
-                    : "text-muted-foreground hover:text-primary font-medium"
+              className={({ isActive }) =>
+                `transition-all duration-300 text-base leading-none flex items-center ${isActive
+                  ? "text-white nav-active-item"
+                  : "text-muted-foreground hover:text-primary font-medium"
                 }`
               }
-              style={({ isActive }) => 
+              style={({ isActive }) =>
                 isActive ? { fontWeight: '950' } : {}
               }
             >
               Início
             </NavLink>
-            
+
             {user && (
               <>
                 <NavLink
                   to="/account"
-                  className={({ isActive }) => 
-                    `transition-all duration-300 text-base leading-none flex items-center ${
-                      isActive 
-                        ? "text-white nav-active-item" 
-                        : "text-muted-foreground hover:text-primary font-medium"
+                  className={({ isActive }) =>
+                    `transition-all duration-300 text-base leading-none flex items-center ${isActive
+                      ? "text-white nav-active-item"
+                      : "text-muted-foreground hover:text-primary font-medium"
                     }`
                   }
-                  style={({ isActive }) => 
+                  style={({ isActive }) =>
                     isActive ? { fontWeight: '950' } : {}
                   }
                 >
@@ -158,14 +156,13 @@ const Header = () => {
                 </NavLink>
                 <NavLink
                   to="/my-chatbot"
-                  className={({ isActive }) => 
-                    `transition-all duration-300 text-base leading-none flex items-center ${
-                      isActive 
-                        ? "text-white nav-active-item" 
-                        : "text-muted-foreground hover:text-primary font-medium"
+                  className={({ isActive }) =>
+                    `transition-all duration-300 text-base leading-none flex items-center ${isActive
+                      ? "text-white nav-active-item"
+                      : "text-muted-foreground hover:text-primary font-medium"
                     }`
                   }
-                  style={({ isActive }) => 
+                  style={({ isActive }) =>
                     isActive ? { fontWeight: '950' } : {}
                   }
                 >
@@ -175,9 +172,21 @@ const Header = () => {
             )}
           </nav>
 
-          {/* Auth Section */}
-          <div className="flex items-center space-x-4">
-            
+          {/* Mobile Menu Button - Mobile Only */}
+          <div className="md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-muted-foreground hover:text-primary hover:bg-primary/10"
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
+
+          {/* Auth Section - Desktop Only */}
+          <div className="hidden md:flex items-center space-x-4">
+
             {authLoading ? (
               <div className="text-muted-foreground text-sm">Carregando...</div>
             ) : !user ? (
@@ -207,12 +216,12 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground hover:text-primary hover:bg-primary/10">
                     <User className="h-4 w-4" />
-                    <span className="hidden md:inline">{userName || user.email}</span>
+                    <span className="hidden lg:inline">{userName || user.email}</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg">
-                  
+
                   <DropdownMenuItem asChild>
                     <NavLink to="/" className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-blue-950 hover:text-blue-400">
                       <Home className="h-4 w-4" />
@@ -250,6 +259,105 @@ const Header = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile Menu - Mobile Only */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border shadow-lg">
+            <div className="container mx-auto px-4 py-4 space-y-4">
+
+              {/* Navigation Links */}
+              <div className="space-y-2">
+                <NavLink
+                  to="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `block py-2 px-4 rounded-lg transition-all duration-300 ${isActive
+                      ? "bg-primary/20 text-primary font-bold"
+                      : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                    }`
+                  }
+                >
+                  Início
+                </NavLink>
+
+                {user && (
+                  <>
+                    <NavLink
+                      to="/account"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `block py-2 px-4 rounded-lg transition-all duration-300 ${isActive
+                          ? "bg-primary/20 text-primary font-bold"
+                          : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        }`
+                      }
+                    >
+                      Minha Conta
+                    </NavLink>
+                    <NavLink
+                      to="/my-chatbot"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `block py-2 px-4 rounded-lg transition-all duration-300 ${isActive
+                          ? "bg-primary/20 text-primary font-bold"
+                          : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        }`
+                      }
+                    >
+                      Meu Chatbot
+                    </NavLink>
+                  </>
+                )}
+              </div>
+
+              {/* Auth Buttons */}
+              <div className="border-t border-border pt-4 space-y-2">
+                {!user ? (
+                  <>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setAuthModalTab("login");
+                        setIsAuthModalOpen(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start text-muted-foreground hover:text-primary hover:bg-primary/10"
+                    >
+                      Entrar
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setAuthModalTab("signup");
+                        setIsAuthModalOpen(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-medium"
+                    >
+                      Cadastre-se GRÁTIS
+                    </Button>
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="px-4 py-2 text-sm text-muted-foreground border-b border-border">
+                      {userName || user.email}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        handleSignOut();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50/10"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sair
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Auth Modal */}

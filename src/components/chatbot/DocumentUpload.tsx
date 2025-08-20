@@ -617,37 +617,37 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     <div className="space-y-6">
       {/* Upload Area */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="w-5 h-5" />
+        <CardHeader className="p-3 md:p-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <Upload className="w-4 h-4 md:w-5 md:h-5" />
             Upload de Documentos
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 md:p-6">
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${isDragActive
+            className={`border-2 border-dashed rounded-lg p-4 md:p-8 text-center cursor-pointer transition-colors ${isDragActive
               ? "border-primary bg-primary/10"
               : "border-gray-300 hover:border-primary"
               } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <input {...getInputProps()} />
             {isUploading ? (
-              <RefreshCw className="w-16 h-16 mx-auto mb-4 text-blue-500 animate-spin" />
+              <RefreshCw className="w-8 h-8 md:w-16 md:h-16 mx-auto mb-2 md:mb-4 text-blue-500 animate-spin" />
             ) : (
-              <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+              <Upload className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-4 text-gray-400" />
             )}
             {isDragActive ? (
-              <p>Solte os arquivos aqui...</p>
+              <p className="text-sm md:text-base">Solte os arquivos aqui...</p>
             ) : (
               <div>
                 {isUploading ? (
-                  <div className="space-y-3">
-                    <p className="text-2xl font-bold text-blue-500">CARREGANDO...</p>
-                    <p className="text-lg text-blue-400">Processando seu arquivo, aguarde...</p>
+                  <div className="space-y-2 md:space-y-3">
+                    <p className="text-lg md:text-2xl font-bold text-blue-500">CARREGANDO...</p>
+                    <p className="text-sm md:text-lg text-blue-400">Processando seu arquivo, aguarde...</p>
                   </div>
                 ) : (
-                  <Button variant="outline" disabled={isUploading} className="text-yellow-500">
+                  <Button variant="outline" disabled={isUploading} className="text-yellow-500 text-xs md:text-sm px-3 md:px-4 py-2">
                     Arraste arquivos .txt ou clique para selecionar
                   </Button>
                 )}
@@ -660,12 +660,12 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       {/* Documents List */}
       {documents.length > 0 && (
         <Card>
-          <CardHeader>
+          <CardHeader className="p-3 md:p-6">
             <CardTitle>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <File className="w-5 h-5" />
-                  Documentos Enviados ({documents.length})
+                  <File className="w-4 h-4 md:w-5 md:h-5" />
+                  <span className="text-sm md:text-base">Documentos Enviados ({documents.length})</span>
                 </div>
 
                 {/* Botão de recolher/expandir */}
