@@ -23,14 +23,16 @@ export default function CTA() {
 
   return (
     <>
-      {/* CSS personalizado para rotação de 360 graus */}
+      {/* CSS personalizado para rotação automática e glow no hover */}
       <style>{`
-        .hover-rotate-360:hover {
-          transform: rotate(360deg);
+        .hover-glow-yellow:hover {
+          filter: drop-shadow(0 0 20px #fbbf24) drop-shadow(0 0 40px #f59e0b) drop-shadow(0 0 60px #f59e0b);
+          transform: scale(1.05);
         }
         
         .auto-rotate-360 {
           animation: autoRotate360 5s linear infinite;
+          transition: filter 0.3s ease, transform 0.3s ease;
         }
         
         @keyframes autoRotate360 {
@@ -58,8 +60,8 @@ export default function CTA() {
               </h2>
 
               {/* Descrição/Subtítulo da CTA */}
-              <p className="text-xl md:text-2xl text-foreground font-bold max-w-3xl mx-auto">
-                É só configurar... e usar!
+              <p className="italic text-xl md:text-2xl text-foreground font-bold max-w-3xl mx-auto">
+                É só configurar... e USAR !
               </p>
 
               {/* Imagem GPT-5 - Badge de destaque */}
@@ -67,7 +69,7 @@ export default function CTA() {
                 <img
                   src="https://dentistas.com.br/fastbot/GPT-5.png"
                   alt="Powered by GPT-5"
-                  className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 auto-rotate-360 transition-all duration-700"
+                  className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover-glow-yellow auto-rotate-360 cursor-pointer"
                 />
               </div>
 
@@ -77,7 +79,7 @@ export default function CTA() {
                   onClick={() => navigate('/account')}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg w-full md:w-auto"
                 >
-                  COMECE JÁ GRÁTIS!
+                  CRIAR SEU ASSISTENTE DE IA
                 </Button>
               </div>
 
