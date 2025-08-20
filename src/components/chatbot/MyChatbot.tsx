@@ -1740,10 +1740,10 @@ const MyChatbot = () => {
       {/* Área de Mensagens - Container de histórico da conversa */}
       <div
         className="chatbot-messages-container"
-        style={{ 
-          flexGrow: 1, 
-          overflowY: 'auto', 
-          padding: '20px', 
+        style={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          padding: '20px',
           background: chatbotBgColor,
           scrollbarWidth: 'none', /* Firefox */
           msOverflowStyle: 'none', /* IE 10+ */
