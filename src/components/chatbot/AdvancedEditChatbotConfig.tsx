@@ -617,7 +617,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 : 'hover:bg-purple-900'
                 } border border-purple-600 px-4 py-2 transition-colors`}
             >
-              {showShortMemory ? 'Ocultar' : 'Visualizar'} Memória Recente
+              {showShortMemory ? 'Ocultar' : 'Visualizar'} histórico das conversas
             </Button>
           </div>
 
@@ -640,9 +640,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         {/* Seção Memória Recente */}
         {showShortMemory && (
           <div className="mt-6 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
-            <h3 className="text-lg font-semibold ml-2 mb-3">Memória Recente:</h3>
+            <h3 className="text-lg font-semibold ml-2 mb-3">Histórico das conversas</h3>
             <p className="text-sm text-primary ml-2 mt-3 mb-6">
-              Visualize o contexto de conversa recente armazenado no navegador.
+              Reveja suas conversas.
             </p>
 
             {/* Estatísticas da Short-Memory */}
@@ -727,14 +727,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   onClick={() => setShowingSupabaseMemory(prev => !prev)}
                   className="flex items-center gap-2 px-3 py-1 rounded-md border transition-colors"
                   style={{
-                    backgroundColor: showingSupabaseMemory ? '#1e293b' : '#1e40af',
-                    borderColor: showingSupabaseMemory ? '#64748b' : '#3b82f6',
-                    color: showingSupabaseMemory ? '#94a3b8' : '#dbeafe'
+                    backgroundColor: showingSupabaseMemory ? '#1e40af' : '#0F8F0F',
+                    borderColor: showingSupabaseMemory ? '#3b82f6' : '#00C000',
+                    color: showingSupabaseMemory ? '#ffffff' : '#ffffff'
                   }}
-                  title={showingSupabaseMemory ? "Ver memória recente" : "Ver conversas salvas"}
+                  title={showingSupabaseMemory ? "Ver memória recente" : "Ver conversas antigas"}
                 >
                   <span className="text-sm">
-                    {showingSupabaseMemory ? 'Conversas salvas' : 'Memória recente'}
+                    {showingSupabaseMemory ? 'Conversas antigas' : 'Conversa recente'}
                   </span>
                 </button>
 
@@ -765,7 +765,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 </div>
               )}
 
-              {/* Lista da short-memory */}
+              {/* Lista das mensagens */}
+
               {/* Exibição condicional: Short-Memory ou Supabase */}
               {showingSupabaseMemory ? (
                 // Mensagens do Supabase
@@ -821,10 +822,11 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     <div className="text-sm text-center text-green-400 mb-3 pb-2 border-b border-gray-600">
                       Short-Memory (Últimas 20 mensagens mais recentes)
                     </div>
-                    {shortMemoryData.slice(-20).map((message, index) => {
-                      // Calcular o número real da mensagem na lista completa
-                      const realIndex = shortMemoryData.length - 20 + index + 1;
-                      const displayIndex = realIndex > 0 ? realIndex : index + 1;
+                    {shortMemoryData.slice(-20).reverse().map((message, index) => {
+                      // Calcular o número real da mensagem na lista completa (ajustado para ordem reversa)
+                      const totalMessages = shortMemoryData.length;
+                      const displayIndex = totalMessages - index;
+                      const realIndex = totalMessages >= 20 ? (totalMessages - index) : (totalMessages - index);
 
                       return (
                         <div
@@ -837,14 +839,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0">
                               {message.role === 'user' ? (
-                                <User className="w-4 h-4 text-gray-500" />
+                                <User className="w-4 h-4 text-green-500" />
                               ) : (
-                                <Bot className="w-4 h-4 text-gray-400" />
+                                <Bot className="w-4 h-4 text-green-400" />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className={`text-sm font-medium ${message.role === 'user' ? 'text-gray-400' : 'text-gray-300'
+                                <span className={`text-sm font-medium ${message.role === 'user' ? 'text-green-400' : 'text-green-300'
                                   }`}>
                                   {message.role === 'user' ? 'Usuário' : 'Assistente'}
                                 </span>
@@ -862,7 +864,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     })}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="border border-gray-600 text-center py-8 text-gray-500 rounded-lg">
                     <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-600" />
                     <p>Nenhuma mensagem na memória recente</p>
                     <p className="text-xs mt-1">Inicie uma conversa no chatbot para ver as mensagens aqui</p>
@@ -875,7 +877,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             {/* Controles da Short-Memory */}
             <div className="flex gap-3 my-6">
 
-              <Button
+              {/* <Button
                 type="button"
                 variant="outline"
                 size="sm"
@@ -883,14 +885,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 className="flex items-center gap-2" >
                 <RefreshCw className="w-4 h-4" />
                 Recarregar
-              </Button>
+              </Button> */}
 
               <Button
                 type="button"
                 variant="destructive"
                 size="sm"
                 onClick={() => setShowClearConfirmation(true)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-red-500 bg-red-900 hover:border-red-400 hover:bg-red-950"
                 disabled={shortMemoryStats.totalMessages === 0 || shortMemoryLoading} >
                 <Trash2 className="w-4 h-4" />
                 Limpar Memória
@@ -991,7 +993,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </Button>
               <Button
                 type="button"
-                variant="destructive"
+                variant="outline"
                 onClick={handleClearMemory}
                 className="flex items-center gap-2"
               >
