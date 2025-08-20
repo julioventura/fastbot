@@ -3,6 +3,7 @@
 ## 📋 Funcionalidades Implementadas
 
 ### 1. ✅ **Controle de Autenticação**
+
 ```tsx
 // Chatbot só aparece para usuários logados
 if (!user) {
@@ -12,7 +13,8 @@ if (!user) {
 
 ### 2. ✅ **Ocultação de Barras de Rolagem**
 
-#### CSS Global (index.css):
+#### CSS Global (index.css)
+
 ```css
 html, body, * {
   scrollbar-width: none !important;
@@ -26,7 +28,8 @@ html, body, * {
 }
 ```
 
-#### CSS Específico do Chatbot:
+#### CSS Específico do Chatbot
+
 ```css
 .chatbot-messages-container::-webkit-scrollbar {
   display: none !important;
@@ -34,13 +37,15 @@ html, body, * {
 ```
 
 ### 3. ✅ **Estados do Chatbot**
+
 - **Minimizado**: Botão 64x64px arrastável verticalmente
 - **Normal**: Janela 300-800px redimensionável e movível
 - **Maximizado**: Tela cheia completa
 
 ### 4. ✅ **Controles Físicos**
 
-#### Movimento Vertical (Minimizado):
+#### Movimento Vertical (Minimizado)
+
 ```tsx
 const handleMouseMove = useCallback((e: MouseEvent) => {
   const deltaY = dragStartY - e.clientY;
@@ -49,7 +54,8 @@ const handleMouseMove = useCallback((e: MouseEvent) => {
 }, [isDragging, dragStartY]);
 ```
 
-#### Redimensionamento (Normal):
+#### Redimensionamento (Normal)
+
 ```tsx
 const handleResizeMouseMove = useCallback((e: MouseEvent) => {
   const deltaX = dragStartX - e.clientX;
@@ -58,7 +64,8 @@ const handleResizeMouseMove = useCallback((e: MouseEvent) => {
 }, [isResizing, dragStartX, chatbotWidth]);
 ```
 
-#### Movimento Lateral (Normal):
+#### Movimento Lateral (Normal)
+
 ```tsx
 const handleMoveMouseMove = useCallback((e: MouseEvent) => {
   const deltaX = e.clientX - moveStartX;
@@ -69,7 +76,8 @@ const handleMoveMouseMove = useCallback((e: MouseEvent) => {
 
 ## 🎨 Implementação Visual
 
-### Estados Dinâmicos:
+### Estados Dinâmicos
+
 ```tsx
 const getChatbotStyle = () => {
   switch (chatState) {
@@ -91,7 +99,8 @@ const getChatbotStyle = () => {
 };
 ```
 
-### Event Listeners Globais:
+### Event Listeners Globais
+
 ```tsx
 useEffect(() => {
   if (isDragging) {
@@ -110,28 +119,33 @@ useEffect(() => {
 ## 🔧 Checklist de Implementação
 
 ### ✅ Autenticação
+
 - [ ] Hook useAuth implementado
 - [ ] Verificação de usuário logado
 - [ ] Return null quando não logado
 
 ### ✅ Scrollbars
+
 - [ ] CSS global no index.css
 - [ ] CSS específico do chatbot
 - [ ] Estilos inline de backup
 - [ ] Teste em todos os navegadores
 
 ### ✅ Estados
+
 - [ ] ChatState type definido
 - [ ] getChatbotStyle implementado
 - [ ] Transições suaves entre estados
 
 ### ✅ Controles Físicos
+
 - [ ] Drag vertical (minimizado)
 - [ ] Resize horizontal (normal)
 - [ ] Move lateral (normal)
 - [ ] Validação de limites
 
 ### ✅ Event Listeners
+
 - [ ] Mouse events globais
 - [ ] Cleanup adequado
 - [ ] Cursor feedback visual

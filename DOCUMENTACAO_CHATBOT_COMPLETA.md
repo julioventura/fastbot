@@ -9,22 +9,26 @@ Esta documentação descreve uma implementação completa de um sistema de chatb
 ## 🔧 Funcionalidades Implementadas
 
 ### 1. ✅ **Controle de Visibilidade Baseado em Autenticação**
+
 - Chatbot só aparece para usuários logados
 - Proteção contra acesso não autorizado ao Supabase
 - Verificação automática de estado de login
 
 ### 2. ✅ **Sistema de Ocultação de Barras de Rolagem**
+
 - Chatbot sem barra de rolagem visível
 - Página principal sem barra de rolagem visível
 - Funcionalidade de scroll totalmente preservada
 - Compatibilidade com todos os navegadores
 
 ### 3. ✅ **Múltiplos Modos de Exibição**
+
 - **Minimizado**: Botão flutuante arrastável
 - **Normal**: Janela redimensionável e movível
 - **Maximizado**: Tela cheia (fullscreen)
 
 ### 4. ✅ **Controles de Manipulação Física**
+
 - Movimento vertical (modo minimizado)
 - Movimento lateral (modo normal)
 - Redimensionamento de largura (modo normal)
@@ -59,7 +63,8 @@ const MyChatbot = () => {
 };
 ```
 
-#### Benefícios:
+#### Benefícios
+
 - ✅ **Segurança**: Evita tentativas de acesso ao banco sem autenticação
 - ✅ **Performance**: Não renderiza componente desnecessário
 - ✅ **UX**: Interface limpa para usuários não logados
@@ -247,14 +252,14 @@ div.chatbot-messages-container::-webkit-scrollbar-corner {
 `}</style>
 ```
 
-#### Estratégia de Implementação (4 Camadas):
+#### Estratégia de Implementação (4 Camadas)
 
 1. **Estilos Inline**: Aplicação direta no elemento
 2. **CSS Interno**: Estilos específicos do componente
 3. **CSS Global**: Cobertura em toda a aplicação
 4. **!important**: Força máxima prioridade
 
-#### Compatibilidade por Navegador:
+#### Compatibilidade por Navegador
 
 | Navegador | Propriedade CSS |
 |-----------|----------------|
@@ -299,6 +304,7 @@ const getChatbotStyle = () => {
 ```
 
 **Características:**
+
 - ✅ Botão flutuante 64x64px
 - ✅ Arrastável verticalmente
 - ✅ Animação eletrificada periódica
@@ -322,6 +328,7 @@ case 'normal':
 ```
 
 **Características:**
+
 - ✅ Janela redimensionável (300px - 800px)
 - ✅ Movível horizontalmente
 - ✅ Borda de redimensionamento visual
@@ -344,6 +351,7 @@ case 'maximized':
 ```
 
 **Características:**
+
 - ✅ Tela cheia completa
 - ✅ Sem bordas arredondadas
 - ✅ Botão de restaurar no cabeçalho
@@ -383,6 +391,7 @@ const handleMouseMove = useCallback((e: MouseEvent) => {
 ```
 
 **Características:**
+
 - ✅ Arraste suave com limites de tela
 - ✅ Feedback visual de cursor
 - ✅ Prevenção de saída da viewport
@@ -416,6 +425,7 @@ const handleMoveMouseMove = useCallback((e: MouseEvent) => {
 ```
 
 **Características:**
+
 - ✅ Movimento apenas pelo cabeçalho
 - ✅ Respeitaa limites da viewport
 - ✅ Posicionamento relativo inteligente
@@ -443,6 +453,7 @@ const handleResizeMouseMove = useCallback((e: MouseEvent) => {
 ```
 
 **Características:**
+
 - ✅ Borda visual de redimensionamento
 - ✅ Limites mínimo (300px) e máximo (800px)
 - ✅ Cursor de redimensionamento
@@ -934,36 +945,42 @@ describe('Chatbot Interactions', () => {
 ## 📋 Checklist de Implementação
 
 ### ✅ **Funcionalidades Básicas**
+
 - [ ] Controle de visibilidade por autenticação
 - [ ] Estados: minimizado, normal, maximizado
 - [ ] Transições suaves entre estados
 - [ ] Interface responsiva
 
 ### ✅ **Controles Físicos**
+
 - [ ] Arrastar verticalmente (minimizado)
 - [ ] Mover lateralmente (normal)
 - [ ] Redimensionar largura (normal)
 - [ ] Validação de limites de tela
 
 ### ✅ **Ocultação de Scrollbars**
+
 - [ ] CSS global para todo o site
 - [ ] CSS específico para chatbot
 - [ ] Estilos inline de backup
 - [ ] Compatibilidade cross-browser
 
 ### ✅ **Qualidade e Performance**
+
 - [ ] Memoização de componentes
 - [ ] Event listeners otimizados
 - [ ] Cleanup de effects
 - [ ] Tratamento de edge cases
 
 ### ✅ **Acessibilidade**
+
 - [ ] ARIA labels adequados
 - [ ] Navegação por teclado
 - [ ] Contraste de cores
 - [ ] Screen reader friendly
 
 ### ✅ **Testes**
+
 - [ ] Testes unitários
 - [ ] Testes de integração
 - [ ] Testes de acessibilidade
@@ -1032,21 +1049,25 @@ useEffect(() => {
 ## 🎯 Casos de Uso e Adaptações
 
 ### 1. **E-commerce**
+
 - Integração com carrinho de compras
 - Recomendações de produtos
 - Suporte pós-venda
 
 ### 2. **SaaS/Plataformas**
+
 - Onboarding interativo
 - Documentação contextual
 - Suporte técnico
 
 ### 3. **Sites Institucionais**
+
 - FAQ inteligente
 - Agendamento de reuniões
 - Captação de leads
 
 ### 4. **Aplicações Internas**
+
 - Help desk corporativo
 - Treinamentos interativos
 - Assistente de produtividade
@@ -1056,18 +1077,21 @@ useEffect(() => {
 ## 🔮 Roadmap e Melhorias Futuras
 
 ### Versão 2.2
+
 - [ ] Suporte a voz (Speech-to-Text)
 - [ ] Temas visuais customizáveis
 - [ ] Integração com múltiplos idiomas
 - [ ] Widgets embarcados
 
 ### Versão 2.3
+
 - [ ] IA conversacional avançada
 - [ ] Analytics de conversação
 - [ ] A/B testing de interfaces
 - [ ] Modo offline com cache
 
 ### Versão 3.0
+
 - [ ] Arquitetura de plugins
 - [ ] Editor visual de fluxos
 - [ ] Integrações com CRM
@@ -1078,11 +1102,13 @@ useEffect(() => {
 ## 📞 Suporte e Comunidade
 
 ### Documentação Adicional
+
 - [Guia de Configuração Avançada](./docs/advanced-config.md)
 - [API Reference](./docs/api-reference.md)
 - [Troubleshooting](./docs/troubleshooting.md)
 
 ### Contribuição
+
 - [Contributing Guidelines](./CONTRIBUTING.md)
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 - [Issue Templates](./github/ISSUE_TEMPLATE/)
