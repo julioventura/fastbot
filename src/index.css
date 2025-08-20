@@ -461,3 +461,37 @@
   border: 3px solid rgba(255, 255, 255, 0.6) !important;
   border-color: rgba(255, 255, 255, 0.6) !important;
 }
+
+/* FORÇAR OCULTAÇÃO DA BARRA DE ROLAGEM DO CHATBOT - CSS GLOBAL */
+.chatbot-messages-container,
+div.chatbot-messages-container {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE 10+ */
+}
+
+.chatbot-messages-container::-webkit-scrollbar,
+div.chatbot-messages-container::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Edge */
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+.chatbot-messages-container::-webkit-scrollbar-track,
+div.chatbot-messages-container::-webkit-scrollbar-track {
+  display: none !important;
+  background: transparent !important;
+}
+
+.chatbot-messages-container::-webkit-scrollbar-thumb,
+div.chatbot-messages-container::-webkit-scrollbar-thumb {
+  display: none !important;
+  background: transparent !important;
+}
+
+/* CSS adicional para casos específicos do navegador */
+.chatbot-messages-container::-webkit-scrollbar-corner,
+div.chatbot-messages-container::-webkit-scrollbar-corner {
+  display: none !important;
+  background: transparent !important;
+}

@@ -1502,6 +1502,14 @@ const MyChatbot = () => {
   };
 
   /**
+   * 🚫 VERIFICAÇÃO DE SEGURANÇA: Não exibir chatbot se usuário não estiver logado
+   * O chatbot depende do Supabase para funcionar corretamente
+   */
+  if (!user) {
+    return null;
+  }
+
+  /**
    * Renderização do chatbot no estado minimizado
    * Exibe apenas um botão flutuante com ícone
    */
@@ -1572,6 +1580,44 @@ const MyChatbot = () => {
                 0 4px 6px -4px ${chatbotShadowDark}, 
                 0 0 0 1px rgba(255, 255, 255, 0.1);
             }
+          }
+
+          /* Ocultar barra de rolagem mantendo a funcionalidade - FORÇADO */
+          .chatbot-messages-container {
+            scrollbar-width: none !important; /* Firefox */
+            -ms-overflow-style: none !important; /* Internet Explorer 10+ */
+          }
+          
+          .chatbot-messages-container::-webkit-scrollbar {
+            width: 0px !important; /* Remove width */
+            height: 0px !important; /* Remove height */
+            background: transparent !important; /* Optional: transparent background */
+            display: none !important; /* Hide scrollbar for WebKit browsers */
+          }
+          
+          .chatbot-messages-container::-webkit-scrollbar-track {
+            background: transparent !important;
+            display: none !important;
+          }
+          
+          .chatbot-messages-container::-webkit-scrollbar-thumb {
+            background: transparent !important;
+            display: none !important;
+          }
+
+          /* CSS Global adicional para garantir ocultação */
+          div.chatbot-messages-container {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+
+          div.chatbot-messages-container::-webkit-scrollbar,
+          div.chatbot-messages-container::-webkit-scrollbar-track,
+          div.chatbot-messages-container::-webkit-scrollbar-thumb {
+            display: none !important;
+            width: 0px !important;
+            height: 0px !important;
+            background: transparent !important;
           }
         `}</style>
 
@@ -1692,7 +1738,17 @@ const MyChatbot = () => {
       </div>
 
       {/* Área de Mensagens - Container de histórico da conversa */}
-      <div style={{ flexGrow: 1, overflowY: 'auto', padding: '20px', background: chatbotBgColor }}>
+      <div
+        className="chatbot-messages-container"
+        style={{ 
+          flexGrow: 1, 
+          overflowY: 'auto', 
+          padding: '20px', 
+          background: chatbotBgColor,
+          scrollbarWidth: 'none', /* Firefox */
+          msOverflowStyle: 'none', /* IE 10+ */
+        }}
+      >
         {localMessages.map((msg) => (
           <div
             key={msg.id}
