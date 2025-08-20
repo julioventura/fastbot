@@ -117,6 +117,22 @@ const Hero = () => {
           display: none; /* Safari and Chrome */
         }
         
+        /* Animação de rotação 360 graus no hover */
+        .hover-rotate-360:hover {
+          transform: rotate(360deg);
+        }
+        
+        /* Animação automática de rotação 360 graus a cada 5 segundos */
+        .auto-rotate-360 {
+          animation: autoRotate360 5s linear infinite;
+        }
+        
+        @keyframes autoRotate360 {
+          0% { transform: rotate(0deg); }
+          10% { transform: rotate(360deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
         /* Animações diagonais verdadeiras - ângulos intermediários */
         @keyframes floatDiagonal1 {
           0% { transform: translate(-120vw, -80vh) rotate(23deg); }
@@ -207,7 +223,7 @@ const Hero = () => {
                     <img
                       src="https://dentistas.com.br/fastbot/GPT-5.png"
                       alt="Powered by GPT-5"
-                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-700"
+                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 auto-rotate-360 transition-all duration-700"
                     />
                   </div>
                 </div>

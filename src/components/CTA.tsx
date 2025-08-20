@@ -28,6 +28,16 @@ export default function CTA() {
         .hover-rotate-360:hover {
           transform: rotate(360deg);
         }
+        
+        .auto-rotate-360 {
+          animation: autoRotate360 5s linear infinite;
+        }
+        
+        @keyframes autoRotate360 {
+          0% { transform: rotate(0deg); }
+          10% { transform: rotate(360deg); }
+          100% { transform: rotate(360deg); }
+        }
       `}</style>
 
       {/* Elemento <section> principal com estilos de fundo e posicionamento relativo. */}
@@ -43,13 +53,13 @@ export default function CTA() {
             {/* Bloco de texto principal da CTA. */}
             <div className="text-center mt-16 md:mt-32 mb-8 md:mb-12">
               {/* Título da CTA */}
-              <h2 className="text-2xl md:text-3xl lg:text-5xl font-bold mb-4 md:mb-6 text-foreground">
+              <h2 className="text-4xl font-bold mb-4 md:mb-6 text-foreground">
                 Pronto  <span className="text-theme-accent"> em </span> <span className="text-yellow-400">3 minutos!</span>
               </h2>
 
               {/* Descrição/Subtítulo da CTA */}
-              <p className="text-lg md:text-xl text-foreground font-bold max-w-3xl mx-auto">
-                É configurar... e usar!
+              <p className="text-xl md:text-2xl text-foreground font-bold max-w-3xl mx-auto">
+                É só configurar... e usar!
               </p>
 
               {/* Imagem GPT-5 - Badge de destaque */}
@@ -57,7 +67,7 @@ export default function CTA() {
                 <img
                   src="https://dentistas.com.br/fastbot/GPT-5.png"
                   alt="Powered by GPT-5"
-                  className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 transition-all duration-700"
+                  className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover-rotate-360 auto-rotate-360 transition-all duration-700"
                 />
               </div>
 
@@ -67,7 +77,7 @@ export default function CTA() {
                   onClick={() => navigate('/account')}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg w-full md:w-auto"
                 >
-                  COMECE JÁ O PLANO GRATUITO!
+                  COMECE JÁ GRÁTIS!
                 </Button>
               </div>
 
