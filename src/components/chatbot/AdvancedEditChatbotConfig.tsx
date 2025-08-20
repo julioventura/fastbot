@@ -52,6 +52,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
   const [supabaseTotalMessages, setSupabaseTotalMessages] = useState<number>(0);
+  const [showingSupabaseMemory, setShowingSupabaseMemory] = useState(false);
+  const [supabaseMessages, setSupabaseMessages] = useState<{ id: string; role: string; content: string; timestamp: string }[]>([]);
 
   const { user } = useAuth();
 
@@ -219,9 +221,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     if (!user?.id) return;
 
     try {
-      const { count, error } = await supabase
-        .from('conversation_memory')
-        .select('*', { count: 'exact', head: true })
+      // Buscar todas as sessões do usuário e contar mensagens no JSONB
+      const { data, error } = await supabase
+        .from('conversation_history')
+        .select('messages')
         .eq('user_id', user.id);
 
       if (error) {
@@ -229,7 +232,73 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         return;
       }
 
-      setSupabaseTotalMessages(count || 0);
+      // Contar todas as mensagens de todas as sessões
+      let totalMessages = 0;
+      if (data) {
+        data.forEach(session => {
+          if (session.messages && Array.isArray(session.messages)) {
+            totalMessages += session.messages.length;
+          }
+        });
+      }
+
+      setSupabaseTotalMessages(totalMessages);
+      console.log('📊 [Supabase] Total de mensagens encontradas:', totalMessages, 'em', data?.length || 0, 'sessões');
+    } catch (error) {
+      console.error('Erro inesperado ao buscar mensagens do Supabase:', error);
+    }
+  }, [user?.id]);
+
+  // Função para buscar mensagens do Supabase
+  const fetchSupabaseMessages = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      // Buscar todas as sessões ordenadas por última atividade
+      const { data, error } = await supabase
+        .from('conversation_history')
+        .select('messages, last_activity, session_id')
+        .eq('user_id', user.id)
+        .order('last_activity', { ascending: false });
+
+      if (error) {
+        console.error('Erro ao buscar mensagens do Supabase:', error);
+        return;
+      }
+
+      // Extrair todas as mensagens de todas as sessões e ordenar por timestamp
+      const allMessages: Array<{
+        id: string;
+        role: string;
+        content: string;
+        timestamp: string;
+        sessionId: string;
+      }> = [];
+
+      if (data) {
+        data.forEach(session => {
+          if (session.messages && Array.isArray(session.messages)) {
+            session.messages.forEach((message: {
+              id: string;
+              role: string;
+              content: string;
+              timestamp: string;
+            }) => {
+              allMessages.push({
+                ...message,
+                sessionId: session.session_id
+              });
+            });
+          }
+        });
+      }
+
+      // Ordenar por timestamp (mais recentes primeiro) e limitar a 50
+      allMessages.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      const limitedMessages = allMessages.slice(0, 50);
+
+      setSupabaseMessages(limitedMessages);
+      console.log('📊 [Supabase] Mensagens carregadas para exibição:', limitedMessages.length, 'de', allMessages.length, 'total');
     } catch (error) {
       console.error('Erro inesperado ao buscar mensagens do Supabase:', error);
     }
@@ -239,8 +308,22 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   useEffect(() => {
     if (showShortMemory && user?.id) {
       fetchSupabaseTotalMessages();
+      fetchSupabaseMessages();
     }
-  }, [showShortMemory, user?.id, fetchSupabaseTotalMessages]);
+  }, [showShortMemory, user?.id, fetchSupabaseTotalMessages, fetchSupabaseMessages]);
+
+  // Atualizar contadores automaticamente quando a short-memory muda
+  useEffect(() => {
+    if (showShortMemory && user?.id && shortMemoryStats.totalMessages > 0) {
+      // Pequeno delay para dar tempo do Supabase processar novas mensagens
+      const timeoutId = setTimeout(() => {
+        fetchSupabaseTotalMessages();
+        fetchSupabaseMessages();
+      }, 2000); // 2 segundos de delay
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [shortMemoryStats.totalMessages, shortMemoryStats.lastUpdate, showShortMemory, user?.id, fetchSupabaseTotalMessages, fetchSupabaseMessages]);
 
   // Função para confirmar limpeza da memória
   const handleClearMemory = () => {
@@ -334,50 +417,54 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <div className="space-y-2">
               <Label>Temas Permitidos</Label>
 
-              <div>
-                {/* Coluna Esquerda - Input para adicionar temas */}
-                <div className="space-y-4">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Digite e pressione Enter para adicionar à lista"
-                      size={30}
-                      onKeyDown={(e) => {
-                        // Só processa se for Enter sem modificadores (Ctrl, Shift, Alt)
-                        if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          const target = e.target as HTMLInputElement;
-                          if (target.value.trim()) {
-                            addTopic(target.value);
-                            target.value = "";
+              {/* Dividido em duas colunas */}
+              <div className="grid grid-cols-2 gap-6">
+                {/* Coluna Esquerda - Input e Botão */}
+                <div>
+                  {/* Input para adicionar temas */}
+                  <div className="space-y-4">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Digite e pressione Enter para adicionar à lista"
+                        size={15}
+                        onKeyDown={(e) => {
+                          // Só processa se for Enter sem modificadores (Ctrl, Shift, Alt)
+                          if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const target = e.target as HTMLInputElement;
+                            if (target.value.trim()) {
+                              addTopic(target.value);
+                              target.value = "";
+                            }
                           }
-                        }
-                      }}
-                      className="edit-form-input"
-                      style={borderStyle}
-                    />
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={(e) => {
-                        const input =
-                          e.currentTarget.parentElement?.querySelector(
-                            "input"
-                          );
-                        if (input && input.value.trim()) {
-                          addTopic(input.value);
-                          input.value = "";
-                        }
-                      }}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </Button>
+                        }}
+                        className="edit-form-input"
+                        style={borderStyle}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          const input =
+                            e.currentTarget.parentElement?.querySelector(
+                              "input"
+                            );
+                          if (input && input.value.trim()) {
+                            addTopic(input.value);
+                            input.value = "";
+                          }
+                        }}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
                 {/* Coluna Direita - Lista de temas como badges */}
-                <div className="space-y-4">
+                <div>
                   {(chatbotData.allowed_topics || []).length > 0 ? (
                     <div className="flex flex-wrap gap-2 p-3 border border-gray-600 rounded-lg">
                       {(chatbotData.allowed_topics || []).map(
@@ -411,33 +498,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </div>
             </div>
           </div>
-
-
-
-
-          {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div className="space-y-6"> */}
-
-          {/* Rodapé das mensagens */}
-          {/* <div>
-                  <Label htmlFor="footer_message">Rodapé das mensagens</Label>
-                  <Textarea
-                    id="footer_message"
-                    value={chatbotData.footer_message || ""}
-                    onChange={(e) =>
-                      onChange("footer_message", e.target.value)
-                    }
-                    className="mt-2 edit-form-input"
-                    style={borderStyle}
-                    placeholder="Texto que aparecerá no final de cada mensagem do chatbot..."
-                    rows={3}
-                  />
-                </div> */}
-
-          {/* </div>
-            </div>
-          </div> */}
 
         </div>
 
@@ -589,20 +649,36 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <Card className="border border-blue-800">
                 <CardContent className="p-4">
-
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-8 h-8 mr-2 text-blue-600" />
-                    <div>
-                      <p className="text-md font-bold text-blue-600">Total de Mensagens</p>
-                      <p className="text-lg font-bold">
-                        {shortMemoryStats.totalMessages} / {supabaseTotalMessages}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        Local / Supabase
-                      </p>
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2">
+                      <MessageSquare className="w-8 h-8 mr-2 text-blue-600" />
+                      <div>
+                        <p className="text-md font-bold text-blue-600">Total de Mensagens</p>
+                        <p className="text-lg font-bold">
+                          {Math.min(shortMemoryStats.totalMessages, 20)} / {supabaseTotalMessages}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Short-Memory (máx 20) / Supabase
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
+                    {/* Botão de atualizar no canto superior direito */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        loadShortMemoryData();
+                        fetchSupabaseTotalMessages();
+                        fetchSupabaseMessages();
+                      }}
+                      className="p-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+                      title="Atualizar contadores de mensagens"
+                    >
+                      <RefreshCw className="w-4 h-4 text-blue-600 hover:text-blue-800" />
+                    </button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -644,7 +720,25 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
             {/* Lista de Mensagens da Short-Memory */}
             <div className="mt-6 space-y-4">
-              <div className="flex justify-end mr-2">
+              <div className="flex justify-between items-center mr-2">
+                {/* Botão de alternância Short-Memory / Supabase */}
+                <button
+                  type="button"
+                  onClick={() => setShowingSupabaseMemory(prev => !prev)}
+                  className="flex items-center gap-2 px-3 py-1 rounded-md border transition-colors"
+                  style={{
+                    backgroundColor: showingSupabaseMemory ? '#1e293b' : '#1e40af',
+                    borderColor: showingSupabaseMemory ? '#64748b' : '#3b82f6',
+                    color: showingSupabaseMemory ? '#94a3b8' : '#dbeafe'
+                  }}
+                  title={showingSupabaseMemory ? "Ver memória recente" : "Ver conversas salvas"}
+                >
+                  <span className="text-sm">
+                    {showingSupabaseMemory ? 'Conversas salvas' : 'Memória recente'}
+                  </span>
+                </button>
+
+                {/* Botão Detalhes */}
                 <button
                   type="button"
                   onClick={() => setShowTechnicalInfo(prev => !prev)}
@@ -672,52 +766,108 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               )}
 
               {/* Lista da short-memory */}
-              {shortMemoryData.length > 0 ? (
-                <div className="space-y-3 max-h-96 overflow-y-auto bg-background border border-gray-600 rounded-lg p-4">
-                  {shortMemoryData.map((message, index) => (
-                    <div
-                      key={message.id}
-                      className={`p-3 rounded-lg border ${message.role === 'user'
-                        ? ':bg-gray-900/80 border-gray-700'
-                        : 'bg-gray-800/80 border-gray-600'
-                        }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0">
-                          {message.role === 'user' ? (
-                            <User className="w-4 h-4 text-gray-500" />
-                          ) : (
-                            <Bot className="w-4 h-4 text-gray-400" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={`text-sm font-medium ${message.role === 'user' ? 'text-gray-400' : 'text-gray-300'
-                              }`}>
-                              {message.role === 'user' ? 'Usuário' : 'Assistente'}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              #{index + 1} • {new Date(message.timestamp).toLocaleString('pt-BR')}
-                            </span>
+              {/* Exibição condicional: Short-Memory ou Supabase */}
+              {showingSupabaseMemory ? (
+                // Mensagens do Supabase
+                supabaseMessages.length > 0 ? (
+                  <div className="space-y-3 max-h-96 overflow-y-auto bg-background border border-gray-600 rounded-lg p-4">
+                    <div className="text-sm text-center text-blue-400 mb-3 pb-2 border-b border-gray-600">
+                      Mensagens da Memória Longa (Supabase) - Últimas 50
+                    </div>
+                    {supabaseMessages.map((message, index) => (
+                      <div
+                        key={message.id}
+                        className={`p-3 rounded-lg border ${message.role === 'user'
+                          ? 'bg-slate-900/80 border-slate-700'
+                          : 'bg-slate-800/80 border-slate-600'
+                          }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0">
+                            {message.role === 'user' ? (
+                              <User className="w-4 h-4 text-blue-500" />
+                            ) : (
+                              <Bot className="w-4 h-4 text-blue-400" />
+                            )}
                           </div>
-                          <p className="text-sm text-gray-400 whitespace-pre-wrap break-words">
-                            {message.content}
-                          </p>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-sm font-medium ${message.role === 'user' ? 'text-blue-400' : 'text-blue-300'
+                                }`}>
+                                {message.role === 'user' ? 'Usuário' : 'Assistente'}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                #{index + 1} • {new Date(message.timestamp).toLocaleString('pt-BR')}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-400 whitespace-pre-wrap break-words">
+                              {message.content}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Bot className="w-12 h-12 mx-auto mb-3 text-gray-600" />
+                    <p>Nenhuma mensagem encontrada no Supabase</p>
+                  </div>
+                )
               ) : (
-                <div className="text-center py-8 border border-dashed border-gray-600 rounded-lg">
-                  <MessageSquare className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    Nenhum contexto de conversa encontrado na Short-Memory
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    As mensagens aparecerão aqui conforme você conversa com o chatbot
-                  </p>
-                </div>
+                // Mensagens da Short-Memory
+                shortMemoryData.length > 0 ? (
+                  <div className="space-y-3 max-h-96 overflow-y-auto bg-background border border-gray-600 rounded-lg p-4">
+                    <div className="text-sm text-center text-green-400 mb-3 pb-2 border-b border-gray-600">
+                      Short-Memory (Últimas 20 mensagens mais recentes)
+                    </div>
+                    {shortMemoryData.slice(-20).map((message, index) => {
+                      // Calcular o número real da mensagem na lista completa
+                      const realIndex = shortMemoryData.length - 20 + index + 1;
+                      const displayIndex = realIndex > 0 ? realIndex : index + 1;
+
+                      return (
+                        <div
+                          key={message.id}
+                          className={`p-3 rounded-lg border ${message.role === 'user'
+                            ? 'bg-gray-900/80 border-gray-700'
+                            : 'bg-gray-800/80 border-gray-600'
+                            }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0">
+                              {message.role === 'user' ? (
+                                <User className="w-4 h-4 text-gray-500" />
+                              ) : (
+                                <Bot className="w-4 h-4 text-gray-400" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className={`text-sm font-medium ${message.role === 'user' ? 'text-gray-400' : 'text-gray-300'
+                                  }`}>
+                                  {message.role === 'user' ? 'Usuário' : 'Assistente'}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  #{displayIndex} • {new Date(message.timestamp).toLocaleString('pt-BR')}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-400 whitespace-pre-wrap break-words">
+                                {message.content}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-600" />
+                    <p>Nenhuma mensagem na memória recente</p>
+                    <p className="text-xs mt-1">Inicie uma conversa no chatbot para ver as mensagens aqui</p>
+                  </div>
+                )
               )}
             </div>
 

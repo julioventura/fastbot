@@ -440,18 +440,22 @@ const MyChatbot = () => {
           console.log('🤖 [MyChatbot] Adicionando mensagem inicial à memória:', initialMessage.substring(0, 50) + '...');
 
           await addMessage('assistant', initialMessage);
+          // 📋 NOVO: Adicionar mensagem inicial também à Short-Memory
+          await addToShortMemory('assistant', initialMessage);
           console.log('🤖 [MyChatbot] Mensagem inicial adicionada com sucesso!');
         } catch (error) {
           console.error('❌ [MyChatbot] Erro ao inicializar chat:', error);
           // Fallback: adicionar mensagem mesmo sem configuração
           const fallbackMessage = getInitialMessage();
           await addMessage('assistant', fallbackMessage);
+          // 📋 NOVO: Adicionar fallback também à Short-Memory
+          await addToShortMemory('assistant', fallbackMessage);
         }
       };
 
       initializeChat();
     }
-  }, [chatState, conversationHistory.length, initialMessageAdded, getInitialMessage, fetchChatbotConfig, addMessage]);
+  }, [chatState, conversationHistory.length, initialMessageAdded, getInitialMessage, fetchChatbotConfig, addMessage, addToShortMemory]);
 
   /**
    * sendToWebhook
@@ -770,7 +774,7 @@ const MyChatbot = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-mini',
+        model: 'gpt-4.1-nano',
         messages: [
           {
             role: 'system',
@@ -804,7 +808,14 @@ const MyChatbot = () => {
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      let errorDetails = '';
+      try {
+        const errorData = await response.json();
+        errorDetails = errorData.error?.message || JSON.stringify(errorData);
+      } catch {
+        errorDetails = await response.text();
+      }
+      throw new Error(`OpenAI API error (${response.status}): ${errorDetails}`);
     }
 
     const data = await response.json();

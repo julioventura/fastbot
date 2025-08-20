@@ -263,28 +263,27 @@ export const useConversationMemory = ({
       
       if (updatedMessages.length > maxMessages) {
         console.log(`🧠 [ConversationMemory] 📝 Limitando para ${maxMessages} mensagens recentes (tinha ${updatedMessages.length})`);
-        return trimmedMessages;
       }
       
-      return updatedMessages;
+      // Salvar no localStorage e Supabase de forma assíncrona usando as mensagens atualizadas
+      setTimeout(async () => {
+        try {
+          await saveToRedis(currentSession, [newMessage]); // Salvar apenas a nova mensagem
+          console.log('💬 [ConversationMemory] Mensagem salva no localStorage:', role, content.substring(0, 50) + '...');
+          
+          // 🆕 SALVAR: Usar as mensagens atualizadas (não o estado antigo)
+          const finalMessages = updatedMessages.length > maxMessages ? trimmedMessages : updatedMessages;
+          await saveToSupabase(currentSession, finalMessages);
+          console.log('🗄️ [ConversationMemory] Mensagem salva no Supabase:', role, 'Total mensagens:', finalMessages.length);
+        } catch (error) {
+          console.warn('⚠️ [ConversationMemory] Erro ao salvar mensagem:', error);
+        }
+      }, 0);
+      
+      return updatedMessages.length > maxMessages ? trimmedMessages : updatedMessages;
     });
 
-    // Salvar no localStorage de forma assíncrona
-    setTimeout(async () => {
-      try {
-        await saveToRedis(currentSession, [newMessage]); // Salvar apenas a nova mensagem
-        console.log('💬 [ConversationMemory] Mensagem salva no localStorage:', role, content.substring(0, 50) + '...');
-        
-        // 🆕 ADICIONAR: Salvar também no Supabase para backup persistente
-        const allMessages = [...conversationHistory, newMessage];
-        await saveToSupabase(currentSession, allMessages);
-        console.log('🗄️ [ConversationMemory] Mensagem salva no Supabase:', role);
-      } catch (error) {
-        console.warn('⚠️ [ConversationMemory] Erro ao salvar mensagem:', error);
-      }
-    }, 0);
-
-  }, [user?.id, currentSession, maxMessages, saveToRedis, conversationHistory, saveToSupabase]);
+  }, [user?.id, currentSession, maxMessages, saveToRedis, saveToSupabase]);
 
   // Obter contexto para o chatbot (últimas N mensagens formatadas)
   const getContextForChatbot = useCallback((): string => {

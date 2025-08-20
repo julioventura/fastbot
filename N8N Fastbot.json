@@ -77,9 +77,9 @@
       "parameters": {
         "model": {
           "__rl": true,
-          "value": "gpt-4.1-mini",
+          "value": "gpt-4.1-nano",
           "mode": "list",
-          "cachedResultName": "gpt-4.1-mini"
+          "cachedResultName": "gpt-4.1-nano"
         },
         "options": {}
       },
@@ -90,7 +90,7 @@
         160
       ],
       "id": "c4447db5-f899-49f6-921f-8b93d0171dae",
-      "name": "gpt-4.1-mini",
+      "name": "gpt-4.1-nano",
       "credentials": {
         "openAiApi": {
           "id": "9R5GUUnSsv3EBLUx",
@@ -400,7 +400,7 @@
         ]
       ]
     },
-    "gpt-4.1-mini": {
+    "gpt-4.1-nano": {
       "ai_languageModel": [
         [
           {
