@@ -117,7 +117,7 @@ const MyChatbot = () => {
   // Controle de estilo visual (alto-relevo vs baixo-relevo)
   const [isElevated] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null); // Referência para o campo de input
+  const inputRef = useRef<HTMLTextAreaElement | null>(null); // Referência para o campo de input
   const location = useLocation();
   const { user } = useAuth();
 
@@ -252,7 +252,7 @@ const MyChatbot = () => {
   const generateSystemMessage = (config: ChatbotConfig | null): string => {
     // Valores padrão das configurações
     const defaults = {
-      formality_level: 50,
+      formality_level: 70,
       use_emojis: false,
       paragraph_size: 20,
       source_strictness: 90,
@@ -338,6 +338,14 @@ const MyChatbot = () => {
     }
 
     systemMessage += `- Busca na internet: ${allowInternetSearch ? 'Permitida quando necessário' : 'Não permitida, use apenas documentos fornecidos'}\n`;
+
+    // IMPORTANTE: Instrução para omitir metadados de fonte
+    systemMessage += `\nIMPORTANTE - APRESENTAÇÃO DAS RESPOSTAS:\n`;
+    systemMessage += `- NUNCA inclua informações técnicas como "Fonte:", "Similaridade:", porcentagens de similaridade, ou nomes de arquivos nas suas respostas\n`;
+    systemMessage += `- NUNCA mostre metadados como "--- Fonte: arquivo.txt (Similaridade: X%) ---"\n`;
+    systemMessage += `- Use as informações dos documentos naturalmente, sem revelar de onde vieram\n`;
+    systemMessage += `- Responda de forma fluida e natural, como se o conhecimento fosse seu próprio\n`;
+    systemMessage += `- Se precisar referenciar algo, use termos gerais como "conforme a legislação" ou "segundo as diretrizes"\n`;
 
     // 3. Interação
     systemMessage += `- Velocidade de resposta: ${responseSpeed}/100 (`;
@@ -762,7 +770,7 @@ const MyChatbot = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-nano',
+        model: 'gpt-5-mini',
         messages: [
           {
             role: 'system',
@@ -1347,6 +1355,17 @@ const MyChatbot = () => {
     };
   }, [isMovingLaterally, handleMoveMouseMove, handleMoveMouseUp]);
 
+  // Auto-resize do textarea conforme o conteúdo
+  useEffect(() => {
+    if (inputRef.current) {
+      const textarea = inputRef.current;
+      textarea.style.height = 'auto'; // Reset height
+      const scrollHeight = textarea.scrollHeight;
+      const maxHeight = 120; // máximo definido no CSS
+      textarea.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+    }
+  }, [inputValue]);
+
   /**
    * getElectrifiedStyles
    * Gera estilos para a animação eletrificada quando o chatbot está minimizado
@@ -1731,11 +1750,10 @@ const MyChatbot = () => {
         alignItems: 'center',
         borderTop: isElevated ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
       }}>
-        <input
+        <textarea
           ref={inputRef}
           id="chatbot-input"
           name="chatbot-input"
-          type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           aria-label="Digite sua mensagem para o chatbot"
@@ -1750,14 +1768,13 @@ const MyChatbot = () => {
                 inputRef.current?.focus();
               }, 100);
             }
-            // Para Enter simples ou Shift+Enter, apenas previne o comportamento padrão
-            else if (e.key === 'Enter') {
-              e.preventDefault();
-            }
+            // Enter simples e Shift+Enter funcionam normalmente para quebras de linha
+            // Não fazemos preventDefault() para permitir comportamento padrão do textarea
           }}
 
-          placeholder={isLoading ? "Aguardando resposta..." : "Digite sua mensagem... (Ctrl+Enter para enviar)"}
+          placeholder={isLoading ? "Aguardando resposta..." : "Sua mensagem (Ctrl+Enter para enviar)"}
           disabled={isLoading}
+          rows={1}
           style={{
             flexGrow: 1,
             padding: '12px 15px',
@@ -1772,6 +1789,12 @@ const MyChatbot = () => {
               ? 'inset 0 2px 4px rgba(0, 0, 0, 0.3)'
               : `inset 3px 3px 6px ${chatbotShadowDark}, inset -3px -3px 6px ${chatbotShadowLight}`,
             opacity: isLoading ? 0.6 : 1,
+            resize: 'none',
+            minHeight: '44px',
+            maxHeight: '120px',
+            overflow: 'hidden',
+            lineHeight: '1.4',
+            fontFamily: 'inherit',
           }}
         />
         <button

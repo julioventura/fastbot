@@ -161,7 +161,7 @@
   },
   "openaiIntegration": {
     "recommended": {
-      "model": "gpt-5-nano",
+      "model": "gpt-5-mini",
       "messages": [
         {
           "role": "system",

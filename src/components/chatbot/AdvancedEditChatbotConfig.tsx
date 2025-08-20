@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { useShortMemory } from "@/hooks/useShortMemory";
 import { useAuth } from "@/lib/auth/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   chatbotData,
@@ -50,6 +51,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [showShortMemory, setShowShortMemory] = useState(false);
   const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
+  const [supabaseTotalMessages, setSupabaseTotalMessages] = useState<number>(0);
 
   const { user } = useAuth();
 
@@ -211,6 +213,34 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
       loadShortMemoryData();
     }
   }, [showShortMemory, user?.id, loadShortMemoryData]);
+
+  // Função para buscar total de mensagens do Supabase
+  const fetchSupabaseTotalMessages = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      const { count, error } = await supabase
+        .from('conversation_memory')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Erro ao buscar total de mensagens do Supabase:', error);
+        return;
+      }
+
+      setSupabaseTotalMessages(count || 0);
+    } catch (error) {
+      console.error('Erro inesperado ao buscar mensagens do Supabase:', error);
+    }
+  }, [user?.id]);
+
+  // Carregar total de mensagens do Supabase quando a seção é ativada
+  useEffect(() => {
+    if (showShortMemory && user?.id) {
+      fetchSupabaseTotalMessages();
+    }
+  }, [showShortMemory, user?.id, fetchSupabaseTotalMessages]);
 
   // Função para confirmar limpeza da memória
   const handleClearMemory = () => {
@@ -411,101 +441,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
         </div>
 
-        {/* Seção: Configurações Avançadas */}
-        <div className="space-y-6 border border-gray-600 rounded-lg p-6 bg-blue-950">
-          <h3 className="text-xl font-semibold mb-4 text-primary">
-            ⚙️ Configurações Avançadas
-          </h3>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Coluna Esquerda */}
-            <div className="space-y-6">
-              {/* Personalidade */}
-              <div>
-                <Label htmlFor="personality">
-                  Personalidade do Chatbot
-                </Label>
-                <Textarea
-                  id="personality"
-                  value={chatbotData.personality || ""}
-                  onChange={(e) => onChange("personality", e.target.value)}
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  rows={4}
-                  placeholder="Descreva a personalidade do chatbot (ex: amigável, profissional, empático, direto...)"
-                />
-              </div>
-
-              {/* Comportamento */}
-              <div>
-                <Label htmlFor="behavior">
-                  Comportamento Específico
-                </Label>
-                <Textarea
-                  id="behavior"
-                  value={chatbotData.behavior || ""}
-                  onChange={(e) => onChange("behavior", e.target.value)}
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  rows={4}
-                  placeholder="Instruções específicas sobre como o chatbot deve se comportar em diferentes situações..."
-                />
-              </div>
-
-              {/* Estilo de Comunicação */}
-              <div>
-                <Label htmlFor="style">
-                  Estilo de Comunicação
-                </Label>
-                <Textarea
-                  id="style"
-                  value={chatbotData.style || ""}
-                  onChange={(e) => onChange("style", e.target.value)}
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  rows={4}
-                  placeholder="Defina o estilo de comunicação (formal/informal, técnico/simples, longo/conciso...)"
-                />
-              </div>
-            </div>
-
-            {/* Coluna Direita */}
-            <div className="space-y-6">
-              {/* Interação */}
-              <div>
-                <Label htmlFor="interaction">
-                  Forma de Interação
-                </Label>
-                <Textarea
-                  id="interaction"
-                  value={chatbotData.interaction || ""}
-                  onChange={(e) => onChange("interaction", e.target.value)}
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  rows={4}
-                  placeholder="Como o chatbot deve interagir com o usuário (fazer perguntas, usar emojis, formato das respostas...)"
-                />
-              </div>
-
-              {/* Rodapé das Mensagens */}
-              <div>
-                <Label htmlFor="footer">
-                  Rodapé das Mensagens
-                </Label>
-                <Textarea
-                  id="footer"
-                  value={chatbotData.footer || ""}
-                  onChange={(e) => onChange("footer", e.target.value)}
-                  className="mt-2 edit-form-input"
-                  style={borderStyle}
-                  rows={4}
-                  placeholder="Texto que aparecerá no final de cada mensagem do chatbot..."
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Botões Cancelar e Salvar */}
         <div className="flex justify-center items-center w-full gap-5">
           <Button
@@ -605,8 +540,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               onClick={onPreviewSystemMessage}
               disabled={isSaving}
               className={`${showSystemMessagePreview
-                  ? 'bg-purple-900 text-white hover:bg-purple-900'
-                  : 'hover:bg-purple-900'
+                ? 'bg-purple-900 text-white hover:bg-purple-900'
+                : 'hover:bg-purple-900'
                 } border border-purple-600 px-4 py-2 transition-colors`}
             >
               {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
@@ -618,8 +553,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               onClick={() => setShowShortMemory(prev => !prev)}
               disabled={isSaving}
               className={`${showShortMemory
-                  ? 'bg-purple-900 text-white hover:bg-purple-900'
-                  : 'hover:bg-purple-900'
+                ? 'bg-purple-900 text-white hover:bg-purple-900'
+                : 'hover:bg-purple-900'
                 } border border-purple-600 px-4 py-2 transition-colors`}
             >
               {showShortMemory ? 'Ocultar' : 'Visualizar'} Memória Recente
@@ -659,7 +594,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     <MessageSquare className="w-8 h-8 mr-2 text-blue-600" />
                     <div>
                       <p className="text-md font-bold text-blue-600">Total de Mensagens</p>
-                      <p className="text-lg font-bold">{shortMemoryStats.totalMessages}</p>
+                      <p className="text-lg font-bold">
+                        {shortMemoryStats.totalMessages} / {supabaseTotalMessages}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Local / Supabase
+                      </p>
                     </div>
                   </div>
 
