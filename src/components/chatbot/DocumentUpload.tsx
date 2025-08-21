@@ -744,13 +744,16 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                             <p className="font-medium text-lg">{doc.filename}</p>
 
                             <p className="pt-1 text-sx text-gray-400">
-                              {new Date(doc.upload_date).toLocaleDateString(
-                                "pt-BR"
-                              )}
-                            </p>
-
-                            <p className="pt-1 text-sx text-gray-400">
-                              {formatFileSize(doc.file_size)}
+                              {doc.upload_date
+                                ? new Date(doc.upload_date).toLocaleString("pt-BR", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                                : "Data não disponível"}
+                              <span> - {formatFileSize(doc.file_size)} </span>
                             </p>
 
                           </div>
