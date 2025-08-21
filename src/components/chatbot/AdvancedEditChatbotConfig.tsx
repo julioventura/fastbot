@@ -785,10 +785,47 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
           {/* Botões auxiliares */}
           <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2 md:gap-5">
+
+
             <Button
               type="button"
               variant="outline"
-              onClick={onPreviewSystemMessage}
+              onClick={() => {
+                if (showShortMemory) {
+                  // Se já está aberto, fecha
+                  setShowShortMemory(false);
+                } else {
+                  // Se não está aberto, fecha as instruções e abre o histórico
+                  if (showSystemMessagePreview) {
+                    onPreviewSystemMessage();
+                  }
+                  setShowShortMemory(true);
+                }
+              }}
+              disabled={isSaving}
+              className={`${showShortMemory
+                ? 'bg-purple-900 text-white hover:bg-purple-900'
+                : 'hover:bg-purple-900'
+                } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
+            >
+              {showShortMemory ? 'Ocultar' : 'Ver'} Histórico de Conversas
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                if (showSystemMessagePreview) {
+                  // Se já está aberto, fecha
+                  onPreviewSystemMessage();
+                } else {
+                  // Se não está aberto, fecha o histórico e abre as instruções
+                  if (showShortMemory) {
+                    setShowShortMemory(false);
+                  }
+                  onPreviewSystemMessage();
+                }
+              }}
               disabled={isSaving}
               className={`${showSystemMessagePreview
                 ? 'bg-purple-900 text-white hover:bg-purple-900'
@@ -798,18 +835,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               {showSystemMessagePreview ? 'Ocultar' : 'Ver'} Instrução Automática
             </Button>
 
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowShortMemory(prev => !prev)}
-              disabled={isSaving}
-              className={`${showShortMemory
-                ? 'bg-purple-900 text-white hover:bg-purple-900'
-                : 'hover:bg-purple-900'
-                } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
-            >
-              {showShortMemory ? 'Ocultar' : 'Ver'} Histórico de Conversas
-            </Button>
           </div>
 
         </div>
@@ -818,9 +843,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         {/* Preview do System Message */}
         {showSystemMessagePreview && (
           <div className="mt-3 md:mt-6 p-3 md:p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
-            <h3 className="text-base md:text-lg font-semibold ml-2 mb-3">Preview do System Message:</h3>
-            <p className="text-xs md:text-sm text-primary ml-2 mt-3 mb-6">
-              Conteúdo automático para o "system_message" do chatbot.
+            <h3 className="text-base md:text-lg font-semibold ml-2 mb-3">Instrução Automática</h3>
+            <p className="text-xm text-blue-400 ml-2 mt-3 mb-6">
+              Instrução gerada a partir do formulário do chatbot.
             </p>
             <pre className="whitespace-pre-wrap text-xs md:text-sm bg-muted p-3 md:p-4 rounded border max-h-64 md:max-h-96 overflow-y-auto">
               {systemMessagePreview}
@@ -832,7 +857,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         {showShortMemory && (
           <div className="mt-6 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
             <h3 className="text-lg font-semibold ml-2 mb-3">Histórico de conversas</h3>
-            <p className="text-sm text-primary ml-2 mt-3 mb-6">
+            <p className="text-xm text-blue-400 ml-2 mt-3 mb-6">
               Reveja suas conversas.
             </p>
 
