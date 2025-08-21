@@ -13,6 +13,8 @@ import {
   Download,
   ChevronDown,
   ChevronUp,
+  Eye,
+  Trash2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +26,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,6 +77,13 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const [generatingPreviews, setGeneratingPreviews] = useState<Set<string>>(
     new Set()
   );
+
+  // Estados do modal de preview
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [previewContent, setPreviewContent] = useState("");
+  const [previewFilename, setPreviewFilename] = useState("");
+  const [previewUploadDate, setPreviewUploadDate] = useState("");
+
   const { user } = useAuth();
   const { toast } = useToast();
   const { processDocumentEmbeddings, isProcessing } = useVectorStore();
@@ -468,7 +483,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       // Buscar o conteúdo do documento
       const { data: document, error } = await supabase
         .from("chatbot_documents")
-        .select("content, filename")
+        .select("content, filename, upload_date")
         .eq("id", documentId)
         .eq("chatbot_user", user.id)
         .single();
@@ -477,24 +492,12 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         throw new Error("Documento não encontrado");
       }
 
-      // Gerar o resumo
-      const summary = generateSummary(document.content);
+      // Abrir modal com o conteúdo
+      setPreviewContent(document.content || "Conteúdo não disponível");
+      setPreviewFilename(document.filename);
+      setPreviewUploadDate(document.upload_date);
+      setPreviewModalOpen(true);
 
-      // Atualizar o documento com o resumo
-      const { error: updateError } = await supabase
-        .from("chatbot_documents")
-        .update({ summary })
-        .eq("id", documentId);
-
-      if (updateError) throw updateError;
-
-      toast({
-        title: "Preview gerado!",
-        description: `Preview do documento "${document.filename}" foi criado com sucesso.`,
-      });
-
-      // Recarregar a lista para mostrar o novo resumo
-      fetchDocuments();
     } catch (error) {
       console.error("Erro ao gerar preview:", error);
       toast({
@@ -753,8 +756,22 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                           </div>
                         </div>
 
-                        {/* Botões Download e Excluir centralizados verticalmente */}
-                        <div className="flex-shrink-0 flex flex-col gap-2">
+                        {/* Botões Preview, Download e Excluir lado a lado */}
+                        <div className="flex-shrink-0 flex flex-row gap-2">
+                          {/* Botão Preview */}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => generatePreview(doc.id)}
+                            disabled={generatingPreviews.has(doc.id)}
+                            className="border border-violet-600 hover:border-violet-700 text-violet-400 hover:bg-violet-800"
+                            title="Visualizar conteúdo do documento"
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            Preview
+                          </Button>
+
                           {/* Botão Baixar */}
                           <Button
                             type="button"
@@ -777,7 +794,9 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                                 size="sm"
                                 disabled={processingDocuments.has(doc.id)}
                                 className="border border-red-800 hover:border-red-900 text-red-700 hover:bg-red-800"
+                                title="Excluir documento"
                               >
+                                <Trash2 className="w-4 h-4 mr-1" />
                                 Excluir
                               </Button>
                             </AlertDialogTrigger>
@@ -857,6 +876,49 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           </CardContent>
         </Card>
       )}
+
+      {/* Modal de Preview */}
+      <Dialog open={previewModalOpen} onOpenChange={setPreviewModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Preview do Documento</DialogTitle>
+          </DialogHeader>
+
+          {/* Informações do arquivo reorganizadas */}
+          <div className="p-3 bg-blue-900 text-gray-200 rounded-lg border space-y-2">
+            {/* Primeira linha: Nome do arquivo ocupando toda a largura */}
+            <div className="w-full">
+              <p className="font-medium text-gray-200 text-left">
+                {previewFilename}
+              </p>
+            </div>
+
+            {/* Segunda linha: Upload à esquerda, palavras e caracteres à direita */}
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-gray-200">
+                Upload: {previewUploadDate ? new Date(previewUploadDate).toLocaleString('pt-BR') : 'Data não disponível'}
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-200">
+                  {previewContent.split(/\s+/).filter(word => word.length > 0).length} palavras
+                </span>
+                <span className="text-sm text-gray-200">
+                  {previewContent.length} caracteres
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Conteúdo do documento */}
+          <div className="flex-1 overflow-auto">
+            <div className="p-4 bg-gray-200 rounded-lg border">
+              <pre className="whitespace-pre-wrap text-sm font-mono text-gray-800 dark:text-gray-200">
+                {previewContent}
+              </pre>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
