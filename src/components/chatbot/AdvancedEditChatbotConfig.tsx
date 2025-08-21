@@ -651,7 +651,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </div> */}
 
         {/* Botões de Ação - Apenas no tab de Configuração */}
-        <div className="flex justify-between items-center pt-3 md:pt-6">
+        <div className="flex justify-between items-center pt-3 pb-12">
           {/* Botões auxiliares */}
           <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2 md:gap-5">
             <Button
