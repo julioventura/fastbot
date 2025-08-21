@@ -622,10 +622,76 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           </Button>
         </div>
 
+
+        {/* URL do chatbot público para referência */}
+        {chatbotData?.chatbot_name && (
+          <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
+            <p className="pl-2 text-sl text-white mb-2">
+              URL do seu chatbot público (baseada no nome do chatbot)
+            </p>
+            <code className="text-xs md:text-2xl bg-green-900 border border-gray-600 p-4 mb-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+              {getPublicChatbotUrl()}
+            </code>
+
+            {/* Botões do Link Público */}
+            <div className="flex flex-col md:flex-row items-left w-full gap-3 mt-4 mb-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleOpenPublicChatbot}
+                disabled={!chatbotData?.chatbot_name}
+                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-green-600 text-green-400 hover-glow-green"
+              >
+                <ExternalLink size={16} className="mr-2" />
+                Abrir Chatbot Público
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCopyPublicLink}
+                disabled={!chatbotData?.chatbot_name}
+                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-blue-600 text-blue-400 hover-glow-blue"
+              >
+                {publicLinkCopied ? (
+                  <>
+                    <Check size={16} className="mr-2" />
+                    Link Copiado!
+                  </>
+                ) : (
+                  <>
+                    <Copy size={16} className="mr-2" />
+                    Copiar Link Público
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleShowQRCode}
+                disabled={!chatbotData?.chatbot_name}
+                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-purple-600 text-purple-400 hover-glow-violet"
+              >
+                <QrCode size={16} className="mr-2" />
+                Ver QR-Code
+              </Button>
+            </div>
+
+            <p className="text-xs md:text-sm text-gray-400 mt-8">
+              💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
+            </p>
+            <p className="text-xs md:text-sm text-gray-400 mt-2">
+              💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
+            </p>
+          </div>
+        )}
+
+
+        {/* Base de Dados */}
         <div className="pt-3 md:pt-6"></div>
         <div className="mt-3 md:mt-6 border border-gray-600 rounded-lg bg-blue-950">
 
-          {/* Base de Dados */}
           <Card className="bg-transparent border border-border backdrop-blur-sm">
             <CardHeader className="p-3 md:p-6">
               <CardTitle className="flex items-center text-lg md:text-xl">Base de Dados</CardTitle>
@@ -696,8 +762,13 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 </div>
               </div> */}
 
+
+
+
+
         {/* Botões de Ação - Apenas no tab de Configuração */}
-        <div className="flex justify-between items-center pt-3 pb-12">
+        <div className="flex justify-start items-center pt-12 pb-2">
+
           {/* Botões auxiliares */}
           <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2 md:gap-5">
             <Button
@@ -723,75 +794,11 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 : 'hover:bg-purple-900'
                 } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
             >
-              {showShortMemory ? 'Ocultar' : 'Ver'} Histórico
+              {showShortMemory ? 'Ocultar' : 'Ver'} Histórico de Conversas
             </Button>
           </div>
 
         </div>
-
-        {/* URL do chatbot público para referência */}
-        {chatbotData?.chatbot_name && (
-          <div className="mt-20 p-4 border border-gray-600 rounded-lg bg-blue-950">
-            <p className="text-xs md:text-sm text-gray-300 mb-2">
-              URL do seu chatbot público (baseada no nome do chatbot):
-            </p>
-            <code className="text-xs md:text-sm bg-gray-900 border border-gray-600 p-2 md:p-3 rounded block w-full overflow-x-auto text-green-400 font-mono">
-              {getPublicChatbotUrl()}
-            </code>
-
-            {/* Botões do Link Público */}
-            <div className="flex flex-col md:flex-row items-left w-full gap-3 mt-4 mb-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleOpenPublicChatbot}
-                disabled={!chatbotData?.chatbot_name}
-                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-green-600 text-green-600 hover-glow-green"
-              >
-                <ExternalLink size={16} className="mr-2" />
-                Abrir Chatbot Público
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCopyPublicLink}
-                disabled={!chatbotData?.chatbot_name}
-                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-blue-600 text-blue-600 hover-glow-blue"
-              >
-                {publicLinkCopied ? (
-                  <>
-                    <Check size={16} className="mr-2" />
-                    Link Copiado!
-                  </>
-                ) : (
-                  <>
-                    <Copy size={16} className="mr-2" />
-                    Copiar Link Público
-                  </>
-                )}
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleShowQRCode}
-                disabled={!chatbotData?.chatbot_name}
-                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-purple-600 text-purple-600 hover-glow-violet"
-              >
-                <QrCode size={16} className="mr-2" />
-                Ver QR-Code
-              </Button>
-            </div>
-
-            <p className="text-xs md:text-sm text-gray-400 mt-2">
-              💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
-            </p>
-            <p className="text-xs md:text-sm text-gray-400 mt-2">
-              💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
-            </p>
-          </div>
-        )}
 
 
         {/* Preview do System Message */}
@@ -810,7 +817,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         {/* Seção Memória Recente */}
         {showShortMemory && (
           <div className="mt-6 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
-            <h3 className="text-lg font-semibold ml-2 mb-3">Histórico das conversas</h3>
+            <h3 className="text-lg font-semibold ml-2 mb-3">Histórico de conversas</h3>
             <p className="text-sm text-primary ml-2 mt-3 mb-6">
               Reveja suas conversas.
             </p>

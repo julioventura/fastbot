@@ -908,7 +908,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             margin: 0,
             transform: 'none',
             zIndex: 50,
-            backgroundColor: '#1e293b', // Fundo escuro para melhor contraste
+            backgroundColor: '#f8fafc', // Fundo claro para melhor legibilidade
           } : {
             backgroundColor: '#1e293b',
           }}
@@ -945,9 +945,9 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           </div>
 
           {/* Container principal do conteúdo */}
-          <div className={`flex flex-col ${isModalMaximized ? 'h-full' : 'flex-1'} overflow-hidden`}>
+          <div className={`flex flex-col ${isModalMaximized ? 'flex-1 min-h-0' : 'flex-1'}`}>
             {/* Informações do arquivo reorganizadas */}
-            <div className="mx-6 mt-4 p-3 bg-blue-900 text-gray-200 rounded-lg border space-y-2">
+            <div className="mx-6 mt-4 p-3 bg-blue-900 text-gray-200 rounded-lg border space-y-2 flex-shrink-0">
               {/* Primeira linha: Nome do arquivo ocupando toda a largura */}
               <div className="w-full">
                 <p className="font-medium text-gray-200 text-left">
@@ -972,9 +972,13 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             </div>
 
             {/* Conteúdo do documento */}
-            <div className="flex-1 overflow-auto mx-6 my-4">
-              <div className="p-4 bg-gray-200 rounded-lg border">
-                <pre className="whitespace-pre-wrap text-sm font-mono text-gray-800 dark:text-gray-200">
+            <div className={`flex-1 mx-6 my-4 ${isModalMaximized ? 'min-h-0 overflow-auto' : 'overflow-auto'}`}>
+              <div className={`p-6 rounded-lg border ${isModalMaximized
+                  ? 'bg-white text-gray-900 min-h-full'
+                  : 'bg-gray-200 text-gray-800'
+                }`}>
+                <pre className={`whitespace-pre-wrap text-sm font-mono leading-relaxed ${isModalMaximized ? 'text-gray-900' : 'text-gray-800 dark:text-gray-200'
+                  }`}>
                   {previewContent}
                 </pre>
               </div>
