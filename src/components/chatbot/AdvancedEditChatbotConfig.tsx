@@ -780,370 +780,374 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
 
 
-        {/* Botões de Ação - Apenas no tab de Configuração */}
-        <div className="flex justify-start items-center pt-12 pb-2">
-
-          {/* Botões auxiliares */}
-          <div className="flex flex-col md:flex-row justify-center items-center w-full gap-2 md:gap-5">
-
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                if (showShortMemory) {
-                  // Se já está aberto, fecha
-                  setShowShortMemory(false);
-                } else {
-                  // Se não está aberto, fecha as instruções e abre o histórico
-                  if (showSystemMessagePreview) {
-                    onPreviewSystemMessage();
-                  }
-                  setShowShortMemory(true);
-                }
-              }}
-              disabled={isSaving}
-              className={`${showShortMemory
-                ? 'bg-purple-900 text-white hover:bg-purple-900'
-                : 'hover:bg-purple-900'
-                } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
-            >
-              {showShortMemory ? 'Ocultar' : 'Ver'} Histórico de Conversas
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                if (showSystemMessagePreview) {
-                  // Se já está aberto, fecha
-                  onPreviewSystemMessage();
-                } else {
-                  // Se não está aberto, fecha o histórico e abre as instruções
-                  if (showShortMemory) {
-                    setShowShortMemory(false);
-                  }
-                  onPreviewSystemMessage();
-                }
-              }}
-              disabled={isSaving}
-              className={`${showSystemMessagePreview
-                ? 'bg-purple-900 text-white hover:bg-purple-900'
-                : 'hover:bg-purple-900'
-                } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
-            >
-              {showSystemMessagePreview ? 'Ocultar' : 'Ver'} Instrução Automática
-            </Button>
-
-          </div>
-
-        </div>
-
-
-        {/* Preview do System Message */}
-        {showSystemMessagePreview && (
-          <div className="mt-3 md:mt-6 p-3 md:p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
-            <h3 className="text-base md:text-lg font-semibold ml-2 mb-3">Instrução Automática</h3>
-            <p className="text-xm text-blue-400 ml-2 mt-3 mb-6">
-              Instrução gerada a partir do formulário do chatbot.
-            </p>
-            <pre className="whitespace-pre-wrap text-xs md:text-sm bg-muted p-3 md:p-4 rounded border max-h-64 md:max-h-96 overflow-y-auto">
-              {systemMessagePreview}
-            </pre>
-          </div>
-        )}
-
-        {/* Seção Memória Recente */}
-        {showShortMemory && (
-          <div className="mt-6 p-4 bg-background/50 backdrop-blur-sm rounded-lg border">
-            <h3 className="text-lg font-semibold ml-2 mb-3">Histórico de conversas</h3>
-            <p className="text-xm text-blue-400 ml-2 mt-3 mb-6">
-              Reveja suas conversas.
-            </p>
-
-            {/* Estatísticas da Short-Memory */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <Card className="border border-blue-800">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="w-8 h-8 mr-2 text-blue-600" />
-                      <div>
-                        <p className="text-md font-bold text-blue-600">Total de Mensagens</p>
-                        <p className="text-lg font-bold">
-                          {Math.min(shortMemoryStats.totalMessages, 20)} / {supabaseTotalMessages}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Short-Memory (máx 20) / Supabase
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Botão de atualizar no canto superior direito */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        loadShortMemoryData();
-                        fetchSupabaseTotalMessages();
-                        fetchSupabaseMessages();
-                      }}
-                      className="p-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
-                      title="Atualizar contadores de mensagens"
-                    >
-                      <RefreshCw className="w-4 h-4 text-blue-600 hover:text-blue-800" />
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border border-green-800">
-                <CardContent className="p-4">
-
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-8 h-8 mr-2 text-green-600" />
-                    <div>
-                      <p className="text-md font-bold text-green-600">Última Atualização</p>
-                      <p className="text-lg font-bold">
-                        {shortMemoryStats.lastUpdate
-                          ? shortMemoryStats.lastUpdate.toLocaleString('pt-BR')
-                          : 'Nenhuma'
-                        }
-                      </p>
-                    </div>
-                  </div>
-
-                </CardContent>
-              </Card>
-
-              <Card className="border border-purple-800">
-                <CardContent className="p-4">
-
-                  <div className="flex items-center gap-2">
-                    <Upload className="w-8 h-8 mr-2 text-purple-600" />
-                    <div>
-                      <p className="text-md font-bold text-purple-600">Tamanho da Memória</p>
-                      <p className="text-lg font-bold">
-                        {(shortMemoryStats.memorySize / 1024).toFixed(2)} KB
-                      </p>
-                    </div>
-                  </div>
-
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Lista de Mensagens da Short-Memory */}
-            <div className="mt-14 space-y-4">
-              <div className="flex justify-between items-center mr-2">
-                {/* Botões de alternância Short-Memory / Supabase */}
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!showingSupabaseMemory) {
-                        // Se já está na conversa recente, não faz nada
-                        return;
-                      } else {
-                        // Muda para conversa recente
-                        setShowingSupabaseMemory(false);
-                      }
-                    }}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-md border transition-colors ${!showingSupabaseMemory
-                      ? 'bg-green-800 border-green-600 text-white'
-                      : 'bg-transparent border-gray-600 text-gray-400 hover:bg-green-900/20'
-                      }`}
-                    title="Ver memória recente (short-memory)"
-                  >
-                    <span className="text-sm">Conversa recente</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (showingSupabaseMemory) {
-                        // Se já está nas conversas antigas, não faz nada
-                        return;
-                      } else {
-                        // Muda para conversas antigas
-                        setShowingSupabaseMemory(true);
-                      }
-                    }}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-md border transition-colors ${showingSupabaseMemory
-                      ? 'bg-blue-800 border-blue-600 text-white'
-                      : 'bg-transparent border-gray-600 text-gray-400 hover:bg-blue-900/20'
-                      }`}
-                    title="Ver conversas antigas (Supabase)"
-                  >
-                    <span className="text-sm">Conversas antigas</span>
-                  </button>
-                </div>
-
-                {/* Botão Detalhes */}
+        {/* Sistema de Tabs Elegante */}
+        <div className="pt-8 pb-2">
+          {/* Tab Navigation */}
+          <div className="flex justify-center mb-6">
+            <div className="relative bg-slate-900/50 backdrop-blur-sm rounded-xl p-1 border border-slate-700/50 shadow-lg">
+              <div className="flex gap-1">
                 <button
                   type="button"
-                  onClick={() => setShowTechnicalInfo(prev => !prev)}
-                  className="ml-2 flex items-center gap-2 text-orange-600 hover:text-yellow-400 transition-colors"
-                  title="Detalhes da memória recente (short-memory)"
+                  onClick={() => {
+                    if (showShortMemory) {
+                      setShowShortMemory(false);
+                    } else {
+                      if (showSystemMessagePreview) {
+                        onPreviewSystemMessage();
+                      }
+                      setShowShortMemory(true);
+                    }
+                  }}
+                  disabled={isSaving}
+                  className={`relative px-6 py-3 rounded-lg transition-all duration-300 ease-in-out text-sm font-medium min-w-[180px] ${showShortMemory
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform translate-y-[-1px]'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    }`}
                 >
-                  <Info className="w-4 h-4" />
-                  <span className="text-sm">Detalhes</span>
+                  <div className="flex items-center justify-center gap-2">
+                    <MessageSquare className="w-4 h-4" />
+                    Histórico de Conversas
+                  </div>
+                  {showShortMemory && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse" />
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (showSystemMessagePreview) {
+                      onPreviewSystemMessage();
+                    } else {
+                      if (showShortMemory) {
+                        setShowShortMemory(false);
+                      }
+                      onPreviewSystemMessage();
+                    }
+                  }}
+                  disabled={isSaving}
+                  className={`relative px-6 py-3 rounded-lg transition-all duration-300 ease-in-out text-sm font-medium min-w-[180px] ${showSystemMessagePreview
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Bot className="w-4 h-4" />
+                    Instrução Automática
+                  </div>
+                  {showSystemMessagePreview && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse" />
+                  )}
                 </button>
               </div>
+            </div>
+          </div>
 
-
-              {/* Informações Técnicas */}
-              {showTechnicalInfo && (
-                <div className="mt-12 space-y-4">
-                  <div className="border border-orange-600 bg-orange-950 rounded-lg p-4">
-                    <div className="text-sm text-muted-foreground space-y-1">
-                      <p><strong>Chave do LocalStorage:</strong> {getShortMemoryKey()}</p>
-                      <p><strong>Limite de Mensagens:</strong> 50 mensagens (mantém as mais recentes)</p>
-                      <p><strong>Contexto Enviado ao Chatbot:</strong> Últimas 10 mensagens</p>
-                      <p><strong>Integração:</strong> O contexto da short-memory é automaticamente incluído nas consultas ao chatbot</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Lista das mensagens */}
-
-              {/* Exibição condicional: Short-Memory ou Supabase */}
-              {showingSupabaseMemory ? (
-                // Mensagens do Supabase
-                supabaseMessages.length > 0 ? (
-                  <div className="space-y-3 max-h-96 overflow-y-auto bg-background border border-gray-600 rounded-lg p-4">
-                    <div className="text-sm text-center text-blue-400 mb-3 pb-2 border-b border-gray-600">
-                      Mensagens da Memória Longa (Supabase) - Últimas 50
-                    </div>
-                    {supabaseMessages.map((message, index) => (
-                      <div
-                        key={message.id}
-                        className={`p-3 rounded-lg border ${message.role === 'user'
-                          ? 'bg-slate-900/80 border-slate-700'
-                          : 'bg-slate-800/80 border-slate-600'
-                          }`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0">
-                            {message.role === 'user' ? (
-                              <User className="w-4 h-4 text-blue-500" />
-                            ) : (
-                              <Bot className="w-4 h-4 text-blue-400" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-sm font-medium ${message.role === 'user' ? 'text-blue-400' : 'text-blue-300'
-                                }`}>
-                                {message.role === 'user' ? 'Usuário' : 'Assistente'}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                #{index + 1} • {new Date(message.timestamp).toLocaleString('pt-BR')}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-400 whitespace-pre-wrap break-words">
-                              {message.content}
-                            </p>
-                          </div>
-                        </div>
+          {/* Tab Content */}
+          <div className="relative">
+            {/* Container animado para conteúdo */}
+            <div className={`transition-all duration-500 ease-in-out ${showShortMemory || showSystemMessagePreview ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4 pointer-events-none'
+              }`}>
+              {/* Conteúdo do Tab Histórico */}
+              {showShortMemory && (
+                <div className="bg-gradient-to-br from-slate-900/80 to-blue-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 p-6 border-b border-slate-700/50">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-600/20 rounded-lg">
+                        <MessageSquare className="w-6 h-6 text-blue-400" />
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <Bot className="w-12 h-12 mx-auto mb-3 text-gray-600" />
-                    <p>Nenhuma mensagem encontrada no Supabase</p>
-                  </div>
-                )
-              ) : (
-                // Mensagens da Short-Memory
-                shortMemoryData.length > 0 ? (
-                  <div className="space-y-3 max-h-96 overflow-y-auto bg-background border border-gray-600 rounded-lg p-4">
-                    <div className="text-sm text-center text-green-400 mb-3 pb-2 border-b border-gray-600">
-                      Short-Memory (Últimas 20 mensagens mais recentes)
+                      <div>
+                        <h3 className="text-xl font-bold text-white">Histórico de Conversas</h3>
+                        <p className="text-blue-300/80 text-sm">Reveja suas conversas anteriores</p>
+                      </div>
                     </div>
-                    {shortMemoryData.slice(-20).reverse().map((message, index) => {
-                      // Calcular o número real da mensagem na lista completa (ajustado para ordem reversa)
-                      const totalMessages = shortMemoryData.length;
-                      const displayIndex = totalMessages - index;
-                      const realIndex = totalMessages >= 20 ? (totalMessages - index) : (totalMessages - index);
+                  </div>
 
-                      return (
-                        <div
-                          key={message.id}
-                          className={`p-3 rounded-lg border ${message.role === 'user'
-                            ? 'bg-gray-900/80 border-gray-700'
-                            : 'bg-gray-800/80 border-gray-600'
-                            }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0">
-                              {message.role === 'user' ? (
-                                <User className="w-4 h-4 text-green-500" />
-                              ) : (
-                                <Bot className="w-4 h-4 text-green-400" />
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className={`text-sm font-medium ${message.role === 'user' ? 'text-green-400' : 'text-green-300'
-                                  }`}>
-                                  {message.role === 'user' ? 'Usuário' : 'Assistente'}
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  #{displayIndex} • {new Date(message.timestamp).toLocaleString('pt-BR')}
-                                </span>
+                  <div className="p-6">
+                    {/* Estatísticas da Short-Memory */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                      <Card className="border border-blue-800/50 bg-blue-900/20 backdrop-blur-sm">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex items-center gap-2">
+                              <MessageSquare className="w-8 h-8 mr-2 text-blue-400" />
+                              <div>
+                                <p className="text-md font-bold text-blue-400">Total de Mensagens</p>
+                                <p className="text-lg font-bold text-white">
+                                  {Math.min(shortMemoryStats.totalMessages, 20)} / {supabaseTotalMessages}
+                                </p>
+                                <p className="text-xs text-blue-300/70">
+                                  Short-Memory (máx 20) / Supabase
+                                </p>
                               </div>
-                              <p className="text-sm text-gray-400 whitespace-pre-wrap break-words">
-                                {message.content}
+                            </div>
+
+                            {/* Botão de atualizar no canto superior direito */}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                loadShortMemoryData();
+                                fetchSupabaseTotalMessages();
+                                fetchSupabaseMessages();
+                              }}
+                              className="p-2 rounded-lg hover:bg-blue-700/30 transition-colors group"
+                              title="Atualizar contadores de mensagens"
+                            >
+                              <RefreshCw className="w-4 h-4 text-blue-400 group-hover:text-blue-300 transition-colors" />
+                            </button>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="border border-green-800/50 bg-green-900/20 backdrop-blur-sm">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-8 h-8 mr-2 text-green-400" />
+                            <div>
+                              <p className="text-md font-bold text-green-400">Última Atualização</p>
+                              <p className="text-sm font-bold text-white">
+                                {shortMemoryStats.lastUpdate
+                                  ? shortMemoryStats.lastUpdate.toLocaleString('pt-BR')
+                                  : 'Nenhuma'
+                                }
                               </p>
                             </div>
                           </div>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="border border-purple-800/50 bg-purple-900/20 backdrop-blur-sm">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2">
+                            <Upload className="w-8 h-8 mr-2 text-purple-400" />
+                            <div>
+                              <p className="text-md font-bold text-purple-400">Tamanho da Memória</p>
+                              <p className="text-lg font-bold text-white">
+                                {(shortMemoryStats.memorySize / 1024).toFixed(2)} KB
+                              </p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Lista de Mensagens da Short-Memory */}
+                    <div className="mt-6 space-y-4">
+                      <div className="flex justify-between items-center mr-2">
+                        {/* Botões de alternância Short-Memory / Supabase */}
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!showingSupabaseMemory) {
+                                return;
+                              } else {
+                                setShowingSupabaseMemory(false);
+                              }
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${!showingSupabaseMemory
+                                ? 'bg-green-700/30 border-green-500/50 text-green-300 shadow-lg'
+                                : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-green-900/20 hover:border-green-600/30'
+                              }`}
+                            title="Ver memória recente (short-memory)"
+                          >
+                            <span className="text-sm font-medium">Conversa recente</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (showingSupabaseMemory) {
+                                return;
+                              } else {
+                                setShowingSupabaseMemory(true);
+                              }
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${showingSupabaseMemory
+                                ? 'bg-blue-700/30 border-blue-500/50 text-blue-300 shadow-lg'
+                                : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-blue-900/20 hover:border-blue-600/30'
+                              }`}
+                            title="Ver conversas antigas (Supabase)"
+                          >
+                            <span className="text-sm font-medium">Conversas antigas</span>
+                          </button>
                         </div>
-                      );
-                    })}
+
+                        {/* Botão Detalhes */}
+                        <button
+                          type="button"
+                          onClick={() => setShowTechnicalInfo(prev => !prev)}
+                          className="ml-2 flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors bg-orange-900/20 px-3 py-2 rounded-lg border border-orange-600/30"
+                          title="Detalhes da memória recente (short-memory)"
+                        >
+                          <Info className="w-4 h-4" />
+                          <span className="text-sm">Detalhes</span>
+                        </button>
+                      </div>
+
+                      {/* Informações Técnicas */}
+                      {showTechnicalInfo && (
+                        <div className="mt-4 space-y-4">
+                          <div className="border border-orange-600/50 bg-orange-900/20 rounded-xl p-4 backdrop-blur-sm">
+                            <div className="text-sm text-orange-200 space-y-2">
+                              <p><strong className="text-orange-300">Chave do LocalStorage:</strong> {getShortMemoryKey()}</p>
+                              <p><strong className="text-orange-300">Limite de Mensagens:</strong> 50 mensagens (mantém as mais recentes)</p>
+                              <p><strong className="text-orange-300">Contexto Enviado ao Chatbot:</strong> Últimas 10 mensagens</p>
+                              <p><strong className="text-orange-300">Integração:</strong> O contexto da short-memory é automaticamente incluído nas consultas ao chatbot</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Lista das mensagens */}
+                      {showingSupabaseMemory ? (
+                        // Mensagens do Supabase
+                        supabaseMessages.length > 0 ? (
+                          <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900/50 border border-blue-600/30 rounded-xl p-4 backdrop-blur-sm">
+                            <div className="text-sm text-center text-blue-300 mb-3 pb-2 border-b border-blue-600/30">
+                              Mensagens da Memória Longa (Supabase) - Últimas 50
+                            </div>
+                            {supabaseMessages.map((message, index) => (
+                              <div
+                                key={message.id}
+                                className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
+                                    ? 'bg-slate-800/60 border-slate-600/50'
+                                    : 'bg-blue-900/30 border-blue-700/50'
+                                  }`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="flex-shrink-0">
+                                    {message.role === 'user' ? (
+                                      <User className="w-4 h-4 text-blue-400" />
+                                    ) : (
+                                      <Bot className="w-4 h-4 text-blue-300" />
+                                    )}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className={`text-sm font-medium ${message.role === 'user' ? 'text-blue-300' : 'text-blue-200'
+                                        }`}>
+                                        {message.role === 'user' ? 'Usuário' : 'Assistente'}
+                                      </span>
+                                      <span className="text-xs text-slate-400">
+                                        #{index + 1} • {new Date(message.timestamp).toLocaleString('pt-BR')}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-slate-300 whitespace-pre-wrap break-words">
+                                      {message.content}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-12 text-slate-400 bg-slate-900/30 rounded-xl border border-slate-700/50">
+                            <Bot className="w-12 h-12 mx-auto mb-3 text-slate-500" />
+                            <p>Nenhuma mensagem encontrada no Supabase</p>
+                          </div>
+                        )
+                      ) : (
+                        // Mensagens da Short-Memory
+                        shortMemoryData.length > 0 ? (
+                          <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900/50 border border-green-600/30 rounded-xl p-4 backdrop-blur-sm">
+                            <div className="text-sm text-center text-green-300 mb-3 pb-2 border-b border-green-600/30">
+                              Short-Memory (Últimas 20 mensagens mais recentes)
+                            </div>
+                            {shortMemoryData.slice(-20).reverse().map((message, index) => {
+                              const totalMessages = shortMemoryData.length;
+                              const displayIndex = totalMessages - index;
+
+                              return (
+                                <div
+                                  key={message.id}
+                                  className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
+                                      ? 'bg-slate-800/60 border-slate-600/50'
+                                      : 'bg-green-900/30 border-green-700/50'
+                                    }`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="flex-shrink-0">
+                                      {message.role === 'user' ? (
+                                        <User className="w-4 h-4 text-green-400" />
+                                      ) : (
+                                        <Bot className="w-4 h-4 text-green-300" />
+                                      )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className={`text-sm font-medium ${message.role === 'user' ? 'text-green-300' : 'text-green-200'
+                                          }`}>
+                                          {message.role === 'user' ? 'Usuário' : 'Assistente'}
+                                        </span>
+                                        <span className="text-xs text-slate-400">
+                                          #{displayIndex} • {new Date(message.timestamp).toLocaleString('pt-BR')}
+                                        </span>
+                                      </div>
+                                      <p className="text-sm text-slate-300 whitespace-pre-wrap break-words">
+                                        {message.content}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="border border-slate-700/50 text-center py-12 text-slate-400 rounded-xl bg-slate-900/30">
+                            <MessageSquare className="w-12 h-12 mx-auto mb-3 text-slate-500" />
+                            <p>Nenhuma mensagem na memória recente</p>
+                            <p className="text-xs mt-1">Inicie uma conversa no chatbot para ver as mensagens aqui</p>
+                          </div>
+                        )
+                      )}
+                    </div>
+
+                    {/* Controles da Short-Memory */}
+                    <div className="flex gap-3 mt-6">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => setShowClearConfirmation(true)}
+                        className="flex items-center gap-2 border-red-500/50 bg-red-900/30 hover:border-red-400/70 hover:bg-red-900/50 backdrop-blur-sm"
+                        disabled={shortMemoryStats.totalMessages === 0 || shortMemoryLoading}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Limpar Memória
+                      </Button>
+                    </div>
                   </div>
-                ) : (
-                  <div className="border border-gray-600 text-center py-8 text-gray-500 rounded-lg">
-                    <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-600" />
-                    <p>Nenhuma mensagem na memória recente</p>
-                    <p className="text-xs mt-1">Inicie uma conversa no chatbot para ver as mensagens aqui</p>
+                </div>
+              )}
+
+              {/* Conteúdo do Tab Instrução Automática */}
+              {showSystemMessagePreview && (
+                <div className="bg-gradient-to-br from-slate-900/80 to-purple-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 p-6 border-b border-slate-700/50">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-purple-600/20 rounded-lg">
+                        <Bot className="w-6 h-6 text-purple-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-white">Instrução Automática</h3>
+                        <p className="text-purple-300/80 text-sm">Instrução gerada a partir do formulário do chatbot</p>
+                      </div>
+                    </div>
                   </div>
-                )
+
+                  <div className="p-6">
+                    <pre className="whitespace-pre-wrap text-sm bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 max-h-96 overflow-y-auto text-slate-200 backdrop-blur-sm leading-relaxed">
+                      {systemMessagePreview}
+                    </pre>
+                  </div>
+                </div>
               )}
             </div>
-
-
-            {/* Controles da Short-Memory */}
-            <div className="flex gap-3 my-6">
-
-              {/* <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={loadShortMemoryData}
-                className="flex items-center gap-2" >
-                <RefreshCw className="w-4 h-4" />
-                Recarregar
-              </Button> */}
-
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={() => setShowClearConfirmation(true)}
-                className="flex items-center gap-2 border-red-500 bg-red-900 hover:border-red-400 hover:bg-red-950"
-                disabled={shortMemoryStats.totalMessages === 0 || shortMemoryLoading} >
-                <Trash2 className="w-4 h-4" />
-                Limpar Memória
-              </Button>
-
-            </div>
-
           </div>
-        )}
+        </div>
 
 
       </form>
