@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot, Info, ExternalLink, Copy, Check, QrCode } from "lucide-react";
+import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot, Info, ExternalLink, Copy, Check, QrCode, Download } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 // import { ChatbotData } from "@/interfaces";
 import { ChatbotConfigProps } from "@/interfaces";
@@ -33,6 +33,7 @@ import {
 import { useShortMemory } from "@/hooks/useShortMemory";
 import { useAuth } from "@/lib/auth/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import QRCode from "qrcode";
 
 const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   chatbotData,
@@ -55,6 +56,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [supabaseTotalMessages, setSupabaseTotalMessages] = useState<number>(0);
   const [showingSupabaseMemory, setShowingSupabaseMemory] = useState(false);
   const [supabaseMessages, setSupabaseMessages] = useState<{ id: string; role: string; content: string; timestamp: string }[]>([]);
+  const [showQRCodeModal, setShowQRCodeModal] = useState(false);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
 
   const { user } = useAuth();
 
@@ -108,6 +111,49 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     if (url) {
       window.open(url, '_blank');
     }
+  };
+
+  // Função para gerar QR-code
+  const generateQRCode = async (url: string): Promise<string> => {
+    try {
+      const qrCodeDataUrl = await QRCode.toDataURL(url, {
+        width: 512,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      return qrCodeDataUrl;
+    } catch (error) {
+      console.error('Erro ao gerar QR-code:', error);
+      throw error;
+    }
+  };
+
+  // Função para abrir modal do QR-code
+  const handleShowQRCode = async () => {
+    const url = getPublicChatbotUrl();
+    if (!url) return;
+
+    try {
+      const qrDataUrl = await generateQRCode(url);
+      setQrCodeDataUrl(qrDataUrl);
+      setShowQRCodeModal(true);
+    } catch (error) {
+      console.error('Erro ao gerar QR-code:', error);
+      alert('Erro ao gerar QR-code. Tente novamente.');
+    }
+  };
+
+  // Função para baixar o QR-code
+  const downloadQRCode = () => {
+    if (!qrCodeDataUrl) return;
+
+    const link = document.createElement('a');
+    link.download = `qrcode-${createSlug(chatbotData.chatbot_name || 'chatbot')}.png`;
+    link.href = qrCodeDataUrl;
+    link.click();
   };
 
   // Hook para Short-Memory
@@ -729,7 +775,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => alert("EM TESTES...")}
+                onClick={handleShowQRCode}
                 disabled={!chatbotData?.chatbot_name}
                 className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-purple-600 text-purple-600 hover-glow-violet"
               >
@@ -1124,6 +1170,69 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <Trash2 className="w-4 h-4" />
                 Confirmar Limpeza
               </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal do QR-Code */}
+      <Dialog open={showQRCodeModal} onOpenChange={setShowQRCodeModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <QrCode className="w-5 h-5 text-purple-500" />
+              QR-Code do Chatbot Público
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-4">
+                Escaneie este QR-code para acessar o chatbot público
+              </p>
+
+              {qrCodeDataUrl && (
+                <div className="flex justify-center p-4 bg-white rounded-lg">
+                  <img
+                    src={qrCodeDataUrl}
+                    alt="QR-Code do Chatbot"
+                    className="max-w-full h-auto"
+                    style={{ maxWidth: '256px' }}
+                  />
+                </div>
+              )}
+
+              <div className="mt-4 p-3 bg-muted rounded-lg">
+                <p className="text-xs font-mono text-muted-foreground break-all">
+                  {getPublicChatbotUrl()}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-between gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowQRCodeModal(false)}
+                className="flex-1"
+              >
+                Fechar
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={downloadQRCode}
+                className="flex-1 flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-950"
+              >
+                <Download className="w-4 h-4" />
+                Baixar PNG
+              </Button>
+            </div>
+
+            <div className="bg-blue-900/20 border border-blue-600 rounded-lg p-3">
+              <p className="text-xs text-blue-400">
+                <strong>💡 Dica:</strong> O QR-code é gerado automaticamente baseado na URL atual do seu chatbot.
+                Qualquer pessoa que escaneá-lo poderá conversar com seu chatbot.
+              </p>
             </div>
           </div>
         </DialogContent>
