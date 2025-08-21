@@ -15,6 +15,8 @@ import {
   ChevronUp,
   Eye,
   Trash2,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,6 +85,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const [previewContent, setPreviewContent] = useState("");
   const [previewFilename, setPreviewFilename] = useState("");
   const [previewUploadDate, setPreviewUploadDate] = useState("");
+  const [isModalMaximized, setIsModalMaximized] = useState(false);
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -496,6 +499,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       setPreviewContent(document.content || "Conteúdo não disponível");
       setPreviewFilename(document.filename);
       setPreviewUploadDate(document.upload_date);
+      setIsModalMaximized(false); // Resetar estado de maximização
       setPreviewModalOpen(true);
 
     } catch (error) {
@@ -881,43 +885,99 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       )}
 
       {/* Modal de Preview */}
-      <Dialog open={previewModalOpen} onOpenChange={setPreviewModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle>Preview do Documento</DialogTitle>
-          </DialogHeader>
+      <Dialog
+        open={previewModalOpen}
+        onOpenChange={(open) => {
+          setPreviewModalOpen(open);
+          if (!open) setIsModalMaximized(false); // Resetar maximização ao fechar
+        }}
+      >
+        <DialogContent
+          className={`p-0 gap-0 [&>button]:hidden ${isModalMaximized
+            ? "fixed inset-0 w-screen h-screen max-w-none max-h-none m-0 rounded-none border-0"
+            : "max-w-4xl max-h-[80vh]"
+            }`}
+          style={isModalMaximized ? {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            margin: 0,
+            transform: 'none',
+            zIndex: 50,
+            backgroundColor: '#1e293b', // Fundo escuro para melhor contraste
+          } : {
+            backgroundColor: '#1e293b',
+          }}
+        >
+          {/* Header customizado seguindo padrão Windows */}
+          <div className={`flex items-center justify-between px-6 py-4 border-b border-gray-600 bg-slate-800 ${isModalMaximized ? 'rounded-none' : 'rounded-t-lg'
+            }`}>
+            <h2 className="text-lg font-semibold text-white">Preview do Documento</h2>
+            <div className="flex items-center gap-1">
+              {/* Botão Maximizar/Restaurar */}
+              <button
+                onClick={() => setIsModalMaximized(!isModalMaximized)}
+                className="flex items-center justify-center w-8 h-8 text-gray-300 hover:bg-gray-600 hover:text-white transition-colors rounded"
+                title={isModalMaximized ? "Restaurar tamanho" : "Maximizar"}
+                aria-label={isModalMaximized ? "Restaurar tamanho" : "Maximizar"}
+              >
+                {isModalMaximized ? (
+                  <Minimize2 className="h-4 w-4" />
+                ) : (
+                  <Maximize2 className="h-4 w-4" />
+                )}
+              </button>
 
-          {/* Informações do arquivo reorganizadas */}
-          <div className="p-3 bg-blue-900 text-gray-200 rounded-lg border space-y-2">
-            {/* Primeira linha: Nome do arquivo ocupando toda a largura */}
-            <div className="w-full">
-              <p className="font-medium text-gray-200 text-left">
-                {previewFilename}
-              </p>
-            </div>
-
-            {/* Segunda linha: Upload à esquerda, palavras e caracteres à direita */}
-            <div className="flex justify-between items-center">
-              <div className="text-sm text-gray-200">
-                Upload: {previewUploadDate ? new Date(previewUploadDate).toLocaleString('pt-BR') : 'Data não disponível'}
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-200">
-                  {previewContent.split(/\s+/).filter(word => word.length > 0).length} palavras
-                </span>
-                <span className="text-sm text-gray-200">
-                  {previewContent.length} caracteres
-                </span>
-              </div>
+              {/* Botão Fechar */}
+              <button
+                onClick={() => setPreviewModalOpen(false)}
+                className="flex items-center justify-center w-8 h-8 text-gray-300 hover:bg-red-600 hover:text-white transition-colors rounded"
+                title="Fechar"
+                aria-label="Fechar modal"
+              >
+                <span className="text-lg leading-none">×</span>
+              </button>
             </div>
           </div>
 
-          {/* Conteúdo do documento */}
-          <div className="flex-1 overflow-auto">
-            <div className="p-4 bg-gray-200 rounded-lg border">
-              <pre className="whitespace-pre-wrap text-sm font-mono text-gray-800 dark:text-gray-200">
-                {previewContent}
-              </pre>
+          {/* Container principal do conteúdo */}
+          <div className={`flex flex-col ${isModalMaximized ? 'h-full' : 'flex-1'} overflow-hidden`}>
+            {/* Informações do arquivo reorganizadas */}
+            <div className="mx-6 mt-4 p-3 bg-blue-900 text-gray-200 rounded-lg border space-y-2">
+              {/* Primeira linha: Nome do arquivo ocupando toda a largura */}
+              <div className="w-full">
+                <p className="font-medium text-gray-200 text-left">
+                  {previewFilename}
+                </p>
+              </div>
+
+              {/* Segunda linha: Upload à esquerda, palavras e caracteres à direita */}
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-gray-200">
+                  Upload: {previewUploadDate ? new Date(previewUploadDate).toLocaleString('pt-BR') : 'Data não disponível'}
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-200">
+                    {previewContent.split(/\s+/).filter(word => word.length > 0).length} palavras
+                  </span>
+                  <span className="text-sm text-gray-200">
+                    {previewContent.length} caracteres
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Conteúdo do documento */}
+            <div className="flex-1 overflow-auto mx-6 my-4">
+              <div className="p-4 bg-gray-200 rounded-lg border">
+                <pre className="whitespace-pre-wrap text-sm font-mono text-gray-800 dark:text-gray-200">
+                  {previewContent}
+                </pre>
+              </div>
             </div>
           </div>
         </DialogContent>
