@@ -175,6 +175,39 @@
     @apply p-6 rounded-2xl bg-card-gradient shadow-card hover:shadow-lg transition-all duration-300;
   }
 
+  /* Efeitos de glow para hover - Cores variadas */
+  .hover-glow-yellow:hover {
+    filter: drop-shadow(0 0 20px #fbbf24) drop-shadow(0 0 40px #f59e0b) drop-shadow(0 0 60px #f59e0b);
+    /* transform: scale(1.05); */
+  }
+  
+  .hover-glow-green:hover {
+    filter: drop-shadow(0 0 20px #22c55e) drop-shadow(0 0 40px #16a34a) drop-shadow(0 0 60px #15803d);
+    /* transform: scale(1.05); */
+  }
+  
+  .hover-glow-blue:hover {
+    filter: drop-shadow(0 0 20px #3b82f6) drop-shadow(0 0 40px #2563eb) drop-shadow(0 0 60px #1d4ed8);
+    /* transform: scale(1.05); */
+  }
+  
+  .hover-glow-violet:hover {
+    filter: drop-shadow(0 0 20px #8b5cf6) drop-shadow(0 0 40px #7c3aed) drop-shadow(0 0 60px #6d28d9);
+    /* transform: scale(1.05); */
+  }
+
+  /* Animação automática de rotação 360 graus */
+  .auto-rotate-360 {
+    animation: autoRotate360 5s linear infinite;
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+
+  @keyframes autoRotate360 {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(360deg); }
+    100% { transform: rotate(360deg); }
+  }
+
   /* Classes utilitárias para o sistema de temas */
   .bg-theme-gradient {
     background: linear-gradient(

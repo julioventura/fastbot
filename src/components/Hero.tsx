@@ -117,24 +117,6 @@ const Hero = () => {
           display: none; /* Safari and Chrome */
         }
         
-        /* Efeito de glow amarelo no hover */
-        .hover-glow-yellow:hover {
-          filter: drop-shadow(0 0 20px #fbbf24) drop-shadow(0 0 40px #f59e0b) drop-shadow(0 0 60px #f59e0b);
-          transform: scale(1.05);
-        }
-        
-        /* Animação automática de rotação 360 graus a cada 5 segundos */
-        .auto-rotate-360 {
-          animation: autoRotate360 5s linear infinite;
-          transition: filter 0.3s ease, transform 0.3s ease;
-        }
-        
-        @keyframes autoRotate360 {
-          0% { transform: rotate(0deg); }
-          10% { transform: rotate(360deg); }
-          100% { transform: rotate(360deg); }
-        }
-        
         /* Animações diagonais verdadeiras - ângulos intermediários */
         @keyframes floatDiagonal1 {
           0% { transform: translate(-120vw, -80vh) rotate(23deg); }
@@ -196,11 +178,11 @@ const Hero = () => {
 
                   {/* Título Principal */}
                   <div className="space-y-2 mt-4 md:mt-0 md:space-y-2 ml-2 md:ml-10 flex-1">
-                    {/* Sempre 4 linhas, cada uma com seu estilo. Se faltar, exibe vazio. */}
+
                     <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-yellow-400">
                       {slides[currentSlide].text[0] || ""}
                     </span>
-                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-white">
+                    <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-white hover-glow-yellow">
                       {slides[currentSlide].text[1] || ""}
                     </span>
                     <span className="block text-xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-yellow-400">
@@ -221,7 +203,7 @@ const Hero = () => {
                   </div>
 
                   {/* Selo GPT-5 - mobile: lado direito maior, desktop: centralizado depois */}
-                  <div className="flex justify-center items-start lg:justify-center mt-0 pt-0 lg:mt-6 mr-2 lg:mr-0">
+                  <div className="hover-glow-violet flex justify-center items-start lg:justify-center mt-0 pt-0 lg:mt-6 mr-2 lg:mr-0">
                     <img
                       src="https://dentistas.com.br/fastbot/GPT-5.png"
                       alt="Powered by GPT-5"
@@ -247,7 +229,7 @@ const Hero = () => {
                         });
                       }
                     }}
-                    className="hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-4 md:px-8 py-2 md:py-4 rounded-full text-sm md:text-xl lg:text-2xl font-semibold flex items-center gap-2 md:gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                    className="hover-glow-green hero-cta-button bg-primary hover:bg-primary/90 text-primary-foreground mr-2 px-4 md:px-8 py-2 md:py-4 rounded-full text-sm md:text-xl lg:text-2xl font-semibold flex items-center gap-2 md:gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                   >
                     <span>ATENDE NO WHATSAPP...</span>
                   </Button>
@@ -266,7 +248,7 @@ const Hero = () => {
                         });
                       }
                     }}
-                    className="bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-4 md:px-8 py-2 md:py-4 rounded-full text-sm md:text-xl lg:text-2xl font-semibold flex items-center gap-2 md:gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                    className="hover-glow-violet bg-gradient-to-r from-[#f82855] via-[#c91767] to-[#962fbf] hover:from-[#fd5949] hover:via-[#d6249f] hover:to-[#285AEB] text-white px-4 md:px-8 py-2 md:py-4 rounded-full text-sm md:text-xl lg:text-2xl font-semibold flex items-center gap-2 md:gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                   >
                     <span>ATENDE NO INSTAGRAM...</span>
                   </Button>
@@ -284,19 +266,19 @@ const Hero = () => {
 
             {/* Coluna da imagem - lado direito */}
             <div className="lg:col-span-2 flex justify-center lg:justify-end items-center order-last">
-              <div className="relative w-full h-[40vh] md:h-[60vh] lg:h-full flex items-center justify-center lg:justify-end">
+              <div className="relative flex items-center justify-center lg:justify-end">
                 {/* Container da imagem otimizado para altura completa - sem animação */}
-                <div className="relative h-full w-auto max-w-full">
+                <div>
                   {/* Imagem da Fastbot - altura completa, largura automática - FIXA sem movimento */}
                   <img
                     src={slides[currentSlide].image}
                     alt="Fastbot - Assistente Virtual Profissional da Saúde"
-                    className="h-full w-auto object-contain object-center lg:object-right mr-0 lg:mr-20 rounded-[2rem]"
+                    className="object-contain object-center lg:object-right lg:mr-20 rounded-[2rem] cursor-pointer"
                     onError={handleImageError}
                   />
 
                   {/* Overlay sutil para melhor integração com o design */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div>
+                  {/* <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent"></div> */}
                 </div>
 
                 {/* Elementos decorativos externos otimizados - COM ANIMAÇÃO DIAGONAL INTENSA */}

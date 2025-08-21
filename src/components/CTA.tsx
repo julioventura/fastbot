@@ -23,29 +23,10 @@ export default function CTA() {
 
   return (
     <>
-      {/* CSS personalizado para rotação automática e glow no hover */}
-      <style>{`
-        .hover-glow-yellow:hover {
-          filter: drop-shadow(0 0 20px #fbbf24) drop-shadow(0 0 40px #f59e0b) drop-shadow(0 0 60px #f59e0b);
-          transform: scale(1.05);
-        }
-        
-        .auto-rotate-360 {
-          animation: autoRotate360 5s linear infinite;
-          transition: filter 0.3s ease, transform 0.3s ease;
-        }
-        
-        @keyframes autoRotate360 {
-          0% { transform: rotate(0deg); }
-          10% { transform: rotate(360deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
-
       {/* Elemento <section> principal com estilos de fundo e posicionamento relativo. */}
       {/* 'relative' é usado para posicionar o padrão de grade absoluto dentro dele. */}
       {/* 'min-h-screen flex items-center justify-center' para ocupar altura da tela e centralizar */}
-      <section className="relative min-h-screen flex items-center justify-center py-8 md:py-16 bg-theme-gradient">
+      <section className="relative flex items-center justify-center py-8 md:py-16 bg-theme-gradient">
 
         {/* Contêiner do Conteúdo Principal da Seção CTA */}
         {/* 'relative z-10' garante que este conteúdo fique acima do padrão de grade. */}
@@ -55,17 +36,17 @@ export default function CTA() {
             {/* Bloco de texto principal da CTA. */}
             <div className="text-center mt-16 md:mt-32 mb-8 md:mb-12">
               {/* Título da CTA */}
-              <h2 className="text-4xl font-bold mb-4 md:mb-6 text-foreground">
+              <h2 className="hover-glow-blue text-4xl font-bold mb-4 md:mb-6 text-foreground">
                 Pronto  <span className="text-theme-accent"> em </span> <span className="text-yellow-400">3 minutos!</span>
               </h2>
 
               {/* Descrição/Subtítulo da CTA */}
-              <p className="italic text-xl md:text-2xl text-foreground font-bold max-w-3xl mx-auto">
+              <p className="hover-glow-violet italic text-xl md:text-2xl text-foreground font-bold max-w-3xl mx-auto">
                 É só configurar... e USAR !
               </p>
 
               {/* Imagem GPT-5 - Badge de destaque */}
-              <div className="flex justify-center my-4 md:my-6">
+              <div className="hover-glow-violet flex justify-center my-4 md:my-6">
                 <img
                   src="https://dentistas.com.br/fastbot/GPT-5.png"
                   alt="Powered by GPT-5"
@@ -77,7 +58,7 @@ export default function CTA() {
               <div className="mt-6 md:mt-10">
                 <Button
                   onClick={() => navigate('/account')}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg w-full md:w-auto"
+                  className="hover-glow-blue bg-primary hover:bg-primary/90 text-primary-foreground px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg w-full md:w-auto"
                 >
                   CRIAR SEU ASSISTENTE DE IA
                 </Button>
