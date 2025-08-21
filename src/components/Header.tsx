@@ -41,7 +41,7 @@ const Header = () => {
   // Configuração do comportamento do header
   // true = header sempre fixo no topo
   // false = header se esconde quando rola para baixo
-  const header_fixo = false;
+  const header_fixo = true;
 
   const scrollDirection = useScrollDirection();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -99,12 +99,13 @@ const Header = () => {
   };
 
   return (
-    <header className={`header-modern sticky top-0 z-50 shadow-sm bg-background/95 backdrop-blur-md border-b border-border ${header_fixo
-        ? '' // Header fixo - sem animação de transform
+    <header
+      className={`header-modern sticky top-0 z-50 shadow-sm bg-background/95 backdrop-blur-md border-b border-border ${header_fixo
+        ? 'transform-none' // Header fixo - garante que não há transformações
         : `transition-transform duration-300 ease-in-out ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"}` // Header com auto-hide
-      }`}>
-
-      <div className="container mx-auto px-4 h-16 md:h-20">
+        }`}
+      style={header_fixo ? { transform: 'none !important' } : {}}
+    >      <div className="container mx-auto px-4 h-16 md:h-20">
         <div className="flex items-center justify-between h-full">
 
           {/* Logo Section */}
