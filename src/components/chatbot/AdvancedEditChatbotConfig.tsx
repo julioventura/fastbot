@@ -629,9 +629,23 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <p className="pl-2 text-sl text-white mb-2">
               URL do seu chatbot público (baseada no nome do chatbot)
             </p>
-            <code className="text-xs md:text-2xl bg-green-900 border border-gray-600 p-4 mb-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
-              {getPublicChatbotUrl()}
-            </code>
+            <div className="relative">
+              <code className="text-xs md:text-2xl bg-green-900 border border-gray-600 p-4 pr-12 mb-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                {getPublicChatbotUrl()}
+              </code>
+              <button
+                type="button"
+                onClick={handleCopyPublicLink}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-md hover:bg-green-800/50 transition-colors"
+                title="Copiar URL para a área de transferência"
+              >
+                {publicLinkCopied ? (
+                  <Check size={20} className="text-green-300" />
+                ) : (
+                  <Copy size={20} className="text-green-400 hover:text-green-300" />
+                )}
+              </button>
+            </div>
 
             {/* Botões do Link Público */}
             <div className="flex flex-col md:flex-row items-left w-full gap-3 mt-4 mb-4">
