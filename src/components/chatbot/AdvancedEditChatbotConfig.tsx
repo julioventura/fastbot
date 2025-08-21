@@ -935,24 +935,50 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             </div>
 
             {/* Lista de Mensagens da Short-Memory */}
-            <div className="mt-6 space-y-4">
+            <div className="mt-14 space-y-4">
               <div className="flex justify-between items-center mr-2">
-                {/* Botão de alternância Short-Memory / Supabase */}
-                <button
-                  type="button"
-                  onClick={() => setShowingSupabaseMemory(prev => !prev)}
-                  className="flex items-center gap-2 px-3 py-1 rounded-md border transition-colors"
-                  style={{
-                    backgroundColor: showingSupabaseMemory ? '#1e40af' : '#0F8F0F',
-                    borderColor: showingSupabaseMemory ? '#3b82f6' : '#00C000',
-                    color: showingSupabaseMemory ? '#ffffff' : '#ffffff'
-                  }}
-                  title={showingSupabaseMemory ? "Ver memória recente" : "Ver conversas antigas"}
-                >
-                  <span className="text-sm">
-                    {showingSupabaseMemory ? 'Conversas antigas' : 'Conversa recente'}
-                  </span>
-                </button>
+                {/* Botões de alternância Short-Memory / Supabase */}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!showingSupabaseMemory) {
+                        // Se já está na conversa recente, não faz nada
+                        return;
+                      } else {
+                        // Muda para conversa recente
+                        setShowingSupabaseMemory(false);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-md border transition-colors ${!showingSupabaseMemory
+                      ? 'bg-green-800 border-green-600 text-white'
+                      : 'bg-transparent border-gray-600 text-gray-400 hover:bg-green-900/20'
+                      }`}
+                    title="Ver memória recente (short-memory)"
+                  >
+                    <span className="text-sm">Conversa recente</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (showingSupabaseMemory) {
+                        // Se já está nas conversas antigas, não faz nada
+                        return;
+                      } else {
+                        // Muda para conversas antigas
+                        setShowingSupabaseMemory(true);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-3 py-1 rounded-md border transition-colors ${showingSupabaseMemory
+                      ? 'bg-blue-800 border-blue-600 text-white'
+                      : 'bg-transparent border-gray-600 text-gray-400 hover:bg-blue-900/20'
+                      }`}
+                    title="Ver conversas antigas (Supabase)"
+                  >
+                    <span className="text-sm">Conversas antigas</span>
+                  </button>
+                </div>
 
                 {/* Botão Detalhes */}
                 <button
