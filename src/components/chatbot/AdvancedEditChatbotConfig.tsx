@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot, Info } from "lucide-react";
+import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot, Info, ExternalLink, Copy, Check, QrCode } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 // import { ChatbotData } from "@/interfaces";
 import { ChatbotConfigProps } from "@/interfaces";
@@ -49,6 +49,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [previewImageIndex, setPreviewImageIndex] = useState<number>(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showShortMemory, setShowShortMemory] = useState(false);
+  const [publicLinkCopied, setPublicLinkCopied] = useState(false);
   const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
   const [showClearConfirmation, setShowClearConfirmation] = useState(false);
   const [supabaseTotalMessages, setSupabaseTotalMessages] = useState<number>(0);
@@ -56,6 +57,58 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [supabaseMessages, setSupabaseMessages] = useState<{ id: string; role: string; content: string; timestamp: string }[]>([]);
 
   const { user } = useAuth();
+
+  // Função para criar slug a partir do nome do chatbot
+  const createSlug = (name: string): string => {
+    return name
+      .toLowerCase()
+      .normalize('NFD') // Decompor caracteres acentuados
+      .replace(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
+      .replace(/ç/g, 'c') // Substituir ç por c
+      .replace(/Ç/g, 'c') // Substituir Ç por c
+      .replace(/[^a-z0-9]/g, '') // Remover tudo que não for letra ou número
+      .trim();
+  };
+
+  // Funções para link público
+  const getPublicChatbotUrl = () => {
+    if (!chatbotData?.chatbot_name) return '';
+    const slug = createSlug(chatbotData.chatbot_name);
+    if (!slug) return '';
+
+    const baseUrl = window.location.origin;
+    const basePath = window.location.pathname.includes('/fastbot') ? '/fastbot' : '';
+    return `${baseUrl}${basePath}/chat/${slug}`;
+  };
+
+  const handleCopyPublicLink = async () => {
+    const url = getPublicChatbotUrl();
+    if (!url) return;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setPublicLinkCopied(true);
+      setTimeout(() => setPublicLinkCopied(false), 2000);
+    } catch (error) {
+      console.error('Erro ao copiar link:', error);
+      // Fallback para seleção manual
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setPublicLinkCopied(true);
+      setTimeout(() => setPublicLinkCopied(false), 2000);
+    }
+  };
+
+  const handleOpenPublicChatbot = () => {
+    const url = getPublicChatbotUrl();
+    if (url) {
+      window.open(url, '_blank');
+    }
+  };
 
   // Hook para Short-Memory
   const {
@@ -509,7 +562,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             variant="outline"
             onClick={onCancel}
             disabled={isSaving}
-            className="w-full md:w-auto text-sm md:text-base px-4 py-2"
+            className="hover-glow-shadow w-full md:w-auto text-sm md:text-base px-4 py-2"
           >
             Cancelar
           </Button>
@@ -517,11 +570,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           <Button
             type="submit"
             disabled={isSaving}
-            className="w-full md:w-auto text-sm md:text-base px-4 py-2"
+            className="hover-glow-blue w-full md:w-auto text-sm md:text-base px-4 py-2"
           >
             {isSaving ? "Salvando..." : "Salvar Configurações"}
           </Button>
         </div>
+
         <div className="pt-3 md:pt-6"></div>
         <div className="mt-3 md:mt-6 border border-gray-600 rounded-lg bg-blue-950">
 
@@ -610,7 +664,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 : 'hover:bg-purple-900'
                 } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
             >
-              {showSystemMessagePreview ? 'Ocultar' : 'Visualizar'} System Message Gerado
+              {showSystemMessagePreview ? 'Ocultar' : 'Ver'} Instrução Automática
             </Button>
 
             <Button
@@ -623,12 +677,76 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 : 'hover:bg-purple-900'
                 } border border-purple-600 px-3 md:px-4 py-2 transition-colors text-xs md:text-sm w-full md:w-auto`}
             >
-              {showShortMemory ? 'Ocultar' : 'Visualizar'} histórico das conversas
+              {showShortMemory ? 'Ocultar' : 'Ver'} Histórico
             </Button>
           </div>
 
-
         </div>
+
+        {/* URL do chatbot público para referência */}
+        {chatbotData?.chatbot_name && (
+          <div className="mt-20 p-4 border border-gray-600 rounded-lg bg-blue-950">
+            <p className="text-xs md:text-sm text-gray-300 mb-2">
+              URL do seu chatbot público (baseada no nome do chatbot):
+            </p>
+            <code className="text-xs md:text-sm bg-gray-900 border border-gray-600 p-2 md:p-3 rounded block w-full overflow-x-auto text-green-400 font-mono">
+              {getPublicChatbotUrl()}
+            </code>
+
+            {/* Botões do Link Público */}
+            <div className="flex flex-col md:flex-row items-left w-full gap-3 mt-4 mb-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleOpenPublicChatbot}
+                disabled={!chatbotData?.chatbot_name}
+                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-green-600 text-green-600 hover-glow-green"
+              >
+                <ExternalLink size={16} className="mr-2" />
+                Abrir Chatbot Público
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCopyPublicLink}
+                disabled={!chatbotData?.chatbot_name}
+                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-blue-600 text-blue-600 hover-glow-blue"
+              >
+                {publicLinkCopied ? (
+                  <>
+                    <Check size={16} className="mr-2" />
+                    Link Copiado!
+                  </>
+                ) : (
+                  <>
+                    <Copy size={16} className="mr-2" />
+                    Copiar Link Público
+                  </>
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => alert("EM TESTES...")}
+                disabled={!chatbotData?.chatbot_name}
+                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-purple-600 text-purple-600 hover-glow-violet"
+              >
+                <QrCode size={16} className="mr-2" />
+                Ver QR-Code
+              </Button>
+            </div>
+
+            <p className="text-xs md:text-sm text-gray-400 mt-2">
+              💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
+            </p>
+            <p className="text-xs md:text-sm text-gray-400 mt-2">
+              💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
+            </p>
+          </div>
+        )}
+
 
         {/* Preview do System Message */}
         {showSystemMessagePreview && (

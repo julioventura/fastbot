@@ -196,6 +196,11 @@
     /* transform: scale(1.05); */
   }
 
+  .hover-glow-shadow:hover {
+    filter: drop-shadow(0 0 20px #000000) drop-shadow(0 0 40px #464646) drop-shadow(0 0 60px #1f1f1f);
+    /* transform: scale(1.05); */
+  }
+
   /* Animação automática de rotação 360 graus */
   .auto-rotate-360 {
     animation: autoRotate360 5s linear infinite;
