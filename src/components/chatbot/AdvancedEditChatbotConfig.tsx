@@ -702,32 +702,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         )}
 
 
-        {/* Base de Dados */}
-        <div className="pt-3 md:pt-6"></div>
-        <div className="mt-3 md:mt-6 border border-gray-600 rounded-lg bg-blue-950">
-
-          <Card className="bg-transparent border border-border backdrop-blur-sm">
-            <CardHeader className="p-3 md:p-6">
-              <CardTitle className="flex items-center text-lg md:text-xl">Base de Dados</CardTitle>
-              <CardDescription className="text-sm md:text-base">
-                Gerencie documentos e imagens para enriquecer as respostas do
-                chatbot
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 md:space-y-6 p-3 md:p-6">
-
-              {/* Upload de Documentos */}
-              <div className="space-y-3 md:space-y-6 lg p-2 md:p-6">
-                <DocumentUpload />
-              </div>
-
-            </CardContent>
-          </Card>
-
-
-        </div>
-
-
 
         {/* Seção: Configurações da Base de Dados */}
         {/* <div className="space-y-6 border border-gray-600 rounded-lg p-6">
@@ -800,8 +774,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   }}
                   disabled={isSaving}
                   className={`relative px-6 py-3 rounded-lg transition-all duration-300 ease-in-out text-sm font-medium min-w-[180px] ${showShortMemory
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform translate-y-[-1px]'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform translate-y-[-1px]'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                     }`}
                 >
                   <div className="flex items-center justify-center gap-2">
@@ -827,8 +801,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   }}
                   disabled={isSaving}
                   className={`relative px-6 py-3 rounded-lg transition-all duration-300 ease-in-out text-sm font-medium min-w-[180px] ${showSystemMessagePreview
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                     }`}
                 >
                   <div className="flex items-center justify-center gap-2">
@@ -948,8 +922,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                               }
                             }}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${!showingSupabaseMemory
-                                ? 'bg-green-700/30 border-green-500/50 text-green-300 shadow-lg'
-                                : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-green-900/20 hover:border-green-600/30'
+                              ? 'bg-green-700/30 border-green-500/50 text-green-300 shadow-lg'
+                              : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-green-900/20 hover:border-green-600/30'
                               }`}
                             title="Ver memória recente (short-memory)"
                           >
@@ -966,8 +940,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                               }
                             }}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${showingSupabaseMemory
-                                ? 'bg-blue-700/30 border-blue-500/50 text-blue-300 shadow-lg'
-                                : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-blue-900/20 hover:border-blue-600/30'
+                              ? 'bg-blue-700/30 border-blue-500/50 text-blue-300 shadow-lg'
+                              : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-blue-900/20 hover:border-blue-600/30'
                               }`}
                             title="Ver conversas antigas (Supabase)"
                           >
@@ -1013,8 +987,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                               <div
                                 key={message.id}
                                 className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
-                                    ? 'bg-slate-800/60 border-slate-600/50'
-                                    : 'bg-blue-900/30 border-blue-700/50'
+                                  ? 'bg-slate-800/60 border-slate-600/50'
+                                  : 'bg-blue-900/30 border-blue-700/50'
                                   }`}
                               >
                                 <div className="flex items-start gap-3">
@@ -1064,8 +1038,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                                 <div
                                   key={message.id}
                                   className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
-                                      ? 'bg-slate-800/60 border-slate-600/50'
-                                      : 'bg-green-900/30 border-green-700/50'
+                                    ? 'bg-slate-800/60 border-slate-600/50'
+                                    : 'bg-green-900/30 border-green-700/50'
                                     }`}
                                 >
                                   <div className="flex items-start gap-3">
@@ -1149,8 +1123,34 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           </div>
         </div>
 
-
       </form>
+
+
+      {/* Base de Dados */}
+      <div className="pt-3 md:pt-6"></div>
+      <div className="mt-3 md:mt-6 border border-gray-600 rounded-lg bg-blue-950">
+
+        <Card className="bg-transparent border border-border backdrop-blur-sm">
+          <CardHeader className="p-3 md:p-6">
+            <CardTitle className="flex items-center text-lg md:text-xl">Base de Dados</CardTitle>
+            <CardDescription className="text-sm md:text-base">
+              Gerencie documentos e imagens para enriquecer as respostas do
+              chatbot
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 md:space-y-6 p-3 md:p-6">
+
+            {/* Upload de Documentos */}
+            <div className="space-y-3 md:space-y-6 lg p-2 md:p-6">
+              <DocumentUpload />
+            </div>
+
+          </CardContent>
+        </Card>
+
+
+      </div>
+
 
       {/* Modal de Preview de Imagem */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
