@@ -7,12 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import { Slider } from "@/components/ui/slider";
-// import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -20,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot, Info, ExternalLink, Copy, Check, QrCode, Download } from "lucide-react";
+import { Upload, X, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Info, ExternalLink, Copy, Check, QrCode, Download } from "lucide-react";
 // import { ChatbotData } from "@/interfaces";
 import { ChatbotConfigProps } from "@/interfaces";
 import {
@@ -175,41 +171,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     borderColor: isDark ? "rgba(255, 255, 255, 0.6)" : "#000000",
   };
 
-  // Funções auxiliares para frases obrigatórias
-  const addMandatoryPhrase = (phrase: string) => {
-    if (
-      phrase.trim() &&
-      !(chatbotData.mandatory_phrases || []).includes(phrase.trim())
-    ) {
-      onChange("mandatory_phrases", [
-        ...(chatbotData.mandatory_phrases || []),
-        phrase.trim(),
-      ]);
-    }
-  };
-
-  const removeMandatoryPhrase = (index: number) => {
-    const phrases = [...(chatbotData.mandatory_phrases || [])];
-    phrases.splice(index, 1);
-    onChange("mandatory_phrases", phrases);
-  };
-
-
-  const addTopic = (topic: string) => {
-    if (topic.trim()) {
-      onChange("allowed_topics", [
-        ...(chatbotData.allowed_topics || []),
-        topic.trim(),
-      ]);
-    }
-  };
-
-  const removeTopic = (index: number) => {
-    const newTopics = [...(chatbotData.allowed_topics || [])];
-    newTopics.splice(index, 1);
-    onChange("allowed_topics", newTopics);
-  };
-
   // Funções para upload de imagens
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -303,63 +264,54 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   return (
     <div className="space-y-6">
 
-      <form onSubmit={onSubmit} onKeyDown={(e) => {
-        // Permite Enter apenas para submissão quando for no botão de submit
-        // Bloqueia Enter para evitar submissões acidentais de outros campos
-        if (e.key === "Enter" && e.target !== e.currentTarget) {
-          const target = e.target as HTMLElement;
-          // Permite Enter apenas em botões de submit ou se for Ctrl+Enter
-          if (!('type' in target && target.type === "submit") && !e.ctrlKey) {
-            e.preventDefault();
-          }
-        }
-      }} className="space-y-6">
 
 
 
-        {/* URL do chatbot público para referência */}
-        <div id="chatbot_publico">
 
-          {chatbotData?.chatbot_name && (
-            <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
-              <p className="pl-2 text-xl text-white mb-4">
-                Seu chatbot público
-                <br />
-                <span className="text-lg text-gray-400 italic">Baseada no nome do chatbot</span>
-              </p>
+      {/* URL do chatbot público para referência */}
+      <div id="chatbot_publico">
 
-              {/* Layout em duas colunas */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {chatbotData?.chatbot_name && (
+          <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
+            <p className="pl-2 text-xl text-white mb-4">
+              Seu chatbot público
+              <br />
+              <span className="text-lg text-gray-400 italic">Baseada no nome do chatbot</span>
+            </p>
 
-                {/* Coluna 1 - URL e QR-Code */}
-                <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-white mb-3">URL do Chatbot</h4>
+            {/* Layout em duas colunas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                  <div className="relative">
-                    <code className="text-xs lg:text-sm bg-green-900 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
-                      {getPublicChatbotUrl()}
-                    </code>
-                    <button
-                      type="button"
-                      onClick={handleCopyPublicLink}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md hover:bg-green-800/50 transition-colors"
-                      title="Copiar URL para a área de transferência"
-                    >
-                      {publicLinkCopied ? (
-                        <Check size={16} className="text-green-300" />
-                      ) : (
-                        <Copy size={16} className="text-green-400 hover:text-green-300" />
-                      )}
-                    </button>
-                  </div>
+              {/* Coluna 1 - URL e QR-Code */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-white mb-3">URL do Chatbot</h4>
 
-                  {/* QR-Code */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-white">QR-Code</h4>
-                    <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-4">
-                      {qrCodeDataUrl ? (
-                        <div className="space-y-3">
-                          <div className="flex justify-center p-3 bg-white rounded-lg">
+                <div className="relative">
+                  <code className="text-xs lg:text-sm bg-green-900 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                    {getPublicChatbotUrl()}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={handleCopyPublicLink}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md hover:bg-green-800/50 transition-colors"
+                    title="Copiar URL para a área de transferência"
+                  >
+                    {publicLinkCopied ? (
+                      <Check size={16} className="text-green-300" />
+                    ) : (
+                      <Copy size={16} className="text-green-400 hover:text-green-300" />
+                    )}
+                  </button>
+                </div>
+
+                {/* QR-Code */}
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium text-white">QR-Code</h4>
+                  <div className="bg-transparent border border-slate-700/30 rounded-lg p-4">
+                    {qrCodeDataUrl ? (
+                      <div className="space-y-3">
+                        <div className="flex justify-center">
+                          <div className="bg-white rounded-xl p-4 shadow-lg shadow-black/20">
                             <img
                               src={qrCodeDataUrl}
                               alt="QR-Code do Chatbot"
@@ -367,29 +319,30 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                             />
                           </div>
                         </div>
-                      ) : (
-                        <div className="text-center py-6">
-                          <QrCode className="w-8 h-8 mx-auto mb-2 text-slate-500" />
-                          <p className="text-xs text-slate-400">
-                            QR-Code será gerado automaticamente
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6">
+                        <QrCode className="w-8 h-8 mx-auto mb-2 text-slate-500" />
+                        <p className="text-xs text-slate-400">
+                          QR-Code será gerado automaticamente
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
+              </div>
 
-                {/* Coluna 2 - Botões de Ação */}
-                <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-white mb-3">Ações Disponíveis</h4>
+              {/* Coluna 2 - Botões de Ação */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-white mb-3">Ações Disponíveis</h4>
 
-                  <div className="space-y-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleOpenPublicChatbot}
-                      disabled={!chatbotData?.chatbot_name}
-                      className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green                      -- 1. Verificar todas as políticas existentes para documents
+                <div className="space-y-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleOpenPublicChatbot}
+                    disabled={!chatbotData?.chatbot_name}
+                    className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green                      -- 1. Verificar todas as políticas existentes para documents
                       SELECT 
                           schemaname,
                           tablename,
@@ -430,285 +383,51 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           AND table_schema = 'public'
                           AND column_name ILIKE '%user%' OR column_name ILIKE '%chatbot%' OR column_name ILIKE '%owner%'
                       ORDER BY column_name;-950 hover-glow-green"
-                    >
-                      <ExternalLink size={16} className="mr-2" />
-                      Abrir Chatbot
-                    </Button>
+                  >
+                    <ExternalLink size={16} className="mr-2" />
+                    Abrir Chatbot
+                  </Button>
 
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleCopyPublicLink}
-                      disabled={!chatbotData?.chatbot_name}
-                      className="w-full text-sm px-4 py-2 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
-                    >
-                      {publicLinkCopied ? (
-                        <>
-                          <Check size={16} className="mr-2" />
-                          Link Copiado!
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={16} className="mr-2" />
-                          Copiar Link
-                        </>
-                      )}
-                    </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCopyPublicLink}
+                    disabled={!chatbotData?.chatbot_name}
+                    className="w-full text-sm px-4 py-2 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
+                  >
+                    {publicLinkCopied ? (
+                      <>
+                        <Check size={16} className="mr-2" />
+                        Link Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={16} className="mr-2" />
+                        Copiar Link
+                      </>
+                    )}
+                  </Button>
 
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={downloadQRCode}
-                      className="w-full text-xs border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
-                    >
-                      <Download className="w-3 h-3 mr-1" />
-                      Baixar QR-Code
-                    </Button>
-                  </div>
-
-
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={downloadQRCode}
+                    className="w-full text-xs border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
+                  >
+                    <Download className="w-3 h-3 mr-1" />
+                    Baixar QR-Code
+                  </Button>
                 </div>
 
-              </div>
-            </div>
-          )}
 
-        </div>
-
-
-        {/* Seção: Identidade do chatbot */}
-        <div className="space-y-4 md:space-y-6 border border-gray-600 rounded-lg p-3 md:p-6 bg-blue-950">
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
-            {/* Coluna Esquerda */}
-            <div className="space-y-4 md:space-y-6">
-              {/* Nome do Chatbot */}
-              <div>
-                <Label htmlFor="chatbot_name" className="text-sm md:text-base">
-                  Nome do Chatbot <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="chatbot_name"
-                  value={chatbotData.chatbot_name}
-                  onChange={(e) => onChange("chatbot_name", e.target.value)}
-                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
-                  style={borderStyle}
-                  placeholder="Ex: Assistente Virtual Dr. Silva"
-                  required
-                />
               </div>
 
-              {/* Saudação Personalizada */}
-              <div>
-                <Label htmlFor="welcome_message" className="text-sm md:text-base">
-                  Mensagem de Saudação
-                </Label>
-                <Textarea
-                  id="welcome_message"
-                  value={chatbotData.welcome_message}
-                  onChange={(e) =>
-                    onChange("welcome_message", e.target.value)
-                  }
-                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
-                  style={borderStyle}
-                  rows={6}
-                  placeholder="Olá! Como posso ajudar?"
-                />
-              </div>
-            </div>
-
-            {/* Coluna Direita */}
-            <div className="space-y-4 md:space-y-6">
-              {/* System Message */}
-              <div>
-                <Label htmlFor="system_instructions" className="text-sm md:text-base">
-                  Instruções Gerais{" "}
-                </Label>
-                <Textarea
-                  id="system_instructions"
-                  value={chatbotData.system_instructions}
-                  onChange={(e) =>
-                    onChange("system_instructions", e.target.value)
-                  }
-                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
-                  style={borderStyle}
-                  rows={10}
-                  placeholder="Você é um assistente virtual e suas principais funções são..."
-                />
-              </div>
             </div>
           </div>
+        )}
 
-          <div className="border-1 border-gray-500">
-
-            {/* Temas Permitidos */}
-
-            <div className="space-y-2">
-              <Label className="text-sm md:text-base">Temas Permitidos</Label>
-
-              {/* Layout responsivo para mobile */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-                {/* Seção de Input - Full width no mobile */}
-
-                <div className="md:col-span-1">
-                  {/* Input para adicionar temas */}
-                  <div className="space-y-2 md:space-y-4">
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Digite e pressione Enter para adicionar à lista"
-                        size={15}
-                        onKeyDown={(e) => {
-                          // Só processa se for Enter sem modificadores (Ctrl, Shift, Alt)
-                          if (e.key === "Enter" && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const target = e.target as HTMLInputElement;
-                            if (target.value.trim()) {
-                              addTopic(target.value);
-                              target.value = "";
-                            }
-                          }
-                        }}
-                        className="edit-form-input text-sm md:text-base"
-                        style={borderStyle}
-                      />
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={(e) => {
-                          const input =
-                            e.currentTarget.parentElement?.querySelector(
-                              "input"
-                            );
-                          if (input && input.value.trim()) {
-                            addTopic(input.value);
-                            input.value = "";
-                          }
-                        }}
-                        className="flex-shrink-0"
-                      >
-                        <Plus className="w-3 h-3 md:w-4 md:h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Lista de temas - Full width no mobile */}
-                <div className="col-span-1 bg-blue-900 border-1 border-blue-600 rounded-md" >
-                  {(chatbotData.allowed_topics || []).length > 0 ? (
-                    <div className="flex flex-wrap gap-1 md:gap-2 p-2 md:p-3 border border-blue-300 rounded-lg">
-                      {(chatbotData.allowed_topics || []).map(
-                        (topic, index) => (
-                          <Badge
-                            key={index}
-                            variant="secondary"
-                            className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs md:text-sm font-medium text-white border-2 border-blue-500 hover:bg-blue-800/50 transition-colors"
-                          >
-                            <span className="break-words">{topic}</span>
-                            <div
-                              className="cursor-pointer flex-shrink-0"
-                              onClick={() => removeTopic(index)}
-                              title={`Remover tema: ${topic}`}
-                            >
-                              <X className="w-3 h-3 hover:text-red-400" />
-                            </div>
-                          </Badge>
-                        )
-                      )}
-                    </div>
-                  ) : (
-                    <div className="p-4 border border-dashed border-gray-400 rounded-lg text-center">
-                      <p className="text-sm text-muted-foreground">
-                        Nenhum tema adicionado ainda. Use o campo ao lado para
-                        adicionar temas permitidos.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* Botões Cancelar e Salvar */}
-        <div className="pb-0 flex justify-center items-center w-full gap-5">
-
-          <button
-            type="button"
-            onClick={onPreviewSystemMessage}
-            disabled={isSaving}
-            className={`relative px-8 py-4 rounded-xl transition-all duration-300 ease-in-out text-sm font-medium min-w-[200px] ${showSystemMessagePreview
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
-              : 'bg-slate-900/50 border border-slate-700/50 text-slate-300 hover:text-white hover:bg-slate-800/70 hover:border-slate-600/70 backdrop-blur-sm'
-              }`}
-          >
-            <div className="flex items-center justify-center gap-3">
-              <Bot className="w-5 h-5" />
-              {showSystemMessagePreview ? 'Ocultar' : 'Ver'} Instrução Automática
-            </div>
-            {showSystemMessagePreview && (
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse" />
-            )}
-          </button>
-
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            disabled={isSaving}
-            className="hover-glow-shadow w-full md:w-auto text-sm md:text-base px-4 py-2"
-          >
-            Cancelar
-          </Button>
-
-          <Button
-            type="submit"
-            disabled={isSaving}
-            className="hover-glow-blue w-full md:w-auto text-sm md:text-base px-4 py-2"
-          >
-            {isSaving ? "Salvando..." : "Salvar Configurações"}
-          </Button>
-
-        </div>
-
-
-        {/* Botão para Instrução Automática */}
-        <div className="pt-0 pb-0">
-
-
-          {/* Conteúdo da Instrução Automática */}
-          {showSystemMessagePreview && (
-            <div className={`transition-all duration-500 ease-in-out ${showSystemMessagePreview ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4 pointer-events-none'
-              }`}>
-              <div className="bg-gradient-to-br from-slate-900/80 to-purple-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
-                <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 p-6 border-b border-slate-700/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-600/20 rounded-lg">
-                      <Bot className="w-6 h-6 text-purple-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white">Instrução Automática</h3>
-                      <p className="text-purple-300/80 text-sm">Instrução gerada a partir do formulário do chatbot</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <pre className="whitespace-pre-wrap text-sm bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 max-h-96 overflow-y-auto text-slate-200 backdrop-blur-sm leading-relaxed">
-                    {systemMessagePreview}
-                  </pre>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-      </form>
+      </div>
 
 
       {/* Modal de Preview de Imagem */}
@@ -786,13 +505,15 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </p>
 
               {qrCodeDataUrl && (
-                <div className="flex justify-center p-4 bg-white rounded-lg">
-                  <img
-                    src={qrCodeDataUrl}
-                    alt="QR-Code do Chatbot"
-                    className="max-w-full h-auto"
-                    style={{ maxWidth: '256px' }}
-                  />
+                <div className="flex justify-center">
+                  <div className="bg-white rounded-xl p-6 shadow-lg shadow-black/10">
+                    <img
+                      src={qrCodeDataUrl}
+                      alt="QR-Code do Chatbot"
+                      className="max-w-full h-auto"
+                      style={{ maxWidth: '256px' }}
+                    />
+                  </div>
                 </div>
               )}
 
