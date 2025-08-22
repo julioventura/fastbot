@@ -12,14 +12,14 @@ const BaseDeDados: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-green-950 to-emerald-950">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto border border-green-700 rounded-lg bg-green-900/30 p-6">
 
           {/* Header da página */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h1 className="text-3xl font-bold text-white">
               Base de Dados
             </h1>
-            <p className="text-lg text-green-200 max-w-3xl">
+            <p className="text-sl pt-2 text-green-200 max-w-3xl">
               Gerencie os arquivos de texto que seu chatbot usará para responder perguntas.
             </p>
           </div>

@@ -258,41 +258,47 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, [isPreviewOpen, navigateImage, closeImagePreview]);
 
-  // Recarregar dados da Short-Memory quando a seção é ativada ou o usuário muda - removido pois agora está em página separada
-
-  // Funções do Supabase removidas - agora estão em página separada
 
   return (
-    <div className="space-y-6">
+    // <div className="bg-gradient-to-br from-violet-900 via-blue-900 to-indigo-900 border rounded-lg">
+    //   <div className="container mx-auto px-4 py-8">
+    //     <div className="max-w-6xl mx-auto space-y-6">
 
+    <div className="min-h-screen bg-gradient-to-br from-violet-900 via-blue-950/30 to-indigo-700">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto border border-blue-700 rounded-lg bg-blue-900/30 p-6">
 
+          {/* Header da página */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-white">
+              Meu Chatbot
+            </h1>
+            <p className="text-sl pt-2 text-slate-300 max-w-3xl">
+              Configure e gerencie seu chatbot público com QR-code e URL personalizada
+            </p>
+          </div>
 
+          {/* URL do chatbot público para referência */}
+          <div id="chatbot_publico">
 
-
-      {/* URL do chatbot público para referência */}
-      <div id="chatbot_publico">
-
-        {chatbotData?.chatbot_name && (
-          <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
-            {/* <p className="pl-2 text-xl text-white mb-4">
+            {chatbotData?.chatbot_name && (
+              <div className="p-6 border border-slate-600/50 rounded-xl bg-slate-900/60 backdrop-blur-sm shadow-2xl">
+                {/* <p className="pl-2 text-xl text-white mb-4">
               Seu chatbot público
             </p> */}
 
-            {/* Layout em duas colunas */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-              {/* Coluna 1 - URL e QR-Code */}
-              <div className="space-y-4">
+
                 <h4 className="pl-2 text-sm font-medium text-white mb-3">URL do Chatbot</h4>
 
                 <div className="relative">
-                  <code className="text-xs md:text-sm bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                  <code className="mb-10 text-xs md:text-sm bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
                     {getPublicChatbotUrl().replace(/^https?:\/\//, "")}
                   </code>
                   <button
                     type="button"
                     onClick={handleCopyPublicLink}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md hover:bg-green-800/50 transition-colors"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md hover:bg-blue-800/50 transition-colors"
                     title="Copiar URL para a área de transferência"
                   >
                     {publicLinkCopied ? (
@@ -303,215 +309,226 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   </button>
                 </div>
 
-                {/* QR-Code */}
-                <div className="pt-5 space-y-3">
-                  <h4 className="pl-2 text-sm font-medium text-white">QR-Code do Chatbot</h4>
-                  <div className="bg-transparent border border-gray-500/70 rounded-lg p-12">
-                    {qrCodeDataUrl ? (
-                      <div className="space-y-3">
-                        <div className="flex justify-center">
-                          <div className="bg-white rounded-xl p-2 shadow-2xl shadow-black/90">
-                            <img
-                              src={qrCodeDataUrl}
-                              alt="QR-Code do Chatbot"
-                              className="w-48 h-48 object-contain"
-                            />
+
+                { }
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* Coluna 1 - URL e QR-Code */}
+                  <div className="space-y-4">
+
+
+                    {/* QR-Code */}
+                    <div className="pt-0 space-y-3">
+                      <h4 className="pl-2 text-sm font-medium text-white">QR-Code do Chatbot</h4>
+                      <div className="bg-blue-900 border border-gray-500/70 rounded-lg p-12">
+                        {qrCodeDataUrl ? (
+                          <div className="space-y-3">
+                            <div className="flex justify-center">
+                              <div className="bg-white rounded-xl p-2 shadow-2xl shadow-black/90">
+                                <img
+                                  src={qrCodeDataUrl}
+                                  alt="QR-Code do Chatbot"
+                                  className="w-48 h-48 object-contain"
+                                />
+                              </div>
+                            </div>
                           </div>
-                        </div>
+                        ) : (
+                          <div className="text-center py-6">
+                            <QrCode className="w-8 h-8 mx-auto mb-2 text-slate-500" />
+                            <p className="text-xs text-slate-400">
+                              QR-Code será gerado automaticamente
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div className="text-center py-6">
-                        <QrCode className="w-8 h-8 mx-auto mb-2 text-slate-500" />
-                        <p className="text-xs text-slate-400">
-                          QR-Code será gerado automaticamente
-                        </p>
-                      </div>
-                    )}
+                    </div>
                   </div>
+
+                  {/* Coluna 2 - Botões de Ação */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-white mb-8"></h4>
+
+                    <div className="space-y-8">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleOpenPublicChatbot}
+                        disabled={!chatbotData?.chatbot_name}
+                        className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
+                      >
+                        <ExternalLink size={18} className="mr-2" />
+                        Abrir Chatbot
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCopyPublicLink}
+                        disabled={!chatbotData?.chatbot_name}
+                        className="w-full text-sm px-4 py-2 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
+                      >
+                        {publicLinkCopied ? (
+                          <>
+                            <Check size={16} className="mr-2" />
+                            Link Copiado!
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={16} className="mr-2" />
+                            Copiar Link
+                          </>
+                        )}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={downloadQRCode}
+                        className="w-full text-sm py-2 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Baixar QR-Code
+                      </Button>
+                    </div>
+
+
+                  </div>
+
                 </div>
               </div>
+            )}
 
-              {/* Coluna 2 - Botões de Ação */}
+          </div>
+
+
+          {/* Modal de Preview de Imagem */}
+          <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+              <DialogHeader>
+                <DialogTitle>
+                  Preview da Imagem{" "}
+                  {(chatbotData.uploaded_images || []).length > 1 &&
+                    `(${previewImageIndex + 1} de ${(chatbotData.uploaded_images || []).length
+                    })`}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="relative">
+                <div className="flex items-center justify-center p-4 bg-gray-900 rounded-lg">
+                  {previewImage && (
+                    <img
+                      src={previewImage}
+                      alt="Preview da imagem"
+                      className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg"
+                      style={{ maxWidth: "100%", height: "auto" }}
+                    />
+                  )}
+                </div>
+
+                {/* Botões de navegação */}
+                {(chatbotData.uploaded_images || []).length > 1 && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2"
+                      onClick={() => navigateImage("prev")}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                      onClick={() => navigateImage("next")}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center pt-4">
+                <p className="text-sm text-muted-foreground">
+                  {(chatbotData.uploaded_images || []).length > 1
+                    ? "Use as setas ou clique fora da imagem para fechar"
+                    : "Clique fora da imagem ou no botão para fechar"}
+                </p>
+                <Button variant="outline" onClick={closeImagePreview}>
+                  Fechar
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Modal do QR-Code */}
+          <Dialog open={showQRCodeModal} onOpenChange={setShowQRCodeModal}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <QrCode className="w-5 h-5 text-purple-500" />
+                  QR-Code do Chatbot Público
+                </DialogTitle>
+              </DialogHeader>
               <div className="space-y-4">
-                <h4 className="text-sm font-medium text-white mb-3">Ações Disponíveis</h4>
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Escaneie este QR-code para acessar o chatbot público
+                  </p>
 
-                <div className="space-y-8">
+                  {qrCodeDataUrl && (
+                    <div className="flex justify-center">
+                      <div className="bg-white rounded-xl p-6 shadow-lg shadow-black/10">
+                        <img
+                          src={qrCodeDataUrl}
+                          alt="QR-Code do Chatbot"
+                          className="max-w-full h-auto"
+                          style={{ maxWidth: '256px' }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-4 p-3 bg-muted rounded-lg">
+                    <p className="text-xs font-mono text-muted-foreground break-all">
+                      {getPublicChatbotUrl()}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between gap-3">
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={handleOpenPublicChatbot}
-                    disabled={!chatbotData?.chatbot_name}
-                    className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
+                    onClick={() => setShowQRCodeModal(false)}
+                    className="flex-1"
                   >
-                    <ExternalLink size={18} className="mr-2" />
-                    Abrir Chatbot
+                    Fechar
                   </Button>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCopyPublicLink}
-                    disabled={!chatbotData?.chatbot_name}
-                    className="w-full text-sm px-4 py-2 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
-                  >
-                    {publicLinkCopied ? (
-                      <>
-                        <Check size={16} className="mr-2" />
-                        Link Copiado!
-                      </>
-                    ) : (
-                      <>
-                        <Copy size={16} className="mr-2" />
-                        Copiar Link
-                      </>
-                    )}
-                  </Button>
-
                   <Button
                     type="button"
                     variant="outline"
                     onClick={downloadQRCode}
-                    className="w-full text-sm py-2 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
+                    className="flex-1 flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-950"
                   >
-                    <Download className="w-4 h-4 mr-1" />
-                    Baixar QR-Code
+                    <Download className="w-4 h-4" />
+                    Baixar PNG
                   </Button>
                 </div>
 
-
-              </div>
-
-            </div>
-          </div>
-        )}
-
-      </div>
-
-
-      {/* Modal de Preview de Imagem */}
-      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-          <DialogHeader>
-            <DialogTitle>
-              Preview da Imagem{" "}
-              {(chatbotData.uploaded_images || []).length > 1 &&
-                `(${previewImageIndex + 1} de ${(chatbotData.uploaded_images || []).length
-                })`}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="relative">
-            <div className="flex items-center justify-center p-4 bg-gray-900 rounded-lg">
-              {previewImage && (
-                <img
-                  src={previewImage}
-                  alt="Preview da imagem"
-                  className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-lg"
-                  style={{ maxWidth: "100%", height: "auto" }}
-                />
-              )}
-            </div>
-
-            {/* Botões de navegação */}
-            {(chatbotData.uploaded_images || []).length > 1 && (
-              <>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => navigateImage("prev")}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => navigateImage("next")}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </>
-            )}
-          </div>
-
-          <div className="flex justify-between items-center pt-4">
-            <p className="text-sm text-muted-foreground">
-              {(chatbotData.uploaded_images || []).length > 1
-                ? "Use as setas ou clique fora da imagem para fechar"
-                : "Clique fora da imagem ou no botão para fechar"}
-            </p>
-            <Button variant="outline" onClick={closeImagePreview}>
-              Fechar
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal do QR-Code */}
-      <Dialog open={showQRCodeModal} onOpenChange={setShowQRCodeModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <QrCode className="w-5 h-5 text-purple-500" />
-              QR-Code do Chatbot Público
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-4">
-                Escaneie este QR-code para acessar o chatbot público
-              </p>
-
-              {qrCodeDataUrl && (
-                <div className="flex justify-center">
-                  <div className="bg-white rounded-xl p-6 shadow-lg shadow-black/10">
-                    <img
-                      src={qrCodeDataUrl}
-                      alt="QR-Code do Chatbot"
-                      className="max-w-full h-auto"
-                      style={{ maxWidth: '256px' }}
-                    />
-                  </div>
+                <div className="bg-blue-900/20 border border-blue-600 rounded-lg p-3">
+                  <p className="text-xs text-blue-400">
+                    <strong>💡 Dica:</strong> O QR-code é gerado automaticamente baseado na URL atual do seu chatbot.
+                    Qualquer pessoa que escaneá-lo poderá conversar com seu chatbot.
+                  </p>
                 </div>
-              )}
-
-              <div className="mt-4 p-3 bg-muted rounded-lg">
-                <p className="text-xs font-mono text-muted-foreground break-all">
-                  {getPublicChatbotUrl()}
-                </p>
               </div>
-            </div>
+            </DialogContent>
+          </Dialog>
 
-            <div className="flex justify-between gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowQRCodeModal(false)}
-                className="flex-1"
-              >
-                Fechar
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={downloadQRCode}
-                className="flex-1 flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-950"
-              >
-                <Download className="w-4 h-4" />
-                Baixar PNG
-              </Button>
-            </div>
-
-            <div className="bg-blue-900/20 border border-blue-600 rounded-lg p-3">
-              <p className="text-xs text-blue-400">
-                <strong>💡 Dica:</strong> O QR-code é gerado automaticamente baseado na URL atual do seu chatbot.
-                Qualquer pessoa que escaneá-lo poderá conversar com seu chatbot.
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div >
+        </div>
+      </div>
+    </div>
   );
 };
 

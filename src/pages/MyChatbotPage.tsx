@@ -20,7 +20,7 @@ const MyChatbotPage: React.FC = () => {
     office_address: "",
     office_hours: "",
     specialties: "",
-    chatbot_name: "Meu Chatbot",
+    chatbot_name: "",
     welcome_message: "",
     whatsapp: "",
     // Valores padrão dos novos campos
@@ -86,7 +86,7 @@ const MyChatbotPage: React.FC = () => {
           office_address: record.office_address || "",
           office_hours: record.office_hours || "",
           specialties: record.specialties || "",
-          chatbot_name: record.chatbot_name || "Meu Chatbot",
+          chatbot_name: record.chatbot_name || "",
           welcome_message: record.welcome_message || "",
           whatsapp: record.whatsapp || "",
           // Campos avançados
@@ -347,26 +347,16 @@ const MyChatbotPage: React.FC = () => {
   }
 
   return (
-    <div className="relative overflow-hidden bg-theme-gradient min-h-screen">
+    <div>
       <BackgroundDecoration />
 
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-theme-gradient"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl opacity-60"></div>
-        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-2xl opacity-50"></div>
-        <div className="absolute top-1/2 left-3/4 w-64 h-64 bg-primary/8 rounded-full blur-xl opacity-40"></div>
-        <div className="absolute inset-0 opacity-5">
-          <div className="w-full h-full" style={{
-            backgroundImage: 'radial-gradient(circle, hsl(var(--primary)) 1px, transparent 1px)',
-            backgroundSize: '50px 50px'
-          }}></div>
-        </div>
-      </div>
+      {/* <div className="absolute inset-0 z-0"> */}
+      {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl opacity-30"></div> */}
+      {/* <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-indigo-500/5 rounded-full blur-2xl opacity-50"></div> */}
+      {/* </div> */}
 
-      <div className="container mx-auto py-4 md:py-10 px-2 md:px-4 relative z-10">
-        <h1 className="text-center text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-8 gradient-text">Meu Chatbot</h1>
-
-        {/* Botão para Preview do System Message */}
+      {/* Botão para Preview do System Message */}
+      <div >
         <AdvancedEditChatbotConfig
           chatbotData={chatbotData}
           isSaving={isSaving}
@@ -378,6 +368,7 @@ const MyChatbotPage: React.FC = () => {
           systemMessagePreview={systemMessagePreview}
         />
       </div>
+
     </div>
   );
 };

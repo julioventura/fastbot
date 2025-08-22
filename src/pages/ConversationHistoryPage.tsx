@@ -168,8 +168,8 @@ const ConversationHistoryPage: React.FC = () => {
         </div> */}
 
         {/* Container Principal */}
-        <div className="bg-gradient-to-br from-slate-900/80 to-blue-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 p-6 border-b border-slate-700/50">
+        <div className="bg-gradient-to-br from-slate-900/80 to-blue-900/20 backdrop-blur-sm rounded-2xl border border-blue-700/80 shadow-2xl overflow-hidden">
+          <div className="p-6">
             <div className="flex items-center gap-3">
 
               <div>

@@ -109,15 +109,16 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-violet-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+
+        <div className="max-w-6xl mx-auto bg-violet-950 border border-violet-900 rounded-lg p-6 ">
 
           {/* Header da página */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h1 className="text-3xl font-bold text-white">
               Configure seu Chatbot
             </h1>
-            <p className="text-lg text-slate-300 max-w-3xl">
+            <p className="text-sl pt-2 text-slate-300 max-w-3xl">
               Configure como ele se apresenta, quais temas pode abordar e suas instruções gerais.
             </p>
           </div>
