@@ -59,7 +59,7 @@ const PublicChatbotPage: React.FC = () => {
 
   // Função para criar slug a partir do nome do chatbot
   const createSlug = (name: string): string => {
-    return name
+    const slug = name
       .toLowerCase()
       .normalize('NFD') // Decompor caracteres acentuados
       .replace(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
@@ -67,16 +67,22 @@ const PublicChatbotPage: React.FC = () => {
       .replace(/Ç/g, 'c') // Substituir Ç por c
       .replace(/[^a-z0-9]/g, '') // Remover tudo que não for letra ou número
       .trim();
+
+    console.log('🔧 [PublicChatbot] Slug gerado:', { original: name, slug });
+    return slug;
   };  // Função específica para busca vetorial com userId personalizado
   const getChatbotContextForUser = async (userMessage: string, maxTokens: number = 3000, targetUserId: string): Promise<string> => {
     try {
+      console.log('🔍 [PublicChatbot] Iniciando busca por contexto:', { userMessage: userMessage.substring(0, 50) + '...', targetUserId });
+
       // Gerar embedding da query usando OpenAI
       const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
       if (!openaiApiKey) {
-        console.warn('OpenAI API key não configurada, retornando contexto vazio');
+        console.warn('❌ [PublicChatbot] OpenAI API key não configurada, retornando contexto vazio');
         return '';
       }
 
+      console.log('🔧 [PublicChatbot] Gerando embedding...');
       // Gerar embedding
       const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
         method: 'POST',
@@ -86,32 +92,52 @@ const PublicChatbotPage: React.FC = () => {
         },
         body: JSON.stringify({
           input: userMessage,
-          model: 'text-embedding-3-small'
+          model: 'text-embedding-ada-002' // Mesmo modelo usado para criar os embeddings
         }),
       });
 
       if (!embeddingResponse.ok) {
-        console.warn('Erro ao gerar embedding, retornando contexto vazio');
+        console.warn('❌ [PublicChatbot] Erro ao gerar embedding, retornando contexto vazio');
         return '';
       }
 
       const embeddingData = await embeddingResponse.json();
       const queryEmbedding = embeddingData.data[0].embedding;
+      console.log('✅ [PublicChatbot] Embedding gerado com sucesso, dimensões:', queryEmbedding.length);
 
-      // Buscar documentos similares
-      const { data, error } = await supabase.rpc('match_embeddings', {
-        query_embedding: queryEmbedding,
-        user_id: targetUserId,
-        match_threshold: 0.5,
-        match_count: 5
+      // Buscar documentos similares usando a função pública
+      console.log('🔧 [PublicChatbot] Chamando função match_embeddings_public...', {
+        targetUserId,
+        embeddingLength: queryEmbedding.length,
+        threshold: 0.3,
+        count: 10
       });
 
+      const { data, error } = await supabase.rpc('match_embeddings_public', {
+        query_embedding: queryEmbedding,
+        target_user_id: targetUserId,
+        match_threshold: 0.3, // Reduzido para capturar mais resultados
+        match_count: 10 // Aumentado para mais resultados
+      });
+
+      console.log('🔧 [PublicChatbot] Resposta da RPC:', { data, error, hasData: !!data, dataLength: data?.length });
+
       if (error) {
-        console.error('Erro na busca RPC:', error);
+        console.error('❌ [PublicChatbot] Erro na busca RPC:', error);
         return '';
       }
 
+      console.log('📊 [PublicChatbot] Resultados da busca:', {
+        totalResults: data?.length || 0,
+        results: data?.map(r => ({
+          filename: r.filename,
+          similarity: (r.similarity * 100).toFixed(1) + '%',
+          chunkPreview: r.chunk_text.substring(0, 100) + '...'
+        }))
+      });
+
       if (!data || data.length === 0) {
+        console.log('❌ [PublicChatbot] Nenhum resultado encontrado na busca vetorial');
         return '';
       }
 
@@ -131,9 +157,14 @@ const PublicChatbotPage: React.FC = () => {
         currentTokens += chunkTokens;
       }
 
+      console.log('✅ [PublicChatbot] Contexto construído com sucesso:', {
+        totalChars: context.length,
+        estimatedTokens: Math.ceil(context.length * estimatedTokensPerChar)
+      });
+
       return context.trim();
     } catch (error) {
-      console.error('Erro ao buscar contexto:', error);
+      console.error('❌ [PublicChatbot] Erro ao buscar contexto:', error);
       return '';
     }
   };
@@ -159,10 +190,24 @@ const PublicChatbotPage: React.FC = () => {
         return;
       }
 
+      console.log('🔍 [PublicChatbot] Chatbots encontrados:', allChatbots?.map(bot => ({
+        name: bot.chatbot_name,
+        slug: bot.chatbot_name ? createSlug(bot.chatbot_name) : 'sem-nome',
+        user: bot.chatbot_user
+      })));
+
+      console.log('🔍 [PublicChatbot] Procurando por slug:', chatbotSlug);
+
       // Encontrar o chatbot com o slug correspondente
       const chatbot = allChatbots?.find(bot =>
         bot.chatbot_name && createSlug(bot.chatbot_name) === chatbotSlug
       );
+
+      console.log('🔍 [PublicChatbot] Chatbot encontrado:', chatbot ? {
+        name: chatbot.chatbot_name,
+        user: chatbot.chatbot_user,
+        slug: createSlug(chatbot.chatbot_name)
+      } : 'Nenhum chatbot encontrado');
 
       if (!chatbot) {
         setError('Chatbot não encontrado');
@@ -277,8 +322,20 @@ const PublicChatbotPage: React.FC = () => {
     if (!config) return 'Erro: Configuração não carregada';
 
     try {
+      console.log('🚀 [PublicChatbot] Processando mensagem:', {
+        userMessage: userMessage.substring(0, 100) + '...',
+        chatbotUser: config?.chatbot_user,
+        chatbotName: config?.chatbot_name
+      });
+
       // Buscar contexto nos documentos
       const vectorContext = await getChatbotContextForUser(userMessage, 3000, config?.chatbot_user || '');
+
+      console.log('📖 [PublicChatbot] Contexto vetorial obtido:', {
+        hasContext: !!vectorContext,
+        contextLength: vectorContext.length,
+        contextPreview: vectorContext ? vectorContext.substring(0, 200) + '...' : 'Nenhum contexto encontrado'
+      });
 
       // Gerar system message
       const systemMessage = generateSystemMessage(config);
@@ -300,6 +357,9 @@ const PublicChatbotPage: React.FC = () => {
 
       if (vectorContext && vectorContext.trim()) {
         fullPrompt += `INFORMAÇÕES RELEVANTES DOS DOCUMENTOS:\n${vectorContext}\n\n`;
+        console.log('✅ [PublicChatbot] Contexto vetorial adicionado ao prompt');
+      } else {
+        console.log('⚠️ [PublicChatbot] Nenhum contexto vetorial disponível');
       }
 
       // Adicionar informações adicionais do chatbot
@@ -312,12 +372,23 @@ const PublicChatbotPage: React.FC = () => {
         fullPrompt += '\n';
       }
 
+      console.log('🤖 [PublicChatbot] Chamando OpenAI...', {
+        promptLength: fullPrompt.length,
+        systemMessageLength: systemMessage.length
+      });
+
       // Chamar OpenAI
       const response = await generateAIResponse(systemMessage, fullPrompt, userMessage);
+
+      console.log('✅ [PublicChatbot] Resposta da IA obtida:', {
+        responseLength: response.length,
+        responsePreview: response.substring(0, 100) + '...'
+      });
+
       return response;
 
     } catch (error) {
-      console.error('Erro no processamento com IA:', error);
+      console.error('❌ [PublicChatbot] Erro no processamento com IA:', error);
       return getBotResponseLocal(userMessage);
     }
   };

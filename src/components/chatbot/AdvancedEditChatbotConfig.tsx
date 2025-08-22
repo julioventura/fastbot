@@ -390,7 +390,47 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       variant="outline"
                       onClick={handleOpenPublicChatbot}
                       disabled={!chatbotData?.chatbot_name}
-                      className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
+                      className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green                      -- 1. Verificar todas as políticas existentes para documents
+                      SELECT 
+                          schemaname,
+                          tablename,
+                          policyname,
+                          permissive,
+                          roles,
+                          cmd,
+                          qual,
+                          with_check
+                      FROM pg_policies 
+                      WHERE tablename = 'documents'
+                      ORDER BY policyname;
+                      
+                      -- 2. Verificar estrutura da tabela documents
+                      SELECT 
+                          column_name,
+                          data_type,
+                          is_nullable
+                      FROM information_schema.columns 
+                      WHERE table_name = 'documents'
+                          AND table_schema = 'public'
+                      ORDER BY ordinal_position;
+                      
+                      -- 3. Verificar permissões atuais do role 'anon' na tabela documents
+                      SELECT 
+                          privilege_type,
+                          grantee
+                      FROM information_schema.table_privileges 
+                      WHERE table_name = 'documents'
+                          AND grantee IN ('anon', 'public')
+                      ORDER BY privilege_type;
+                      
+                      -- 4. Verificar se existe coluna para identificar o chatbot (user_id, chatbot_id, etc.)
+                      SELECT 
+                          column_name
+                      FROM information_schema.columns 
+                      WHERE table_name = 'documents'
+                          AND table_schema = 'public'
+                          AND column_name ILIKE '%user%' OR column_name ILIKE '%chatbot%' OR column_name ILIKE '%owner%'
+                      ORDER BY column_name;-950 hover-glow-green"
                     >
                       <ExternalLink size={16} className="mr-2" />
                       Abrir Chatbot
