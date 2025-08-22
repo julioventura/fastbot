@@ -68,7 +68,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   };
 
   // Funções para link público
-  const getPublicChatbotUrl = () => {
+  const getPublicChatbotUrl = useCallback(() => {
     if (!chatbotData?.chatbot_name) return '';
     const slug = createSlug(chatbotData.chatbot_name);
     if (!slug) return '';
@@ -76,7 +76,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     const baseUrl = window.location.origin;
     const basePath = window.location.pathname.includes('/fastbot') ? '/fastbot' : '';
     return `${baseUrl}${basePath}/chat/${slug}`;
-  };
+  }, [chatbotData?.chatbot_name]);
 
   const handleCopyPublicLink = async () => {
     const url = getPublicChatbotUrl();
@@ -108,7 +108,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   };
 
   // Função para gerar QR-code
-  const generateQRCode = async (url: string): Promise<string> => {
+  const generateQRCode = useCallback(async (url: string): Promise<string> => {
     try {
       const qrCodeDataUrl = await QRCode.toDataURL(url, {
         width: 512,
@@ -123,22 +123,28 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
       console.error('Erro ao gerar QR-code:', error);
       throw error;
     }
-  };
+  }, []);
 
-  // Função para abrir modal do QR-code
-  const handleShowQRCode = async () => {
-    const url = getPublicChatbotUrl();
-    if (!url) return;
+  // Gerar QR-Code automaticamente quando a URL muda
+  useEffect(() => {
+    const generateQRCodeAuto = async () => {
+      const url = getPublicChatbotUrl();
+      if (!url) return;
 
-    try {
-      const qrDataUrl = await generateQRCode(url);
-      setQrCodeDataUrl(qrDataUrl);
-      setShowQRCodeModal(true);
-    } catch (error) {
-      console.error('Erro ao gerar QR-code:', error);
-      alert('Erro ao gerar QR-code. Tente novamente.');
+      try {
+        const qrDataUrl = await generateQRCode(url);
+        setQrCodeDataUrl(qrDataUrl);
+      } catch (error) {
+        console.error('Erro ao gerar QR-code:', error);
+      }
+    };
+
+    if (chatbotData?.chatbot_name) {
+      generateQRCodeAuto();
+    } else {
+      setQrCodeDataUrl('');
     }
-  };
+  }, [chatbotData?.chatbot_name, getPublicChatbotUrl, generateQRCode]);
 
   // Função para baixar o QR-code
   const downloadQRCode = () => {
@@ -324,40 +330,57 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               </p>
 
               {/* Layout em duas colunas */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {/* Coluna Esquerda - URL e Cópia */}
-                <div className="space-y-4 pt-9">
+                {/* Coluna 1 - URL e QR-Code */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-white mb-3">URL do Chatbot</h4>
+
                   <div className="relative">
-                    <code className="text-xs md:text-lg bg-green-900 border border-gray-600 p-4 pr-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                    <code className="text-xs lg:text-sm bg-green-900 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
                       {getPublicChatbotUrl()}
                     </code>
                     <button
                       type="button"
                       onClick={handleCopyPublicLink}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-md hover:bg-green-800/50 transition-colors"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-md hover:bg-green-800/50 transition-colors"
                       title="Copiar URL para a área de transferência"
                     >
                       {publicLinkCopied ? (
-                        <Check size={20} className="text-green-300" />
+                        <Check size={16} className="text-green-300" />
                       ) : (
-                        <Copy size={20} className="text-green-400 hover:text-green-300" />
+                        <Copy size={16} className="text-green-400 hover:text-green-300" />
                       )}
                     </button>
                   </div>
 
-                  {/* Informações sobre a URL */}
-                  <div className="space-y-2">
-                    <p className="text-xs md:text-sm text-gray-400">
-                      💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
-                    </p>
-                    <p className="text-xs md:text-sm text-gray-400">
-                      💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
-                    </p>
+                  {/* QR-Code */}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-medium text-white">QR-Code</h4>
+                    <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-4">
+                      {qrCodeDataUrl ? (
+                        <div className="space-y-3">
+                          <div className="flex justify-center p-3 bg-white rounded-lg">
+                            <img
+                              src={qrCodeDataUrl}
+                              alt="QR-Code do Chatbot"
+                              className="w-32 h-32 object-contain"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-6">
+                          <QrCode className="w-8 h-8 mx-auto mb-2 text-slate-500" />
+                          <p className="text-xs text-slate-400">
+                            QR-Code será gerado automaticamente
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Coluna Direita - Botões de Ação */}
+                {/* Coluna 2 - Botões de Ação */}
                 <div className="space-y-4">
                   <h4 className="text-sm font-medium text-white mb-3">Ações Disponíveis</h4>
 
@@ -367,10 +390,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       variant="outline"
                       onClick={handleOpenPublicChatbot}
                       disabled={!chatbotData?.chatbot_name}
-                      className="w-full text-sm md:text-base px-4 py-2 border-green-600 text-green-400 hover-glow-green"
+                      className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
                     >
                       <ExternalLink size={16} className="mr-2" />
-                      Abrir Chatbot Público
+                      Abrir Chatbot
                     </Button>
 
                     <Button
@@ -378,7 +401,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       variant="outline"
                       onClick={handleCopyPublicLink}
                       disabled={!chatbotData?.chatbot_name}
-                      className="w-full text-sm md:text-base px-4 py-2 border-blue-600 text-blue-400 hover-glow-blue"
+                      className="w-full text-sm px-4 py-2 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
                     >
                       {publicLinkCopied ? (
                         <>
@@ -388,7 +411,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       ) : (
                         <>
                           <Copy size={16} className="mr-2" />
-                          Copiar Link Público
+                          Copiar Link
                         </>
                       )}
                     </Button>
@@ -396,14 +419,16 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={handleShowQRCode}
-                      disabled={!chatbotData?.chatbot_name}
-                      className="w-full text-sm md:text-base px-4 py-2 border-purple-600 text-purple-400 hover-glow-violet"
+                      size="sm"
+                      onClick={downloadQRCode}
+                      className="w-full text-xs border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
                     >
-                      <QrCode size={16} className="mr-2" />
-                      Ver QR-Code
+                      <Download className="w-3 h-3 mr-1" />
+                      Baixar QR-Code
                     </Button>
                   </div>
+
+
                 </div>
 
               </div>
