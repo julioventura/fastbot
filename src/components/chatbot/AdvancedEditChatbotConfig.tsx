@@ -292,7 +292,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <h4 className="pl-2 text-sm font-medium text-white mb-3">URL do Chatbot</h4>
 
                 <div className="relative">
-                  <code className="mb-10 text-xs md:text-sm bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                  <code className="mb-10 text-xs md:text-2xl lg:text-3xl bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
                     {getPublicChatbotUrl().replace(/^https?:\/\//, "")}
                   </code>
                   <button
