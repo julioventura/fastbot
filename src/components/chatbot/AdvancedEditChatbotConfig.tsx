@@ -317,78 +317,96 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
           {chatbotData?.chatbot_name && (
             <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
-              <p className="pl-2 text-sl text-white mb-2">
-                URL do seu chatbot público (baseada no nome do chatbot)
+              <p className="pl-2 text-xl text-white mb-4">
+                Seu chatbot público
+                <br />
+                <span className="text-lg text-gray-400 italic">Baseada no nome do chatbot</span>
               </p>
-              <div className="relative">
-                <code className="text-xs md:text-2xl bg-green-900 border border-gray-600 p-4 pr-12 mb-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
-                  {getPublicChatbotUrl()}
-                </code>
-                <button
-                  type="button"
-                  onClick={handleCopyPublicLink}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-md hover:bg-green-800/50 transition-colors"
-                  title="Copiar URL para a área de transferência"
-                >
-                  {publicLinkCopied ? (
-                    <Check size={20} className="text-green-300" />
-                  ) : (
-                    <Copy size={20} className="text-green-400 hover:text-green-300" />
-                  )}
-                </button>
+
+              {/* Layout em duas colunas */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                {/* Coluna Esquerda - URL e Cópia */}
+                <div className="space-y-4 pt-9">
+                  <div className="relative">
+                    <code className="text-xs md:text-lg bg-green-900 border border-gray-600 p-4 pr-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                      {getPublicChatbotUrl()}
+                    </code>
+                    <button
+                      type="button"
+                      onClick={handleCopyPublicLink}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-md hover:bg-green-800/50 transition-colors"
+                      title="Copiar URL para a área de transferência"
+                    >
+                      {publicLinkCopied ? (
+                        <Check size={20} className="text-green-300" />
+                      ) : (
+                        <Copy size={20} className="text-green-400 hover:text-green-300" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Informações sobre a URL */}
+                  <div className="space-y-2">
+                    <p className="text-xs md:text-sm text-gray-400">
+                      💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
+                    </p>
+                    <p className="text-xs md:text-sm text-gray-400">
+                      💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
+                    </p>
+                  </div>
+                </div>
+
+                {/* Coluna Direita - Botões de Ação */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-white mb-3">Ações Disponíveis</h4>
+
+                  <div className="space-y-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleOpenPublicChatbot}
+                      disabled={!chatbotData?.chatbot_name}
+                      className="w-full text-sm md:text-base px-4 py-2 border-green-600 text-green-400 hover-glow-green"
+                    >
+                      <ExternalLink size={16} className="mr-2" />
+                      Abrir Chatbot Público
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCopyPublicLink}
+                      disabled={!chatbotData?.chatbot_name}
+                      className="w-full text-sm md:text-base px-4 py-2 border-blue-600 text-blue-400 hover-glow-blue"
+                    >
+                      {publicLinkCopied ? (
+                        <>
+                          <Check size={16} className="mr-2" />
+                          Link Copiado!
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={16} className="mr-2" />
+                          Copiar Link Público
+                        </>
+                      )}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleShowQRCode}
+                      disabled={!chatbotData?.chatbot_name}
+                      className="w-full text-sm md:text-base px-4 py-2 border-purple-600 text-purple-400 hover-glow-violet"
+                    >
+                      <QrCode size={16} className="mr-2" />
+                      Ver QR-Code
+                    </Button>
+                  </div>
+                </div>
+
               </div>
-
-              {/* Botões do Link Público */}
-              <div className="flex flex-col md:flex-row items-left w-full gap-3 mt-4 mb-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleOpenPublicChatbot}
-                  disabled={!chatbotData?.chatbot_name}
-                  className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-green-600 text-green-400 hover-glow-green"
-                >
-                  <ExternalLink size={16} className="mr-2" />
-                  Abrir Chatbot Público
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCopyPublicLink}
-                  disabled={!chatbotData?.chatbot_name}
-                  className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-blue-600 text-blue-400 hover-glow-blue"
-                >
-                  {publicLinkCopied ? (
-                    <>
-                      <Check size={16} className="mr-2" />
-                      Link Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={16} className="mr-2" />
-                      Copiar Link Público
-                    </>
-                  )}
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleShowQRCode}
-                  disabled={!chatbotData?.chatbot_name}
-                  className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-purple-600 text-purple-400 hover-glow-violet"
-                >
-                  <QrCode size={16} className="mr-2" />
-                  Ver QR-Code
-                </Button>
-              </div>
-
-              <p className="text-xs md:text-sm text-gray-400 mt-8">
-                💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
-              </p>
-              <p className="text-xs md:text-sm text-gray-400 mt-2">
-                💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
-              </p>
             </div>
           )}
 
@@ -554,7 +572,26 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         </div>
 
         {/* Botões Cancelar e Salvar */}
-        <div className="pb-20 flex justify-center items-center w-full gap-5">
+        <div className="pb-0 flex justify-center items-center w-full gap-5">
+
+          <button
+            type="button"
+            onClick={onPreviewSystemMessage}
+            disabled={isSaving}
+            className={`relative px-8 py-4 rounded-xl transition-all duration-300 ease-in-out text-sm font-medium min-w-[200px] ${showSystemMessagePreview
+              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
+              : 'bg-slate-900/50 border border-slate-700/50 text-slate-300 hover:text-white hover:bg-slate-800/70 hover:border-slate-600/70 backdrop-blur-sm'
+              }`}
+          >
+            <div className="flex items-center justify-center gap-3">
+              <Bot className="w-5 h-5" />
+              {showSystemMessagePreview ? 'Ocultar' : 'Ver'} Instrução Automática
+            </div>
+            {showSystemMessagePreview && (
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse" />
+            )}
+          </button>
+
           <Button
             type="button"
             variant="outline"
@@ -572,82 +609,13 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           >
             {isSaving ? "Salvando..." : "Salvar Configurações"}
           </Button>
+
         </div>
 
 
-
-        {/* Seção: Configurações da Base de Dados */}
-        {/* <div className="space-y-6 border border-gray-600 rounded-lg p-6">
-                <h3 className="text-xl font-semibold mb-4 text-primary">
-                  📊 Configurações da Base de Dados
-                </h3>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <Label>
-                        Rigidez nas Fontes:{" "}
-                        {chatbotData.source_strictness || 50}%
-                      </Label>
-                      <Slider
-                        value={[chatbotData.source_strictness || 50]}
-                        onValueChange={([value]) =>
-                          onChange("source_strictness", value)
-                        }
-                        max={100}
-                        step={1}
-                      />
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Flexível</span>
-                        <span>Apenas documentos</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <Label>
-                        Confiança Mínima para Resposta:{" "}
-                        {chatbotData.confidence_threshold || 70}%
-                      </Label>
-                      <Slider
-                        value={[chatbotData.confidence_threshold || 70]}
-                        onValueChange={([value]) =>
-                          onChange("confidence_threshold", value)
-                        }
-                        max={100}
-                        step={1}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div> */}
-
-
-
-
-
         {/* Botão para Instrução Automática */}
-        <div className="pt-8 pb-2">
-          <div className="flex justify-center mb-6">
-            <button
-              type="button"
-              onClick={onPreviewSystemMessage}
-              disabled={isSaving}
-              className={`relative px-8 py-4 rounded-xl transition-all duration-300 ease-in-out text-sm font-medium min-w-[200px] ${showSystemMessagePreview
-                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
-                : 'bg-slate-900/50 border border-slate-700/50 text-slate-300 hover:text-white hover:bg-slate-800/70 hover:border-slate-600/70 backdrop-blur-sm'
-                }`}
-            >
-              <div className="flex items-center justify-center gap-3">
-                <Bot className="w-5 h-5" />
-                {showSystemMessagePreview ? 'Ocultar' : 'Ver'} Instrução Automática
-              </div>
-              {showSystemMessagePreview && (
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse" />
-              )}
-            </button>
-          </div>
+        <div className="pt-0 pb-0">
+
 
           {/* Conteúdo da Instrução Automática */}
           {showSystemMessagePreview && (
@@ -687,8 +655,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           <CardHeader className="p-3 md:p-6">
             <CardTitle className="flex items-center text-lg md:text-xl">Base de Dados</CardTitle>
             <CardDescription className="text-sm md:text-base">
-              Gerencie documentos e imagens para enriquecer as respostas do
-              chatbot
+              Adicione arquivos de texto com informações para seu chatbot usar nas conversas
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 md:space-y-6 p-3 md:p-6">

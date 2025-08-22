@@ -265,8 +265,8 @@ const ConversationHistoryPage: React.FC = () => {
                       }
                     }}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${!showingSupabaseMemory
-                        ? 'bg-green-700/30 border-green-500/50 text-green-300 shadow-lg'
-                        : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-green-900/20 hover:border-green-600/30'
+                      ? 'bg-green-700/30 border-green-500/50 text-green-300 shadow-lg'
+                      : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-green-900/20 hover:border-green-600/30'
                       }`}
                     title="Ver memória recente (short-memory)"
                   >
@@ -283,8 +283,8 @@ const ConversationHistoryPage: React.FC = () => {
                       }
                     }}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${showingSupabaseMemory
-                        ? 'bg-blue-700/30 border-blue-500/50 text-blue-300 shadow-lg'
-                        : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-blue-900/20 hover:border-blue-600/30'
+                      ? 'bg-blue-700/30 border-blue-500/50 text-blue-300 shadow-lg'
+                      : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-blue-900/20 hover:border-blue-600/30'
                       }`}
                     title="Ver conversas antigas (Supabase)"
                   >
@@ -308,7 +308,7 @@ const ConversationHistoryPage: React.FC = () => {
               {showTechnicalInfo && (
                 <div className="mt-4 space-y-4">
                   <div className="border border-orange-600/50 bg-orange-900/20 rounded-xl p-4 backdrop-blur-sm">
-                    <div className="text-sm text-orange-200 space-y-2">
+                    <div className="text-lg text-orange-200 space-y-2">
                       <p><strong className="text-orange-300">Chave do LocalStorage:</strong> {getShortMemoryKey()}</p>
                       <p><strong className="text-orange-300">Limite de Mensagens:</strong> 50 mensagens (mantém as mais recentes)</p>
                       <p><strong className="text-orange-300">Contexto Enviado ao Chatbot:</strong> Últimas 10 mensagens</p>
@@ -330,8 +330,8 @@ const ConversationHistoryPage: React.FC = () => {
                       <div
                         key={message.id}
                         className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
-                            ? 'bg-slate-800/60 border-slate-600/50'
-                            : 'bg-blue-900/30 border-blue-700/50'
+                          ? 'bg-slate-800/60 border-slate-600/50'
+                          : 'bg-blue-900/30 border-blue-700/50'
                           }`}
                       >
                         <div className="flex items-start gap-3">
@@ -381,8 +381,8 @@ const ConversationHistoryPage: React.FC = () => {
                         <div
                           key={message.id}
                           className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
-                              ? 'bg-slate-800/60 border-slate-600/50'
-                              : 'bg-green-900/30 border-green-700/50'
+                            ? 'bg-slate-800/60 border-slate-600/50'
+                            : 'bg-green-900/30 border-green-700/50'
                             }`}
                         >
                           <div className="flex items-start gap-3">
