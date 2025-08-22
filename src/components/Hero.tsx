@@ -207,7 +207,7 @@ const Hero = () => {
                     <img
                       src="https://dentistas.com.br/fastbot/GPT-5.png"
                       alt="Powered by GPT-5"
-                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 hover:opacity-100 hover-glow-yellow auto-rotate-360 cursor-pointer"
+                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 hover:opacity-100 auto-rotate-360 cursor-pointer"
                     />
                   </div>
                 </div>
