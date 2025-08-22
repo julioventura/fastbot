@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Upload, X, Plus, ChevronLeft, ChevronRight, Trash2, RefreshCw, Clock, MessageSquare, User, Bot, Info, ExternalLink, Copy, Check, QrCode, Download } from "lucide-react";
-import DocumentUpload from "@/components/chatbot/DocumentUpload";
 // import { ChatbotData } from "@/interfaces";
 import { ChatbotConfigProps } from "@/interfaces";
 import {
@@ -514,7 +513,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                   style={borderStyle}
                   rows={6}
-                  placeholder="Olá! Sou o assistente virtual. Como posso ajudar?"
+                  placeholder="Olá! Como posso ajudar?"
                 />
               </div>
             </div>
@@ -535,7 +534,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                   style={borderStyle}
                   rows={10}
-                  placeholder="Você é um assistente virtual especializado em... Suas principais funções são..."
+                  placeholder="Você é um assistente virtual e suas principais funções são..."
                 />
               </div>
             </div>
@@ -710,31 +709,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         </div>
 
       </form>
-
-
-      {/* Base de Dados */}
-      <div className="pt-3 md:pt-6"></div>
-      <div className="mt-3 md:mt-6 border border-gray-600 rounded-lg bg-blue-950">
-
-        <Card className="bg-transparent border border-border backdrop-blur-sm">
-          <CardHeader className="p-3 md:p-6">
-            <CardTitle className="flex items-center text-lg md:text-xl">Base de Dados</CardTitle>
-            <CardDescription className="text-sm md:text-base">
-              Adicione arquivos de texto com informações para seu chatbot usar nas conversas
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 md:space-y-6 p-3 md:p-6">
-
-            {/* Upload de Documentos */}
-            <div className="space-y-3 md:space-y-6 lg p-2 md:p-6">
-              <DocumentUpload />
-            </div>
-
-          </CardContent>
-        </Card>
-
-
-      </div>
 
 
       {/* Modal de Preview de Imagem */}

@@ -74,7 +74,7 @@
           "welcome_message": {
             "type": "string",
             "description": "Mensagem de boas-vindas personalizada",
-            "example": "Olá! Sou o assistente virtual do consultório Dr. Silva. Como posso ajudar?"
+            "example": "Olá! Como posso ajudar?"
           },
           "office_address": {
             "type": "string",
@@ -116,7 +116,7 @@
     "systemMessage": "Você é um assistente virtual do Dr. Silva, dentista especialista em ortodontia. Seja cordial, profissional e sempre indique os horários de atendimento quando perguntado. Responda sempre em português brasileiro.",
     "chatbotConfig": {
       "chatbot_name": "Assistente Dr. Silva",
-      "welcome_message": "Olá! Sou o assistente virtual do consultório Dr. Silva. Como posso ajudar?",
+      "welcome_message": "Olá! Como posso ajudar?",
       "office_address": "Rua das Flores, 123 - Centro, São Paulo - SP",
       "office_hours": "Segunda a Sexta: 8h às 18h, Sábado: 8h às 12h",
       "specialties": "Ortodontia, Clínica Geral, Implantes, Estética Dental",

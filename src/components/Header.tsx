@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, MessageSquare, ChevronDown, Home, Menu, X, History } from 'lucide-react';
+import { User, LogOut, MessageSquare, ChevronDown, Home, Menu, X, History, Database } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const useScrollDirection = () => {
@@ -142,20 +142,6 @@ const Header = () => {
             {user && (
               <>
                 <NavLink
-                  to="/account"
-                  className={({ isActive }) =>
-                    `transition-all duration-300 text-base leading-none flex items-center ${isActive
-                      ? "text-white nav-active-item"
-                      : "text-muted-foreground hover:text-primary font-medium"
-                    }`
-                  }
-                  style={({ isActive }) =>
-                    isActive ? { fontWeight: '950' } : {}
-                  }
-                >
-                  Minha Conta
-                </NavLink>
-                <NavLink
                   to="/my-chatbot"
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
@@ -168,6 +154,20 @@ const Header = () => {
                   }
                 >
                   Meu Chatbot
+                </NavLink>
+                <NavLink
+                  to="/base-de-dados"
+                  className={({ isActive }) =>
+                    `transition-all duration-300 text-base leading-none flex items-center ${isActive
+                      ? "text-white nav-active-item"
+                      : "text-muted-foreground hover:text-primary font-medium"
+                    }`
+                  }
+                  style={({ isActive }) =>
+                    isActive ? { fontWeight: '950' } : {}
+                  }
+                >
+                  Base de Dados
                 </NavLink>
                 <NavLink
                   to="/conversation-history"
@@ -261,6 +261,13 @@ const Header = () => {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem asChild>
+                    <NavLink to="/base-de-dados" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
+                      <Database className="h-4 w-4" />
+                      <span>Base de Dados</span>
+                    </NavLink>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
                     <NavLink to="/conversation-history" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <History className="h-4 w-4" />
                       <span>Histórico de Conversas</span>
@@ -327,6 +334,18 @@ const Header = () => {
                       }
                     >
                       Meu Chatbot
+                    </NavLink>
+                    <NavLink
+                      to="/base-de-dados"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `block py-2 px-4 rounded-lg transition-all duration-300 ${isActive
+                          ? "bg-primary/20 text-primary font-bold"
+                          : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        }`
+                      }
+                    >
+                      Base de Dados
                     </NavLink>
                     <NavLink
                       to="/conversation-history"

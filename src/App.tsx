@@ -28,6 +28,7 @@ import PublicChatbotPage from "./pages/PublicChatbotPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ConversationHistoryPage from "./pages/ConversationHistoryPage";
 import { AdminPage } from "./pages/AdminPage";
+import BaseDeDados from "./pages/BaseDeDados";
 
 // Constante queryClient
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const AppLayout = () => {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/my-chatbot" element={<MyChatbotPage />} />
+        <Route path="/base-de-dados" element={<BaseDeDados />} />
         <Route path="/conversation-history" element={<ConversationHistoryPage />} />
         <Route path="/chat/:chatbotSlug" element={<PublicChatbotPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

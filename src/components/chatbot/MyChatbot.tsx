@@ -397,18 +397,19 @@ const MyChatbot = () => {
 
   /**
    * getInitialMessage
-   * Cria mensagem de boas-vindas personalizada baseada na página atual
+   * Cria mensagem de boas-vindas usando a "Mensagem de Saudação" configurada
    * Memorizada com useCallback para evitar re-renders desnecessários
    */
   const getInitialMessage = useCallback(() => {
-    const pageContext = getPageContext();
-    // Usar o nome do chatbot da configuração ou fallback 
-    const botName = chatbotConfig?.chatbot_name || 'virtual';
-    console.log("=====================")
-    console.log("botName = ", botName)
-    console.log("=====================")
-    return `Olá! 👋 Bem-vindo à ${pageContext}. \n\nNesta conversa eu sigo as suas configurações do seu chatbot e uso a base de dados que você anexou por upload.\n\n Qual o seu nome?\n\nOu como devo te chamar?`;
-  }, [getPageContext, chatbotConfig?.chatbot_name]);
+    // Verificar se há uma mensagem de saudação personalizada configurada
+    if (chatbotConfig?.welcome_message) {
+      return chatbotConfig.welcome_message;
+    } else {
+      // Mensagem padrão se não houver welcome_message configurada
+      const botName = chatbotConfig?.chatbot_name || 'o assistente virtual';
+      return `Olá! Sou ${botName}. Como posso ajudá-lo hoje?`;
+    }
+  }, [chatbotConfig?.welcome_message, chatbotConfig?.chatbot_name]);
 
   /**
    * Inicialização de mensagens

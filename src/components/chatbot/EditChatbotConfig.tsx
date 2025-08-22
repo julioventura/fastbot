@@ -56,7 +56,7 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-6">
-          
+
           {/* Campo Nome do Chatbot */}
           <div>
             <Label htmlFor="chatbot_name" className="text-foreground">
@@ -73,7 +73,7 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               style={borderStyle}
             />
           </div>
-          
+
           {/* Campo de instruções gerais para o system_message */}
           <div>
             <Label htmlFor="system_instructions" className="text-foreground">Instruções Gerais do Chatbot</Label>
@@ -114,7 +114,7 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
               value={chatbotData.welcome_message}
               onChange={onChange}
               className="text-lg mt-1 p-6 bg-input text-foreground placeholder:text-muted-foreground focus:ring-primary focus:border-primary"
-              placeholder="Olá! Sou o assistente virtual do consultório. Como posso ajudar?"
+              placeholder="Olá! Como posso ajudar?"
               rows={3}
               style={{ border: `2px solid ${borderColor}` }}
             />
@@ -166,7 +166,7 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
 
           {/* Botões de Ação do Formulário */}
           <div className="flex justify-end space-x-3 pt-4">
-            <Button 
+            <Button
               type="button"
               variant="outline"
               onClick={onCancel}
@@ -175,7 +175,7 @@ const EditChatbotConfig: React.FC<EditChatbotConfigProps> = ({
             >
               Cancelar
             </Button>
-            <Button 
+            <Button
               type="submit"
               className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 text-base rounded-md"
               disabled={isSaving}
