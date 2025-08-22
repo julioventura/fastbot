@@ -15,13 +15,18 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/auth/useAuth";
+import AuthModal from '@/components/auth/AuthModal';
 
 // Componente Hero
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
 const Hero = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [useImageFallback, setUseImageFallback] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<"login" | "signup" | "reset">("login");
 
   const slides = [
     {
@@ -100,6 +105,18 @@ const Hero = () => {
   const prevSlide = React.useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
+
+  // Função para abrir o chatbot ou modal de login (igual ao Header.tsx)
+  const handleOpenChatbot = React.useCallback(() => {
+    if (user) {
+      // Usuário logado: dispara evento customizado para abrir o chatbot
+      window.dispatchEvent(new CustomEvent('openChatbot'));
+    } else {
+      // Usuário não logado: abre modal de login (mesmo método do Header.tsx)
+      setAuthModalTab("login");
+      setIsAuthModalOpen(true);
+    }
+  }, [user]);
 
   return (
     <>
@@ -273,8 +290,10 @@ const Hero = () => {
                   <img
                     src={slides[currentSlide].image}
                     alt="Fastbot - Assistente Virtual Profissional da Saúde"
-                    className="object-contain object-center lg:object-right lg:mr-20 rounded-[2rem] cursor-pointer"
+                    className="object-contain object-center lg:object-right lg:mr-20 rounded-[2rem] cursor-pointer hover:scale-110 transition-transform duration-300"
                     onError={handleImageError}
+                    onClick={handleOpenChatbot}
+                    title={user ? "Clique para abrir o chatbot" : "Clique para fazer login e usar o chatbot"}
                   />
 
                   {/* Overlay sutil para melhor integração com o design */}
@@ -413,6 +432,14 @@ const Hero = () => {
           </>
         )}
       </section>
+
+      {/* Auth Modal - igual ao Header.tsx */}
+      <AuthModal
+        key={authModalTab}
+        isOpen={isAuthModalOpen}
+        onOpenChange={setIsAuthModalOpen}
+        defaultTab={authModalTab}
+      />
     </>
   );
 };

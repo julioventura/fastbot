@@ -1378,6 +1378,21 @@ const MyChatbot = () => {
     }
   }, [inputValue]);
 
+  // Event listener para abrir o chatbot externamente
+  useEffect(() => {
+    const handleOpenChatbot = () => {
+      toggleChatState('normal');
+    };
+
+    // Adicionar event listener para evento customizado
+    window.addEventListener('openChatbot', handleOpenChatbot);
+
+    // Cleanup: remover event listener quando componente for desmontado
+    return () => {
+      window.removeEventListener('openChatbot', handleOpenChatbot);
+    };
+  }, []);
+
   /**
    * getElectrifiedStyles
    * Gera estilos para a animação eletrificada quando o chatbot está minimizado

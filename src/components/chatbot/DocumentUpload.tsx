@@ -555,9 +555,9 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       case "error":
         return { label: "Erro", color: "text-red-500" };
       case "processing":
-        return { label: "Processando", color: "text-blue-500 font-semibold" };
+        return { label: "Processando", color: "text-green-500 font-semibold" };
       default:
-        return { label: "CARREGANDO", color: "text-blue-500 font-bold text-lg" };
+        return { label: "CARREGANDO", color: "text-green-500 font-bold text-lg" };
     }
   };
 
@@ -596,7 +596,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" />
+                <RefreshCw className="w-5 h-5 text-green-500 animate-spin" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>Processando embeddings... Aguarde</p>
@@ -609,7 +609,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <RefreshCw className="w-6 h-6 text-blue-500 animate-spin font-bold" />
+                <RefreshCw className="w-6 h-6 text-green-500 animate-spin font-bold" />
               </TooltipTrigger>
               <TooltipContent>
                 <p>CARREGANDO... Sincronizando arquivo</p>
@@ -623,7 +623,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   return (
     <div className="space-y-6">
       {/* Upload Area */}
-      <Card>
+      <Card className="bg-gray-950/60">
         <CardHeader className="p-3 md:p-6">
           <CardTitle className="flex items-center gap-2 text-base md:text-lg">
             <Upload className="w-4 h-4 md:w-5 md:h-5" />
@@ -635,12 +635,12 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-4 md:p-8 text-center cursor-pointer transition-colors ${isDragActive
               ? "border-primary bg-primary/10"
-              : "border-gray-300 hover:border-primary"
+              : "border-gray-400 hover:border-green-400 hover:bg-green-600/10"
               } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <input {...getInputProps()} />
             {isUploading ? (
-              <RefreshCw className="w-8 h-8 md:w-16 md:h-16 mx-auto mb-2 md:mb-4 text-blue-500 animate-spin" />
+              <RefreshCw className="w-8 h-8 md:w-16 md:h-16 mx-auto mb-2 md:mb-4 text-green-500 animate-spin" />
             ) : (
               <Upload className="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-4 text-gray-400" />
             )}
@@ -650,11 +650,11 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
               <div>
                 {isUploading ? (
                   <div className="space-y-2 md:space-y-3">
-                    <p className="text-lg md:text-2xl font-bold text-blue-500">CARREGANDO...</p>
-                    <p className="text-sm md:text-lg text-blue-400">Processando seu arquivo, aguarde...</p>
+                    <p className="text-lg md:text-2xl font-bold text-green-500">CARREGANDO...</p>
+                    <p className="text-sm md:text-lg text-green-400">Processando seu arquivo, aguarde...</p>
                   </div>
                 ) : (
-                  <Button variant="outline" disabled={isUploading} className="text-yellow-500 text-xs md:text-sm px-3 md:px-4 py-2">
+                  <Button variant="outline" disabled={isUploading} className="text-yellow-500 text-md px-3 md:px-4 py-2 border-0 bg-transparent hover:bg-transparent">
                     Arraste arquivos .txt ou clique para selecionar
                   </Button>
                 )}
@@ -666,7 +666,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
       {/* Documents List */}
       {documents.length > 0 && (
-        <Card>
+        <Card className="bg-black/10">
           <CardHeader className="p-3 md:p-6">
             <CardTitle>
               <div className="flex items-center justify-between mb-3">
@@ -681,7 +681,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={toggleDocumentsExpansion}
-                  className="h-8 w-8 p-0 hover:bg-blue-800"
+                  className="h-8 w-8 p-0 hover:bg-green-800"
                   title={isDocumentsExpanded ? "Recolher lista" : "Expandir lista"}
                 >
                   {isDocumentsExpanded ? (
@@ -739,7 +739,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                   const statusInfo = getStatusLabel(doc.status);
 
                   return (
-                    <div key={doc.id} className="bg-blue-950 border rounded-lg p-4">
+                    <div key={doc.id} className="bg-black/30 border rounded-lg p-4">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 flex-1">
                           {getStatusIcon(doc.status)}
@@ -974,8 +974,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             {/* Conteúdo do documento */}
             <div className={`flex-1 mx-6 my-4 ${isModalMaximized ? 'min-h-0 overflow-auto' : 'overflow-auto'}`}>
               <div className={`p-6 rounded-lg border ${isModalMaximized
-                  ? 'bg-white text-gray-900 min-h-full'
-                  : 'bg-gray-200 text-gray-800'
+                ? 'bg-white text-gray-900 min-h-full'
+                : 'bg-gray-200 text-gray-800'
                 }`}>
                 <pre className={`whitespace-pre-wrap text-sm font-mono leading-relaxed ${isModalMaximized ? 'text-gray-900' : 'text-gray-800 dark:text-gray-200'
                   }`}>
