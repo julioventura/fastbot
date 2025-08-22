@@ -49,13 +49,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewImageIndex, setPreviewImageIndex] = useState<number>(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [showShortMemory, setShowShortMemory] = useState(false);
   const [publicLinkCopied, setPublicLinkCopied] = useState(false);
-  const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
-  const [showClearConfirmation, setShowClearConfirmation] = useState(false);
-  const [supabaseTotalMessages, setSupabaseTotalMessages] = useState<number>(0);
-  const [showingSupabaseMemory, setShowingSupabaseMemory] = useState(false);
-  const [supabaseMessages, setSupabaseMessages] = useState<{ id: string; role: string; content: string; timestamp: string }[]>([]);
   const [showQRCodeModal, setShowQRCodeModal] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
 
@@ -156,17 +150,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     link.click();
   };
 
-  // Hook para Short-Memory
-  const {
-    shortMemoryData,
-    shortMemoryStats,
-    isLoading: shortMemoryLoading,
-    loadShortMemoryData,
-    clearShortMemory,
-    getShortMemoryKey,
-    hasMessages,
-    isEmpty: shortMemoryIsEmpty
-  } = useShortMemory(user?.id);
+  // Hook para Short-Memory - removido pois agora está em página separada
 
   useEffect(() => {
     const checkTheme = () => {
@@ -307,128 +291,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, [isPreviewOpen, navigateImage, closeImagePreview]);
 
-  // Recarregar dados da Short-Memory quando a seção é ativada ou o usuário muda
-  useEffect(() => {
-    if (showShortMemory && user?.id) {
-      console.log('🔄 [AdvancedEditChatbotConfig] Recarregando dados da memória recente para o usuário:', user.id);
-      loadShortMemoryData();
-    }
-  }, [showShortMemory, user?.id, loadShortMemoryData]);
+  // Recarregar dados da Short-Memory quando a seção é ativada ou o usuário muda - removido pois agora está em página separada
 
-  // Função para buscar total de mensagens do Supabase
-  const fetchSupabaseTotalMessages = useCallback(async () => {
-    if (!user?.id) return;
-
-    try {
-      // Buscar todas as sessões do usuário e contar mensagens no JSONB
-      const { data, error } = await supabase
-        .from('conversation_history')
-        .select('messages')
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Erro ao buscar total de mensagens do Supabase:', error);
-        return;
-      }
-
-      // Contar todas as mensagens de todas as sessões
-      let totalMessages = 0;
-      if (data) {
-        data.forEach(session => {
-          if (session.messages && Array.isArray(session.messages)) {
-            totalMessages += session.messages.length;
-          }
-        });
-      }
-
-      setSupabaseTotalMessages(totalMessages);
-      console.log('📊 [Supabase] Total de mensagens encontradas:', totalMessages, 'em', data?.length || 0, 'sessões');
-    } catch (error) {
-      console.error('Erro inesperado ao buscar mensagens do Supabase:', error);
-    }
-  }, [user?.id]);
-
-  // Função para buscar mensagens do Supabase
-  const fetchSupabaseMessages = useCallback(async () => {
-    if (!user?.id) return;
-
-    try {
-      // Buscar todas as sessões ordenadas por última atividade
-      const { data, error } = await supabase
-        .from('conversation_history')
-        .select('messages, last_activity, session_id')
-        .eq('user_id', user.id)
-        .order('last_activity', { ascending: false });
-
-      if (error) {
-        console.error('Erro ao buscar mensagens do Supabase:', error);
-        return;
-      }
-
-      // Extrair todas as mensagens de todas as sessões e ordenar por timestamp
-      const allMessages: Array<{
-        id: string;
-        role: string;
-        content: string;
-        timestamp: string;
-        sessionId: string;
-      }> = [];
-
-      if (data) {
-        data.forEach(session => {
-          if (session.messages && Array.isArray(session.messages)) {
-            session.messages.forEach((message: {
-              id: string;
-              role: string;
-              content: string;
-              timestamp: string;
-            }) => {
-              allMessages.push({
-                ...message,
-                sessionId: session.session_id
-              });
-            });
-          }
-        });
-      }
-
-      // Ordenar por timestamp (mais recentes primeiro) e limitar a 50
-      allMessages.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      const limitedMessages = allMessages.slice(0, 50);
-
-      setSupabaseMessages(limitedMessages);
-      console.log('📊 [Supabase] Mensagens carregadas para exibição:', limitedMessages.length, 'de', allMessages.length, 'total');
-    } catch (error) {
-      console.error('Erro inesperado ao buscar mensagens do Supabase:', error);
-    }
-  }, [user?.id]);
-
-  // Carregar total de mensagens do Supabase quando a seção é ativada
-  useEffect(() => {
-    if (showShortMemory && user?.id) {
-      fetchSupabaseTotalMessages();
-      fetchSupabaseMessages();
-    }
-  }, [showShortMemory, user?.id, fetchSupabaseTotalMessages, fetchSupabaseMessages]);
-
-  // Atualizar contadores automaticamente quando a short-memory muda
-  useEffect(() => {
-    if (showShortMemory && user?.id && shortMemoryStats.totalMessages > 0) {
-      // Pequeno delay para dar tempo do Supabase processar novas mensagens
-      const timeoutId = setTimeout(() => {
-        fetchSupabaseTotalMessages();
-        fetchSupabaseMessages();
-      }, 2000); // 2 segundos de delay
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [shortMemoryStats.totalMessages, shortMemoryStats.lastUpdate, showShortMemory, user?.id, fetchSupabaseTotalMessages, fetchSupabaseMessages]);
-
-  // Função para confirmar limpeza da memória
-  const handleClearMemory = () => {
-    clearShortMemory();
-    setShowClearConfirmation(false);
-  };
+  // Funções do Supabase removidas - agora estão em página separada
 
   return (
     <div className="space-y-6">
@@ -445,6 +310,89 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
         }
       }} className="space-y-6">
 
+
+
+        {/* URL do chatbot público para referência */}
+        <div id="chatbot_publico">
+
+          {chatbotData?.chatbot_name && (
+            <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
+              <p className="pl-2 text-sl text-white mb-2">
+                URL do seu chatbot público (baseada no nome do chatbot)
+              </p>
+              <div className="relative">
+                <code className="text-xs md:text-2xl bg-green-900 border border-gray-600 p-4 pr-12 mb-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                  {getPublicChatbotUrl()}
+                </code>
+                <button
+                  type="button"
+                  onClick={handleCopyPublicLink}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-md hover:bg-green-800/50 transition-colors"
+                  title="Copiar URL para a área de transferência"
+                >
+                  {publicLinkCopied ? (
+                    <Check size={20} className="text-green-300" />
+                  ) : (
+                    <Copy size={20} className="text-green-400 hover:text-green-300" />
+                  )}
+                </button>
+              </div>
+
+              {/* Botões do Link Público */}
+              <div className="flex flex-col md:flex-row items-left w-full gap-3 mt-4 mb-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleOpenPublicChatbot}
+                  disabled={!chatbotData?.chatbot_name}
+                  className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-green-600 text-green-400 hover-glow-green"
+                >
+                  <ExternalLink size={16} className="mr-2" />
+                  Abrir Chatbot Público
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCopyPublicLink}
+                  disabled={!chatbotData?.chatbot_name}
+                  className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-blue-600 text-blue-400 hover-glow-blue"
+                >
+                  {publicLinkCopied ? (
+                    <>
+                      <Check size={16} className="mr-2" />
+                      Link Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={16} className="mr-2" />
+                      Copiar Link Público
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleShowQRCode}
+                  disabled={!chatbotData?.chatbot_name}
+                  className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-purple-600 text-purple-400 hover-glow-violet"
+                >
+                  <QrCode size={16} className="mr-2" />
+                  Ver QR-Code
+                </Button>
+              </div>
+
+              <p className="text-xs md:text-sm text-gray-400 mt-8">
+                💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
+              </p>
+              <p className="text-xs md:text-sm text-gray-400 mt-2">
+                💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
+              </p>
+            </div>
+          )}
+
+        </div>
 
 
         {/* Seção: Identidade do chatbot */}
@@ -513,12 +461,14 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           <div className="border-1 border-gray-500">
 
             {/* Temas Permitidos */}
+
             <div className="space-y-2">
               <Label className="text-sm md:text-base">Temas Permitidos</Label>
 
               {/* Layout responsivo para mobile */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 {/* Seção de Input - Full width no mobile */}
+
                 <div className="md:col-span-1">
                   {/* Input para adicionar temas */}
                   <div className="space-y-2 md:space-y-4">
@@ -564,9 +514,9 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 </div>
 
                 {/* Lista de temas - Full width no mobile */}
-                <div className="md:col-span-1">
+                <div className="col-span-1 bg-blue-900 border-1 border-blue-600 rounded-md" >
                   {(chatbotData.allowed_topics || []).length > 0 ? (
-                    <div className="flex flex-wrap gap-1 md:gap-2 p-2 md:p-3 border border-gray-600 rounded-lg">
+                    <div className="flex flex-wrap gap-1 md:gap-2 p-2 md:p-3 border border-blue-300 rounded-lg">
                       {(chatbotData.allowed_topics || []).map(
                         (topic, index) => (
                           <Badge
@@ -595,14 +545,16 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     </div>
                   )}
                 </div>
+
               </div>
             </div>
+
           </div>
 
         </div>
 
         {/* Botões Cancelar e Salvar */}
-        <div className="flex justify-center items-center w-full gap-5">
+        <div className="pb-20 flex justify-center items-center w-full gap-5">
           <Button
             type="button"
             variant="outline"
@@ -621,85 +573,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             {isSaving ? "Salvando..." : "Salvar Configurações"}
           </Button>
         </div>
-
-
-        {/* URL do chatbot público para referência */}
-        {chatbotData?.chatbot_name && (
-          <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
-            <p className="pl-2 text-sl text-white mb-2">
-              URL do seu chatbot público (baseada no nome do chatbot)
-            </p>
-            <div className="relative">
-              <code className="text-xs md:text-2xl bg-green-900 border border-gray-600 p-4 pr-12 mb-12 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
-                {getPublicChatbotUrl()}
-              </code>
-              <button
-                type="button"
-                onClick={handleCopyPublicLink}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-md hover:bg-green-800/50 transition-colors"
-                title="Copiar URL para a área de transferência"
-              >
-                {publicLinkCopied ? (
-                  <Check size={20} className="text-green-300" />
-                ) : (
-                  <Copy size={20} className="text-green-400 hover:text-green-300" />
-                )}
-              </button>
-            </div>
-
-            {/* Botões do Link Público */}
-            <div className="flex flex-col md:flex-row items-left w-full gap-3 mt-4 mb-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleOpenPublicChatbot}
-                disabled={!chatbotData?.chatbot_name}
-                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-green-600 text-green-400 hover-glow-green"
-              >
-                <ExternalLink size={16} className="mr-2" />
-                Abrir Chatbot Público
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCopyPublicLink}
-                disabled={!chatbotData?.chatbot_name}
-                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-blue-600 text-blue-400 hover-glow-blue"
-              >
-                {publicLinkCopied ? (
-                  <>
-                    <Check size={16} className="mr-2" />
-                    Link Copiado!
-                  </>
-                ) : (
-                  <>
-                    <Copy size={16} className="mr-2" />
-                    Copiar Link Público
-                  </>
-                )}
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleShowQRCode}
-                disabled={!chatbotData?.chatbot_name}
-                className="w-full md:w-auto text-sm md:text-base px-4 py-2 border-purple-600 text-purple-400 hover-glow-violet"
-              >
-                <QrCode size={16} className="mr-2" />
-                Ver QR-Code
-              </Button>
-            </div>
-
-            <p className="text-xs md:text-sm text-gray-400 mt-8">
-              💡&nbsp; Esta URL permite que qualquer pessoa converse com seu chatbot sem precisar fazer login
-            </p>
-            <p className="text-xs md:text-sm text-gray-400 mt-2">
-              💡&nbsp; A URL é gerada automaticamente baseada no nome do seu chatbot (sem espaços e acentos)
-            </p>
-          </div>
-        )}
 
 
 
@@ -754,373 +627,53 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
 
 
-        {/* Sistema de Tabs Elegante */}
+        {/* Botão para Instrução Automática */}
         <div className="pt-8 pb-2">
-          {/* Tab Navigation */}
           <div className="flex justify-center mb-6">
-            <div className="relative bg-slate-900/50 backdrop-blur-sm rounded-xl p-1 border border-slate-700/50 shadow-lg">
-              <div className="flex gap-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (showShortMemory) {
-                      setShowShortMemory(false);
-                    } else {
-                      if (showSystemMessagePreview) {
-                        onPreviewSystemMessage();
-                      }
-                      setShowShortMemory(true);
-                    }
-                  }}
-                  disabled={isSaving}
-                  className={`relative px-6 py-3 rounded-lg transition-all duration-300 ease-in-out text-sm font-medium min-w-[180px] ${showShortMemory
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25 transform translate-y-[-1px]'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                    }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <MessageSquare className="w-4 h-4" />
-                    Histórico de Conversas
-                  </div>
-                  {showShortMemory && (
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse" />
-                  )}
-                </button>
+            <button
+              type="button"
+              onClick={onPreviewSystemMessage}
+              disabled={isSaving}
+              className={`relative px-8 py-4 rounded-xl transition-all duration-300 ease-in-out text-sm font-medium min-w-[200px] ${showSystemMessagePreview
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
+                : 'bg-slate-900/50 border border-slate-700/50 text-slate-300 hover:text-white hover:bg-slate-800/70 hover:border-slate-600/70 backdrop-blur-sm'
+                }`}
+            >
+              <div className="flex items-center justify-center gap-3">
+                <Bot className="w-5 h-5" />
+                {showSystemMessagePreview ? 'Ocultar' : 'Ver'} Instrução Automática
+              </div>
+              {showSystemMessagePreview && (
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse" />
+              )}
+            </button>
+          </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (showSystemMessagePreview) {
-                      onPreviewSystemMessage();
-                    } else {
-                      if (showShortMemory) {
-                        setShowShortMemory(false);
-                      }
-                      onPreviewSystemMessage();
-                    }
-                  }}
-                  disabled={isSaving}
-                  className={`relative px-6 py-3 rounded-lg transition-all duration-300 ease-in-out text-sm font-medium min-w-[180px] ${showSystemMessagePreview
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 transform translate-y-[-1px]'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                    }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Bot className="w-4 h-4" />
-                    Instrução Automática
+          {/* Conteúdo da Instrução Automática */}
+          {showSystemMessagePreview && (
+            <div className={`transition-all duration-500 ease-in-out ${showSystemMessagePreview ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4 pointer-events-none'
+              }`}>
+              <div className="bg-gradient-to-br from-slate-900/80 to-purple-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 p-6 border-b border-slate-700/50">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-600/20 rounded-lg">
+                      <Bot className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">Instrução Automática</h3>
+                      <p className="text-purple-300/80 text-sm">Instrução gerada a partir do formulário do chatbot</p>
+                    </div>
                   </div>
-                  {showSystemMessagePreview && (
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse" />
-                  )}
-                </button>
+                </div>
+
+                <div className="p-6">
+                  <pre className="whitespace-pre-wrap text-sm bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 max-h-96 overflow-y-auto text-slate-200 backdrop-blur-sm leading-relaxed">
+                    {systemMessagePreview}
+                  </pre>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Tab Content */}
-          <div className="relative">
-            {/* Container animado para conteúdo */}
-            <div className={`transition-all duration-500 ease-in-out ${showShortMemory || showSystemMessagePreview ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-4 pointer-events-none'
-              }`}>
-              {/* Conteúdo do Tab Histórico */}
-              {showShortMemory && (
-                <div className="bg-gradient-to-br from-slate-900/80 to-blue-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 p-6 border-b border-slate-700/50">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-600/20 rounded-lg">
-                        <MessageSquare className="w-6 h-6 text-blue-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white">Histórico de Conversas</h3>
-                        <p className="text-blue-300/80 text-sm">Reveja suas conversas anteriores</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    {/* Estatísticas da Short-Memory */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                      <Card className="border border-blue-800/50 bg-blue-900/20 backdrop-blur-sm">
-                        <CardContent className="p-4">
-                          <div className="flex justify-between items-start">
-                            <div className="flex items-center gap-2">
-                              <MessageSquare className="w-8 h-8 mr-2 text-blue-400" />
-                              <div>
-                                <p className="text-md font-bold text-blue-400">Total de Mensagens</p>
-                                <p className="text-lg font-bold text-white">
-                                  {Math.min(shortMemoryStats.totalMessages, 20)} / {supabaseTotalMessages}
-                                </p>
-                                <p className="text-xs text-blue-300/70">
-                                  Short-Memory (máx 20) / Supabase
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Botão de atualizar no canto superior direito */}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                loadShortMemoryData();
-                                fetchSupabaseTotalMessages();
-                                fetchSupabaseMessages();
-                              }}
-                              className="p-2 rounded-lg hover:bg-blue-700/30 transition-colors group"
-                              title="Atualizar contadores de mensagens"
-                            >
-                              <RefreshCw className="w-4 h-4 text-blue-400 group-hover:text-blue-300 transition-colors" />
-                            </button>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="border border-green-800/50 bg-green-900/20 backdrop-blur-sm">
-                        <CardContent className="p-4">
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-8 h-8 mr-2 text-green-400" />
-                            <div>
-                              <p className="text-md font-bold text-green-400">Última Atualização</p>
-                              <p className="text-sm font-bold text-white">
-                                {shortMemoryStats.lastUpdate
-                                  ? shortMemoryStats.lastUpdate.toLocaleString('pt-BR')
-                                  : 'Nenhuma'
-                                }
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="border border-purple-800/50 bg-purple-900/20 backdrop-blur-sm">
-                        <CardContent className="p-4">
-                          <div className="flex items-center gap-2">
-                            <Upload className="w-8 h-8 mr-2 text-purple-400" />
-                            <div>
-                              <p className="text-md font-bold text-purple-400">Tamanho da Memória</p>
-                              <p className="text-lg font-bold text-white">
-                                {(shortMemoryStats.memorySize / 1024).toFixed(2)} KB
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    {/* Lista de Mensagens da Short-Memory */}
-                    <div className="mt-6 space-y-4">
-                      <div className="flex justify-between items-center mr-2">
-                        {/* Botões de alternância Short-Memory / Supabase */}
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (!showingSupabaseMemory) {
-                                return;
-                              } else {
-                                setShowingSupabaseMemory(false);
-                              }
-                            }}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${!showingSupabaseMemory
-                              ? 'bg-green-700/30 border-green-500/50 text-green-300 shadow-lg'
-                              : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-green-900/20 hover:border-green-600/30'
-                              }`}
-                            title="Ver memória recente (short-memory)"
-                          >
-                            <span className="text-sm font-medium">Conversa recente</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (showingSupabaseMemory) {
-                                return;
-                              } else {
-                                setShowingSupabaseMemory(true);
-                              }
-                            }}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${showingSupabaseMemory
-                              ? 'bg-blue-700/30 border-blue-500/50 text-blue-300 shadow-lg'
-                              : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-blue-900/20 hover:border-blue-600/30'
-                              }`}
-                            title="Ver conversas antigas (Supabase)"
-                          >
-                            <span className="text-sm font-medium">Conversas antigas</span>
-                          </button>
-                        </div>
-
-                        {/* Botão Detalhes */}
-                        <button
-                          type="button"
-                          onClick={() => setShowTechnicalInfo(prev => !prev)}
-                          className="ml-2 flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors bg-orange-900/20 px-3 py-2 rounded-lg border border-orange-600/30"
-                          title="Detalhes da memória recente (short-memory)"
-                        >
-                          <Info className="w-4 h-4" />
-                          <span className="text-sm">Detalhes</span>
-                        </button>
-                      </div>
-
-                      {/* Informações Técnicas */}
-                      {showTechnicalInfo && (
-                        <div className="mt-4 space-y-4">
-                          <div className="border border-orange-600/50 bg-orange-900/20 rounded-xl p-4 backdrop-blur-sm">
-                            <div className="text-sm text-orange-200 space-y-2">
-                              <p><strong className="text-orange-300">Chave do LocalStorage:</strong> {getShortMemoryKey()}</p>
-                              <p><strong className="text-orange-300">Limite de Mensagens:</strong> 50 mensagens (mantém as mais recentes)</p>
-                              <p><strong className="text-orange-300">Contexto Enviado ao Chatbot:</strong> Últimas 10 mensagens</p>
-                              <p><strong className="text-orange-300">Integração:</strong> O contexto da short-memory é automaticamente incluído nas consultas ao chatbot</p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Lista das mensagens */}
-                      {showingSupabaseMemory ? (
-                        // Mensagens do Supabase
-                        supabaseMessages.length > 0 ? (
-                          <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900/50 border border-blue-600/30 rounded-xl p-4 backdrop-blur-sm">
-                            <div className="text-sm text-center text-blue-300 mb-3 pb-2 border-b border-blue-600/30">
-                              Mensagens da Memória Longa (Supabase) - Últimas 50
-                            </div>
-                            {supabaseMessages.map((message, index) => (
-                              <div
-                                key={message.id}
-                                className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
-                                  ? 'bg-slate-800/60 border-slate-600/50'
-                                  : 'bg-blue-900/30 border-blue-700/50'
-                                  }`}
-                              >
-                                <div className="flex items-start gap-3">
-                                  <div className="flex-shrink-0">
-                                    {message.role === 'user' ? (
-                                      <User className="w-4 h-4 text-blue-400" />
-                                    ) : (
-                                      <Bot className="w-4 h-4 text-blue-300" />
-                                    )}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className={`text-sm font-medium ${message.role === 'user' ? 'text-blue-300' : 'text-blue-200'
-                                        }`}>
-                                        {message.role === 'user' ? 'Usuário' : 'Assistente'}
-                                      </span>
-                                      <span className="text-xs text-slate-400">
-                                        #{index + 1} • {new Date(message.timestamp).toLocaleString('pt-BR')}
-                                      </span>
-                                    </div>
-                                    <p className="text-sm text-slate-300 whitespace-pre-wrap break-words">
-                                      {message.content}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="text-center py-12 text-slate-400 bg-slate-900/30 rounded-xl border border-slate-700/50">
-                            <Bot className="w-12 h-12 mx-auto mb-3 text-slate-500" />
-                            <p>Nenhuma mensagem encontrada no Supabase</p>
-                          </div>
-                        )
-                      ) : (
-                        // Mensagens da Short-Memory
-                        shortMemoryData.length > 0 ? (
-                          <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900/50 border border-green-600/30 rounded-xl p-4 backdrop-blur-sm">
-                            <div className="text-sm text-center text-green-300 mb-3 pb-2 border-b border-green-600/30">
-                              Short-Memory (Últimas 20 mensagens mais recentes)
-                            </div>
-                            {shortMemoryData.slice(-20).reverse().map((message, index) => {
-                              const totalMessages = shortMemoryData.length;
-                              const displayIndex = totalMessages - index;
-
-                              return (
-                                <div
-                                  key={message.id}
-                                  className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
-                                    ? 'bg-slate-800/60 border-slate-600/50'
-                                    : 'bg-green-900/30 border-green-700/50'
-                                    }`}
-                                >
-                                  <div className="flex items-start gap-3">
-                                    <div className="flex-shrink-0">
-                                      {message.role === 'user' ? (
-                                        <User className="w-4 h-4 text-green-400" />
-                                      ) : (
-                                        <Bot className="w-4 h-4 text-green-300" />
-                                      )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <span className={`text-sm font-medium ${message.role === 'user' ? 'text-green-300' : 'text-green-200'
-                                          }`}>
-                                          {message.role === 'user' ? 'Usuário' : 'Assistente'}
-                                        </span>
-                                        <span className="text-xs text-slate-400">
-                                          #{displayIndex} • {new Date(message.timestamp).toLocaleString('pt-BR')}
-                                        </span>
-                                      </div>
-                                      <p className="text-sm text-slate-300 whitespace-pre-wrap break-words">
-                                        {message.content}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div className="border border-slate-700/50 text-center py-12 text-slate-400 rounded-xl bg-slate-900/30">
-                            <MessageSquare className="w-12 h-12 mx-auto mb-3 text-slate-500" />
-                            <p>Nenhuma mensagem na memória recente</p>
-                            <p className="text-xs mt-1">Inicie uma conversa no chatbot para ver as mensagens aqui</p>
-                          </div>
-                        )
-                      )}
-                    </div>
-
-                    {/* Controles da Short-Memory */}
-                    <div className="flex gap-3 mt-6">
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => setShowClearConfirmation(true)}
-                        className="flex items-center gap-2 border-red-500/50 bg-red-900/30 hover:border-red-400/70 hover:bg-red-900/50 backdrop-blur-sm"
-                        disabled={shortMemoryStats.totalMessages === 0 || shortMemoryLoading}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Limpar Memória
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Conteúdo do Tab Instrução Automática */}
-              {showSystemMessagePreview && (
-                <div className="bg-gradient-to-br from-slate-900/80 to-purple-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 p-6 border-b border-slate-700/50">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-600/20 rounded-lg">
-                        <Bot className="w-6 h-6 text-purple-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white">Instrução Automática</h3>
-                        <p className="text-purple-300/80 text-sm">Instrução gerada a partir do formulário do chatbot</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    <pre className="whitespace-pre-wrap text-sm bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 max-h-96 overflow-y-auto text-slate-200 backdrop-blur-sm leading-relaxed">
-                      {systemMessagePreview}
-                    </pre>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
       </form>
@@ -1207,46 +760,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <Button variant="outline" onClick={closeImagePreview}>
               Fechar
             </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal de Confirmação para Limpar Memória */}
-      <Dialog open={showClearConfirmation} onOpenChange={setShowClearConfirmation}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Trash2 className="w-5 h-5 text-red-500" />
-              Confirmar Limpeza da Memória
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Tem certeza que deseja limpar toda a memória recente? Esta ação não pode ser desfeita.
-            </p>
-            <div className="bg-yellow-900/20 border border-yellow-600 rounded-lg p-3">
-              <p className="text-sm text-yellow-400">
-                <strong>Atenção:</strong> Serão removidas {shortMemoryStats.totalMessages} mensagens do contexto de conversa.
-              </p>
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowClearConfirmation(false)}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClearMemory}
-                className="flex items-center gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                Confirmar Limpeza
-              </Button>
-            </div>
           </div>
         </DialogContent>
       </Dialog>

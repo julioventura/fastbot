@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, MessageSquare, ChevronDown, Home, Menu, X } from 'lucide-react';
+import { User, LogOut, MessageSquare, ChevronDown, Home, Menu, X, History } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const useScrollDirection = () => {
@@ -169,6 +169,20 @@ const Header = () => {
                 >
                   Meu Chatbot
                 </NavLink>
+                <NavLink
+                  to="/conversation-history"
+                  className={({ isActive }) =>
+                    `transition-all duration-300 text-base leading-none flex items-center ${isActive
+                      ? "text-white nav-active-item"
+                      : "text-muted-foreground hover:text-primary font-medium"
+                    }`
+                  }
+                  style={({ isActive }) =>
+                    isActive ? { fontWeight: '950' } : {}
+                  }
+                >
+                  Histórico
+                </NavLink>
               </>
             )}
           </nav>
@@ -246,6 +260,13 @@ const Header = () => {
                     </NavLink>
                   </DropdownMenuItem>
 
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/conversation-history" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
+                      <History className="h-4 w-4" />
+                      <span>Histórico de Conversas</span>
+                    </NavLink>
+                  </DropdownMenuItem>
+
                   <DropdownMenuSeparator className="bg-border" />
                   <DropdownMenuItem
                     onClick={handleSignOut}
@@ -306,6 +327,18 @@ const Header = () => {
                       }
                     >
                       Meu Chatbot
+                    </NavLink>
+                    <NavLink
+                      to="/conversation-history"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `block py-2 px-4 rounded-lg transition-all duration-300 ${isActive
+                          ? "bg-primary/20 text-primary font-bold"
+                          : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+                        }`
+                      }
+                    >
+                      Histórico de Conversas
                     </NavLink>
                   </>
                 )}
