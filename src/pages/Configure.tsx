@@ -115,11 +115,10 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
           {/* Header da página */}
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Configurações do Chatbot
+              Configure seu Chatbot
             </h1>
             <p className="text-lg text-slate-300 max-w-3xl">
-              Configure a identidade, comportamento e características do seu chatbot.<br />
-              Defina como ele se apresenta, quais temas pode abordar e suas instruções gerais.
+              Configure como ele se apresenta, quais temas pode abordar e suas instruções gerais.
             </p>
           </div>
 
