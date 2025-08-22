@@ -153,30 +153,30 @@ const ConversationHistoryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
+
         {/* Header da Página */}
-        <div className="text-center mb-8">
+        {/* <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="p-3 bg-blue-600/20 rounded-xl">
               <MessageSquare className="w-8 h-8 text-blue-400" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white">Histórico de Conversas</h1>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">Histórico de Conversas</h2>
           </div>
           <p className="text-blue-200/80 text-lg max-w-2xl mx-auto">
             Revise suas conversas anteriores e gerencie sua memória de chatbot
           </p>
-        </div>
+        </div> */}
 
         {/* Container Principal */}
         <div className="bg-gradient-to-br from-slate-900/80 to-blue-900/20 backdrop-blur-sm rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 p-6 border-b border-slate-700/50">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-600/20 rounded-lg">
-                <MessageSquare className="w-6 h-6 text-blue-400" />
-              </div>
+
               <div>
-                <h2 className="text-xl font-bold text-white">Histórico de Conversas</h2>
-                <p className="text-blue-300/80 text-sm">Gerencie suas conversas anteriores</p>
+                <h2 className="text-3xl font-bold text-white">Histórico de Conversas</h2>
+                <p className="text-blue-300/80 text-sl pt-2">Visualize as conversas anteriores</p>
               </div>
+
             </div>
           </div>
 
@@ -429,7 +429,7 @@ const ConversationHistoryPage: React.FC = () => {
                 variant="destructive"
                 size="sm"
                 onClick={() => setShowClearConfirmation(true)}
-                className="flex items-center gap-2 border-red-500/50 bg-red-900/30 hover:border-red-400/70 hover:bg-red-900/50 backdrop-blur-sm"
+                className="flex items-center gap-2 border-red-600 bg-red-600/40 hover:border-red-500 hover:bg-red-800 backdrop-blur-sm"
                 disabled={shortMemoryStats.totalMessages === 0 || shortMemoryLoading}
               >
                 <Trash2 className="w-4 h-4" />

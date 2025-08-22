@@ -273,21 +273,19 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
         {chatbotData?.chatbot_name && (
           <div className="p-6 border border-gray-600 rounded-lg bg-blue-950">
-            <p className="pl-2 text-xl text-white mb-4">
+            {/* <p className="pl-2 text-xl text-white mb-4">
               Seu chatbot público
-              <br />
-              <span className="text-lg text-gray-400 italic">Baseada no nome do chatbot</span>
-            </p>
+            </p> */}
 
             {/* Layout em duas colunas */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
               {/* Coluna 1 - URL e QR-Code */}
               <div className="space-y-4">
-                <h4 className="text-sm font-medium text-white mb-3">URL do Chatbot</h4>
+                <h4 className="pl-2 text-sm font-medium text-white mb-3">URL do Chatbot</h4>
 
                 <div className="relative">
-                  <code className="text-xs lg:text-sm bg-green-900 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                  <code className="text-xl bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
                     {getPublicChatbotUrl()}
                   </code>
                   <button
@@ -305,17 +303,17 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 </div>
 
                 {/* QR-Code */}
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-white">QR-Code</h4>
-                  <div className="bg-transparent border border-slate-700/30 rounded-lg p-4">
+                <div className="pt-5 space-y-3">
+                  <h4 className="pl-2 text-sm font-medium text-white">QR-Code do Chatbot</h4>
+                  <div className="bg-transparent border border-gray-500/70 rounded-lg p-12">
                     {qrCodeDataUrl ? (
                       <div className="space-y-3">
                         <div className="flex justify-center">
-                          <div className="bg-white rounded-xl p-4 shadow-lg shadow-black/20">
+                          <div className="bg-white rounded-xl p-2 shadow-2xl shadow-black/90">
                             <img
                               src={qrCodeDataUrl}
                               alt="QR-Code do Chatbot"
-                              className="w-32 h-32 object-contain"
+                              className="w-48 h-48 object-contain"
                             />
                           </div>
                         </div>
@@ -336,55 +334,15 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
               <div className="space-y-4">
                 <h4 className="text-sm font-medium text-white mb-3">Ações Disponíveis</h4>
 
-                <div className="space-y-3">
+                <div className="space-y-8">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={handleOpenPublicChatbot}
                     disabled={!chatbotData?.chatbot_name}
-                    className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green                      -- 1. Verificar todas as políticas existentes para documents
-                      SELECT 
-                          schemaname,
-                          tablename,
-                          policyname,
-                          permissive,
-                          roles,
-                          cmd,
-                          qual,
-                          with_check
-                      FROM pg_policies 
-                      WHERE tablename = 'documents'
-                      ORDER BY policyname;
-                      
-                      -- 2. Verificar estrutura da tabela documents
-                      SELECT 
-                          column_name,
-                          data_type,
-                          is_nullable
-                      FROM information_schema.columns 
-                      WHERE table_name = 'documents'
-                          AND table_schema = 'public'
-                      ORDER BY ordinal_position;
-                      
-                      -- 3. Verificar permissões atuais do role 'anon' na tabela documents
-                      SELECT 
-                          privilege_type,
-                          grantee
-                      FROM information_schema.table_privileges 
-                      WHERE table_name = 'documents'
-                          AND grantee IN ('anon', 'public')
-                      ORDER BY privilege_type;
-                      
-                      -- 4. Verificar se existe coluna para identificar o chatbot (user_id, chatbot_id, etc.)
-                      SELECT 
-                          column_name
-                      FROM information_schema.columns 
-                      WHERE table_name = 'documents'
-                          AND table_schema = 'public'
-                          AND column_name ILIKE '%user%' OR column_name ILIKE '%chatbot%' OR column_name ILIKE '%owner%'
-                      ORDER BY column_name;-950 hover-glow-green"
+                    className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
                   >
-                    <ExternalLink size={16} className="mr-2" />
+                    <ExternalLink size={18} className="mr-2" />
                     Abrir Chatbot
                   </Button>
 
@@ -411,11 +369,10 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   <Button
                     type="button"
                     variant="outline"
-                    size="sm"
                     onClick={downloadQRCode}
-                    className="w-full text-xs border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
+                    className="w-full text-sm py-2 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
                   >
-                    <Download className="w-3 h-3 mr-1" />
+                    <Download className="w-4 h-4 mr-1" />
                     Baixar QR-Code
                   </Button>
                 </div>
