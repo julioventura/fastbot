@@ -70,7 +70,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
     const baseUrl = window.location.origin;
     const basePath = window.location.pathname.includes('/fastbot') ? '/fastbot' : '';
-    return `${baseUrl}${basePath}/chat/${slug}`;
+    const url = `${baseUrl}${basePath}/chat/${slug}`;
+    return url;
   }, [chatbotData?.chatbot_name]);
 
   const handleCopyPublicLink = async () => {
@@ -285,8 +286,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <h4 className="pl-2 text-sm font-medium text-white mb-3">URL do Chatbot</h4>
 
                 <div className="relative">
-                  <code className="text-xl bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
-                    {getPublicChatbotUrl()}
+                  <code className="text-xs md:text-sm bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                    {getPublicChatbotUrl().replace(/^https?:\/\//, "")}
                   </code>
                   <button
                     type="button"
