@@ -21,22 +21,13 @@ const BaseDeDados: React.FC = () => {
             </h1>
             <p className="text-lg text-green-200 max-w-3xl">
               Gerencie os arquivos de texto que seu chatbot usará para responder perguntas.
-              Adicione documentos, PDFs, e outras informações relevantes para criar uma base
-              de conhecimento personalizada.
             </p>
           </div>
 
           {/* Card principal da Base de Dados */}
           <div className="border border-green-400/30 rounded-lg bg-green-900/20 backdrop-blur-sm">
             <Card className="bg-transparent border border-green-400/20 backdrop-blur-sm">
-              <CardHeader className="p-3 md:p-6">
-                <CardTitle className="flex items-center text-lg md:text-xl text-white">
-                  Base de Dados do Chatbot
-                </CardTitle>
-                <CardDescription className="text-sm md:text-base text-green-200">
-                  Adicione arquivos de texto com informações para seu chatbot usar nas conversas
-                </CardDescription>
-              </CardHeader>
+
               <CardContent className="space-y-3 md:space-y-6 p-3 md:p-6">
 
                 {/* Upload de Documentos */}
