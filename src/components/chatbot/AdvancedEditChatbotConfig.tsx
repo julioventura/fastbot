@@ -314,11 +314,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                   {/* Coluna 1 - URL e QR-Code */}
-                  <div className="space-y-4">
+                  <div className="space-y-8">
 
 
                     {/* QR-Code */}
                     <div className="pt-0 space-y-3">
+
                       <h4 className="pl-2 text-sm font-medium text-white">QR-Code do Chatbot</h4>
                       <div className="bg-blue-900 border border-gray-500/70 rounded-lg p-12">
                         {qrCodeDataUrl ? (
@@ -342,20 +343,22 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                           </div>
                         )}
                       </div>
+
                     </div>
+
                   </div>
 
                   {/* Coluna 2 - Botões de Ação */}
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-medium text-white mb-8"></h4>
-
+                  <div className="pt-0 space-y-8">
+                    <h4 className="pl-2 text-sm font-medium text-white">&nbsp;</h4>
                     <div className="space-y-8">
+
                       <Button
                         type="button"
                         variant="outline"
                         onClick={handleOpenPublicChatbot}
                         disabled={!chatbotData?.chatbot_name}
-                        className="w-full text-sm px-4 py-2 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
+                        className="w-full text-md px-4 py-8 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
                       >
                         <ExternalLink size={18} className="mr-2" />
                         Abrir Chatbot
@@ -366,7 +369,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         variant="outline"
                         onClick={handleCopyPublicLink}
                         disabled={!chatbotData?.chatbot_name}
-                        className="w-full text-sm px-4 py-2 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
+                        className="w-full text-md px-4 py-8 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
                       >
                         {publicLinkCopied ? (
                           <>
@@ -385,14 +388,12 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         type="button"
                         variant="outline"
                         onClick={downloadQRCode}
-                        className="w-full text-sm py-2 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
+                        className="w-full text-md py-8 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
                       >
                         <Download className="w-4 h-4 mr-1" />
                         Baixar QR-Code
                       </Button>
                     </div>
-
-
                   </div>
 
                 </div>
@@ -462,7 +463,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           </Dialog>
 
           {/* Modal do QR-Code */}
-          <Dialog open={showQRCodeModal} onOpenChange={setShowQRCodeModal}>
+          {/* <Dialog open={showQRCodeModal} onOpenChange={setShowQRCodeModal}>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
@@ -524,7 +525,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 </div>
               </div>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
 
         </div>
       </div>
