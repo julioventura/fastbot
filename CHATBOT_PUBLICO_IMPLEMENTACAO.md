@@ -1,4 +1,4 @@
-﻿# ðŸŒ PÃ¡gina PÃºblica do Chatbot - FastBot
+# ðŸŒ PÃ¡gina PÃºblica do Chatbot - FastBot
 
 ## ðŸ“‹ Resumo da ImplementaÃ§Ã£o
 

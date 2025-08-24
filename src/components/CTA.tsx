@@ -26,7 +26,7 @@ export default function CTA() {
       {/* Elemento <section> principal com estilos de fundo e posicionamento relativo. */}
       {/* 'relative' é usado para posicionar o padrão de grade absoluto dentro dele. */}
       {/* 'min-h-screen flex items-center justify-center' para ocupar altura da tela e centralizar */}
-      <section className="relative flex items-center justify-center py-8 md:py-16 bg-theme-gradient">
+      <section className="relative flex items-center justify-center py-8 md:py-16 bg-gradient-to-br from-black via-background/90 to-primary/50">
 
         {/* Contêiner do Conteúdo Principal da Seção CTA */}
         {/* 'relative z-10' garante que este conteúdo fique acima do padrão de grade. */}
@@ -57,7 +57,7 @@ export default function CTA() {
               {/* Botão de Chamada para Ação */}
               <div className="mt-6 md:mt-10">
                 <Button
-                  onClick={() => navigate('/account')}
+                  onClick={() => navigate('/my-chatbot')}
                   className="hover-glow-blue bg-primary hover:bg-primary/90 text-primary-foreground px-6 md:px-8 py-4 md:py-6 text-base md:text-lg rounded-lg w-full md:w-auto"
                 >
                   CRIAR SEU ASSISTENTE DE IA

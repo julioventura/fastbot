@@ -49,6 +49,11 @@ const Configure: React.FC = () => {
     }
   }, [chatbotData]);
 
+  // Rolar para o topo da página quando o componente for montado
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const checkTheme = () => {
       setIsDark(document.documentElement.classList.contains("dark"));
@@ -110,6 +115,7 @@ const Configure: React.FC = () => {
 
       if (result?.success) {
         toast({
+          variant: "success",
           title: "Sucesso!",
           description: "Configurações do chatbot salvas com sucesso.",
         });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -49,6 +50,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
 
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Função para criar slug a partir do nome do chatbot
   const createSlug = (name: string): string => {
@@ -351,14 +353,26 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   {/* Coluna 2 - Botões de Ação */}
                   <div className="pt-0 space-y-8">
                     <h4 className="pl-2 text-sm font-medium text-white">&nbsp;</h4>
-                    <div className="space-y-8">
+                    <div className="space-y-6">
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => navigate("/configure")}
+                        disabled={!chatbotData?.chatbot_name}
+                        className="w-full text-md px-4 py-6 border-red-600 text-red-400 hover:bg-red-950 hover-glow-red"
+                      >
+                        <ExternalLink size={18} className="mr-2" />
+                        Configure seu Chatbot
+                      </Button>
+
 
                       <Button
                         type="button"
                         variant="outline"
                         onClick={handleOpenPublicChatbot}
                         disabled={!chatbotData?.chatbot_name}
-                        className="w-full text-md px-4 py-8 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
+                        className="w-full text-md px-4 py-6 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
                       >
                         <ExternalLink size={18} className="mr-2" />
                         Abrir Chatbot
@@ -369,7 +383,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         variant="outline"
                         onClick={handleCopyPublicLink}
                         disabled={!chatbotData?.chatbot_name}
-                        className="w-full text-md px-4 py-8 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
+                        className="w-full text-md px-4 py-6 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
                       >
                         {publicLinkCopied ? (
                           <>
@@ -388,7 +402,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         type="button"
                         variant="outline"
                         onClick={downloadQRCode}
-                        className="w-full text-md py-8 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
+                        className="w-full text-md py-6 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
                       >
                         <Download className="w-4 h-4 mr-1" />
                         Baixar QR-Code

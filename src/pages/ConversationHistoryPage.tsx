@@ -122,6 +122,11 @@ const ConversationHistoryPage: React.FC = () => {
     }
   }, [user?.id]);
 
+  // Rolar para o topo da página quando o componente for montado
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Carregar dados quando o componente monta
   useEffect(() => {
     if (user?.id) {
@@ -168,7 +173,8 @@ const ConversationHistoryPage: React.FC = () => {
         </div> */}
 
         {/* Container Principal */}
-        <div className="bg-gradient-to-br from-slate-900/80 to-blue-900/20 backdrop-blur-sm rounded-2xl border border-blue-700/80 shadow-2xl overflow-hidden">
+        {/* <div className="bg-gradient-to-br from-blue-950/90 to-black/40 backdrop-blur-sm rounded-2xl border border-blue-700/80 shadow-2xl overflow-hidden"> */}
+        <div className="bg-red-950/60 backdrop-blur-sm rounded-2xl border border-red-700/80 shadow-2xl overflow-hidden">
           <div className="p-6">
             <div className="flex items-center gap-3">
 
@@ -183,19 +189,17 @@ const ConversationHistoryPage: React.FC = () => {
           <div className="p-6">
             {/* Estatísticas da Short-Memory */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <Card className="border border-blue-800/50 bg-blue-900/20 backdrop-blur-sm">
+              <Card className="border border-red-700 bg-red-900/20 backdrop-blur-sm">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="w-8 h-8 mr-2 text-blue-400" />
+                      <MessageSquare className="w-8 h-8 mr-2 text-red-400" />
                       <div>
-                        <p className="text-md font-bold text-blue-400">Total de Mensagens</p>
+                        <p className="text-md font-bold text-red-400">Total de Mensagens</p>
                         <p className="text-lg font-bold text-white">
                           {Math.min(shortMemoryStats.totalMessages, 20)} / {supabaseTotalMessages}
                         </p>
-                        <p className="text-xs text-blue-300/70">
-                          Short-Memory (máx 20) / Supabase
-                        </p>
+
                       </div>
                     </div>
 
@@ -212,19 +216,19 @@ const ConversationHistoryPage: React.FC = () => {
                       className="p-2 rounded-lg hover:bg-blue-700/30 transition-colors group"
                       title="Atualizar contadores de mensagens"
                     >
-                      <RefreshCw className="w-4 h-4 text-blue-400 group-hover:text-blue-300 transition-colors" />
+                      <RefreshCw className="w-4 h-4 text-red-400 group-hover:text-red-300 transition-colors" />
                     </button>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border border-green-800/50 bg-green-900/20 backdrop-blur-sm">
+              <Card className="border border-green-600 bg-green-900/60 backdrop-blur-sm">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2">
                     <Clock className="w-8 h-8 mr-2 text-green-400" />
                     <div>
                       <p className="text-md font-bold text-green-400">Última Atualização</p>
-                      <p className="text-sm font-bold text-white">
+                      <p className="text-lg font-bold text-white">
                         {shortMemoryStats.lastUpdate
                           ? shortMemoryStats.lastUpdate.toLocaleString('pt-BR')
                           : 'Nenhuma'
@@ -235,7 +239,7 @@ const ConversationHistoryPage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border border-purple-800/50 bg-purple-900/20 backdrop-blur-sm">
+              <Card className="border border-purple-500 bg-purple-800/60 backdrop-blur-sm">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2">
                     <Upload className="w-8 h-8 mr-2 text-purple-400" />
@@ -251,7 +255,7 @@ const ConversationHistoryPage: React.FC = () => {
             </div>
 
             {/* Lista de Mensagens da Short-Memory */}
-            <div className="mt-6 space-y-4">
+            <div className="mt-16 space-y-4">
               <div className="flex justify-between items-center mr-2">
                 {/* Botões de alternância Short-Memory / Supabase */}
                 <div className="flex gap-2">
@@ -283,7 +287,7 @@ const ConversationHistoryPage: React.FC = () => {
                       }
                     }}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${showingSupabaseMemory
-                      ? 'bg-blue-700/30 border-blue-500/50 text-blue-300 shadow-lg'
+                      ? 'bg-blue-700/30 border-blue-500 text-blue-400 shadow-lg'
                       : 'bg-slate-800/50 border-slate-600/50 text-slate-400 hover:bg-blue-900/20 hover:border-blue-600/30'
                       }`}
                     title="Ver conversas antigas (Supabase)"
@@ -296,8 +300,8 @@ const ConversationHistoryPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowTechnicalInfo(prev => !prev)}
-                  className="ml-2 flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors bg-orange-900/20 px-3 py-2 rounded-lg border border-orange-600/30"
-                  title="Detalhes da memória recente (short-memory)"
+                  className="ml-2 flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors bg-orange-900/40 px-3 py-2 rounded-lg border border-orange-600/30"
+                  title="Detalhes da memória recente (em memória)"
                 >
                   <Info className="w-4 h-4" />
                   <span className="text-sm">Detalhes</span>
@@ -322,9 +326,9 @@ const ConversationHistoryPage: React.FC = () => {
               {showingSupabaseMemory ? (
                 // Mensagens do Supabase
                 supabaseMessages.length > 0 ? (
-                  <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900/50 border border-blue-600/30 rounded-xl p-4 backdrop-blur-sm">
-                    <div className="text-sm text-center text-blue-300 mb-3 pb-2 border-b border-blue-600/30">
-                      Mensagens da Memória Longa (Supabase) - Últimas 50
+                  <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900 border border-blue-600 rounded-xl p-4 backdrop-blur-sm">
+                    <div className="text-sm text-center text-blue-300 mb-3 pb-4 border-b border-blue-600">
+                      Mensagens salvas na nuvem
                     </div>
                     {supabaseMessages.map((message, index) => (
                       <div
@@ -369,9 +373,9 @@ const ConversationHistoryPage: React.FC = () => {
               ) : (
                 // Mensagens da Short-Memory
                 shortMemoryData.length > 0 ? (
-                  <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900/50 border border-green-600/30 rounded-xl p-4 backdrop-blur-sm">
-                    <div className="text-sm text-center text-green-300 mb-3 pb-2 border-b border-green-600/30">
-                      Short-Memory (Últimas 20 mensagens mais recentes)
+                  <div className="space-y-3 max-h-96 overflow-y-auto bg-slate-900 border border-green-600 rounded-xl p-4 backdrop-blur-lg">
+                    <div className="text-sm text-center text-green-300 mb-3 pb-4 border-b border-green-600">
+                      Conversa recente, na memória para uso na conversa
                     </div>
                     {shortMemoryData.slice(-20).reverse().map((message, index) => {
                       const totalMessages = shortMemoryData.length;
@@ -381,8 +385,8 @@ const ConversationHistoryPage: React.FC = () => {
                         <div
                           key={message.id}
                           className={`p-4 rounded-lg border backdrop-blur-sm ${message.role === 'user'
-                            ? 'bg-slate-800/60 border-slate-600/50'
-                            : 'bg-green-900/30 border-green-700/50'
+                            ? 'bg-slate-800/60 border-slate-600'
+                            : 'bg-green-900/30 border-green-700'
                             }`}
                         >
                           <div className="flex items-start gap-3">

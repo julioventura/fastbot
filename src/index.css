@@ -195,6 +195,10 @@
     filter: drop-shadow(0 0 20px #3b82f6) drop-shadow(0 0 40px #2563eb) drop-shadow(0 0 60px #1d4ed8);
     /* transform: scale(1.05); */
   }
+  .hover-glow-red:hover {
+    filter: drop-shadow(0 0 20px #af1925) drop-shadow(0 0 40px #db2727) drop-shadow(0 0 60px #9b0e0e);
+    /* transform: scale(1.05); */
+  }
   
   .hover-glow-violet:hover {
     filter: drop-shadow(0 0 20px #8b5cf6) drop-shadow(0 0 40px #7c3aed) drop-shadow(0 0 60px #6d28d9);

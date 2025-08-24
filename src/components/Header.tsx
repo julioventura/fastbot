@@ -181,7 +181,7 @@ const Header = () => {
                     isActive ? { fontWeight: '950' } : {}
                   }
                 >
-                  Base de Dados
+                  Meus Dados
                 </NavLink>
                 <NavLink
                   to="/conversation-history"
@@ -284,7 +284,7 @@ const Header = () => {
                   <DropdownMenuItem asChild>
                     <NavLink to="/base-de-dados" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <Database className="h-4 w-4" />
-                      <span>Base de Dados</span>
+                      <span>Meus Dados</span>
                     </NavLink>
                   </DropdownMenuItem>
 
@@ -378,7 +378,7 @@ const Header = () => {
                         }`
                       }
                     >
-                      Base de Dados
+                      Meus Dados
                     </NavLink>
                     <NavLink
                       to="/conversation-history"

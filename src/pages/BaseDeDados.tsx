@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -9,6 +9,11 @@ import {
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 
 const BaseDeDados: React.FC = () => {
+  // Rolar para o topo da página quando o componente for montado
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-green-950 to-emerald-950">
       <div className="container mx-auto px-4 py-8">
@@ -17,10 +22,10 @@ const BaseDeDados: React.FC = () => {
           {/* Header da página */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-white">
-              Base de Dados
+              Meus Dados
             </h1>
             <p className="text-sl pt-2 text-green-200 max-w-3xl">
-              Gerencie os arquivos de texto que seu chatbot usará para responder perguntas.
+              Adicione arquivos de texto para seu chatbot usar nas respostas.
             </p>
           </div>
 
