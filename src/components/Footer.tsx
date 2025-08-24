@@ -7,13 +7,13 @@ const Footer = () => {
   return (
     // Elemento <footer> principal com estilos de fundo e borda.
     // 'relative' é usado para posicionar os elementos SVG de decoração absoluta dentro dele.
-    <footer className="relative bg-theme-gradient border-t border-theme-accent/30">
+    <footer className="relative bg-background/95 border-t border-theme-accent/30">
 
       {/* Efeito de Brilho SVG (Decorativo) */}
       {/* Este div contém um SVG que cria um efeito de brilho de fundo. */}
       {/* 'absolute inset-0 z-0 overflow-hidden' posiciona o SVG para preencher o footer e ficar atrás do conteúdo. */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <svg className="w-full h-full opacity-40" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <svg className="w-full h-full opacity-0" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
           {/* Grupo de elementos SVG para o brilho, com filtros aplicados. */}
           <g opacity="0.4" filter="url(#filter0_f_101_3)">
             <circle cx="1079" cy="540" r="359" fill="#0063F7" />
