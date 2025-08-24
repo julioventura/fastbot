@@ -51,6 +51,7 @@ export const useChatbot = () => {
           chatbot_name: '',
           welcome_message: '',
           whatsapp: '',
+          allowed_topics: [],
         };
 
         const { data: newData, error: insertError } = await supabase

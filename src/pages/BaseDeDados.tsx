@@ -50,7 +50,7 @@ const BaseDeDados: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-green-100 space-y-3">
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-sl">
                   {/* <li>• Use arquivos PDF, DOC, TXT ou MD</li> */}
                   <li>• Inclua informações relevantes para o chatbot responder</li>
                   <li>• Mantenha os textos organizados e claros</li>
@@ -67,9 +67,9 @@ const BaseDeDados: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-green-100 space-y-3">
-                <ul className="space-y-2 text-sm">
-                  <li>• <strong>TXT:</strong> Arquivos de texto simples<br /> &nbsp;</li>
-                  <li>• <strong>Em breve: </strong> PDF, DOCX e imagens</li>
+                <ul className="space-y-2 text-sl">
+                  <li>• <strong>TXT:</strong> Arquivos de texto simples</li>
+                  <li>• <strong>Em breve: </strong> PDF, .docx, áudio e imagens</li>
                 </ul>
               </CardContent>
             </Card>

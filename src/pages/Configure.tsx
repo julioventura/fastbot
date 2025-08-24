@@ -12,22 +12,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, Bot } from "lucide-react";
-import { ChatbotConfigProps } from "@/interfaces";
+import { ChatbotData } from "@/interfaces";
 import { useAuth } from "@/lib/auth/useAuth";
+import { useChatbot } from "@/hooks/useChatbot";
+import { useToast } from "@/hooks/use-toast";
+import LoadingScreen from "@/components/account/LoadingScreen";
 
 const Configure: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
-  const [chatbotData, setChatbotData] = useState({
-    chatbot_name: '',
-    welcome_message: '',
-    system_instructions: '',
-    allowed_topics: [] as string[]
-  });
   const [isSaving, setIsSaving] = useState(false);
   const [showSystemMessagePreview, setShowSystemMessagePreview] = useState(false);
   const [systemMessagePreview, setSystemMessagePreview] = useState('');
 
   const { user } = useAuth();
+  const { toast } = useToast();
+  const { chatbotData, loading, error, updateChatbotData, refetch } = useChatbot();
+
+  // State local para os campos específicos da página Configure
+  const [localChatbotData, setLocalChatbotData] = useState({
+    chatbot_name: '',
+    welcome_message: '',
+    system_instructions: '',
+    allowed_topics: [] as string[]
+  });
+
+  // Sincronizar dados locais quando os dados do chatbot forem carregados
+  useEffect(() => {
+    if (chatbotData) {
+      const fullChatbotData = chatbotData as ChatbotData;
+      setLocalChatbotData({
+        chatbot_name: fullChatbotData.chatbot_name || '',
+        welcome_message: fullChatbotData.welcome_message || '',
+        system_instructions: fullChatbotData.system_instructions || '',
+        allowed_topics: fullChatbotData.allowed_topics || []
+      });
+    }
+  }, [chatbotData]);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -49,7 +69,7 @@ const Configure: React.FC = () => {
 
   const addTopic = (topic: string) => {
     if (topic.trim()) {
-      setChatbotData(prev => ({
+      setLocalChatbotData(prev => ({
         ...prev,
         allowed_topics: [...prev.allowed_topics, topic.trim()]
       }));
@@ -57,24 +77,59 @@ const Configure: React.FC = () => {
   };
 
   const removeTopic = (index: number) => {
-    setChatbotData(prev => ({
+    setLocalChatbotData(prev => ({
       ...prev,
       allowed_topics: prev.allowed_topics.filter((_, i) => i !== index)
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.id) {
+      toast({
+        variant: "destructive",
+        title: "Erro de autenticação",
+        description: "Usuário não autenticado.",
+      });
+      return;
+    }
+
     setIsSaving(true);
-    // Aqui seria implementada a lógica de salvamento
-    setTimeout(() => {
+
+    try {
+      // Usar o hook para atualizar os dados
+      const result = await updateChatbotData({
+        chatbot_name: localChatbotData.chatbot_name,
+        welcome_message: localChatbotData.welcome_message,
+        system_instructions: localChatbotData.system_instructions,
+        // Estender o tipo para incluir allowed_topics
+        ...(localChatbotData.allowed_topics.length > 0 && {
+          allowed_topics: localChatbotData.allowed_topics
+        })
+      } as Partial<ChatbotData>);
+
+      if (result?.success) {
+        toast({
+          title: "Sucesso!",
+          description: "Configurações do chatbot salvas com sucesso.",
+        });
+      } else if (result?.error) {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Erro ao salvar configurações:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar",
+        description: error instanceof Error ? error.message : "Erro desconhecido ao salvar configurações.",
+      });
+    } finally {
       setIsSaving(false);
-      // Mostrar toast de sucesso
-    }, 1000);
+    }
   };
 
   const handleChange = (field: string, value: string | string[]) => {
-    setChatbotData(prev => ({
+    setLocalChatbotData(prev => ({
       ...prev,
       [field]: value
     }));
@@ -87,17 +142,17 @@ const Configure: React.FC = () => {
       const preview = `Você é um chatbot de atendimento online via web e deve utilizar as seguintes informações e diretivas:
 
 1. IDENTIDADE E BOAS VINDAS:
-- Seu nome é: ${chatbotData.chatbot_name || 'Assistente Virtual'}
-- Use como mensagem de boas-vindas: ${chatbotData.welcome_message || 'Olá! Como posso ajudar?'}
+- Seu nome é: ${localChatbotData.chatbot_name || 'Assistente Virtual'}
+- Use como mensagem de boas-vindas: ${localChatbotData.welcome_message || 'Olá! Como posso ajudar?'}
 
 2. INSTRUÇÕES GERAIS:
 """
-${chatbotData.system_instructions || 'Você é um assistente virtual prestativo e profissional.'}
+${localChatbotData.system_instructions || 'Você é um assistente virtual prestativo e profissional.'}
 """
 
 3. TEMAS PERMITIDOS:
-${chatbotData.allowed_topics.length > 0
-          ? chatbotData.allowed_topics.map(topic => `- ${topic}`).join('\n')
+${localChatbotData.allowed_topics.length > 0
+          ? localChatbotData.allowed_topics.map(topic => `- ${topic}`).join('\n')
           : '- Todos os temas são permitidos'
         }
 
@@ -106,6 +161,26 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
       setSystemMessagePreview(preview);
     }
   };
+
+  // Se estiver carregando ou se não há usuário autenticado, mostrar loading
+  if (loading || !user) {
+    return <LoadingScreen />;
+  }
+
+  // Se houve erro no carregamento
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-violet-900 flex items-center justify-center">
+        <div className="max-w-md mx-auto bg-violet-950 border border-violet-900 rounded-lg p-6 text-center">
+          <h2 className="text-xl font-bold text-white mb-4">Erro ao carregar dados</h2>
+          <p className="text-slate-300 mb-4">{error}</p>
+          <Button onClick={refetch} className="hover-glow-blue">
+            Tentar novamente
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-violet-900">
@@ -146,7 +221,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                       </Label>
                       <Input
                         id="chatbot_name"
-                        value={chatbotData.chatbot_name}
+                        value={localChatbotData.chatbot_name}
                         onChange={(e) => handleChange("chatbot_name", e.target.value)}
                         className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                         style={borderStyle}
@@ -162,7 +237,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                       </Label>
                       <Textarea
                         id="welcome_message"
-                        value={chatbotData.welcome_message}
+                        value={localChatbotData.welcome_message}
                         onChange={(e) => handleChange("welcome_message", e.target.value)}
                         className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                         style={borderStyle}
@@ -181,7 +256,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                       </Label>
                       <Textarea
                         id="system_instructions"
-                        value={chatbotData.system_instructions}
+                        value={localChatbotData.system_instructions}
                         onChange={(e) => handleChange("system_instructions", e.target.value)}
                         className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
                         style={borderStyle}
@@ -242,9 +317,9 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
 
                       {/* Lista de temas - Full width no mobile */}
                       <div className="col-span-1 bg-purple-800/30 border-1 border-purple-400/40 rounded-md backdrop-blur-sm">
-                        {chatbotData.allowed_topics.length > 0 ? (
+                        {localChatbotData.allowed_topics.length > 0 ? (
                           <div className="flex flex-wrap gap-1 md:gap-2 p-2 md:p-3 border border-purple-300/40 rounded-lg bg-purple-900/10 backdrop-blur-sm">
-                            {chatbotData.allowed_topics.map((topic, index) => (
+                            {localChatbotData.allowed_topics.map((topic, index) => (
                               <Badge
                                 key={index}
                                 variant="secondary"

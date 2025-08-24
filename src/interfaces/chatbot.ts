@@ -18,6 +18,7 @@ export interface BaseChatbotData {
   chatbot_name: string;
   welcome_message: string;
   whatsapp: string;
+  allowed_topics?: string[]; // Adicionando o campo allowed_topics
 }
 
 /**

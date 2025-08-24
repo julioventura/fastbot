@@ -624,16 +624,16 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     <div className="space-y-6">
       {/* Upload Area */}
       <Card className="bg-gray-950/60">
-        <CardHeader className="p-3 md:p-6">
-          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-            <Upload className="w-4 h-4 md:w-5 md:h-5" />
+        <CardHeader className="pl-8 pt-4 pb-0">
+          <CardTitle className="flex items-center gap-4 text-base md:text-lg">
+            <Upload className="w-6 h-6" />
             Upload de Documentos
           </CardTitle>
         </CardHeader>
         <CardContent className="p-3 md:p-6">
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-4 md:p-8 text-center cursor-pointer transition-colors ${isDragActive
+            className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${isDragActive
               ? "border-primary bg-primary/10"
               : "border-gray-400 hover:border-green-400 hover:bg-green-600/10"
               } ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -672,22 +672,22 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <File className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-sm md:text-base">Documentos Enviados ({documents.length})</span>
+                  <span className="text-lg">Documentos Enviados ({documents.length})</span>
                 </div>
 
                 {/* Botão de recolher/expandir */}
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
+                  size="lg"
                   onClick={toggleDocumentsExpansion}
-                  className="h-8 w-8 p-0 hover:bg-green-800"
+                  className="h-12 w-12 p-0 hover:bg-green-800"
                   title={isDocumentsExpanded ? "Recolher lista" : "Expandir lista"}
                 >
                   {isDocumentsExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="h-12 w-12" />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-12 w-12" />
                   )}
                 </Button>
               </div>
@@ -696,15 +696,15 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 <div className="space-y-2">
                   {/* Layout responsivo: uma linha no desktop, duas linhas no mobile */}
                   <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-left">
-                    <span className="text-sm text-green-500">
+                    <span className="text-lg text-green-500">
                       • Processados:{" "}
                       {documents.filter((d) => d.status === "completed").length}
                     </span>
-                    <span className="text-sm text-red-500">
+                    <span className="text-lg text-red-500">
                       • Com erro:{" "}
                       {documents.filter((d) => d.status === "error").length}
                     </span>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-lg text-gray-400">
                       • Processando:{" "}
                       {documents.filter((d) => d.status === "processing").length}
                     </span>
@@ -713,7 +713,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                       <Button
                         type="button"
                         variant="destructive"
-                        size="sm"
+                        size="lg"
                         onClick={() => {
                           const errorDocs = documents.filter(
                             (d) => d.status === "error"
