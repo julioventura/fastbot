@@ -203,6 +203,10 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
             <form onSubmit={handleSubmit} onKeyDown={(e) => {
               if (e.key === "Enter" && e.target !== e.currentTarget) {
                 const target = e.target as HTMLElement;
+                // Permitir Enter em TextAreas para quebras de linha
+                if (target.tagName === "TEXTAREA") {
+                  return; // Não prevenir Enter em TextAreas
+                }
                 if (!('type' in target && target.type === "submit") && !e.ctrlKey) {
                   e.preventDefault();
                 }

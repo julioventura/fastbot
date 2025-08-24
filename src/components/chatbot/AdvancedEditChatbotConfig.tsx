@@ -70,7 +70,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
     const baseUrl = window.location.origin;
     const basePath = window.location.pathname.includes('/fastbot') ? '/fastbot' : '';
-    const url = `${baseUrl}${basePath}/chat/${slug}`;
+    const url = `${baseUrl}${basePath}/${slug}`;
     return url;
   }, [chatbotData?.chatbot_name]);
 

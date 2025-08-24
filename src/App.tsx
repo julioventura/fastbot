@@ -34,10 +34,40 @@ import Configure from "./pages/Configure";
 // Constante queryClient
 const queryClient = new QueryClient();
 
+// Lista de rotas conhecidas do sistema (que não são chatbots)
+const SYSTEM_ROUTES = [
+  '/',
+  '/account',
+  '/pricing',
+  '/features',
+  '/my-chatbot',
+  '/configure',
+  '/base-de-dados',
+  '/conversation-history',
+  '/reset-password',
+  '/admin',
+  '/404'
+];
+
+// Função para verificar se é uma página de chatbot público
+const isPublicChatbotRoute = (pathname: string): boolean => {
+  // Remove o trailing slash se existir
+  const cleanPath = pathname.replace(/\/$/, '') || '/';
+
+  // Se for uma rota do sistema, não é chatbot
+  if (SYSTEM_ROUTES.includes(cleanPath)) {
+    return false;
+  }
+
+  // Se começa com /, tem pelo menos um caractere e não contém barras adicionais, pode ser chatbot
+  const pathParts = cleanPath.split('/').filter(part => part.length > 0);
+  return pathParts.length === 1 && pathParts[0].length > 0;
+};
+
 // Componente AppLayout que decide quando mostrar Header/Footer
 const AppLayout = () => {
   const location = useLocation();
-  const isPublicChatbot = location.pathname.startsWith('/chat/');
+  const isPublicChatbot = isPublicChatbotRoute(location.pathname);
 
   return (
     <>
@@ -51,7 +81,7 @@ const AppLayout = () => {
         <Route path="/configure" element={<Configure />} />
         <Route path="/base-de-dados" element={<BaseDeDados />} />
         <Route path="/conversation-history" element={<ConversationHistoryPage />} />
-        <Route path="/chat/:chatbotSlug" element={<PublicChatbotPage />} />
+        <Route path="/:chatbotSlug" element={<PublicChatbotPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<NotFound />} />
