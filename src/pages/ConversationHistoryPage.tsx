@@ -156,7 +156,7 @@ const ConversationHistoryPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-red-950/70 via-violet-950/80 to-red-950 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
 
         {/* Header da Página */}
@@ -175,12 +175,12 @@ const ConversationHistoryPage: React.FC = () => {
         {/* Container Principal */}
         {/* <div className="bg-gradient-to-br from-blue-950/90 to-black/40 backdrop-blur-sm rounded-2xl border border-blue-700/80 shadow-2xl overflow-hidden"> */}
         <div className="bg-red-950/60 backdrop-blur-sm rounded-2xl border border-red-700/80 shadow-2xl overflow-hidden">
-          <div className="p-6">
-            <div className="flex items-center gap-3">
+          <div className="p-6 pb-0">
+            <div className="flex items-center">
 
               <div>
                 <h2 className="text-3xl font-bold text-white">Histórico de Conversas</h2>
-                <p className="text-blue-300/80 text-sl pt-2">Visualize as conversas anteriores</p>
+                <p className="text-red-300/80 text-xl pt-2">Visualize as conversas anteriores</p>
               </div>
 
             </div>

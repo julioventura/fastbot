@@ -275,9 +275,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             <h1 className="text-3xl font-bold text-white">
               Meu Chatbot
             </h1>
-            <p className="text-sl pt-2 text-slate-300 max-w-3xl">
-              Configure e gerencie seu chatbot público com QR-code e URL personalizada
-            </p>
           </div>
 
           {/* URL do chatbot público para referência */}
@@ -285,11 +282,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
             {chatbotData?.chatbot_name && (
               <div className="p-6 border border-slate-600/50 rounded-xl bg-slate-900/60 backdrop-blur-sm shadow-2xl">
-                {/* <p className="pl-2 text-xl text-white mb-4">
-              Seu chatbot público
-            </p> */}
-
-
 
                 <h4 className="pl-2 text-sm font-medium text-white mb-3">URL do Chatbot</h4>
 

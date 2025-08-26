@@ -24,7 +24,7 @@ const BaseDeDados: React.FC = () => {
             <h1 className="text-3xl font-bold text-white">
               Meus Dados
             </h1>
-            <p className="text-sl pt-2 text-green-200 max-w-3xl">
+            <p className="text-xl pt-2 text-green-200 max-w-3xl">
               Adicione arquivos de texto para seu chatbot usar nas respostas.
             </p>
           </div>
