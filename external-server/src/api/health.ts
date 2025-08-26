@@ -1,10 +1,10 @@
 import { Router, Request, Response } from 'express';
-import { asyncHandler } from '../middleware/errorHandler.js';
-import { openaiService } from '../services/openai.js';
-import { dbService } from '../services/database.js';
-import { validateConfig } from '../config/index.js';
-import { logger } from '../utils/logger.js';
-import type { ApiSuccess } from '../types/index.js';
+import { asyncHandler } from '../middleware/errorHandler';
+import { openaiService } from '../services/openai';
+import { dbService } from '../services/database';
+import { validateConfig } from '../config/index';
+import { logger } from '../utils/logger';
+import type { ApiSuccess } from '../types/index';
 
 export const healthRouter = Router();
 

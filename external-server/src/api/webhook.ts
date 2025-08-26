@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { asyncHandler, authenticateApiKey } from '../middleware/errorHandler.js';
-import { WebhookPayloadSchema, type WebhookResponse, type ApiSuccess } from '../types/index.js';
-import { openaiService } from '../services/openai.js';
-import { dbService } from '../services/database.js';
-import { logger } from '../utils/logger.js';
+import { asyncHandler, authenticateApiKey } from '../middleware/errorHandler';
+import { WebhookPayloadSchema, type WebhookResponse, type ApiSuccess } from '../types/index';
+import { openaiService } from '../services/openai';
+import { dbService } from '../services/database';
+import { logger } from '../utils/logger';
 
 export const webhookRouter = Router();
 

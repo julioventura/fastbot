@@ -1,7 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { config } from '../config/index.js';
-import { Database } from '../types/index.js';
-import { logger } from '../utils/logger.js';
+import { config } from '../config/index';
+import { Database } from '../types/index';
+import { logger } from '../utils/logger';
 
 class DatabaseService {
   private supabase: SupabaseClient<Database>;
@@ -25,7 +25,7 @@ class DatabaseService {
   }
 
   // Buscar perfil do usuário
-  async getUserProfile(userId: string) {
+  async getUserProfile(userId: string): Promise<Database['public']['Tables']['profiles']['Row']> {
     try {
       const { data, error } = await this.supabase
         .from('profiles')
@@ -46,7 +46,7 @@ class DatabaseService {
   }
 
   // Buscar configuração do chatbot
-  async getChatbotConfig(userId: string) {
+  async getChatbotConfig(userId: string): Promise<Database['public']['Tables']['mychatbot']['Row'] | null> {
     try {
       const { data, error } = await this.supabase
         .from('mychatbot')

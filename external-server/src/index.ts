@@ -2,12 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import { webhookRouter } from './api/webhook.js';
-import { chatRouter } from './api/chat.js';
-import { healthRouter } from './api/health.js';
-import { errorHandler } from './middleware/errorHandler.js';
-import { corsConfig } from './config/cors.js';
-import { logger } from './utils/logger.js';
+import { webhookRouter } from './api/webhook';
+import { chatRouter } from './api/chat';
+import { healthRouter } from './api/health';
+import { errorHandler } from './middleware/errorHandler';
+import { corsConfig } from './config/cors';
+import { logger } from './utils/logger';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -28,7 +28,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Logging de requisições
-app.use((req, res, next) => {
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
   logger.info(`${req.method} ${req.path}`, {
     ip: req.ip,
     userAgent: req.get('User-Agent'),
@@ -43,7 +43,7 @@ app.use('/webhook', webhookRouter);
 app.use('/api/chat', chatRouter);
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use('*', (req: express.Request, res: express.Response) => {
   res.status(404).json({
     success: false,
     error: 'Endpoint not found',

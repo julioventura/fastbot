@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "Servidor Node.js com TypeScript para integração externa com banco de dados e OpenAI",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "rm -rf dist && tsc",
+    "build": "rimraf dist && tsc",
     "start": "node dist/index.js",
     "start:prod": "NODE_ENV=production node dist/index.js",
     "test": "vitest",
@@ -16,7 +15,14 @@
     "docker:build": "docker build -t fastbot-external-server .",
     "docker:run": "docker run -p 3000:3000 --env-file .env fastbot-external-server"
   },
-  "keywords": ["typescript", "nodejs", "express", "openai", "supabase", "webhook"],
+  "keywords": [
+    "typescript",
+    "nodejs",
+    "express",
+    "openai",
+    "supabase",
+    "webhook"
+  ],
   "author": "FastBot Team",
   "license": "MIT",
   "dependencies": {
@@ -30,12 +36,14 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.14.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.23",
+    "@types/helmet": "^0.0.48",
+    "@types/node": "^20.19.11",
     "@typescript-eslint/eslint-plugin": "^7.16.0",
     "@typescript-eslint/parser": "^7.16.0",
     "eslint": "^8.57.0",
+    "rimraf": "^6.0.1",
     "tsx": "^4.16.0",
     "typescript": "^5.5.3",
     "vitest": "^1.6.0"

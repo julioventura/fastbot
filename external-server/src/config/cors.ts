@@ -1,8 +1,8 @@
 import { CorsOptions } from 'cors';
-import { config } from './index.js';
+import { config } from './index';
 
 export const corsConfig: CorsOptions = {
-  origin: (origin, callback) => {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     // Permitir requests sem origin (ex: mobile apps, Postman)
     if (!origin) return callback(null, true);
     

@@ -3,6 +3,7 @@
 ## 📋 Checklist Pré-Deploy
 
 ### ✅ Preparação
+
 - [ ] Node.js 18+ instalado na VPS
 - [ ] Docker e Docker Compose instalados
 - [ ] Nginx configurado (opcional, mas recomendado)
@@ -10,6 +11,7 @@
 - [ ] Certificado SSL configurado
 
 ### ✅ Credenciais Necessárias
+
 - [ ] OpenAI API Key
 - [ ] Supabase URL
 - [ ] Supabase Service Role Key
@@ -186,11 +188,13 @@ sudo certbot renew --dry-run
 ## 🔧 Configuração do N8N
 
 ### 1. URL do Webhook
+
 ```
 https://webhook.seudominio.com/webhook
 ```
 
 ### 2. Headers necessários
+
 ```
 Content-Type: application/json
 X-API-Key: SuaChaveAPISeguraAqui123!@#
@@ -199,6 +203,7 @@ X-API-Key: SuaChaveAPISeguraAqui123!@#
 ### 3. Exemplo de configuração no N8N
 
 **HTTP Request Node:**
+
 - **Method:** POST
 - **URL:** `https://webhook.seudominio.com/webhook`
 - **Headers:**
@@ -268,6 +273,7 @@ echo "0 2 * * * /usr/bin/find /home/user/fastbot-server/logs -name '*.log' -mtim
 ### Problemas Comuns
 
 #### 1. Container não inicia
+
 ```bash
 # Verificar logs
 docker-compose logs
@@ -280,20 +286,24 @@ docker-compose build --no-cache
 ```
 
 #### 2. Erro 401 Unauthorized
+
 - Verificar se `X-API-Key` está sendo enviado
 - Verificar se `API_KEY` no `.env` está correta
 
 #### 3. Erro de conexão OpenAI
+
 ```bash
 # Testar manualmente
 curl -H "Authorization: Bearer sua_openai_key" https://api.openai.com/v1/models
 ```
 
 #### 4. Erro de conexão Supabase
+
 - Verificar URL e chaves no `.env`
 - Verificar conectividade de rede
 
 #### 5. Nginx erro 502 Bad Gateway
+
 ```bash
 # Verificar se o container está rodando
 docker-compose ps
@@ -332,6 +342,7 @@ Após o deploy, execute:
 ## 📞 Suporte
 
 Para problemas:
+
 1. Verificar logs: `docker-compose logs -f`
 2. Health check: `curl https://webhook.seudominio.com/health/detailed`
 3. Testar conectividade: Scripts de teste incluídos

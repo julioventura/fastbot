@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
-import { config } from '../config/index.js';
-import { logger } from '../utils/logger.js';
-import type { WebhookPayload, ChatConfig } from '../types/index.js';
+import { config } from '../config/index';
+import { logger } from '../utils/logger';
+import type { WebhookPayload, ChatConfig } from '../types/index';
 
 class OpenAIService {
   private openai: OpenAI;

@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
-import { asyncHandler, authenticateApiKey } from '../middleware/errorHandler.js';
-import { openaiService } from '../services/openai.js';
-import { logger } from '../utils/logger.js';
-import type { ApiSuccess } from '../types/index.js';
+import { asyncHandler, authenticateApiKey } from '../middleware/errorHandler';
+import { openaiService } from '../services/openai';
+import { logger } from '../utils/logger';
+import type { ApiSuccess } from '../types/index';
 
 export const chatRouter = Router();
 

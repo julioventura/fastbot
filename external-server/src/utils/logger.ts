@@ -1,5 +1,5 @@
 import winston from 'winston';
-import { config } from '../config/index.js';
+import { config } from '../config/index';
 
 // Configurar formato dos logs
 const logFormat = winston.format.combine(
