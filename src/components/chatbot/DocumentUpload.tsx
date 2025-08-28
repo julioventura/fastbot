@@ -59,6 +59,8 @@ interface UploadedDocument {
   file_size: number;
   upload_date: string;
   summary?: string;
+  chatbot_name?: string;
+  file_type?: string;
 }
 
 interface ChatbotConfig {
@@ -167,24 +169,95 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
   // 📂 Carregar documentos - Modo Webhook
   const loadWebhookDocuments = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('🚫 loadWebhookDocuments: Usuário não autenticado');
+      return;
+    }
+
+    console.log('🔍 loadWebhookDocuments: Iniciando busca para usuário:', user.id);
 
     try {
       // Primeiro tenta carregar da tabela documents_details
+      console.log('📊 Tentando carregar de documents_details...');
       let { data, error } = await supabase
         .from("documents_details")
-        .select("id, filename, status, file_size, upload_date, summary")
+        .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
         .eq("chatbot_user", user.id)
         .order("upload_date", { ascending: false });
 
-      // Se documents_details não funcionar, tenta documents como fallback
+      console.log('📊 Resultado documents_details:', {
+        data: data?.length || 0,
+        error: error?.message || 'nenhum erro',
+        rawData: data
+      });
+
+      // Se documents_details estiver vazio (não há erro, mas sem dados), buscar de documents
+      if (!error && (!data || data.length === 0)) {
+        console.log('📝 documents_details vazio, buscando de documents...');
+
+        // Buscar documentos únicos da tabela documents usando metadata
+        const { data: docsData, error: docsError } = await supabase
+          .from("documents")
+          .select("id, metadata")
+          .not("metadata", "is", null)
+          .order("id", { ascending: false });
+
+        console.log('📄 Resultado documents (bruto):', {
+          data: docsData?.length || 0,
+          error: docsError?.message || 'nenhum erro'
+        });
+
+        if (docsError) {
+          error = docsError;
+        } else if (docsData && docsData.length > 0) {
+          // Processar e agrupar documentos por metadata
+          const documentsMap = new Map();
+
+          docsData.forEach(doc => {
+            if (doc.metadata) {
+              const metadata = doc.metadata;
+              const userId = metadata.usuario || metadata.chatbot_user;
+
+              // Filtrar apenas documentos do usuário atual
+              if (userId === user.id) {
+                const filename = metadata.file_name || metadata.filename;
+                const chatbotName = metadata.chatbot_name || '';
+
+                if (filename && !documentsMap.has(filename)) {
+                  documentsMap.set(filename, {
+                    id: doc.id,
+                    filename: filename,
+                    status: "completed", // Assumir completed se está na tabela documents
+                    file_size: parseInt(metadata.file_size) || 0,
+                    upload_date: new Date().toISOString(), // Usar data atual como fallback
+                    summary: `Documento processado via N8N`,
+                    chatbot_name: chatbotName,
+                    file_type: metadata.file_type || 'text/plain'
+                  });
+                }
+              }
+            }
+          });
+
+          data = Array.from(documentsMap.values());
+          console.log('📋 Documentos processados de documents:', data);
+        }
+      }
+
+      // Se documents_details não funcionar, tenta documents como fallback (apenas para compatibilidade)
       if (error) {
         console.log('📝 Carregando de documents como fallback...');
         const { data: fallbackData, error: fallbackError } = await supabase
           .from("documents")
-          .select("id, filename, status, file_size, upload_date, summary")
+          .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
           .eq("chatbot_user", user.id)
           .order("upload_date", { ascending: false });
+
+        console.log('📝 Resultado documents (fallback):', {
+          data: fallbackData?.length || 0,
+          error: fallbackError?.message || 'nenhum erro',
+          rawData: fallbackData
+        });
 
         data = fallbackData;
         error = fallbackError;
@@ -197,15 +270,20 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       }
 
       console.log('✅ Documentos webhook carregados:', data?.length || 0);
+      console.log('📋 Dados completos:', data);
       setDocuments(data || []);
     } catch (error) {
       console.warn("⚠️ Erro ao carregar documentos webhook:", error);
       setDocuments([]);
     }
   }, [user]); const fetchDocuments = useCallback(async () => {
+    console.log('🔄 fetchDocuments: Modo atual -', useLocalProcessing ? 'LOCAL' : 'WEBHOOK');
+
     if (useLocalProcessing) {
+      console.log('📋 Carregando documentos em modo LOCAL...');
       loadLocalDocuments();
     } else {
+      console.log('🌐 Carregando documentos em modo WEBHOOK...');
       loadWebhookDocuments();
     }
   }, [useLocalProcessing, loadLocalDocuments, loadWebhookDocuments]);
@@ -940,17 +1018,102 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         <CardContent className="p-3 md:p-6">
           {/* Descrição do modo ativo */}
           <div className="mb-4 p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
-            <p className="text-sm text-gray-300">
-              {useLocalProcessing ? (
-                <>
-                  <span className="text-blue-400 font-medium">Modo Local:</span> Arquivos processados localmente com embeddings salvos no Supabase.
-                </>
-              ) : (
-                <>
-                  <span className="text-purple-400 font-medium">Modo Webhook:</span> Arquivos enviados para N8N que processa e registra automaticamente nas tabelas.
-                </>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-300">
+                {useLocalProcessing ? (
+                  <>
+                    <span className="text-blue-400 font-medium">Modo Local:</span> Arquivos processados localmente com embeddings salvos no Supabase.
+                  </>
+                ) : (
+                  <>
+                    <span className="text-purple-400 font-medium">Modo Webhook:</span> Arquivos enviados para N8N que processa e registra automaticamente nas tabelas.
+                  </>
+                )}
+              </p>
+
+              {/* Botão de Debug - apenas no modo WEBHOOK */}
+              {!useLocalProcessing && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    console.log('🔍 DEBUG: Iniciando teste manual...');
+                    console.log('👤 Usuário atual:', user?.id);
+                    console.log('🌐 Modo:', useLocalProcessing ? 'LOCAL' : 'WEBHOOK');
+
+                    if (user) {
+                      console.log('📊 Testando acesso direto à documents_details...');
+                      try {
+                        const { data, error } = await supabase
+                          .from("documents_details")
+                          .select("*")
+                          .eq("chatbot_user", user.id);
+
+                        console.log('✅ Resultado documents_details:');
+                        console.log('Data:', data);
+                        console.log('Error:', error);
+
+                        // Teste sem filtro de usuário
+                        const { data: allData, error: allError } = await supabase
+                          .from("documents_details")
+                          .select("*")
+                          .limit(5);
+
+                        console.log('📋 Primeiros 5 registros (sem filtro):');
+                        console.log('All Data:', allData);
+                        console.log('All Error:', allError);
+
+                        // Teste na tabela documents também
+                        console.log('📊 Testando tabela documents...');
+                        const { data: docsData, error: docsError } = await supabase
+                          .from("documents")
+                          .select("*")
+                          .eq("chatbot_user", user.id)
+                          .limit(5);
+
+                        console.log('📄 Resultado documents (filtrado por usuário):');
+                        console.log('Docs Data:', docsData);
+                        console.log('Docs Error:', docsError);
+
+                        // Teste documents sem filtro
+                        const { data: allDocsData, error: allDocsError } = await supabase
+                          .from("documents")
+                          .select("*")
+                          .limit(5);
+
+                        console.log('📄 Primeiros 5 registros da tabela documents (sem filtro):');
+                        console.log('All Docs Data:', allDocsData);
+                        console.log('All Docs Error:', allDocsError);
+
+                        // Teste usando Service Role Key para verificar se é problema de RLS
+                        console.log('🔑 Testando com Service Role Key...');
+                        const { createClient } = await import('@supabase/supabase-js');
+                        const supabaseServiceRole = createClient(
+                          'https://supabase.cirurgia.com.br',
+                          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q'
+                        );
+
+                        const { data: serviceData, error: serviceError } = await supabaseServiceRole
+                          .from("documents_details")
+                          .select("*")
+                          .eq("chatbot_user", user.id);
+
+                        console.log('🔑 Resultado com Service Role:');
+                        console.log('Service Data:', serviceData);
+                        console.log('Service Error:', serviceError);
+
+                      } catch (err) {
+                        console.error('❌ Erro no teste:', err);
+                      }
+                    }
+                  }}
+                  className="text-yellow-400 border-yellow-600 hover:bg-yellow-600/20"
+                >
+                  🔍 Debug
+                </Button>
               )}
-            </p>
+            </div>
           </div>
 
           <div
@@ -998,20 +1161,39 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 </div>
 
                 {/* Botão de recolher/expandir */}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="lg"
-                  onClick={toggleDocumentsExpansion}
-                  className="h-12 w-12 p-0 hover:bg-green-800"
-                  title={isDocumentsExpanded ? "Recolher lista" : "Expandir lista"}
-                >
-                  {isDocumentsExpanded ? (
-                    <ChevronUp className="h-12 w-12" />
-                  ) : (
-                    <ChevronDown className="h-12 w-12" />
+                <div className="flex items-center gap-2">
+                  {/* Botão de recarregar - apenas no modo WEBHOOK */}
+                  {!useLocalProcessing && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        console.log('🔄 Forçando recarregamento manual...');
+                        fetchDocuments();
+                      }}
+                      className="text-blue-400 border-blue-600 hover:bg-blue-600/20"
+                      title="Recarregar documentos manualmente"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
                   )}
-                </Button>
+
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="lg"
+                    onClick={toggleDocumentsExpansion}
+                    className="h-12 w-12 p-0 hover:bg-green-800"
+                    title={isDocumentsExpanded ? "Recolher lista" : "Expandir lista"}
+                  >
+                    {isDocumentsExpanded ? (
+                      <ChevronUp className="h-12 w-12" />
+                    ) : (
+                      <ChevronDown className="h-12 w-12" />
+                    )}
+                  </Button>
+                </div>
               </div>
 
               {isDocumentsExpanded && (
