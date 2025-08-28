@@ -276,8 +276,8 @@ const MyChatbotPage: React.FC = () => {
       }));
 
       toast({
-        title: "Sucesso!",
-        description: "Configurações do chatbot salvas com system_message gerado automaticamente.",
+        title: "SUCESSO",
+        description: "Configurações salvas!",
       });
 
       console.log('🎉 [MyChatbotPage] Salvamento concluído com sucesso');

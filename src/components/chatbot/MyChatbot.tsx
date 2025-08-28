@@ -124,28 +124,51 @@ const MyChatbot = () => {
   // Hook para Vector Store - busca semântica nos documentos
   const { getChatbotContext } = useVectorStore();
 
-  // 🧠 Hook de memória híbrida (Redis + Supabase)
+  // 🚀 Verificar se deve usar processamento local (afeta o uso de memória)
+  const useLocalProcessing = import.meta.env.VITE_USE_LOCAL_AI === 'true';
+
+  // 🧠 Hook de memória híbrida (Redis + Supabase) - APENAS para modo local
+  const memoryHookResult = useConversationMemory();
   const {
     conversationHistory,
     isLoading: memoryLoading,
     error: memoryError,
     addMessage,
     clearSession,
-    getContextForChatbot
-  } = useConversationMemory();
+    getContextForChatbot,
+    currentSession
+  } = useLocalProcessing ? memoryHookResult : {
+    conversationHistory: [],
+    isLoading: false,
+    error: null,
+    addMessage: async () => { },
+    clearSession: async () => { },
+    getContextForChatbot: () => '',
+    currentSession: null
+  };
 
-  // 📋 Hook de Short-Memory (LocalStorage)
+  // 📋 Hook de Short-Memory (LocalStorage) - APENAS para modo local
+  const shortMemoryHookResult = useShortMemory(useLocalProcessing ? user?.id : undefined);
   const {
     addToShortMemory,
     getShortMemoryContext,
     hasMessages: hasShortMemoryMessages
-  } = useShortMemory(user?.id);
+  } = useLocalProcessing ? shortMemoryHookResult : {
+    addToShortMemory: async () => { },
+    getShortMemoryContext: () => '',
+    hasMessages: false
+  };
 
   // Estado local para compatibilidade com interface atual
   const [localMessages, setLocalMessages] = useState<Message[]>([]);
 
-  // Sincronizar mensagens da memória com interface local
+  // Sincronizar mensagens da memória com interface local (APENAS no modo local)
   useEffect(() => {
+    if (!useLocalProcessing) {
+      // No modo webhook, manter estado local simples
+      return;
+    }
+
     logger.debug('===== EFEITO DE SINCRONIZAÇÃO EXECUTADO =====');
     logger.debug('Mensagens na memória:', { count: conversationHistory.length });
 
@@ -164,7 +187,7 @@ const MyChatbot = () => {
     setLocalMessages(formattedMessages);
 
     logger.debug('===== FIM DA SINCRONIZAÇÃO =====');
-  }, [conversationHistory, logger]);
+  }, [conversationHistory, logger, useLocalProcessing]);
 
   // Efeito da animação eletrificada no chatbot minimizado
   useEffect(() => {
@@ -376,24 +399,7 @@ const MyChatbot = () => {
    * Determina o contexto da página atual com base na URL
    * Usado para personalizar respostas e mensagem inicial
    */
-  const getPageContext = useCallback(() => {
-    switch (location.pathname) {
-      case '/':
-        return 'página inicial do FastBot';
-      case '/account':
-        return 'página de Conta do FastBot';
-      case '/pricing':
-        return 'página de Preços do FastBot';
-      case '/features':
-        return 'página de Funcionalidades do FastBot';
-      case '/my-chatbot':
-        return 'página Meu Chatbot do FastBot';
-      case '/admin':
-        return 'página de Administração do FastBot';
-      default:
-        return 'uma página do FastBot';
-    }
-  }, [location.pathname]);
+  const getPageContext = location.pathname;
 
   /**
    * getInitialMessage
@@ -414,16 +420,23 @@ const MyChatbot = () => {
   /**
    * Inicialização de mensagens
    * Carrega a mensagem inicial quando o chat é aberto pela primeira vez
+   * No modo webhook (N8N), não usa memória local - apenas interface
    */
   useEffect(() => {
     console.log('🚀 [MyChatbot] useEffect inicialização executado:', {
       chatState,
       conversationHistoryLength: conversationHistory.length,
       initialMessageAdded,
+      useLocalProcessing,
       timestamp: new Date().toISOString()
     });
 
-    if (chatState === 'normal' && conversationHistory.length === 0 && !initialMessageAdded) {
+    // Condições para inicialização
+    const shouldInitialize = useLocalProcessing
+      ? (chatState === 'normal' && conversationHistory.length === 0 && !initialMessageAdded)
+      : (chatState === 'normal' && localMessages.length === 0 && !initialMessageAdded);
+
+    if (shouldInitialize) {
       // Primeiro buscar configuração do chatbot, depois adicionar mensagem inicial
       const initializeChat = async () => {
         try {
@@ -438,25 +451,42 @@ const MyChatbot = () => {
 
           // Criar mensagem inicial com a configuração carregada
           const initialMessage = getInitialMessage();
-          console.log('🤖 [MyChatbot] Adicionando mensagem inicial à memória:', initialMessage.substring(0, 50) + '...');
+          console.log('🤖 [MyChatbot] Adicionando mensagem inicial:', initialMessage.substring(0, 50) + '...');
 
-          await addMessage('assistant', initialMessage);
-          // 📋 NOVO: Adicionar mensagem inicial também à Short-Memory
-          await addToShortMemory('assistant', initialMessage);
+          if (useLocalProcessing) {
+            // Modo local: usar memória
+            await addMessage('assistant', initialMessage);
+            await addToShortMemory('assistant', initialMessage);
+          } else {
+            // Modo webhook: apenas interface local
+            setLocalMessages([{
+              id: 1,
+              text: initialMessage,
+              sender: 'bot'
+            }]);
+          }
           console.log('🤖 [MyChatbot] Mensagem inicial adicionada com sucesso!');
         } catch (error) {
           console.error('❌ [MyChatbot] Erro ao inicializar chat:', error);
           // Fallback: adicionar mensagem mesmo sem configuração
           const fallbackMessage = getInitialMessage();
-          await addMessage('assistant', fallbackMessage);
-          // 📋 NOVO: Adicionar fallback também à Short-Memory
-          await addToShortMemory('assistant', fallbackMessage);
+
+          if (useLocalProcessing) {
+            await addMessage('assistant', fallbackMessage);
+            await addToShortMemory('assistant', fallbackMessage);
+          } else {
+            setLocalMessages([{
+              id: 1,
+              text: fallbackMessage,
+              sender: 'bot'
+            }]);
+          }
         }
       };
 
       initializeChat();
     }
-  }, [chatState, conversationHistory.length, initialMessageAdded, getInitialMessage, fetchChatbotConfig, addMessage, addToShortMemory]);
+  }, [chatState, conversationHistory.length, localMessages.length, initialMessageAdded, useLocalProcessing, getInitialMessage, fetchChatbotConfig, addMessage, addToShortMemory]);
 
   /**
    * sendToWebhook
@@ -488,9 +518,12 @@ const MyChatbot = () => {
       const payload = {
         message: userMessage,
         userId: user?.id,
-        pageContext: location.pathname,
-        pageName: getPageContext(),
-        timestamp: requestTimestamp
+        page: location.pathname,
+        pageContext: getPageContext,
+        timestamp: requestTimestamp,
+        chatbot_name: chatbotConfig?.chatbot_name || "",
+        sessionId: currentSession,
+        userEmail: user?.email,
       };
 
       // Log do payload sendo enviado
@@ -524,7 +557,7 @@ const MyChatbot = () => {
       const responseTimestamp = new Date().toISOString();
 
       // Log simplificado da requisição
-      console.log('� [MyChatbot] Enviando para N8N:', {
+      console.log('� [MyChatbot] Enviando para Webhook:', {
         url: webhookUrl,
         payloadSize: JSON.stringify(payload).length,
         message: payload.message
@@ -731,7 +764,7 @@ const MyChatbot = () => {
       }
 
       // 6. Adicionar contexto da página atual
-      const currentPageContext = getPageContext();
+      const currentPageContext = getPageContext;
       if (fullPrompt.trim()) {
         fullPrompt += `\n\nOBS: CONTEXTO DA PÁGINA ATUAL - O usuário está atualmente na ${currentPageContext} (URL: ${location.pathname}). Use essa informação para contextualizar suas respostas quando relevante.`;
       } else {
@@ -830,7 +863,7 @@ const MyChatbot = () => {
    * NOVO: Integrado com busca vetorial para usar documentos do usuário
    */
   const getBotResponseLocal = async (userMessage: string): Promise<string> => {
-    const pageContext = getPageContext();
+    const pageContext = getPageContext;
 
     try {
       // 🔍 NOVO: Buscar contexto relevante nos documentos do usuário
@@ -927,7 +960,7 @@ const MyChatbot = () => {
   const generateContextualResponse = (userMessage: string, vectorContext: string, systemMessage: string): string => {
     // Análise básica da intenção do usuário
     const messageLower = userMessage.toLowerCase();
-    const currentPageContext = getPageContext();
+    const currentPageContext = getPageContext;
 
     // Se pergunta sobre página atual, responder diretamente
     if (messageLower.includes('página') || messageLower.includes('pagina') || messageLower.includes('onde estou') || messageLower.includes('que página')) {
@@ -988,6 +1021,7 @@ const MyChatbot = () => {
    * handleSendMessage
    * Processa o envio de mensagens do usuário e obtenção de respostas
    * Gerencia estados de loading e atualização da interface
+   * Otimizado para usar memória apenas no modo local
    */
   const handleSendMessage = async (): Promise<void> => {
     if (inputValue.trim() === '') return;
@@ -1001,7 +1035,8 @@ const MyChatbot = () => {
       messageLength: userMessage.length,
       userId: user?.id,
       chatbotConfigLoaded: !!chatbotConfig,
-      currentPage: location.pathname
+      currentPage: location.pathname,
+      useLocalProcessing
     });
 
     const currentInput = inputValue;
@@ -1012,62 +1047,68 @@ const MyChatbot = () => {
       inputRef.current?.focus();
     }, 50);
 
-    // 🧠 Adicionar mensagem do usuário à memória híbrida
-    console.log('🧠 [MyChatbot] ===== ADICIONANDO MENSAGEM DO USUÁRIO À MEMÓRIA =====');
-    console.log('🧠 [MyChatbot] Mensagem a ser adicionada:', currentInput.substring(0, 30) + '...');
+    if (useLocalProcessing) {
+      // MODO LOCAL: Usar memória híbrida
+      console.log('🧠 [MyChatbot] ===== MODO LOCAL: ADICIONANDO À MEMÓRIA =====');
+      await addMessage('user', currentInput);
+      await addToShortMemory('user', currentInput);
 
-    await addMessage('user', currentInput);
+      // Aguardar atualização do estado
+      await new Promise(resolve => setTimeout(resolve, 100));
 
-    // 📋 Adicionar mensagem do usuário à Short-Memory (LocalStorage)
-    console.log('📋 [MyChatbot] ===== ADICIONANDO MENSAGEM À SHORT-MEMORY =====');
-    await addToShortMemory('user', currentInput);
+      try {
+        const conversationContext = getContextForChatbot();
+        const botResponse = await sendToWebhook(currentInput, conversationContext);
 
-    console.log('🧠📋 [MyChatbot] ===== MENSAGENS ADICIONADAS ÀS MEMÓRIAS =====');
+        await addMessage('assistant', botResponse);
+        await addToShortMemory('assistant', botResponse);
 
-    // 🔧 AGUARDAR UM TEMPO PARA O ESTADO REACT ATUALIZAR
-    await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('🧠 [MyChatbot] ===== RESPOSTA ADICIONADA ÀS MEMÓRIAS =====');
+      } catch (error) {
+        console.error('❌ [MyChatbot] Erro no modo local:', error);
+      }
+    } else {
+      // MODO WEBHOOK: Interface simples sem memória persistente
+      console.log('🌐 [MyChatbot] ===== MODO WEBHOOK: INTERFACE SIMPLES =====');
 
-    try {
-      // 🧠 Obter contexto da memória DEPOIS de aguardar a atualização do estado
-      const conversationContext = getContextForChatbot();
-      console.log('🧠 [MyChatbot] Contexto obtido APÓS aguardar atualização:', {
-        hasContext: !!conversationContext,
-        contextLength: conversationContext.length,
-        isEmpty: conversationContext.trim() === ''
-      });
+      // Adicionar mensagem do usuário à interface local
+      const newUserMessage: Message = {
+        id: Date.now(),
+        text: currentInput,
+        sender: 'user'
+      };
+      setLocalMessages(prev => [...prev, newUserMessage]);
 
-      // Enviar para webhook N8N e aguardar resposta
-      const botResponse = await sendToWebhook(currentInput, conversationContext);
+      try {
+        // Enviar direto para webhook sem contexto de memória
+        const botResponse = await sendToWebhook(currentInput);
 
-      // 🧠 Adicionar resposta do bot à memória híbrida
-      console.log('🧠 [MyChatbot] ===== ADICIONANDO RESPOSTA DO BOT À MEMÓRIA =====');
-      console.log('🧠 [MyChatbot] Resposta a ser adicionada:', botResponse.substring(0, 30) + '...');
+        // Adicionar resposta à interface local
+        const newBotMessage: Message = {
+          id: Date.now() + 1,
+          text: botResponse,
+          sender: 'bot'
+        };
+        setLocalMessages(prev => [...prev, newBotMessage]);
 
-      await addMessage('assistant', botResponse);
+        console.log('🌐 [MyChatbot] ===== RESPOSTA ADICIONADA À INTERFACE =====');
+      } catch (error) {
+        console.error('❌ [MyChatbot] Erro no modo webhook:', error);
 
-      // 📋 Adicionar resposta do bot à Short-Memory (LocalStorage)
-      console.log('📋 [MyChatbot] ===== ADICIONANDO RESPOSTA À SHORT-MEMORY =====');
-      await addToShortMemory('assistant', botResponse);
-
-      console.log('🧠📋 [MyChatbot] ===== RESPOSTA ADICIONADA ÀS MEMÓRIAS =====');
-
-      // 🎯 Refocar no campo de input após processar a resposta
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 200);
-    } catch (error) {
-      console.error('❌ [MyChatbot] Erro ao processar mensagem:', error);
-
-      // 🎯 Refocar no input mesmo em caso de erro
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 200);
-    } finally {
-      // 🎯 Garantir foco no input sempre, independentemente do resultado
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 300);
+        // Adicionar mensagem de erro à interface
+        const errorMessage: Message = {
+          id: Date.now() + 1,
+          text: 'Desculpe, houve um problema ao processar sua mensagem. Tente novamente.',
+          sender: 'bot'
+        };
+        setLocalMessages(prev => [...prev, errorMessage]);
+      }
     }
+
+    // 🎯 Refocar no campo de input
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 200);
   };
 
   /**

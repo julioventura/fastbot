@@ -229,8 +229,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         }
 
         toast({
-          title: "Sucesso!",
-          description: `Arquivo "${file.name}" foi enviado e está sendo processado.`,
+          title: "SUCESSO",
+          description: `Arquivo "${file.name}" enviado!`,
         });
 
         fetchDocuments(); // Recarregar lista

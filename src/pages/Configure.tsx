@@ -116,8 +116,8 @@ const Configure: React.FC = () => {
       if (result?.success) {
         toast({
           variant: "success",
-          title: "Sucesso!",
-          description: "Configurações do chatbot salvas com sucesso.",
+          title: "SUCESSO",
+          description: "Configurações salvas!",
         });
       } else if (result?.error) {
         throw new Error(result.error);
