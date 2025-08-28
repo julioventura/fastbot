@@ -169,10 +169,39 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const loadWebhookDocuments = useCallback(async () => {
     if (!user) return;
 
-    // ✅ No modo webhook, o N8N cuida do armazenamento dos documentos
-    // Não tentamos acessar tabelas do Supabase que podem não ter permissão
-    console.log('🌐 Modo webhook ativo - N8N cuida do armazenamento dos documentos');
-    setDocuments([]);
+    try {
+      // Primeiro tenta carregar da tabela documents_details
+      let { data, error } = await supabase
+        .from("documents_details")
+        .select("id, filename, status, file_size, upload_date, summary")
+        .eq("chatbot_user", user.id)
+        .order("upload_date", { ascending: false });
+
+      // Se documents_details não funcionar, tenta documents como fallback
+      if (error) {
+        console.log('📝 Carregando de documents como fallback...');
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from("documents")
+          .select("id, filename, status, file_size, upload_date, summary")
+          .eq("chatbot_user", user.id)
+          .order("upload_date", { ascending: false });
+
+        data = fallbackData;
+        error = fallbackError;
+      }
+
+      if (error) {
+        console.warn("⚠️ Erro ao carregar documentos webhook:", error);
+        setDocuments([]);
+        return;
+      }
+
+      console.log('✅ Documentos webhook carregados:', data?.length || 0);
+      setDocuments(data || []);
+    } catch (error) {
+      console.warn("⚠️ Erro ao carregar documentos webhook:", error);
+      setDocuments([]);
+    }
   }, [user]); const fetchDocuments = useCallback(async () => {
     if (useLocalProcessing) {
       loadLocalDocuments();
@@ -378,11 +407,14 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             description: `Arquivo "${file.name}" enviado para processamento no N8N.`,
           });
 
-          // ✅ Não tentar fazer tracking em tabelas do Supabase para modo webhook
-          // O N8N cuidará do armazenamento e processamento dos documentos
-          console.log('📤 Arquivo enviado com sucesso para N8N, tracking não necessário');
+          // 📝 N8N é responsável por preencher as tabelas documents e documents_details
+          console.log('✅ Arquivo enviado para N8N, aguardando processamento...');
 
-          fetchDocuments(); // Recarregar lista (pode estar vazia no modo webhook)
+          // Recarregar lista após um pequeno delay para dar tempo do N8N processar
+          setTimeout(() => {
+            fetchDocuments();
+          }, 2000);
+
           onUploadComplete?.(result?.documentId || file.name);
         } else {
           throw new Error(result?.error || 'Erro no processamento do N8N');
@@ -415,26 +447,67 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     if (!user) return;
 
     try {
-      // Primeiro, deletar os embeddings relacionados ao documento
-      const { error: embeddingsError } = await supabase
-        .from("chatbot_embeddings")
-        .delete()
-        .eq("document_id", documentId)
-        .eq("chatbot_user", user.id);
+      if (useLocalProcessing) {
+        // Modo Local: deletar embeddings e chatbot_documents
+        const { error: embeddingsError } = await supabase
+          .from("chatbot_embeddings")
+          .delete()
+          .eq("document_id", documentId)
+          .eq("chatbot_user", user.id);
 
-      if (embeddingsError) {
-        console.error("Erro ao deletar embeddings:", embeddingsError);
-        // Continua com a deleção do documento mesmo se houver erro nos embeddings
+        if (embeddingsError) {
+          console.error("Erro ao deletar embeddings:", embeddingsError);
+        }
+
+        const { error } = await supabase
+          .from("chatbot_documents")
+          .delete()
+          .eq("id", documentId)
+          .eq("chatbot_user", user.id);
+
+        if (error) throw error;
+      } else {
+        // Modo Webhook: deletar de documents_details e documents
+        let deletedFromDetails = false;
+        let deletedFromDocuments = false;
+
+        // Tentar deletar de documents_details
+        try {
+          const { error: detailsError } = await supabase
+            .from("documents_details")
+            .delete()
+            .eq("id", documentId)
+            .eq("chatbot_user", user.id);
+
+          if (!detailsError) {
+            deletedFromDetails = true;
+            console.log('✅ Deletado de documents_details');
+          }
+        } catch (err) {
+          console.warn('⚠️ Erro ao deletar de documents_details:', err);
+        }
+
+        // Tentar deletar de documents
+        try {
+          const { error: documentsError } = await supabase
+            .from("documents")
+            .delete()
+            .eq("id", documentId)
+            .eq("chatbot_user", user.id);
+
+          if (!documentsError) {
+            deletedFromDocuments = true;
+            console.log('✅ Deletado de documents');
+          }
+        } catch (err) {
+          console.warn('⚠️ Erro ao deletar de documents:', err);
+        }
+
+        // Se não conseguiu deletar de nenhuma tabela, lançar erro
+        if (!deletedFromDetails && !deletedFromDocuments) {
+          throw new Error("Não foi possível deletar o documento de nenhuma tabela");
+        }
       }
-
-      // Depois, deletar o documento principal
-      const { error } = await supabase
-        .from("chatbot_documents")
-        .delete()
-        .eq("id", documentId)
-        .eq("chatbot_user", user.id);
-
-      if (error) throw error;
 
       toast({
         title: "Documento removido",
@@ -456,13 +529,42 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     if (!user) return;
 
     try {
-      // Buscar o conteúdo do documento
-      const { data: documentData, error } = await supabase
-        .from("chatbot_documents")
-        .select("content, filename")
-        .eq("id", documentId)
-        .eq("chatbot_user", user.id)
-        .single();
+      let documentData = null;
+      let error = null;
+
+      if (useLocalProcessing) {
+        // Modo Local: buscar em chatbot_documents
+        const result = await supabase
+          .from("chatbot_documents")
+          .select("content, filename")
+          .eq("id", documentId)
+          .eq("chatbot_user", user.id)
+          .single();
+
+        documentData = result.data;
+        error = result.error;
+      } else {
+        // Modo Webhook: buscar primeiro em documents_details, depois em documents
+        let result = await supabase
+          .from("documents_details")
+          .select("content, filename")
+          .eq("id", documentId)
+          .eq("chatbot_user", user.id)
+          .single();
+
+        if (result.error) {
+          // Fallback para documents
+          result = await supabase
+            .from("documents")
+            .select("content, filename")
+            .eq("id", documentId)
+            .eq("chatbot_user", user.id)
+            .single();
+        }
+
+        documentData = result.data;
+        error = result.error;
+      }
 
       if (error || !documentData) {
         throw new Error("Documento não encontrado ou você não tem permissão para acessá-lo.");
@@ -645,13 +747,42 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     try {
       setGeneratingPreviews((prev) => new Set([...prev, documentId]));
 
-      // Buscar o conteúdo do documento
-      const { data: document, error } = await supabase
-        .from("chatbot_documents")
-        .select("content, filename, upload_date")
-        .eq("id", documentId)
-        .eq("chatbot_user", user.id)
-        .single();
+      let document = null;
+      let error = null;
+
+      if (useLocalProcessing) {
+        // Modo Local: buscar em chatbot_documents
+        const result = await supabase
+          .from("chatbot_documents")
+          .select("content, filename, upload_date")
+          .eq("id", documentId)
+          .eq("chatbot_user", user.id)
+          .single();
+
+        document = result.data;
+        error = result.error;
+      } else {
+        // Modo Webhook: buscar primeiro em documents_details, depois em documents
+        let result = await supabase
+          .from("documents_details")
+          .select("content, filename, upload_date")
+          .eq("id", documentId)
+          .eq("chatbot_user", user.id)
+          .single();
+
+        if (result.error) {
+          // Fallback para documents
+          result = await supabase
+            .from("documents")
+            .select("content, filename, upload_date")
+            .eq("id", documentId)
+            .eq("chatbot_user", user.id)
+            .single();
+        }
+
+        document = result.data;
+        error = result.error;
+      }
 
       if (error || !document) {
         throw new Error("Documento não encontrado");
@@ -808,7 +939,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                 </>
               ) : (
                 <>
-                  <span className="text-purple-400 font-medium">Modo Webhook:</span> Arquivos enviados para processamento via N8N (InserirRAG). O N8N cuida do armazenamento.
+                  <span className="text-purple-400 font-medium">Modo Webhook:</span> Arquivos enviados para N8N que processa e registra automaticamente nas tabelas.
                 </>
               )}
             </p>
