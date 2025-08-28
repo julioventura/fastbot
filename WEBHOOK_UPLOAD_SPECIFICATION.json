@@ -1,0 +1,183 @@
+{
+  "webhookUploadSpecification": {
+    "title": "FastBot - Upload RAG Webhook Specification",
+    "description": "Especificação para o webhook N8N de upload de documentos para processamento RAG",
+    "version": "1.0.0",
+    "updated": "2025-08-28T12:00:00Z",
+    "method": "POST",
+    "contentType": "multipart/form-data",
+    "url": "https://marte.cirurgia.com.br/webhook/InserirRAG",
+    "payload": {
+      "data": {
+        "type": "file",
+        "required": true,
+        "description": "Arquivo de texto para processamento RAG",
+        "supportedTypes": ["text/plain"],
+        "extensions": [".txt"],
+        "maxSize": "10MB"
+      },
+      "chatbot": {
+        "type": "string",
+        "required": true,
+        "description": "Nome do chatbot configurado pelo usuário",
+        "example": "LGPD-BOT"
+      },
+      "userid": {
+        "type": "string",
+        "format": "UUID",
+        "required": true,
+        "description": "ID único do usuário autenticado",
+        "example": "d0a7d278-b4da-4d34-981d-0b356c2fd21e"
+      },
+      "filename": {
+        "type": "string",
+        "required": true,
+        "description": "Nome original do arquivo enviado",
+        "example": "regulamento_anpd.txt"
+      },
+      "filesize": {
+        "type": "string",
+        "required": true,
+        "description": "Tamanho do arquivo em bytes (como string)",
+        "example": "15420"
+      },
+      "filetype": {
+        "type": "string",
+        "required": true,
+        "description": "Tipo MIME do arquivo",
+        "example": "text/plain"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "ISO 8601",
+        "required": true,
+        "description": "Data e hora do upload",
+        "example": "2025-08-28T10:44:49.281Z"
+      }
+    },
+    "expectedResponse": {
+      "success": {
+        "type": "boolean",
+        "required": true,
+        "description": "Indica se o processamento foi bem-sucedido",
+        "example": true
+      },
+      "message": {
+        "type": "string",
+        "required": false,
+        "description": "Mensagem de status",
+        "example": "Arquivo processado com sucesso"
+      },
+      "documentId": {
+        "type": "string",
+        "required": false,
+        "description": "ID do documento criado",
+        "example": "uuid-do-documento"
+      }
+    },
+    "supabaseIntegration": {
+      "tables": {
+        "documents_details": {
+          "description": "Registro único por documento com metadata",
+          "fields": {
+            "id": "UUID gerado automaticamente",
+            "chatbot_user": "userid do payload",
+            "filename": "filename do payload (nome original do arquivo)",
+            "file_size": "filesize do payload convertido para integer",
+            "upload_date": "timestamp do payload",
+            "status": "processing -> completed/error",
+            "content": "conteúdo completo do arquivo de texto",
+            "summary": "resumo automático do conteúdo (opcional)"
+          },
+          "constraint": "UM ÚNICO REGISTRO POR DOCUMENTO"
+        },
+        "documents": {
+          "description": "Chunks vetorizados do documento",
+          "fields": {
+            "id": "ID sequencial do chunk",
+            "content": "conteúdo do chunk",
+            "metadata": "JSON com referências ao documento original",
+            "embedding": "vetor de embeddings do chunk"
+          },
+          "constraint": "MÚLTIPLOS REGISTROS (chunks) POR DOCUMENTO"
+        }
+      }
+    },
+    "processingFlow": {
+      "steps": [
+        "1. Receber FormData com arquivo e metadata",
+        "2. Extrair conteúdo completo do arquivo de texto",
+        "3. ⚠️ CRIAR APENAS UM REGISTRO em documents_details com status 'processing'",
+        "4. Dividir conteúdo em chunks para vetorização",
+        "5. Gerar embeddings para cada chunk",
+        "6. Inserir CADA CHUNK como registro separado na tabela documents", 
+        "7. Atualizar o ÚNICO registro em documents_details para status 'completed'",
+        "8. Retornar resposta de sucesso"
+      ],
+      "CRITICAL_RULE": "documents_details = 1 registro POR DOCUMENTO | documents = N registros POR CHUNK"
+    },
+    "implementationNotes": {
+      "critical": [
+        "🚨 APENAS UM registro por documento na tabela documents_details",
+        "🚨 NÃO criar um registro em documents_details para cada chunk",
+        "✅ Usar filename original do payload, não timestamps",
+        "✅ Converter filesize de string para integer",
+        "✅ Manter status atualizado durante o processamento",
+        "✅ documents_details armazena metadata do DOCUMENTO COMPLETO",
+        "✅ documents armazena os CHUNKS individuais com embeddings"
+      ],
+      "dataMapping": {
+        "filename": "payload.filename -> documents_details.filename",
+        "filesize": "parseInt(payload.filesize) -> documents_details.file_size",
+        "userid": "payload.userid -> documents_details.chatbot_user",
+        "timestamp": "payload.timestamp -> documents_details.upload_date"
+      },
+      "workflowLogic": {
+        "step1": "Criar UM registro em documents_details no início",
+        "step2": "Para cada chunk: criar registro em documents (não em documents_details)",
+        "step3": "Atualizar o mesmo registro de documents_details ao final"
+      }
+    }
+  },
+  "exampleRequest": {
+    "FormData": {
+      "data": "[arquivo de texto]",
+      "chatbot": "LGPD-BOT", 
+      "userid": "d0a7d278-b4da-4d34-981d-0b356c2fd21e",
+      "filename": "regulamento_anpd.txt",
+      "filesize": "15420",
+      "filetype": "text/plain",
+      "timestamp": "2025-08-28T10:44:49.281Z"
+    }
+  },
+  "expectedDatabaseResult": {
+    "documents_details": {
+      "count": 1,
+      "record": {
+        "id": "28f730bf-3e84-4bf9-9e81-5600c484bf4f",
+        "chatbot_user": "d0a7d278-b4da-4d34-981d-0b356c2fd21e",
+        "filename": "regulamento_anpd.txt",
+        "file_size": 15420,
+        "upload_date": "2025-08-28T10:44:49.281Z",
+        "status": "completed",
+        "content": "[conteúdo completo do arquivo]",
+        "summary": "[resumo automático]"
+      }
+    },
+    "documents": {
+      "count": "múltiplos (chunks)",
+      "records": [
+        {
+          "id": "30",
+          "content": "[chunk 1 do documento]",
+          "metadata": {
+            "usuario": "d0a7d278-b4da-4d34-981d-0b356c2fd21e",
+            "chatbot_name": "LGPD-BOT",
+            "source": "regulamento_anpd.txt"
+          },
+          "embedding": "[vetor de embeddings]"
+        }
+      ]
+    }
+  }
+}

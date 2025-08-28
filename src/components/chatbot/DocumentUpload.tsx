@@ -349,6 +349,12 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         formData.append('chatbot', chatbotName);
         formData.append('userid', user.id);
 
+        // 📝 Adicionar informações complementares do arquivo
+        formData.append('filename', file.name);
+        formData.append('filesize', file.size.toString());
+        formData.append('filetype', file.type || 'text/plain');
+        formData.append('timestamp', new Date().toISOString());
+
         const webhookUrl = import.meta.env.VITE_WEBHOOK_N8N_INSERT_RAG_URL;
 
         if (!webhookUrl) {
@@ -359,8 +365,10 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           url: webhookUrl,
           filename: file.name,
           size: file.size,
+          type: file.type || 'text/plain',
           chatbotName,
-          userId: user.id
+          userId: user.id,
+          timestamp: new Date().toISOString()
         });
 
         // Enviar para N8N

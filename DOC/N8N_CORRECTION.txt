@@ -1,0 +1,37 @@
+CORREÇÃO URGENTE - N8N Upload Workflow
+==========================================
+
+PROBLEMA IDENTIFICADO:
+- N8N está criando 151 registros em documents_details (um por chunk)
+- Deveria criar apenas 1 registro em documents_details por documento
+
+ESTRUTURA CORRETA:
+
+documents_details (1 registro por documento):
+- id: UUID único do documento
+- chatbot_user: UUID do usuário  
+- filename: Nome original do arquivo (NÃO timestamp)
+- content: Conteúdo completo do arquivo
+- file_size: Tamanho em bytes
+- upload_date: Data do upload
+- status: processing -> completed
+
+documents (N registros por chunk):
+- id: ID sequencial do chunk
+- content: Texto do chunk
+- metadata: JSON com referências
+- embedding: Vetor de embeddings
+
+FLUXO CORRETO N8N:
+
+1. Receber arquivo via FormData
+2. Extrair conteúdo completo
+3. Criar UM registro em documents_details com status 'processing'
+4. Dividir em chunks
+5. Para cada chunk: inserir APENAS em documents (NÃO em documents_details)
+6. Atualizar o mesmo registro em documents_details para 'completed'
+
+CRÍTICO:
+- documents_details = 1 registro POR DOCUMENTO
+- documents = N registros POR CHUNK
+- NÃO criar documento_details para cada chunk
