@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +17,8 @@ import {
   Trash2,
   Maximize2,
   Minimize2,
+  Cloud,
+  Cpu,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,11 +61,20 @@ interface UploadedDocument {
   summary?: string;
 }
 
+interface ChatbotConfig {
+  chatbot_name: string;
+  chatbot_user: string;
+}
+
 const DocumentUpload: React.FC<DocumentUploadProps> = ({
   onUploadComplete,
 }) => {
+  // 🚀 Detectar modo de processamento
+  const useLocalProcessing = import.meta.env.VITE_USE_LOCAL_AI === 'true';
+
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [chatbotConfig, setChatbotConfig] = useState<ChatbotConfig | null>(null);
   // Estado da expansão salvo no localStorage, padrão sempre expandido
   const [isDocumentsExpanded, setIsDocumentsExpanded] = useState(() => {
     try {
@@ -104,7 +115,35 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     });
   }, []);
 
-  const fetchDocuments = useCallback(async () => {
+  // 🔄 Carregar configuração do chatbot
+  useEffect(() => {
+    const loadChatbotConfig = async () => {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('mychatbot')
+          .select('chatbot_name, chatbot_user')
+          .eq('chatbot_user', user.id)
+          .maybeSingle(); // Use maybeSingle instead of single
+
+        if (!error && data) {
+          setChatbotConfig(data);
+        } else if (error) {
+          console.warn('Erro ao carregar config do chatbot:', error);
+          // Fallback para config vazia
+          setChatbotConfig({ chatbot_name: '', chatbot_user: user.id });
+        }
+      } catch (err) {
+        console.warn('Erro ao carregar configuração do chatbot:', err);
+        // Fallback para config vazia
+        setChatbotConfig({ chatbot_name: '', chatbot_user: user.id });
+      }
+    };
+
+    loadChatbotConfig();
+  }, [user]);  // 📂 Carregar documentos - Modo Local
+  const loadLocalDocuments = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -112,12 +151,12 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         .from("chatbot_documents")
         .select("id, filename, status, file_size, upload_date, summary")
         .eq("chatbot_user", user.id)
-        .order("filename", { ascending: true }); // Ordenação alfabética por nome do arquivo
+        .order("filename", { ascending: true });
 
       if (error) throw error;
       setDocuments(data || []);
     } catch (error) {
-      console.error("Erro ao carregar documentos:", error);
+      console.error("Erro ao carregar documentos locais:", error);
       toast({
         variant: "destructive",
         title: "Erro",
@@ -125,6 +164,22 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       });
     }
   }, [user, toast]);
+
+  // 📂 Carregar documentos - Modo Webhook
+  const loadWebhookDocuments = useCallback(async () => {
+    if (!user) return;
+
+    // ✅ No modo webhook, o N8N cuida do armazenamento dos documentos
+    // Não tentamos acessar tabelas do Supabase que podem não ter permissão
+    console.log('🌐 Modo webhook ativo - N8N cuida do armazenamento dos documentos');
+    setDocuments([]);
+  }, [user]); const fetchDocuments = useCallback(async () => {
+    if (useLocalProcessing) {
+      loadLocalDocuments();
+    } else {
+      loadWebhookDocuments();
+    }
+  }, [useLocalProcessing, loadLocalDocuments, loadWebhookDocuments]);
 
   // Carregar documentos existentes
   React.useEffect(() => {
@@ -161,7 +216,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     });
   };
 
-  const uploadDocument = useCallback(
+  // 📤 Upload Modo Local - Processamento direto no Supabase
+  const uploadDocumentLocal = useCallback(
     async (file: File) => {
       if (!user) return;
 
@@ -171,7 +227,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         const content = await processFile(file);
         const summary = generateSummary(content);
 
-        // Inserir documento no banco
+        // Inserir documento no banco (tabela local)
         const { data: document, error: insertError } = await supabase
           .from("chatbot_documents")
           .insert({
@@ -187,7 +243,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
         if (insertError) throw insertError;
 
-        // Processar embeddings
+        // Processar embeddings localmente
         try {
           const result = await processDocumentEmbeddings(document.id, content);
           console.log("Embeddings processados:", result);
@@ -204,8 +260,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
           toast({
             title: "Processamento concluído!",
-            description: `${result.chunks_processed || 0
-              } chunks processados com sucesso.`,
+            description: `${result.chunks_processed || 0} chunks processados com sucesso.`,
           });
         } catch (embeddingError) {
           console.error("Erro ao processar embeddings:", embeddingError);
@@ -236,7 +291,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         fetchDocuments(); // Recarregar lista
         onUploadComplete?.(document.id);
       } catch (error) {
-        console.error("Erro no upload:", error);
+        console.error("Erro no upload local:", error);
         toast({
           variant: "destructive",
           title: "Erro no upload",
@@ -247,6 +302,113 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
       }
     },
     [user, toast, fetchDocuments, onUploadComplete, processDocumentEmbeddings]
+  );
+
+  // 📤 Upload Modo Webhook - Envio para N8N
+  const uploadDocumentWebhook = useCallback(
+    async (file: File) => {
+      if (!user) return;
+
+      // Se não há config do chatbot, usa valores padrão
+      const chatbotName = chatbotConfig?.chatbot_name || '';
+
+      setIsUploading(true);
+      try {
+        // Preparar FormData para envio ao N8N
+        const formData = new FormData();
+        formData.append('data', file);
+        formData.append('chatbot', chatbotName);
+        formData.append('userid', user.id);
+
+        const webhookUrl = import.meta.env.VITE_WEBHOOK_N8N_INSERT_RAG_URL;
+
+        if (!webhookUrl) {
+          throw new Error('URL do webhook não configurada');
+        }
+
+        console.log('📤 Enviando arquivo para webhook:', {
+          url: webhookUrl,
+          filename: file.name,
+          size: file.size,
+          chatbotName,
+          userId: user.id
+        });
+
+        // Enviar para N8N
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
+        }
+
+        // Verificar se há conteúdo na resposta antes de tentar fazer parse JSON
+        const responseText = await response.text();
+        console.log('📥 Resposta do webhook:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          body: responseText
+        });
+
+        let result;
+
+        try {
+          // Tentar fazer parse do JSON apenas se há conteúdo
+          if (responseText.trim()) {
+            result = JSON.parse(responseText);
+          } else {
+            // Se não há resposta, assumir sucesso (webhook pode não retornar nada)
+            result = { success: true };
+          }
+        } catch (jsonError) {
+          console.warn('Resposta do webhook não é JSON válido:', responseText);
+          // Se não conseguir fazer parse, mas o HTTP foi 200, assumir sucesso
+          result = { success: true };
+        }
+
+        // Se não há propriedade success ou ela é undefined, assumir sucesso se HTTP foi OK
+        const isSuccess = result?.success !== false;
+
+        if (isSuccess) {
+          toast({
+            title: "Upload realizado!",
+            description: `Arquivo "${file.name}" enviado para processamento no N8N.`,
+          });
+
+          // ✅ Não tentar fazer tracking em tabelas do Supabase para modo webhook
+          // O N8N cuidará do armazenamento e processamento dos documentos
+          console.log('📤 Arquivo enviado com sucesso para N8N, tracking não necessário');
+
+          fetchDocuments(); // Recarregar lista (pode estar vazia no modo webhook)
+          onUploadComplete?.(result?.documentId || file.name);
+        } else {
+          throw new Error(result?.error || 'Erro no processamento do N8N');
+        }
+      } catch (error) {
+        console.error("Erro no upload webhook:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro no upload",
+          description: `Não foi possível enviar o arquivo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+        });
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [user, chatbotConfig, toast, fetchDocuments, onUploadComplete]
+  );  // 📤 Função de upload condicional
+  const uploadDocument = useCallback(
+    async (file: File) => {
+      if (useLocalProcessing) {
+        await uploadDocumentLocal(file);
+      } else {
+        await uploadDocumentWebhook(file);
+      }
+    },
+    [useLocalProcessing, uploadDocumentLocal, uploadDocumentWebhook]
   );
 
   const deleteDocument = async (documentId: string) => {
@@ -628,9 +790,30 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           <CardTitle className="flex items-center gap-4 text-base md:text-lg">
             <Upload className="w-6 h-6" />
             Upload de Documentos
+            <span className={`px-3 py-1 text-xs font-medium rounded-full ${useLocalProcessing
+              ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+              : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+              }`}>
+              {useLocalProcessing ? 'LOCAL' : 'WEBHOOK'}
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-3 md:p-6">
+          {/* Descrição do modo ativo */}
+          <div className="mb-4 p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
+            <p className="text-sm text-gray-300">
+              {useLocalProcessing ? (
+                <>
+                  <span className="text-blue-400 font-medium">Modo Local:</span> Arquivos processados localmente com embeddings salvos no Supabase.
+                </>
+              ) : (
+                <>
+                  <span className="text-purple-400 font-medium">Modo Webhook:</span> Arquivos enviados para processamento via N8N (InserirRAG). O N8N cuida do armazenamento.
+                </>
+              )}
+            </p>
+          </div>
+
           <div
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors ${isDragActive
