@@ -124,7 +124,7 @@ const Header = () => {
 
           {/* Navigation Menu - Center - Desktop Only */}
           <nav className="hidden md:flex items-center space-x-8">
-            <NavLink
+            {/* <NavLink
               to="/"
               className={({ isActive }) =>
                 `transition-all duration-300 text-base leading-none flex items-center ${isActive
@@ -137,7 +137,7 @@ const Header = () => {
               }
             >
               Início
-            </NavLink>
+            </NavLink> */}
 
             {user && (
               <>
@@ -155,7 +155,8 @@ const Header = () => {
                 >
                   Meu Chatbot
                 </NavLink>
-                <NavLink
+
+                {/* <NavLink
                   to="/configure"
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
@@ -167,8 +168,9 @@ const Header = () => {
                     isActive ? { fontWeight: '950' } : {}
                   }
                 >
-                  Configure
-                </NavLink>
+                  Configuração
+                </NavLink> */}
+
                 <NavLink
                   to="/base-de-dados"
                   className={({ isActive }) =>
@@ -195,7 +197,7 @@ const Header = () => {
                     isActive ? { fontWeight: '950' } : {}
                   }
                 >
-                  Histórico
+                  Minhas Conversas
                 </NavLink>
               </>
             )}
@@ -261,25 +263,18 @@ const Header = () => {
                   <DropdownMenuSeparator className="bg-border" />
 
                   <DropdownMenuItem asChild>
-                    <NavLink to="/account" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
-                      <User className="h-4 w-4" />
-                      <span>Minha Conta</span>
-                    </NavLink>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem asChild>
                     <NavLink to="/my-chatbot" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <MessageSquare className="h-4 w-4" />
                       <span>Meu Chatbot</span>
                     </NavLink>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem asChild>
+                  {/* <DropdownMenuItem asChild>
                     <NavLink to="/configure" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <Settings className="h-4 w-4" />
                       <span>Configure</span>
                     </NavLink>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
 
                   <DropdownMenuItem asChild>
                     <NavLink to="/base-de-dados" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
@@ -291,11 +286,23 @@ const Header = () => {
                   <DropdownMenuItem asChild>
                     <NavLink to="/conversation-history" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <History className="h-4 w-4" />
-                      <span>Histórico</span>
+                      <span>Minhas Conversas</span>
                     </NavLink>
                   </DropdownMenuItem>
 
+
                   <DropdownMenuSeparator className="bg-border" />
+
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/account" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
+                      <User className="h-4 w-4" />
+                      <span>Minha Conta</span>
+                    </NavLink>
+                  </DropdownMenuItem>
+
+
+                  <DropdownMenuSeparator className="bg-border" />
+
                   <DropdownMenuItem
                     onClick={handleSignOut}
                     className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-destructive/10 hover:text-red-700 cursor-pointer"

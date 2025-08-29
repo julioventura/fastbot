@@ -170,113 +170,47 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   // 📂 Carregar documentos - Modo Webhook
   const loadWebhookDocuments = useCallback(async () => {
     if (!user) {
-      console.log('🚫 loadWebhookDocuments: Usuário não autenticado');
+      console.log('🚫 loadWebhookDocuments: Usuário não autenticado, limpando documentos.');
+      setDocuments([]); // Limpar documentos se o usuário fizer logout
       return;
     }
 
     console.log('🔍 loadWebhookDocuments: Iniciando busca para usuário:', user.id);
+    setDocuments([]); // Limpar estado anterior para evitar mostrar dados antigos
 
     try {
-      // Primeiro tenta carregar da tabela documents_details
-      console.log('📊 Tentando carregar de documents_details...');
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from("documents_details")
         .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
         .eq("chatbot_user", user.id)
         .order("upload_date", { ascending: false });
 
-      console.log('📊 Resultado documents_details:', {
-        data: data?.length || 0,
-        error: error?.message || 'nenhum erro',
-        rawData: data
-      });
-
-      // Se documents_details estiver vazio (não há erro, mas sem dados), buscar de documents
-      if (!error && (!data || data.length === 0)) {
-        console.log('📝 documents_details vazio, buscando de documents...');
-
-        // Buscar documentos únicos da tabela documents usando metadata
-        const { data: docsData, error: docsError } = await supabase
-          .from("documents")
-          .select("id, metadata")
-          .not("metadata", "is", null)
-          .order("id", { ascending: false });
-
-        console.log('📄 Resultado documents (bruto):', {
-          data: docsData?.length || 0,
-          error: docsError?.message || 'nenhum erro'
-        });
-
-        if (docsError) {
-          error = docsError;
-        } else if (docsData && docsData.length > 0) {
-          // Processar e agrupar documentos por metadata
-          const documentsMap = new Map();
-
-          docsData.forEach(doc => {
-            if (doc.metadata) {
-              const metadata = doc.metadata;
-              const userId = metadata.usuario || metadata.chatbot_user;
-
-              // Filtrar apenas documentos do usuário atual
-              if (userId === user.id) {
-                const filename = metadata.file_name || metadata.filename;
-                const chatbotName = metadata.chatbot_name || '';
-
-                if (filename && !documentsMap.has(filename)) {
-                  documentsMap.set(filename, {
-                    id: doc.id,
-                    filename: filename,
-                    status: "completed", // Assumir completed se está na tabela documents
-                    file_size: parseInt(metadata.file_size) || 0,
-                    upload_date: new Date().toISOString(), // Usar data atual como fallback
-                    summary: `Documento processado via N8N`,
-                    chatbot_name: chatbotName,
-                    file_type: metadata.file_type || 'text/plain'
-                  });
-                }
-              }
-            }
-          });
-
-          data = Array.from(documentsMap.values());
-          console.log('📋 Documentos processados de documents:', data);
-        }
-      }
-
-      // Se documents_details não funcionar, tenta documents como fallback (apenas para compatibilidade)
       if (error) {
-        console.log('📝 Carregando de documents como fallback...');
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from("documents")
-          .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
-          .eq("chatbot_user", user.id)
-          .order("upload_date", { ascending: false });
-
-        console.log('📝 Resultado documents (fallback):', {
-          data: fallbackData?.length || 0,
-          error: fallbackError?.message || 'nenhum erro',
-          rawData: fallbackData
+        // Não jogue o erro, apenas logue. A interface mostrará a lista vazia.
+        console.error("⚠️ Erro ao carregar documentos do webhook:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao Carregar Documentos",
+          description: "Não foi possível buscar os documentos. Verifique sua conexão e tente recarregar.",
         });
-
-        data = fallbackData;
-        error = fallbackError;
-      }
-
-      if (error) {
-        console.warn("⚠️ Erro ao carregar documentos webhook:", error);
-        setDocuments([]);
+        setDocuments([]); // Garantir que a lista está vazia em caso de erro
         return;
       }
 
-      console.log('✅ Documentos webhook carregados:', data?.length || 0);
-      console.log('📋 Dados completos:', data);
-      setDocuments(data || []);
+      // Forçar o status para 'completed' para todos os documentos no modo webhook
+      const documentsWithCompletedStatus = (data || []).map(doc => ({
+        ...doc,
+        status: 'completed' as 'completed',
+      }));
+
+      console.log('✅ Documentos webhook carregados e status forçado para "completed":', documentsWithCompletedStatus.length || 0);
+      setDocuments(documentsWithCompletedStatus);
+
     } catch (error) {
-      console.warn("⚠️ Erro ao carregar documentos webhook:", error);
-      setDocuments([]);
+      console.error("🔥 Erro catastrófico ao carregar documentos do webhook:", error);
+      setDocuments([]); // Garantir que a lista está vazia em caso de erro
     }
-  }, [user]); const fetchDocuments = useCallback(async () => {
+  }, [user, toast]); const fetchDocuments = useCallback(async () => {
     console.log('🔄 fetchDocuments: Modo atual -', useLocalProcessing ? 'LOCAL' : 'WEBHOOK');
 
     if (useLocalProcessing) {
