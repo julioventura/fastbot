@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Bot, Send, ArrowLeft, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useVectorStore } from '@/hooks/useVectorStore';
 import { fetchWithRetry } from '@/lib/utils/retry';
 
 interface ChatbotConfig {
@@ -54,8 +53,8 @@ const PublicChatbotPage: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Hook para busca vetorial
-  const { getChatbotContext } = useVectorStore();
+  // Session ID para tracking
+  const [sessionId] = useState(() => Date.now());
 
   // Função para criar slug a partir do nome do chatbot
   const createSlug = (name: string): string => {
@@ -70,103 +69,163 @@ const PublicChatbotPage: React.FC = () => {
 
     console.log('🔧 [PublicChatbot] Slug gerado:', { original: name, slug });
     return slug;
-  };  // Função específica para busca vetorial com userId personalizado
-  const getChatbotContextForUser = async (userMessage: string, maxTokens: number = 3000, targetUserId: string): Promise<string> => {
-    try {
-      console.log('🔍 [PublicChatbot] Iniciando busca por contexto:', { userMessage: userMessage.substring(0, 50) + '...', targetUserId });
+  };  // 🚀 Enviar mensagem para N8N webhook
+  const sendToN8NWebhook = async (userMessage: string): Promise<string> => {
+    const requestTimestamp = new Date().toISOString();
 
-      // Gerar embedding da query usando OpenAI
-      const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-      if (!openaiApiKey) {
-        console.warn('❌ [PublicChatbot] OpenAI API key não configurada, retornando contexto vazio');
-        return '';
+    try {
+      const webhookUrl = import.meta.env.VITE_WEBHOOK_N8N_URL;
+
+      if (!webhookUrl) {
+        console.error('❌ [PublicChatbot] Webhook URL não configurada');
+        return getFallbackResponse(userMessage);
       }
 
-      console.log('🔧 [PublicChatbot] Gerando embedding...');
-      // Gerar embedding
-      const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
+      if (!config) {
+        console.error('❌ [PublicChatbot] Configuração do chatbot não disponível');
+        return getFallbackResponse(userMessage);
+      }
+
+      // Construir payload conforme especificação do webhook
+      const payload = {
+        message: userMessage,
+        userId: config.chatbot_user, // Usar o ID do dono do chatbot
+        page: `/public-chatbot/${chatbotSlug}`,
+        pageContext: `Página pública do chatbot ${config.chatbot_name}`,
+        timestamp: requestTimestamp,
+        chatbot_name: config.chatbot_name,
+        sessionId: sessionId,
+        userEmail: null, // Usuário público não tem email
+        systemMessage: config.system_message || config.system_instructions || '',
+        chatbotConfig: {
+          chatbot_name: config.chatbot_name,
+          welcome_message: config.welcome_message,
+          office_address: config.office_address,
+          office_hours: config.office_hours,
+          specialties: config.specialties,
+          whatsapp: config.whatsapp,
+          system_message: config.system_message || config.system_instructions || ''
+        }
+      };
+
+      console.log('🚀 [PublicChatbot] Enviando para N8N:', {
+        url: webhookUrl,
+        chatbot: config.chatbot_name,
+        message: userMessage.substring(0, 50) + '...',
+        timestamp: requestTimestamp
+      });
+
+      const response = await fetchWithRetry(webhookUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          input: userMessage,
-          model: 'text-embedding-ada-002' // Mesmo modelo usado para criar os embeddings
-        }),
+        body: JSON.stringify(payload)
+      }, {
+        maxRetries: 3,
+        baseDelay: 1000,
+        backoffFactor: 2,
+        maxDelay: 10000,
+        jitter: true,
+        retryCondition: (error) => {
+          const message = error.message.toLowerCase();
+          return message.includes('network') ||
+            message.includes('fetch') ||
+            message.includes('timeout') ||
+            message.includes('500') ||
+            message.includes('502') ||
+            message.includes('503') ||
+            message.includes('504');
+        }
       });
 
-      if (!embeddingResponse.ok) {
-        console.warn('❌ [PublicChatbot] Erro ao gerar embedding, retornando contexto vazio');
-        return '';
+      if (!response.ok) {
+        console.warn('⚠️ [PublicChatbot] N8N indisponível, usando fallback:', {
+          status: response.status,
+          statusText: response.statusText
+        });
+        return getFallbackResponse(userMessage);
       }
 
-      const embeddingData = await embeddingResponse.json();
-      const queryEmbedding = embeddingData.data[0].embedding;
-      console.log('✅ [PublicChatbot] Embedding gerado com sucesso, dimensões:', queryEmbedding.length);
+      const data = await response.json();
 
-      // Buscar documentos similares usando a função pública
-      console.log('🔧 [PublicChatbot] Chamando função match_embeddings_public...', {
-        targetUserId,
-        embeddingLength: queryEmbedding.length,
-        threshold: 0.3,
-        count: 10
+      console.log('✅ [PublicChatbot] Resposta do N8N recebida:', {
+        success: true,
+        responseTime: Date.now() - Date.parse(requestTimestamp),
+        hasData: !!data
       });
 
-      const { data, error } = await supabase.rpc('match_embeddings_public', {
-        query_embedding: queryEmbedding,
-        target_user_id: targetUserId,
-        match_threshold: 0.3, // Reduzido para capturar mais resultados
-        match_count: 10 // Aumentado para mais resultados
-      });
-
-      console.log('🔧 [PublicChatbot] Resposta da RPC:', { data, error, hasData: !!data, dataLength: data?.length });
-
-      if (error) {
-        console.error('❌ [PublicChatbot] Erro na busca RPC:', error);
-        return '';
-      }
-
-      console.log('📊 [PublicChatbot] Resultados da busca:', {
-        totalResults: data?.length || 0,
-        results: data?.map(r => ({
-          filename: r.filename,
-          similarity: (r.similarity * 100).toFixed(1) + '%',
-          chunkPreview: r.chunk_text.substring(0, 100) + '...'
-        }))
-      });
-
-      if (!data || data.length === 0) {
-        console.log('❌ [PublicChatbot] Nenhum resultado encontrado na busca vetorial');
-        return '';
-      }
-
-      // Construir contexto
-      let context = '';
-      let currentTokens = 0;
-      const estimatedTokensPerChar = 0.25;
-
-      for (const result of data) {
-        const chunkTokens = Math.ceil(result.chunk_text.length * estimatedTokensPerChar);
-
-        if (currentTokens + chunkTokens > maxTokens) {
-          break;
+      // Processar resposta conforme formato esperado
+      if (data && typeof data === 'object') {
+        // Formato estruturado: {"status":"success","response":"..."}
+        if (data.status === 'success' && data.response) {
+          return data.response;
         }
 
-        context += result.chunk_text + '\n\n';
-        currentTokens += chunkTokens;
+        // Formato array: [{"status":"success","response":"..."}]
+        if (Array.isArray(data) && data.length > 0) {
+          const responseData = data[0];
+          if (responseData.status === 'success' && responseData.response) {
+            return responseData.response;
+          }
+        }
+
+        // Formato simples: {"response":"..."}
+        if (data.response) {
+          return data.response;
+        }
+
+        // Formato alternativo: {"message":"..."}
+        if (data.message) {
+          return data.message;
+        }
       }
 
-      console.log('✅ [PublicChatbot] Contexto construído com sucesso:', {
-        totalChars: context.length,
-        estimatedTokens: Math.ceil(context.length * estimatedTokensPerChar)
-      });
+      console.warn('⚠️ [PublicChatbot] Formato de resposta inesperado, usando fallback');
+      return getFallbackResponse(userMessage);
 
-      return context.trim();
     } catch (error) {
-      console.error('❌ [PublicChatbot] Erro ao buscar contexto:', error);
-      return '';
+      console.error('❌ [PublicChatbot] Erro na comunicação com N8N:', error);
+      return getFallbackResponse(userMessage);
     }
+  };
+
+  // 🔄 Resposta de fallback quando N8N não está disponível
+  const getFallbackResponse = (userMessage: string): string => {
+    if (!config) return 'Como posso ajudá-lo?';
+
+    const messageLower = userMessage.toLowerCase();
+
+    // Respostas baseadas na configuração
+    if (config.chatbot_name && messageLower.includes('nome')) {
+      return `Sou ${config.chatbot_name}. ${config.welcome_message || 'Como posso ajudar você hoje?'}`;
+    }
+
+    if (config.office_hours && (messageLower.includes('horário') || messageLower.includes('funcionamento'))) {
+      return `Nosso horário de atendimento é: ${config.office_hours}`;
+    }
+
+    if (config.office_address && (messageLower.includes('endereço') || messageLower.includes('localização'))) {
+      return `Estamos localizados em: ${config.office_address}`;
+    }
+
+    if (config.specialties && messageLower.includes('especialidade')) {
+      return `Nossas especialidades são: ${config.specialties}`;
+    }
+
+    if (config.whatsapp && (messageLower.includes('whatsapp') || messageLower.includes('contato'))) {
+      return `Você pode entrar em contato conosco pelo WhatsApp: ${config.whatsapp}`;
+    }
+
+    // Respostas gerais
+    const responses = [
+      `Sou ${config.chatbot_name || 'o assistente virtual'}. Como posso ajudá-lo?`,
+      'Estou aqui para ajudar. O que você gostaria de saber?',
+      'Tem alguma dúvida? Estou pronto para esclarecê-la!',
+      'No momento estou com dificuldades para processar sua mensagem. Pode tentar novamente?'
+    ];
+
+    return responses[Math.floor(Math.random() * responses.length)];
   };
 
   // Buscar configuração do chatbot
@@ -241,258 +300,7 @@ const PublicChatbotPage: React.FC = () => {
     } finally {
       setIsConfigLoading(false);
     }
-  }, [chatbotSlug]);  // Gerar system message baseado na configuração
-  const generateSystemMessage = (config: ChatbotConfig): string => {
-    const defaults = {
-      formality_level: 70,
-      use_emojis: false,
-      paragraph_size: 20,
-      source_strictness: 90,
-      confidence_threshold: 80,
-      fallback_action: "human",
-      list_style: "bullets",
-      allow_internet_search: false,
-      mandatory_link: false,
-      response_speed: 50,
-      name_usage_frequency: 30,
-      ask_for_name: true,
-      remember_context: true
-    };
-
-    const formalityLevel = config.formality_level ?? defaults.formality_level;
-    const useEmojis = config.use_emojis ?? defaults.use_emojis;
-    const paragraphSize = config.paragraph_size ?? defaults.paragraph_size;
-    const sourceStrictness = config.source_strictness ?? defaults.source_strictness;
-    const confidenceThreshold = config.confidence_threshold ?? defaults.confidence_threshold;
-    const fallbackAction = config.fallback_action ?? defaults.fallback_action;
-    const listStyle = config.list_style ?? defaults.list_style;
-    const allowInternetSearch = config.allow_internet_search ?? defaults.allow_internet_search;
-    const mandatoryLink = config.mandatory_link ?? defaults.mandatory_link;
-    const responseSpeed = config.response_speed ?? defaults.response_speed;
-    const nameUsageFrequency = config.name_usage_frequency ?? defaults.name_usage_frequency;
-    const askForName = config.ask_for_name ?? defaults.ask_for_name;
-
-    let systemMessage = config.system_instructions ||
-      'Você é um assistente virtual profissional e prestativo.';
-
-    systemMessage += '\n\nCONFIGURAÇÕES DE COMPORTAMENTO:\n';
-
-    // Personalidade
-    systemMessage += `- Nível de formalidade: ${formalityLevel}/100 (`;
-    if (formalityLevel <= 30) systemMessage += 'casual e descontraído';
-    else if (formalityLevel <= 70) systemMessage += 'equilibrado entre formal e casual';
-    else systemMessage += 'formal e profissional';
-    systemMessage += ')\n';
-
-    systemMessage += `- Uso de emojis: ${useEmojis ? 'Sim, use emojis adequados nas respostas' : 'Não use emojis nas respostas'}\n`;
-
-    systemMessage += `- Tamanho de parágrafos: ${paragraphSize}/100 (`;
-    if (paragraphSize <= 30) systemMessage += 'respostas concisas e diretas';
-    else if (paragraphSize <= 70) systemMessage += 'respostas de tamanho médio';
-    else systemMessage += 'respostas detalhadas e explicativas';
-    systemMessage += ')\n';
-
-    // Comportamento
-    systemMessage += `- Rigidez nas fontes: ${sourceStrictness}/100 (`;
-    if (sourceStrictness >= 80) systemMessage += 'utilize APENAS informações dos documentos fornecidos';
-    else if (sourceStrictness >= 50) systemMessage += 'priorize documentos fornecidos, mas pode usar conhecimento geral';
-    else systemMessage += 'use conhecimento geral quando necessário';
-    systemMessage += ')\n';
-
-    systemMessage += `- Confiança mínima: ${confidenceThreshold}% (só responda se tiver pelo menos ${confidenceThreshold}% de certeza)\n`;
-
-    // Instruções importantes para apresentação
-    systemMessage += `\nIMPORTANTE - APRESENTAÇÃO DAS RESPOSTAS:\n`;
-    systemMessage += `- NUNCA inclua informações técnicas como "Fonte:", "Similaridade:", porcentagens de similaridade, ou nomes de arquivos nas suas respostas\n`;
-    systemMessage += `- NUNCA mostre metadados como "--- Fonte: arquivo.txt (Similaridade: X%) ---"\n`;
-    systemMessage += `- Use as informações dos documentos naturalmente, sem revelar de onde vieram\n`;
-    systemMessage += `- Responda de forma fluida e natural, como se o conhecimento fosse seu próprio\n`;
-
-    // Informações de contato e contexto
-    if (config.office_hours) systemMessage += `\nHorário de atendimento: ${config.office_hours}\n`;
-    if (config.office_address) systemMessage += `Endereço: ${config.office_address}\n`;
-    if (config.specialties) systemMessage += `Especialidades: ${config.specialties}\n`;
-    if (config.whatsapp) systemMessage += `WhatsApp: ${config.whatsapp}\n`;
-
-    return systemMessage;
-  };
-
-  // Processar mensagem com IA
-  const processMessageWithAI = async (userMessage: string): Promise<string> => {
-    if (!config) return 'Erro: Configuração não carregada';
-
-    try {
-      console.log('🚀 [PublicChatbot] Processando mensagem:', {
-        userMessage: userMessage.substring(0, 100) + '...',
-        chatbotUser: config?.chatbot_user,
-        chatbotName: config?.chatbot_name
-      });
-
-      // Buscar contexto nos documentos
-      const vectorContext = await getChatbotContextForUser(userMessage, 3000, config?.chatbot_user || '');
-
-      console.log('📖 [PublicChatbot] Contexto vetorial obtido:', {
-        hasContext: !!vectorContext,
-        contextLength: vectorContext.length,
-        contextPreview: vectorContext ? vectorContext.substring(0, 200) + '...' : 'Nenhum contexto encontrado'
-      });
-
-      // Gerar system message
-      const systemMessage = generateSystemMessage(config);
-
-      // Construir contexto da conversa
-      let conversationContext = '';
-      const recentMessages = messages.slice(-6); // Últimas 6 mensagens para contexto
-
-      if (recentMessages.length > 0) {
-        conversationContext = 'HISTÓRICO DA CONVERSA:\n';
-        recentMessages.forEach(msg => {
-          conversationContext += `${msg.sender === 'user' ? 'Usuário' : 'Assistente'}: ${msg.text}\n`;
-        });
-        conversationContext += '\n';
-      }
-
-      // Construir prompt completo
-      let fullPrompt = conversationContext;
-
-      if (vectorContext && vectorContext.trim()) {
-        fullPrompt += `INFORMAÇÕES RELEVANTES DOS DOCUMENTOS:\n${vectorContext}\n\n`;
-        console.log('✅ [PublicChatbot] Contexto vetorial adicionado ao prompt');
-      } else {
-        console.log('⚠️ [PublicChatbot] Nenhum contexto vetorial disponível');
-      }
-
-      // Adicionar informações adicionais do chatbot
-      if (config.office_hours || config.office_address || config.specialties || config.whatsapp) {
-        fullPrompt += 'INFORMAÇÕES ADICIONAIS:\n';
-        if (config.office_hours) fullPrompt += `- Horário: ${config.office_hours}\n`;
-        if (config.office_address) fullPrompt += `- Endereço: ${config.office_address}\n`;
-        if (config.specialties) fullPrompt += `- Especialidades: ${config.specialties}\n`;
-        if (config.whatsapp) fullPrompt += `- WhatsApp: ${config.whatsapp}\n`;
-        fullPrompt += '\n';
-      }
-
-      console.log('🤖 [PublicChatbot] Chamando OpenAI...', {
-        promptLength: fullPrompt.length,
-        systemMessageLength: systemMessage.length
-      });
-
-      // Chamar OpenAI
-      const response = await generateAIResponse(systemMessage, fullPrompt, userMessage);
-
-      console.log('✅ [PublicChatbot] Resposta da IA obtida:', {
-        responseLength: response.length,
-        responsePreview: response.substring(0, 100) + '...'
-      });
-
-      return response;
-
-    } catch (error) {
-      console.error('❌ [PublicChatbot] Erro no processamento com IA:', error);
-      return getBotResponseLocal(userMessage);
-    }
-  };
-
-  // Função para chamar OpenAI
-  const generateAIResponse = async (systemMessage: string, contextualPrompt: string, userMessage: string): Promise<string> => {
-    const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-
-    if (!openaiApiKey) {
-      throw new Error('OpenAI API key não configurada');
-    }
-
-    const response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: systemMessage
-          },
-          {
-            role: 'user',
-            content: `${contextualPrompt}\n\nPERGUNTA DO USUÁRIO: ${userMessage}\n\nRESPONDA:`
-          }
-        ],
-        max_tokens: 1000,
-        temperature: 0.7,
-      }),
-    }, {
-      maxRetries: 3,
-      baseDelay: 2000,
-      backoffFactor: 2,
-      maxDelay: 15000,
-      jitter: true,
-      retryCondition: (error) => {
-        const message = error.message.toLowerCase();
-        return message.includes('network') ||
-          message.includes('timeout') ||
-          message.includes('429') ||
-          message.includes('rate limit') ||
-          message.includes('500') ||
-          message.includes('502') ||
-          message.includes('503');
-      }
-    });
-
-    if (!response.ok) {
-      let errorDetails = '';
-      try {
-        const errorData = await response.json();
-        errorDetails = errorData.error?.message || JSON.stringify(errorData);
-      } catch {
-        errorDetails = await response.text();
-      }
-      throw new Error(`OpenAI API error (${response.status}): ${errorDetails}`);
-    }
-
-    const data = await response.json();
-    return data.choices[0]?.message?.content || 'Desculpe, não consegui gerar uma resposta no momento.';
-  };
-
-  // Resposta local de fallback
-  const getBotResponseLocal = (userMessage: string): string => {
-    if (!config) return 'Como posso ajudá-lo?';
-
-    const messageLower = userMessage.toLowerCase();
-
-    // Respostas baseadas na configuração
-    if (config.chatbot_name && messageLower.includes('nome')) {
-      return `Sou ${config.chatbot_name}. ${config.welcome_message || 'Como posso ajudar você hoje?'}`;
-    }
-
-    if (config.office_hours && (messageLower.includes('horário') || messageLower.includes('funcionamento'))) {
-      return `Nosso horário de atendimento é: ${config.office_hours}`;
-    }
-
-    if (config.office_address && messageLower.includes('endereço')) {
-      return `Estamos localizados em: ${config.office_address}`;
-    }
-
-    if (config.specialties && messageLower.includes('especialidade')) {
-      return `Nossas especialidades são: ${config.specialties}`;
-    }
-
-    if (config.whatsapp && (messageLower.includes('whatsapp') || messageLower.includes('contato'))) {
-      return `Você pode entrar em contato conosco pelo WhatsApp: ${config.whatsapp}`;
-    }
-
-    // Respostas gerais
-    const responses = [
-      `Sou ${config.chatbot_name || 'o assistente virtual'}. Como posso ajudá-lo?`,
-      'Estou aqui para ajudar. O que você gostaria de saber?',
-      'Tem alguma dúvida? Estou pronto para esclarecê-la!',
-    ];
-
-    return responses[Math.floor(Math.random() * responses.length)];
-  };
-
-  // Enviar mensagem
+  }, [chatbotSlug]);  // Enviar mensagem
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
 
@@ -509,7 +317,8 @@ const PublicChatbotPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const botResponse = await processMessageWithAI(userMessage);
+      // 🚀 Usar apenas N8N webhook para processamento
+      const botResponse = await sendToN8NWebhook(userMessage);
 
       const newBotMessage: Message = {
         id: messages.length + 2,
