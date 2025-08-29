@@ -33,7 +33,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -56,14 +55,12 @@ interface DocumentUploadProps {
 interface UploadedDocument {
   id: string;
   filename: string;
-  status: "uploading" | "processing" | "completed" | "error";
+  status: "processing" | "completed" | "error";
   file_size: number;
   upload_date: string;
   summary?: string;
   chatbot_name?: string;
   file_type?: string;
-  name?: string; // Para compatibilidade durante upload
-  chunks_processed?: number;
 }
 
 interface ChatbotConfig {
@@ -172,98 +169,121 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
   // 📂 Carregar documentos - Modo Webhook
   const loadWebhookDocuments = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('🚫 loadWebhookDocuments: Usuário não autenticado');
+      return;
+    }
+
+    console.log('🔍 loadWebhookDocuments: Iniciando busca para usuário:', user.id);
 
     try {
-      // Buscar documentos do usuário na tabela de detalhes
-      const { data: detailsData, error: detailsError } = await supabase
+      // Primeiro tenta carregar da tabela documents_details
+      console.log('📊 Tentando carregar de documents_details...');
+      let { data, error } = await supabase
         .from("documents_details")
-        .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type, chatbot_user")
+        .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
         .eq("chatbot_user", user.id)
         .order("upload_date", { ascending: false });
 
-      if (detailsError) {
-        console.warn("⚠️ Erro ao carregar detalhes dos documentos:", detailsError);
-        // Não parar aqui, tentar fallback se necessário
-      }
+      console.log('📊 Resultado documents_details:', {
+        data: data?.length || 0,
+        error: error?.message || 'nenhum erro',
+        rawData: data
+      });
 
-      let finalDocuments = detailsData || [];
+      // Se documents_details estiver vazio (não há erro, mas sem dados), buscar de documents
+      if (!error && (!data || data.length === 0)) {
+        console.log('📝 documents_details vazio, buscando de documents...');
 
-      // Se a tabela de detalhes estiver vazia, tentar fallback para a tabela de chunks (compatibilidade)
-      if (!finalDocuments.length) {
+        // Buscar documentos únicos da tabela documents usando metadata
         const { data: docsData, error: docsError } = await supabase
           .from("documents")
           .select("id, metadata")
           .not("metadata", "is", null)
-          .eq("metadata->>chatbot_user", user.id) // Filtro direto no DB
           .order("id", { ascending: false });
 
+        console.log('📄 Resultado documents (bruto):', {
+          data: docsData?.length || 0,
+          error: docsError?.message || 'nenhum erro'
+        });
+
         if (docsError) {
-          console.warn("⚠️ Erro ao carregar da tabela documents (fallback):", docsError);
+          error = docsError;
         } else if (docsData && docsData.length > 0) {
+          // Processar e agrupar documentos por metadata
           const documentsMap = new Map();
+
           docsData.forEach(doc => {
             if (doc.metadata) {
               const metadata = doc.metadata;
-              const filename = metadata.file_name || metadata.filename;
-              if (filename && !documentsMap.has(filename)) {
-                documentsMap.set(filename, {
-                  id: doc.id,
-                  filename: filename,
-                  status: "completed", // Se está aqui, está completo
-                  file_size: parseInt(metadata.file_size) || 0,
-                  upload_date: metadata.upload_date || new Date().toISOString(),
-                  summary: `Documento processado via N8N`,
-                  chatbot_name: metadata.chatbot_name || '',
-                  file_type: metadata.file_type || 'text/plain'
-                });
+              const userId = metadata.usuario || metadata.chatbot_user;
+
+              // Filtrar apenas documentos do usuário atual
+              if (userId === user.id) {
+                const filename = metadata.file_name || metadata.filename;
+                const chatbotName = metadata.chatbot_name || '';
+
+                if (filename && !documentsMap.has(filename)) {
+                  documentsMap.set(filename, {
+                    id: doc.id,
+                    filename: filename,
+                    status: "completed", // Assumir completed se está na tabela documents
+                    file_size: parseInt(metadata.file_size) || 0,
+                    upload_date: new Date().toISOString(), // Usar data atual como fallback
+                    summary: `Documento processado via N8N`,
+                    chatbot_name: chatbotName,
+                    file_type: metadata.file_type || 'text/plain'
+                  });
+                }
               }
             }
           });
-          finalDocuments = Array.from(documentsMap.values());
+
+          data = Array.from(documentsMap.values());
+          console.log('📋 Documentos processados de documents:', data);
         }
       }
 
-      // ✅ REGRA FINAL: Se um documento está na lista, seu status é "completed".
-      // Corrige o estado na UI e dispara a correção no banco de dados.
-      const correctedDocuments = finalDocuments.map(doc => {
-        // Se o status no banco não for 'completed', corrigir em segundo plano.
-        if (doc.status !== "completed") {
-          console.log(`🛠️ Corrigindo status para "${doc.filename}" (de "${doc.status}" para "completed")`);
-          // Disparar a atualização sem esperar (fire and forget) para não bloquear a UI.
-          supabase
-            .from("documents_details")
-            .update({ status: "completed" })
-            .eq("id", doc.id)
-            .then(({ error: updateError }) => {
-              if (updateError) {
-                console.error(`❌ Falha ao corrigir status no DB para doc ID ${doc.id}:`, updateError.message);
-              } else {
-                console.log(`✅ Status corrigido no DB para doc ID ${doc.id}`);
-              }
-            });
-        }
-        // Para a UI, o status é sempre "completed".
-        return { ...doc, status: "completed" };
-      });
+      // Se documents_details não funcionar, tenta documents como fallback (apenas para compatibilidade)
+      if (error) {
+        console.log('📝 Carregando de documents como fallback...');
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from("documents")
+          .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
+          .eq("chatbot_user", user.id)
+          .order("upload_date", { ascending: false });
 
-      setDocuments(correctedDocuments);
+        console.log('📝 Resultado documents (fallback):', {
+          data: fallbackData?.length || 0,
+          error: fallbackError?.message || 'nenhum erro',
+          rawData: fallbackData
+        });
 
+        data = fallbackData;
+        error = fallbackError;
+      }
+
+      if (error) {
+        console.warn("⚠️ Erro ao carregar documentos webhook:", error);
+        setDocuments([]);
+        return;
+      }
+
+      console.log('✅ Documentos webhook carregados:', data?.length || 0);
+      console.log('📋 Dados completos:', data);
+      setDocuments(data || []);
     } catch (error) {
-      console.error("🔥 Erro fatal ao carregar documentos webhook:", error);
+      console.warn("⚠️ Erro ao carregar documentos webhook:", error);
       setDocuments([]);
-      toast({
-        variant: "destructive",
-        title: "Erro Crítico",
-        description: "Não foi possível carregar os documentos do webhook.",
-      });
     }
-  }, [user, toast]);
+  }, [user]); const fetchDocuments = useCallback(async () => {
+    console.log('🔄 fetchDocuments: Modo atual -', useLocalProcessing ? 'LOCAL' : 'WEBHOOK');
 
-  const fetchDocuments = useCallback(async () => {
     if (useLocalProcessing) {
+      console.log('📋 Carregando documentos em modo LOCAL...');
       loadLocalDocuments();
     } else {
+      console.log('🌐 Carregando documentos em modo WEBHOOK...');
       loadWebhookDocuments();
     }
   }, [useLocalProcessing, loadLocalDocuments, loadWebhookDocuments]);
@@ -401,15 +421,14 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
       setIsUploading(true);
       try {
-        // ⏪ REVERTIDO: Usar FormData para enviar como binário, compatível com N8N
-        console.log('📤 Enviando arquivo para webhook (FormData)...');
-
+        // Preparar FormData para envio ao N8N
         const formData = new FormData();
-        formData.append('file', file, file.name); // Enviar o arquivo binário
+        formData.append('data', file);
         formData.append('chatbot', chatbotName);
         formData.append('userid', user.id);
+
+        // 📝 Adicionar informações complementares do arquivo
         formData.append('filename', file.name);
-        formData.append('original_filename', file.name);
         formData.append('filesize', file.size.toString());
         formData.append('filetype', file.type || 'text/plain');
         formData.append('timestamp', new Date().toISOString());
@@ -417,7 +436,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         const webhookUrl = import.meta.env.VITE_WEBHOOK_N8N_INSERT_RAG_URL;
 
         if (!webhookUrl) {
-          throw new Error('URL do webhook não configurada (VITE_WEBHOOK_N8N_INSERT_RAG_URL)');
+          throw new Error('URL do webhook não configurada');
         }
 
         console.log('📤 Enviando arquivo para webhook:', {
@@ -427,122 +446,67 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           type: file.type || 'text/plain',
           chatbotName,
           userId: user.id,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date().toISOString()
         });
 
-        // Enviar para N8N como FormData
-        // IMPORTANTE: Não definir 'Content-Type', o navegador fará isso automaticamente
+        // Enviar para N8N
         const response = await fetch(webhookUrl, {
           method: 'POST',
           body: formData,
         });
 
-        // Sempre tentar ler a resposta para diagnóstico
-        const responseText = await response.text();
+        if (!response.ok) {
+          throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
+        }
 
-        console.log('📥 Resposta completa do webhook:', {
+        // Verificar se há conteúdo na resposta antes de tentar fazer parse JSON
+        const responseText = await response.text();
+        console.log('📥 Resposta do webhook:', {
           status: response.status,
           statusText: response.statusText,
           headers: Object.fromEntries(response.headers.entries()),
-          body: responseText,
-          url: webhookUrl
+          body: responseText
         });
-
-        if (!response.ok) {
-          // Tentar extrair erro detalhado da resposta
-          let errorDetails = `HTTP ${response.status}`;
-
-          try {
-            const errorData = JSON.parse(responseText);
-            errorDetails = errorData.error || errorData.message || errorDetails;
-          } catch {
-            // Se não é JSON, usar o texto da resposta
-            if (responseText.trim()) {
-              errorDetails = responseText.substring(0, 200); // Limitar tamanho
-            }
-          }
-
-          throw new Error(`Erro do servidor N8N: ${errorDetails}`);
-        }
 
         let result;
 
-        // Parse da resposta JSON - SEM FALLBACKS
         try {
-          if (!responseText.trim()) {
-            // Se resposta está vazia mas HTTP foi 200, o N8N pode estar funcionando mas sem retorno
-            console.warn('⚠️ N8N retornou HTTP 200 mas resposta vazia. Webhook pode estar configurado incorretamente.');
-            throw new Error('N8N retornou resposta vazia (HTTP 200). Verifique se o webhook está configurado para retornar JSON.');
+          // Tentar fazer parse do JSON apenas se há conteúdo
+          if (responseText.trim()) {
+            result = JSON.parse(responseText);
+          } else {
+            // Se não há resposta, assumir sucesso (webhook pode não retornar nada)
+            result = { success: true };
           }
-
-          result = JSON.parse(responseText);
         } catch (jsonError) {
-          if (jsonError.message.includes('N8N retornou resposta vazia')) {
-            throw jsonError; // Re-throw nossa mensagem personalizada
-          }
-          throw new Error(`N8N retornou resposta inválida (não é JSON): "${responseText.substring(0, 100)}..."`);
+          console.warn('Resposta do webhook não é JSON válido:', responseText);
+          // Se não conseguir fazer parse, mas o HTTP foi 200, assumir sucesso
+          result = { success: true };
         }
 
-        // Verificar sucesso - SEM ASSUMIR NADA
-        if (result.success !== true) {
-          const errorMessage = result?.error || result?.message || 'Erro desconhecido do N8N';
-          const errorCode = result?.error_code ? ` (${result.error_code})` : '';
-          throw new Error(`N8N reportou falha: ${errorMessage}${errorCode}`);
+        // Se não há propriedade success ou ela é undefined, assumir sucesso se HTTP foi OK
+        const isSuccess = result?.success !== false;
+
+        if (isSuccess) {
+          toast({
+            title: "Upload realizado!",
+            description: `Arquivo "${file.name}" enviado para processamento no N8N.`,
+          });
+
+          // 📝 N8N é responsável por preencher as tabelas documents e documents_details
+          console.log('✅ Arquivo enviado para N8N, aguardando processamento...');
+
+          // Recarregar lista após um pequeno delay para dar tempo do N8N processar
+          setTimeout(() => {
+            fetchDocuments();
+          }, 2000);
+
+          onUploadComplete?.(result?.documentId || file.name);
+        } else {
+          throw new Error(result?.error || 'Erro no processamento do N8N');
         }
-
-        // Validar campos obrigatórios da resposta
-        if (!result.document_id) {
-          throw new Error('N8N não retornou document_id na resposta');
-        }
-
-        if (!result.status) {
-          throw new Error('N8N não retornou status na resposta');
-        }
-
-        console.log('N8N webhook sucesso:', result);
-
-        // Atualizar estado local do documento com dados reais do N8N
-        setDocuments(prev => prev.map(doc =>
-          doc.name === file.name ? {
-            ...doc,
-            id: result.document_id,
-            status: result.status as "uploading" | "processing" | "completed" | "error",
-            chunks_processed: result.chunks_processed || 0
-          } : doc
-        ));
-
-        // Mensagem de sucesso com dados reais do N8N
-        const successMessage = result?.message || `Arquivo "${file.name}" processado pelo N8N.`;
-        const chunks = result?.chunks_processed;
-
-        toast({
-          title: "Upload realizado!",
-          description: chunks ?
-            `${successMessage} (${chunks} chunks processados)` :
-            successMessage,
-        });
-
-        console.log('✅ Arquivo processado pelo N8N:', {
-          filename: file.name,
-          document_id: result.document_id,
-          status: result.status,
-          chunks_processed: result.chunks_processed,
-          processing_time: result.processing_time_ms
-        });
-
-        // Recarregar lista após um pequeno delay para mostrar o status atualizado
-        setTimeout(() => {
-          fetchDocuments();
-        }, 1500);
-
-        onUploadComplete?.(result.document_id);
       } catch (error) {
         console.error("Erro no upload webhook:", error);
-
-        // Remover documento temporário do estado
-        setDocuments(prev => prev.filter(doc => doc.name !== file.name));
-
-        // Mostrar erro real ao usuário - SEM FALLBACK
         toast({
           variant: "destructive",
           title: "Erro no upload",
@@ -589,135 +553,46 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
         if (error) throw error;
       } else {
-        // Modo Webhook: estratégia mais robusta para deletar
-        console.log('🗑️ Iniciando exclusão WEBHOOK para documento ID:', documentId);
-
+        // Modo Webhook: deletar de documents_details e documents
         let deletedFromDetails = false;
         let deletedFromDocuments = false;
-        let totalDeletedChunks = 0;
 
-        // Primeiro: encontrar o documento na lista atual para obter informações
-        const currentDoc = documents.find(d => d.id === documentId);
-        console.log('📋 Documento encontrado na lista:', currentDoc);
+        // Tentar deletar de documents_details
+        try {
+          const { error: detailsError } = await supabase
+            .from("documents_details")
+            .delete()
+            .eq("id", documentId)
+            .eq("chatbot_user", user.id);
 
-        // Estratégia 1: Deletar de documents_details usando a MESMA lógica da listagem
-        if (currentDoc) {
-          try {
-            console.log('🔍 Buscando documento em documents_details por filename:', currentDoc.filename);
-
-            // Usar exatamente a mesma busca que funciona na listagem
-            const { data: detailsData, error: searchError } = await supabase
-              .from("documents_details")
-              .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
-              .eq("chatbot_user", user.id)
-              .eq("filename", currentDoc.filename);
-
-            console.log('� Resultado da busca em documents_details:', {
-              found: detailsData?.length || 0,
-              error: searchError?.message || 'nenhum erro',
-              data: detailsData
-            });
-
-            if (!searchError && detailsData && detailsData.length > 0) {
-              const detailsId = detailsData[0].id;
-              console.log('📋 ID encontrado em documents_details:', detailsId);
-
-              const { error: detailsError, count: detailsCount } = await supabase
-                .from("documents_details")
-                .delete({ count: 'exact' })
-                .eq("id", detailsId);
-
-              if (!detailsError && detailsCount && detailsCount > 0) {
-                deletedFromDetails = true;
-                console.log('✅ Deletado de documents_details:', detailsCount, 'registros');
-              } else {
-                console.error('❌ Erro ao deletar de documents_details:', detailsError?.message || 'count zero');
-              }
-            } else {
-              console.log('⚠️ Nenhum registro encontrado em documents_details para:', currentDoc.filename);
-              console.log('🔍 Erro de busca:', searchError?.message);
-            }
-          } catch (err) {
-            console.warn('⚠️ Erro ao buscar/deletar em documents_details:', err);
+          if (!detailsError) {
+            deletedFromDetails = true;
+            console.log('✅ Deletado de documents_details');
           }
+        } catch (err) {
+          console.warn('⚠️ Erro ao deletar de documents_details:', err);
         }
 
-        // Estratégia 2: Deletar TODOS os chunks relacionados ao arquivo da tabela documents
-        if (currentDoc) {
-          try {
-            console.log('🧹 Buscando todos os chunks do arquivo:', currentDoc.filename);
+        // Tentar deletar de documents
+        try {
+          const { error: documentsError } = await supabase
+            .from("documents")
+            .delete()
+            .eq("id", documentId)
+            .eq("chatbot_user", user.id);
 
-            // Buscar todos os chunks deste arquivo para deletar
-            const { data: chunksToDelete, error: searchError } = await supabase
-              .from("documents")
-              .select("id, metadata")
-              .not("metadata", "is", null);
-
-            console.log('🔍 Chunks encontrados para análise:', chunksToDelete?.length || 0);
-
-            if (!searchError && chunksToDelete && chunksToDelete.length > 0) {
-              // Filtrar chunks que pertencem ao mesmo arquivo e usuário
-              const relatedChunkIds = chunksToDelete
-                .filter(chunk => {
-                  if (!chunk.metadata) return false;
-                  const metadata = chunk.metadata;
-                  const chunkUserId = metadata.usuario || metadata.chatbot_user;
-                  const chunkFilename = metadata.file_name || metadata.filename;
-
-                  return chunkUserId === user.id && chunkFilename === currentDoc.filename;
-                })
-                .map(chunk => chunk.id);
-
-              console.log('🎯 IDs dos chunks relacionados:', relatedChunkIds);
-
-              if (relatedChunkIds.length > 0) {
-                // Deletar todos os chunks relacionados
-                const { error: deleteError, count: deleteCount } = await supabase
-                  .from("documents")
-                  .delete({ count: 'exact' })
-                  .in("id", relatedChunkIds);
-
-                if (!deleteError) {
-                  deletedFromDocuments = true;
-                  totalDeletedChunks = deleteCount || 0;
-                  console.log('✅ Deletados', totalDeletedChunks, 'chunks da tabela documents');
-                } else {
-                  console.error('❌ Erro ao deletar chunks:', deleteError);
-                }
-              } else {
-                console.log('⚠️ Nenhum chunk relacionado encontrado para deletar');
-                // Se não há chunks para deletar, marcar como "sucesso" porque a tabela está vazia
-                deletedFromDocuments = true;
-                console.log('✅ Tabela documents vazia - considerando sucesso');
-              }
-            } else {
-              console.warn('⚠️ Erro ao buscar chunks ou nenhum chunk encontrado:', searchError?.message || 'tabela vazia');
-              // Se a tabela documents está vazia, marcar como sucesso
-              deletedFromDocuments = true;
-              console.log('✅ Tabela documents vazia - considerando sucesso');
-            }
-          } catch (err) {
-            console.warn('⚠️ Erro na estratégia de deletar chunks:', err);
-            // Em caso de erro, assumir que a tabela documents não tem dados relacionados
+          if (!documentsError) {
             deletedFromDocuments = true;
-            console.log('✅ Assumindo que documents não tem dados relacionados');
+            console.log('✅ Deletado de documents');
           }
+        } catch (err) {
+          console.warn('⚠️ Erro ao deletar de documents:', err);
         }
 
-        // Verificar se conseguiu deletar pelo menos de documents_details
-        if (!deletedFromDetails) {
-          throw new Error(`Não foi possível deletar o documento "${currentDoc?.filename || documentId}" da tabela documents_details`);
+        // Se não conseguiu deletar de nenhuma tabela, lançar erro
+        if (!deletedFromDetails && !deletedFromDocuments) {
+          throw new Error("Não foi possível deletar o documento de nenhuma tabela");
         }
-
-        console.log('🎉 Exclusão concluída:', {
-          deletedFromDetails,
-          deletedFromDocuments,
-          totalDeletedChunks,
-          filename: currentDoc?.filename,
-          note: deletedFromDocuments && totalDeletedChunks > 0
-            ? 'Deletado de ambas as tabelas'
-            : 'Deletado de documents_details (documents estava vazia ou sem dados relacionados)'
-        });
       }
 
       toast({
@@ -1254,99 +1129,73 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={async () => {
-                    console.log('🔍 DEBUG: Iniciando diagnóstico completo...');
+                    console.log('🔍 DEBUG: Iniciando teste manual...');
                     console.log('👤 Usuário atual:', user?.id);
                     console.log('🌐 Modo:', useLocalProcessing ? 'LOCAL' : 'WEBHOOK');
 
                     if (user) {
+                      console.log('📊 Testando acesso direto à documents_details...');
                       try {
-                        // 1. Teste básico de conexão
-                        console.log('===== 1. TESTE DE CONEXÃO =====');
-                        const { data: connectionTest, error: connectionError } = await supabase
-                          .from('documents_details')
-                          .select('count', { count: 'exact', head: true });
-
-                        console.log('📊 Total de registros em documents_details:', connectionTest);
-                        console.log('🔌 Erro de conexão:', connectionError);
-
-                        // 2. Teste sem filtro (deve mostrar todos os registros)
-                        console.log('===== 2. TESTE SEM FILTRO =====');
-                        const { data: allData, error: allError } = await supabase
-                          .from("documents_details")
-                          .select("*")
-                          .limit(10);
-
-                        console.log('📋 Registros sem filtro (primeiros 10):');
-                        console.log('Data:', allData);
-                        console.log('Error:', allError);
-                        console.log('Quantidade encontrada:', allData?.length || 0);
-
-                        // 3. Teste com filtro do usuário
-                        console.log('===== 3. TESTE COM FILTRO DE USUÁRIO =====');
-                        const { data: userData, error: userError } = await supabase
+                        const { data, error } = await supabase
                           .from("documents_details")
                           .select("*")
                           .eq("chatbot_user", user.id);
 
-                        console.log('📋 Registros do usuário:', user.id);
-                        console.log('Data:', userData);
-                        console.log('Error:', userError);
-                        console.log('Quantidade encontrada:', userData?.length || 0);
+                        console.log('✅ Resultado documents_details:');
+                        console.log('Data:', data);
+                        console.log('Error:', error);
 
-                        // 4. Teste na tabela documents
-                        console.log('===== 4. TESTE TABELA DOCUMENTS =====');
+                        // Teste sem filtro de usuário
+                        const { data: allData, error: allError } = await supabase
+                          .from("documents_details")
+                          .select("*")
+                          .limit(5);
+
+                        console.log('📋 Primeiros 5 registros (sem filtro):');
+                        console.log('All Data:', allData);
+                        console.log('All Error:', allError);
+
+                        // Teste na tabela documents também
+                        console.log('📊 Testando tabela documents...');
                         const { data: docsData, error: docsError } = await supabase
                           .from("documents")
-                          .select("id, metadata")
-                          .not("metadata", "is", null)
-                          .limit(10);
+                          .select("*")
+                          .eq("chatbot_user", user.id)
+                          .limit(5);
 
-                        console.log('📄 Chunks na tabela documents:');
-                        console.log('Data:', docsData);
-                        console.log('Error:', docsError);
-                        console.log('Quantidade encontrada:', docsData?.length || 0);
+                        console.log('📄 Resultado documents (filtrado por usuário):');
+                        console.log('Docs Data:', docsData);
+                        console.log('Docs Error:', docsError);
 
-                        // 5. Análise dos usuários na tabela documents_details
-                        if (allData && allData.length > 0) {
-                          console.log('===== 5. ANÁLISE DE USUÁRIOS =====');
-                          const usuarios = [...new Set(allData.map(doc => doc.chatbot_user))];
-                          console.log('� Usuários únicos em documents_details:', usuarios);
-                          console.log('🎯 Seu ID está na lista?', usuarios.includes(user.id));
+                        // Teste documents sem filtro
+                        const { data: allDocsData, error: allDocsError } = await supabase
+                          .from("documents")
+                          .select("*")
+                          .limit(5);
 
-                          // Verificar se há correspondência exata
-                          const matchingDocs = allData.filter(doc => doc.chatbot_user === user.id);
-                          console.log('📄 Documentos que deveriam aparecer para você:', matchingDocs);
-                        }
+                        console.log('📄 Primeiros 5 registros da tabela documents (sem filtro):');
+                        console.log('All Docs Data:', allDocsData);
+                        console.log('All Docs Error:', allDocsError);
 
-                        // 6. Teste de contexto de autenticação
-                        console.log('===== 6. CONTEXTO DE AUTENTICAÇÃO =====');
-                        const { data: authData, error: authError } = await supabase.auth.getUser();
-                        console.log('🔐 Usuário autenticado:', authData?.user?.id);
-                        console.log('🔐 Erro de auth:', authError);
-                        console.log('✅ IDs coincidem?', authData?.user?.id === user.id);
+                        // Teste usando Service Role Key para verificar se é problema de RLS
+                        console.log('🔑 Testando com Service Role Key...');
+                        const { createClient } = await import('@supabase/supabase-js');
+                        const supabaseServiceRole = createClient(
+                          'https://supabase.cirurgia.com.br',
+                          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q'
+                        );
 
-                        // 7. Resumo do diagnóstico
-                        console.log('===== 7. RESUMO DO DIAGNÓSTICO =====');
-                        const totalRegistros = allData?.length || 0;
-                        const registrosUsuario = userData?.length || 0;
-                        const chunksDocuments = docsData?.length || 0;
+                        const { data: serviceData, error: serviceError } = await supabaseServiceRole
+                          .from("documents_details")
+                          .select("*")
+                          .eq("chatbot_user", user.id);
 
-                        console.log(`📊 Total de registros em documents_details: ${totalRegistros}`);
-                        console.log(`� Registros do seu usuário: ${registrosUsuario}`);
-                        console.log(`📄 Chunks em documents: ${chunksDocuments}`);
+                        console.log('🔑 Resultado com Service Role:');
+                        console.log('Service Data:', serviceData);
+                        console.log('Service Error:', serviceError);
 
-                        if (totalRegistros === 0) {
-                          console.log('❌ PROBLEMA: Tabela documents_details está vazia!');
-                          console.log('💡 SOLUÇÃO: Verificar workflow do N8N ou inserir dados de teste');
-                        } else if (registrosUsuario === 0) {
-                          console.log('❌ PROBLEMA: Usuário não tem acesso aos registros!');
-                          console.log('💡 SOLUÇÃO: Verificar políticas RLS ou campo chatbot_user');
-                        } else {
-                          console.log('✅ Tudo parece estar funcionando!');
-                        }
-
-                      } catch (error) {
-                        console.error('❌ Erro durante o diagnóstico:', error);
+                      } catch (err) {
+                        console.error('❌ Erro no teste:', err);
                       }
                     }
                   }}
@@ -1659,12 +1508,6 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
             backgroundColor: '#1e293b',
           }}
         >
-          <DialogHeader className="sr-only">
-            <DialogTitle>Preview do Documento</DialogTitle>
-            <DialogDescription>
-              Visualização do conteúdo do documento selecionado
-            </DialogDescription>
-          </DialogHeader>
           {/* Header customizado seguindo padrão Windows */}
           <div className={`flex items-center justify-between px-6 py-4 border-b border-gray-600 bg-slate-800 ${isModalMaximized ? 'rounded-none' : 'rounded-t-lg'
             }`}>

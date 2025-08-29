@@ -63,6 +63,8 @@ export const useConversationMemory = ({
     
     // 🚨 IMPORTANTE: Não limpar o histórico aqui! 
     // Isso estava causando o problema das mensagens sumindo
+    console.log('🆕 [ConversationMemory] Nova sessão iniciada:', sessionId);
+    console.log('🆕 [ConversationMemory] Histórico será preservado');
     
     return sessionId;
   }, [user?.id, generateSessionId]);
@@ -345,8 +347,19 @@ export const useConversationMemory = ({
 
   // Auto-inicializar sessão quando usuário estiver disponível
   useEffect(() => {
+    console.log('🔄 [ConversationMemory] useEffect executado:', {
+      userId: user?.id,
+      hasCurrentSession: !!currentSession,
+      timestamp: new Date().toISOString()
+    });
+    
     if (user?.id && !currentSession) {
+      console.log('🧠 [ConversationMemory] Auto-inicializando nova sessão para usuário:', user.id);
       initializeSession();
+    } else if (!user?.id) {
+      console.log('🧠 [ConversationMemory] Usuário não disponível, aguardando...');
+    } else if (currentSession) {
+      console.log('🧠 [ConversationMemory] Sessão já existe:', currentSession);
     }
   }, [user?.id, currentSession, initializeSession]);
 

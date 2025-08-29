@@ -423,6 +423,14 @@ const MyChatbot = () => {
    * No modo webhook (N8N), não usa memória local - apenas interface
    */
   useEffect(() => {
+    console.log('🚀 [MyChatbot] useEffect inicialização executado:', {
+      chatState,
+      conversationHistoryLength: conversationHistory.length,
+      initialMessageAdded,
+      useLocalProcessing,
+      timestamp: new Date().toISOString()
+    });
+
     // Condições para inicialização
     const shouldInitialize = useLocalProcessing
       ? (chatState === 'normal' && conversationHistory.length === 0 && !initialMessageAdded)
@@ -443,6 +451,7 @@ const MyChatbot = () => {
 
           // Criar mensagem inicial com a configuração carregada
           const initialMessage = getInitialMessage();
+          console.log('🤖 [MyChatbot] Adicionando mensagem inicial:', initialMessage.substring(0, 50) + '...');
 
           if (useLocalProcessing) {
             // Modo local: usar memória
@@ -456,6 +465,7 @@ const MyChatbot = () => {
               sender: 'bot'
             }]);
           }
+          console.log('🤖 [MyChatbot] Mensagem inicial adicionada com sucesso!');
         } catch (error) {
           console.error('❌ [MyChatbot] Erro ao inicializar chat:', error);
           // Fallback: adicionar mensagem mesmo sem configuração
