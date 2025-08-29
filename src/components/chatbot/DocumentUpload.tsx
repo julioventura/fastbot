@@ -33,6 +33,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -55,12 +56,14 @@ interface DocumentUploadProps {
 interface UploadedDocument {
   id: string;
   filename: string;
-  status: "processing" | "completed" | "error";
+  status: "uploading" | "processing" | "completed" | "error";
   file_size: number;
   upload_date: string;
   summary?: string;
   chatbot_name?: string;
   file_type?: string;
+  name?: string; // Para compatibilidade durante upload
+  chunks_processed?: number;
 }
 
 interface ChatbotConfig {
@@ -467,14 +470,15 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
       setIsUploading(true);
       try {
-        // Preparar FormData para envio ao N8N
+        // ⏪ REVERTIDO: Usar FormData para enviar como binário, compatível com N8N
+        console.log('📤 Enviando arquivo para webhook (FormData)...');
+
         const formData = new FormData();
-        formData.append('data', file);
+        formData.append('file', file, file.name); // Enviar o arquivo binário
         formData.append('chatbot', chatbotName);
         formData.append('userid', user.id);
-
-        // 📝 Adicionar informações complementares do arquivo
         formData.append('filename', file.name);
+        formData.append('original_filename', file.name);
         formData.append('filesize', file.size.toString());
         formData.append('filetype', file.type || 'text/plain');
         formData.append('timestamp', new Date().toISOString());
@@ -482,7 +486,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         const webhookUrl = import.meta.env.VITE_WEBHOOK_N8N_INSERT_RAG_URL;
 
         if (!webhookUrl) {
-          throw new Error('URL do webhook não configurada');
+          throw new Error('URL do webhook não configurada (VITE_WEBHOOK_N8N_INSERT_RAG_URL)');
         }
 
         console.log('📤 Enviando arquivo para webhook:', {
@@ -492,82 +496,122 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           type: file.type || 'text/plain',
           chatbotName,
           userId: user.id,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
-        // Enviar para N8N
+        // Enviar para N8N como FormData
+        // IMPORTANTE: Não definir 'Content-Type', o navegador fará isso automaticamente
         const response = await fetch(webhookUrl, {
           method: 'POST',
           body: formData,
         });
 
-        if (!response.ok) {
-          throw new Error(`Erro HTTP: ${response.status} - ${response.statusText}`);
-        }
-
-        // Verificar se há conteúdo na resposta antes de tentar fazer parse JSON
+        // Sempre tentar ler a resposta para diagnóstico
         const responseText = await response.text();
-        console.log('📥 Resposta do webhook:', {
+
+        console.log('📥 Resposta completa do webhook:', {
           status: response.status,
           statusText: response.statusText,
           headers: Object.fromEntries(response.headers.entries()),
-          body: responseText
+          body: responseText,
+          url: webhookUrl
         });
+
+        if (!response.ok) {
+          // Tentar extrair erro detalhado da resposta
+          let errorDetails = `HTTP ${response.status}`;
+
+          try {
+            const errorData = JSON.parse(responseText);
+            errorDetails = errorData.error || errorData.message || errorDetails;
+          } catch {
+            // Se não é JSON, usar o texto da resposta
+            if (responseText.trim()) {
+              errorDetails = responseText.substring(0, 200); // Limitar tamanho
+            }
+          }
+
+          throw new Error(`Erro do servidor N8N: ${errorDetails}`);
+        }
 
         let result;
 
+        // Parse da resposta JSON - SEM FALLBACKS
         try {
-          // Tentar fazer parse do JSON apenas se há conteúdo
-          if (responseText.trim()) {
-            result = JSON.parse(responseText);
-          } else {
-            // Se não há resposta, assumir sucesso (webhook pode não retornar nada)
-            result = { success: true };
+          if (!responseText.trim()) {
+            // Se resposta está vazia mas HTTP foi 200, o N8N pode estar funcionando mas sem retorno
+            console.warn('⚠️ N8N retornou HTTP 200 mas resposta vazia. Webhook pode estar configurado incorretamente.');
+            throw new Error('N8N retornou resposta vazia (HTTP 200). Verifique se o webhook está configurado para retornar JSON.');
           }
+
+          result = JSON.parse(responseText);
         } catch (jsonError) {
-          console.warn('Resposta do webhook não é JSON válido:', responseText);
-          // Se não conseguir fazer parse, mas o HTTP foi 200, assumir sucesso
-          result = { success: true };
+          if (jsonError.message.includes('N8N retornou resposta vazia')) {
+            throw jsonError; // Re-throw nossa mensagem personalizada
+          }
+          throw new Error(`N8N retornou resposta inválida (não é JSON): "${responseText.substring(0, 100)}..."`);
         }
 
-        // Verificar se o processamento foi bem-sucedido
-        const isSuccess = result?.success !== false;
-
-        if (isSuccess) {
-          // Mensagem de sucesso personalizada com base na resposta
-          const successMessage = result?.message || `Arquivo "${file.name}" enviado para processamento no N8N.`;
-          const chunks = result?.chunks_processed;
-
-          toast({
-            title: "Upload realizado!",
-            description: chunks ?
-              `${successMessage} (${chunks} chunks processados)` :
-              successMessage,
-          });
-
-          console.log('✅ Arquivo processado pelo N8N:', {
-            filename: file.name,
-            document_id: result?.document_id,
-            status: result?.status,
-            chunks_processed: result?.chunks_processed,
-            processing_time: result?.processing_time_ms
-          });
-
-          // Recarregar lista após um pequeno delay para mostrar o status atualizado
-          setTimeout(() => {
-            fetchDocuments();
-          }, 1500);
-
-          onUploadComplete?.(result?.document_id || result?.documentId || file.name);
-        } else {
-          // Tratar erro retornado pelo N8N
-          const errorMessage = result?.error || result?.message || 'Erro no processamento do N8N';
+        // Verificar sucesso - SEM ASSUMIR NADA
+        if (result.success !== true) {
+          const errorMessage = result?.error || result?.message || 'Erro desconhecido do N8N';
           const errorCode = result?.error_code ? ` (${result.error_code})` : '';
-
-          throw new Error(`${errorMessage}${errorCode}`);
+          throw new Error(`N8N reportou falha: ${errorMessage}${errorCode}`);
         }
+
+        // Validar campos obrigatórios da resposta
+        if (!result.document_id) {
+          throw new Error('N8N não retornou document_id na resposta');
+        }
+
+        if (!result.status) {
+          throw new Error('N8N não retornou status na resposta');
+        }
+
+        console.log('N8N webhook sucesso:', result);
+
+        // Atualizar estado local do documento com dados reais do N8N
+        setDocuments(prev => prev.map(doc =>
+          doc.name === file.name ? {
+            ...doc,
+            id: result.document_id,
+            status: result.status as "uploading" | "processing" | "completed" | "error",
+            chunks_processed: result.chunks_processed || 0
+          } : doc
+        ));
+
+        // Mensagem de sucesso com dados reais do N8N
+        const successMessage = result?.message || `Arquivo "${file.name}" processado pelo N8N.`;
+        const chunks = result?.chunks_processed;
+
+        toast({
+          title: "Upload realizado!",
+          description: chunks ?
+            `${successMessage} (${chunks} chunks processados)` :
+            successMessage,
+        });
+
+        console.log('✅ Arquivo processado pelo N8N:', {
+          filename: file.name,
+          document_id: result.document_id,
+          status: result.status,
+          chunks_processed: result.chunks_processed,
+          processing_time: result.processing_time_ms
+        });
+
+        // Recarregar lista após um pequeno delay para mostrar o status atualizado
+        setTimeout(() => {
+          fetchDocuments();
+        }, 1500);
+
+        onUploadComplete?.(result.document_id);
       } catch (error) {
         console.error("Erro no upload webhook:", error);
+
+        // Remover documento temporário do estado
+        setDocuments(prev => prev.filter(doc => doc.name !== file.name));
+
+        // Mostrar erro real ao usuário - SEM FALLBACK
         toast({
           variant: "destructive",
           title: "Erro no upload",
@@ -1686,6 +1730,9 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         >
           <DialogHeader className="sr-only">
             <DialogTitle>Preview do Documento</DialogTitle>
+            <DialogDescription>
+              Visualização do conteúdo do documento selecionado
+            </DialogDescription>
           </DialogHeader>
           {/* Header customizado seguindo padrão Windows */}
           <div className={`flex items-center justify-between px-6 py-4 border-b border-gray-600 bg-slate-800 ${isModalMaximized ? 'rounded-none' : 'rounded-t-lg'

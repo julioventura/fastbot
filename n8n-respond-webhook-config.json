@@ -1,0 +1,25 @@
+{
+  "parameters": {
+    "respondWith": "json",
+    "responseBody": "={\n  \"success\": true,\n  \"document_id\": $('Detalhes').item.json.id,\n  \"status\": \"completed\",\n  \"chunks_processed\": $('Insert Documents').item.json.vectorsInserted || 1,\n  \"message\": \"Documento processado com sucesso\",\n  \"filename\": $('Webhook').item.json.body.original_filename,\n  \"file_size\": $('Webhook').item.json.body.filesize,\n  \"processing_time_ms\": Date.now() - new Date($('Webhook').item.json.body.timestamp).getTime()\n}",
+    "options": {
+      "responseHeaders": {
+        "entries": [
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "name": "Access-Control-Allow-Origin",
+            "value": "*"
+          }
+        ]
+      }
+    }
+  },
+  "type": "n8n-nodes-base.respondToWebhook",
+  "typeVersion": 1.4,
+  "position": [-96, -160],
+  "id": "a0c22fdb-73b3-4487-82e3-a46805f6c8f3",
+  "name": "Respond to Webhook"
+}

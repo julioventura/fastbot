@@ -54,11 +54,10 @@ const BaseDeDados: React.FC = () => {
                   💡 Dicas para sua Base de Dados
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-green-100 space-y-3">
-                <ul className="space-y-2 text-sl">
+              <CardContent className="text-green-100">
+                <ul className="space-y-4 text-sl">
                   {/* <li>• Use arquivos PDF, DOC, TXT ou MD</li> */}
-                  <li>• Inclua informações relevantes para o chatbot responder</li>
-                  <li>• Mantenha os textos organizados e claros</li>
+                  <li>• Inclua informações relevantes para o chatbot responder, como seus endereços, horários, telefones, emails, produtos e serviços que oferece.</li>
                   <li>• Atualize regularmente o conteúdo</li>
                 </ul>
               </CardContent>
@@ -71,10 +70,10 @@ const BaseDeDados: React.FC = () => {
                   📁 Formatos Suportados
                 </CardTitle>
               </CardHeader>
-              <CardContent className="text-green-100 space-y-3">
-                <ul className="space-y-2 text-sl">
-                  <li>• <strong>TXT:</strong> Arquivos de texto simples</li>
-                  <li>• <strong>Em breve: </strong> PDF, .docx, áudio e imagens</li>
+              <CardContent className="text-green-100">
+                <ul className="space-y-4 text-sl">
+                  <li>• <strong>TXT:</strong> Arquivos de texto simples. Crie no Word ou Google Drive e salve/exporte como arquivo de texto (txt).</li>
+                  <li>• <strong>Em breve: </strong> PDF, .docx, áudio e imagens.</li>
                 </ul>
               </CardContent>
             </Card>
