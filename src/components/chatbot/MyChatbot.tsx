@@ -1483,6 +1483,8 @@ const MyChatbot = () => {
             background: chatbotBgColor,
             boxShadow: `0 10px 15px -3px ${chatbotShadowDark}, 0 4px 6px -4px ${chatbotShadowDark}, 0 0 0 1px rgba(255, 255, 255, 0.1)`,
             border: '1px solid rgba(255, 255, 255, 0.1)',
+            // Transição suave para o efeito hover
+            transition: 'all 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
           };
 
           // Aplicar estilos eletrificados se a animação estiver ativa
@@ -1679,6 +1681,30 @@ const MyChatbot = () => {
             height: 0px !important;
             background: transparent !important;
           }
+
+          /* Efeito de glow amarelo no hover do widget minimizado */
+          .neu-chatbot-minimized:hover {
+            box-shadow: 
+              0 10px 15px -3px ${chatbotShadowDark}, 
+              0 4px 6px -4px ${chatbotShadowDark}, 
+              0 0 0 3px rgba(255, 255, 255, 0.3),
+              0 0 30px rgba(251, 191, 36, 0.9),
+              0 0 60px rgba(251, 191, 36, 0.7),
+              0 0 90px rgba(251, 191, 36, 0.5),
+              0 0 120px rgba(251, 191, 36, 0.3) !important;
+            border: 3px solid rgba(251, 191, 36, 0.9) !important;
+            transform: scale(1.08);
+          }
+
+          /* Prevenir o efeito hover durante o drag */
+          .neu-chatbot-minimized.dragging:hover {
+            box-shadow: 
+              0 10px 15px -3px ${chatbotShadowDark}, 
+              0 4px 6px -4px ${chatbotShadowDark}, 
+              0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            transform: none !important;
+          }
         `}</style>
 
         <div
@@ -1687,7 +1713,7 @@ const MyChatbot = () => {
           onClick={handleChatbotClick}
           role="button"
           aria-label="Abrir chatbot (arraste verticalmente para reposicionar)"
-          className="neu-chatbot-minimized"
+          className={`neu-chatbot-minimized ${isDragging ? 'dragging' : ''}`}
           title="Clique para abrir chatbot • Arraste para reposicionar"
         >
           <Bot size={window.innerWidth < 768 ? 24 : 32} color={chatbotTextColor} />

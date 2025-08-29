@@ -286,7 +286,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                 <h4 className="pl-2 text-sm font-medium text-white mb-3">URL do Chatbot</h4>
 
                 <div className="relative">
-                  <code className="mb-10 text-xs md:text-2xl lg:text-3xl bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono">
+                  <code className="mb-10 text-xs md:text-2xl lg:text-3xl bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono font-black">
                     {getPublicChatbotUrl().replace(/^https?:\/\//, "")}
                   </code>
                   <button
@@ -316,10 +316,17 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
 
                       <h4 className="pl-2 text-sm font-medium text-white">QR-Code do Chatbot</h4>
                       <div className="bg-blue-900 border border-gray-500/70 rounded-lg p-12">
+
                         {qrCodeDataUrl ? (
                           <div className="space-y-3">
                             <div className="flex justify-center">
-                              <div className="bg-white rounded-xl p-2 shadow-2xl shadow-black/90">
+                              <div
+                                className="bg-white rounded-xl p-2 shadow-2xl shadow-black/90 transition-all duration-300 hover:scale-95 hover:-rotate-[6deg] hover:shadow-[0_0_24px_8px_rgba(255,255,255,0.7)]"
+                                style={{
+                                  display: "inline-block",
+                                  transition: "transform 0.3s, box-shadow 0.3s",
+                                }}
+                              >
                                 <img
                                   src={qrCodeDataUrl}
                                   alt="QR-Code do Chatbot"
@@ -336,6 +343,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                             </p>
                           </div>
                         )}
+
                       </div>
 
                     </div>

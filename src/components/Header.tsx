@@ -111,11 +111,11 @@ const Header = () => {
           {/* Logo Section */}
           <div className="flex items-center">
             <NavLink to="/" className="flex items-center space-x-2 group">
-              <div>
-                <span className="text-xs md:text-sm text-primary/90 font-bold -mt-1">
+              <div className="text-blue-500 hover:text-yellow-300">
+                <span className="text-xs md:text-sm  font-bold -mt-1">
                   Dentistas.com.br /&nbsp;
                 </span>
-                <span className="text-lg md:text-xl font-black text-primary group-hover:text-primary/95 transition-colors">
+                <span className="text-lg md:text-xl font-black">
                   Fastbot
                 </span>
               </div>
@@ -146,7 +146,7 @@ const Header = () => {
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
                       ? "text-white nav-active-item"
-                      : "text-muted-foreground hover:text-primary font-medium"
+                      : "text-muted-foreground hover:text-white font-medium"
                     }`
                   }
                   style={({ isActive }) =>
@@ -176,7 +176,7 @@ const Header = () => {
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
                       ? "text-white nav-active-item"
-                      : "text-muted-foreground hover:text-primary font-medium"
+                      : "text-muted-foreground hover:text-white font-medium"
                     }`
                   }
                   style={({ isActive }) =>
@@ -190,7 +190,7 @@ const Header = () => {
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
                       ? "text-white nav-active-item"
-                      : "text-muted-foreground hover:text-primary font-medium"
+                      : "text-muted-foreground hover:text-white  font-medium"
                     }`
                   }
                   style={({ isActive }) =>
@@ -254,7 +254,7 @@ const Header = () => {
                 <DropdownMenuContent align="end" className="w-48 bg-background border border-border shadow-lg">
 
                   <DropdownMenuItem asChild>
-                    <NavLink to="/" className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-blue-950 hover:text-blue-400">
+                    <NavLink to="/" className="flex items-center space-x-2 px-3 py-2 text-foreground hover:bg-blue-950 hover:text-white">
                       <Home className="h-4 w-4" />
                       <span>Início</span>
                     </NavLink>
