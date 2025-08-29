@@ -175,159 +175,90 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     if (!user) return;
 
     try {
-      // Buscar documentos do usuário
-      let { data, error } = await supabase
+      // Buscar documentos do usuário na tabela de detalhes
+      const { data: detailsData, error: detailsError } = await supabase
         .from("documents_details")
         .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type, chatbot_user")
         .eq("chatbot_user", user.id)
         .order("upload_date", { ascending: false });
 
-      // ✅ CORREÇÃO: Garantir que documentos de documents_details tenham status completed
-      // e verificar se documentos "processing" já foram processados
-      if (!error && data && data.length > 0) {
-        data = await Promise.all(data.map(async (doc) => {
-          let finalStatus = doc.status || "completed";
-
-          // Se o documento está marcado como "processing", verificar se já foi processado
-          if (finalStatus === "processing") {
-            try {
-              // Verificar se existem chunks na tabela documents para este arquivo
-              const { data: chunks, error: chunksError } = await supabase
-                .from("documents")
-                .select("id")
-                .not("metadata", "is", null)
-                .limit(1);
-
-              if (!chunksError && chunks && chunks.length > 0) {
-                // Se há chunks, verificar se algum pertence a este documento
-                const { data: relatedChunks, error: relatedError } = await supabase
-                  .from("documents")
-                  .select("id, metadata")
-                  .not("metadata", "is", null)
-                  .limit(5);
-
-                if (!relatedError && relatedChunks && relatedChunks.length > 0) {
-                  const hasRelatedChunk = relatedChunks.some(chunk => {
-                    if (!chunk.metadata) return false;
-                    const metadata = chunk.metadata;
-                    const chunkUserId = metadata.usuario || metadata.chatbot_user;
-                    const chunkFilename = metadata.file_name || metadata.filename;
-
-                    return chunkUserId === user.id && chunkFilename === doc.filename;
-                  });
-
-                  if (hasRelatedChunk) {
-                    // Se encontrou chunks relacionados, o documento foi processado
-                    finalStatus = "completed";
-
-                    // Atualizar no banco também
-                    await supabase
-                      .from("documents_details")
-                      .update({ status: "completed" })
-                      .eq("id", doc.id);
-                  }
-                }
-              }
-            } catch (err) {
-              console.warn("Erro ao verificar status do documento:", err);
-              // Em caso de erro, assumir completed se o documento existe há mais de 5 minutos
-              const uploadTime = new Date(doc.upload_date);
-              const now = new Date();
-              const minutesSinceUpload = (now.getTime() - uploadTime.getTime()) / (1000 * 60);
-
-              if (minutesSinceUpload > 5) {
-                finalStatus = "completed";
-
-                // Atualizar no banco
-                await supabase
-                  .from("documents_details")
-                  .update({ status: "completed" })
-                  .eq("id", doc.id);
-              }
-            }
-          }
-
-          return {
-            ...doc,
-            status: finalStatus
-          };
-        }));
+      if (detailsError) {
+        console.warn("⚠️ Erro ao carregar detalhes dos documentos:", detailsError);
+        // Não parar aqui, tentar fallback se necessário
       }
 
-      // Se documents_details estiver vazio (não há erro, mas sem dados), buscar de documents
-      if (!error && (!data || data.length === 0)) {
-        // Buscar documentos únicos da tabela documents usando metadata
+      let finalDocuments = detailsData || [];
+
+      // Se a tabela de detalhes estiver vazia, tentar fallback para a tabela de chunks (compatibilidade)
+      if (!finalDocuments.length) {
         const { data: docsData, error: docsError } = await supabase
           .from("documents")
           .select("id, metadata")
           .not("metadata", "is", null)
+          .eq("metadata->>chatbot_user", user.id) // Filtro direto no DB
           .order("id", { ascending: false });
 
         if (docsError) {
-          error = docsError;
+          console.warn("⚠️ Erro ao carregar da tabela documents (fallback):", docsError);
         } else if (docsData && docsData.length > 0) {
-          // Processar e agrupar documentos por metadata
           const documentsMap = new Map();
-
           docsData.forEach(doc => {
             if (doc.metadata) {
               const metadata = doc.metadata;
-              const userId = metadata.usuario || metadata.chatbot_user;
-
-              // Filtrar apenas documentos do usuário atual
-              if (userId === user.id) {
-                const filename = metadata.file_name || metadata.filename;
-                const chatbotName = metadata.chatbot_name || '';
-
-                if (filename && !documentsMap.has(filename)) {
-                  documentsMap.set(filename, {
-                    id: doc.id,
-                    filename: filename,
-                    status: "completed", // Assumir completed se está na tabela documents
-                    file_size: parseInt(metadata.file_size) || 0,
-                    upload_date: metadata.upload_date || new Date().toISOString(), // Usar data do metadata se disponível
-                    summary: `Documento processado via N8N`,
-                    chatbot_name: chatbotName,
-                    file_type: metadata.file_type || 'text/plain'
-                  });
-                }
+              const filename = metadata.file_name || metadata.filename;
+              if (filename && !documentsMap.has(filename)) {
+                documentsMap.set(filename, {
+                  id: doc.id,
+                  filename: filename,
+                  status: "completed", // Se está aqui, está completo
+                  file_size: parseInt(metadata.file_size) || 0,
+                  upload_date: metadata.upload_date || new Date().toISOString(),
+                  summary: `Documento processado via N8N`,
+                  chatbot_name: metadata.chatbot_name || '',
+                  file_type: metadata.file_type || 'text/plain'
+                });
               }
             }
           });
-
-          data = Array.from(documentsMap.values());
+          finalDocuments = Array.from(documentsMap.values());
         }
       }
 
-      // Se documents_details não funcionar, tenta documents como fallback (apenas para compatibilidade)
-      if (error) {
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from("documents")
-          .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
-          .eq("chatbot_user", user.id)
-          .order("upload_date", { ascending: false });
+      // ✅ REGRA FINAL: Se um documento está na lista, seu status é "completed".
+      // Corrige o estado na UI e dispara a correção no banco de dados.
+      const correctedDocuments = finalDocuments.map(doc => {
+        // Se o status no banco não for 'completed', corrigir em segundo plano.
+        if (doc.status !== "completed") {
+          console.log(`🛠️ Corrigindo status para "${doc.filename}" (de "${doc.status}" para "completed")`);
+          // Disparar a atualização sem esperar (fire and forget) para não bloquear a UI.
+          supabase
+            .from("documents_details")
+            .update({ status: "completed" })
+            .eq("id", doc.id)
+            .then(({ error: updateError }) => {
+              if (updateError) {
+                console.error(`❌ Falha ao corrigir status no DB para doc ID ${doc.id}:`, updateError.message);
+              } else {
+                console.log(`✅ Status corrigido no DB para doc ID ${doc.id}`);
+              }
+            });
+        }
+        // Para a UI, o status é sempre "completed".
+        return { ...doc, status: "completed" };
+      });
 
-        // ✅ CORREÇÃO: Garantir que documentos tenham status completed
-        data = fallbackData?.map(doc => ({
-          ...doc,
-          chatbot_user: user.id,
-          status: doc.status || "completed" // Se não tem status, assumir completed
-        }));
-        error = fallbackError;
-      }
+      setDocuments(correctedDocuments);
 
-      if (error) {
-        console.warn("⚠️ Erro ao carregar documentos webhook:", error);
-        setDocuments([]);
-        return;
-      }
-
-      setDocuments(data || []);
     } catch (error) {
-      console.warn("⚠️ Erro ao carregar documentos webhook:", error);
+      console.error("🔥 Erro fatal ao carregar documentos webhook:", error);
       setDocuments([]);
+      toast({
+        variant: "destructive",
+        title: "Erro Crítico",
+        description: "Não foi possível carregar os documentos do webhook.",
+      });
     }
-  }, [user]);
+  }, [user, toast]);
 
   const fetchDocuments = useCallback(async () => {
     if (useLocalProcessing) {
