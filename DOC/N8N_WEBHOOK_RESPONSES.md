@@ -32,17 +32,19 @@
 
 ## 📋 Campos Obrigatórios
 
-### Para Sucesso:
+### Para Sucesso
+
 - `success`: `true`
 - `document_id`: ID do registro em `documents_details`
 - `status`: `"completed"`
 
-### Para Erro:
+### Para Erro
+
 - `success`: `false`
 - `status`: `"error"`
 - `error`: Descrição do erro
 
-## 📋 Campos Opcionais (mas recomendados):
+## 📋 Campos Opcionais (mas recomendados)
 
 - `filename`: Nome do arquivo
 - `chunks_processed`: Número de chunks criados
@@ -51,9 +53,10 @@
 - `error_code`: Código do erro (para casos de erro)
 - `timestamp`: Data/hora do processamento
 
-## 🔄 Fluxo N8N Recomendado:
+## 🔄 Fluxo N8N Recomendado
 
 1. **Receber arquivo**
+
    ```sql
    INSERT INTO documents_details (
      id, filename, chatbot_user, status, upload_date, file_size
@@ -63,11 +66,13 @@
    ```
 
 2. **Processar e criar chunks**
+
    ```sql
    INSERT INTO documents (content, metadata) VALUES ...
    ```
 
 3. **Atualizar status**
+
    ```sql
    UPDATE documents_details 
    SET status = 'completed', summary = 'Processado via N8N'
@@ -76,7 +81,7 @@
 
 4. **Retornar resposta JSON estruturada**
 
-## 🎯 Vantagens da Implementação:
+## 🎯 Vantagens da Implementação
 
 - ✅ Status atualizado em tempo real
 - ✅ Informações detalhadas de processamento
@@ -84,7 +89,7 @@
 - ✅ Interface mais responsiva
 - ✅ Logs estruturados para debug
 
-## ⚠️ Códigos de Erro Sugeridos:
+## ⚠️ Códigos de Erro Sugeridos
 
 - `FILE_TOO_LARGE`: Arquivo muito grande
 - `INVALID_FORMAT`: Formato não suportado
