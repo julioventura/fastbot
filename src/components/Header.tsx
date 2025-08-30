@@ -146,7 +146,7 @@ const Header = () => {
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
                       ? "text-white nav-active-item"
-                      : "text-muted-foreground hover:text-white font-medium"
+                      : "hover-glow-yellow p-3 rounded-sm text-muted-foreground hover:text-white hover:border-1 hover:border-primary hover:bg-primary/90 font-medium"
                     }`
                   }
                   style={({ isActive }) =>
@@ -176,7 +176,7 @@ const Header = () => {
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
                       ? "text-white nav-active-item"
-                      : "text-muted-foreground hover:text-white font-medium"
+                      : "hover-glow-yellow p-3 rounded-sm text-muted-foreground hover:text-white hover:border-1 hover:border-primary hover:bg-primary/90 font-medium"
                     }`
                   }
                   style={({ isActive }) =>
@@ -248,7 +248,7 @@ const Header = () => {
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground hover:text-primary hover:bg-primary/10">
+                  <Button variant="ghost" className="hover-glow-yellow flex items-center space-x-2 text-muted-foreground hover:text-white hover:bg-primary/90">
                     <User className="h-4 w-4" />
                     <span className="hidden lg:inline">{userName || user.email}</span>
                     <ChevronDown className="h-4 w-4" />
@@ -266,7 +266,9 @@ const Header = () => {
                   <DropdownMenuSeparator className="bg-border" />
 
                   <DropdownMenuItem asChild>
-                    <NavLink to="/my-chatbot" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
+                    <NavLink to="/my-chatbot"
+                      className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                    >
                       <MessageSquare className="h-4 w-4" />
                       <span>Meu Chatbot</span>
                     </NavLink>

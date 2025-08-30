@@ -176,13 +176,12 @@
   }
 
   /* Efeitos de glow para hover - Cores variadas */
-  .hover-glow-yellow {
+  /* .hover-glow-yellow {
     filter: drop-shadow(0 0 20px #fbbf24) drop-shadow(0 0 40px #f59e0b) drop-shadow(0 0 60px #f59e0b);
-    /* transform: scale(1.05); */
-  }
+  } */
   /* Efeitos de glow para hover - Cores variadas */
   .hover-glow-yellow:hover {
-    filter: drop-shadow(0 0 40px #fbbf24) drop-shadow(0 0 60px #f59e0b) drop-shadow(0 0 80px #f59e0b);
+    filter: drop-shadow(0 0 40px #fbbf24) drop-shadow(0 0 40px #fa9e00) drop-shadow(0 0 80px #f59e0b);
     /* transform: scale(1.05); */
   }
   
