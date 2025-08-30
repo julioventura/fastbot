@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Layout Responsivo - FastBot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-4">
+  <div class="max-w-4xl mx-auto space-y-6">
+    <h1 class="text-2xl font-bold mb-6">Teste de Layout Responsivo - DocumentUpload</h1>
+
+    <!-- Simulação do título dos documentos -->
+    <div class="bg-black/10 rounded-lg p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 md:w-5 md:h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm0 2h12v10H4V5z" />
+          </svg>
+          <span class="text-base sm:text-lg">Documentos Enviados (5)</span>
+        </div>
+        <button class="h-8 w-8 sm:h-12 sm:w-12 p-0 hover:bg-green-800 rounded">
+          <svg class="h-6 w-6 sm:h-8 sm:w-8 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Estatísticas responsivas -->
+      <div class="space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <!-- Estatísticas dos documentos -->
+          <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 text-left">
+            <span class="text-base sm:text-lg text-green-500">• Processados: 3</span>
+            <span class="text-base sm:text-lg text-red-500">• Com erro: 1</span>
+            <span class="text-base sm:text-lg text-gray-400">• Processando: 1</span>
+          </div>
+
+          <!-- Botão Limpar Erros -->
+          <button class="w-full sm:w-auto px-3 py-1 text-sm bg-red-600 hover:bg-red-700 rounded">
+            🗑️ Limpar Erros
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulação de um documento -->
+    <div class="bg-black/30 border rounded-lg p-4">
+      <!-- Layout responsivo: desktop = linha única, mobile = duas linhas -->
+      <div class="flex flex-col lg:flex-row lg:items-center gap-3">
+
+        <!-- Informações do documento -->
+        <div class="flex items-center gap-2 flex-1 min-w-0">
+          <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-base sm:text-lg truncate">documento-exemplo-muito-longo-para-testar-truncate.pdf
+            </p>
+            <p class="pt-1 text-sm text-gray-400">
+              15/01/2024, 14:30 - 2.5 MB
+            </p>
+          </div>
+        </div>
+
+        <!-- Botões de ação - responsivos -->
+        <div class="flex flex-row flex-wrap sm:flex-nowrap gap-2 lg:flex-shrink-0">
+          <!-- Botão Preview -->
+          <button
+            class="border border-violet-600 hover:border-violet-700 text-violet-400 hover:bg-violet-800 flex-1 sm:flex-none px-3 py-2 rounded text-sm">
+            <svg class="w-4 h-4 mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+              <path fill-rule="evenodd"
+                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <span class="hidden sm:inline">Preview</span>
+            <span class="sm:hidden">Ver</span>
+          </button>
+
+          <!-- Botão Baixar -->
+          <button
+            class="border border-blue-600 hover:border-blue-700 text-blue-400 hover:bg-blue-800 flex-1 sm:flex-none px-3 py-2 rounded text-sm">
+            <svg class="w-4 h-4 mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" />
+            </svg>
+            <span class="hidden sm:inline">Baixar</span>
+            <span class="sm:hidden">Down</span>
+          </button>
+
+          <!-- Botão Excluir -->
+          <button
+            class="border border-red-800 hover:border-red-900 text-red-700 hover:bg-red-800 flex-1 sm:flex-none px-3 py-2 rounded text-sm">
+            <svg class="w-4 h-4 mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" />
+            </svg>
+            <span class="hidden sm:inline">Excluir</span>
+            <span class="sm:hidden">Del</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teste em diferentes larguras -->
+    <div class="mt-8 space-y-4">
+      <h2 class="text-xl font-bold">Instruções para Teste:</h2>
+      <div class="bg-gray-800 p-4 rounded-lg">
+        <p class="text-sm mb-2">Para testar a responsividade:</p>
+        <ol class="text-sm space-y-1 list-decimal list-inside">
+          <li>Abra as ferramentas de desenvolvedor (F12)</li>
+          <li>Ative o modo de visualização responsiva</li>
+          <li>Teste em diferentes tamanhos:
+            <ul class="ml-4 mt-1 space-y-1 list-disc list-inside">
+              <li>Mobile: 375px (iPhone SE)</li>
+              <li>Tablet: 768px (iPad)</li>
+              <li>Desktop: 1024px e maior</li>
+            </ul>
+          </li>
+          <li>Observe como os elementos se reorganizam:</li>
+          <ul class="ml-4 mt-1 space-y-1 list-disc list-inside">
+            <li>Estatísticas ficam em coluna no mobile</li>
+            <li>Botões de ação se adaptam (texto abreviado)</li>
+            <li>Layout geral se reorganiza em telas pequenas</li>
+          </ul>
+        </ol>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,262 @@
+{
+  "name": "InserirRAG",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "4a450929-e344-4312-906f-cecde307aa0e",
+      "name": "Insert Documents",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        -752,
+        -160
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "f5TLCmBz5cfmwrxj",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "InserirRAG",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -928,
+        -160
+      ],
+      "id": "43df9b1c-090c-4ee2-a19f-85abfb7a20de",
+      "name": "Webhook",
+      "webhookId": "8332be25-fc1e-40ae-9d0f-93681b084c6b"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"document_id\": \"{{ $('Detalhes').item.json.id }}\",\n  \"status\": \"completed\",\n  \"message\": \"Documento processado com sucesso\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -96,
+        -160
+      ],
+      "id": "a0c22fdb-73b3-4487-82e3-a46805f6c8f3",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "cee55897-5f4e-47a4-9f5f-4f1b983296f2",
+      "name": "OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        -752,
+        32
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "JRYZgq2q4R4bTjmn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "chatbot_name",
+                "value": "={{ $('Webhook').item.json.body.chatbot }}"
+              },
+              {
+                "name": "usuario",
+                "value": "={{ $('Webhook').item.json.body.userid }}"
+              },
+              {
+                "name": "file_name",
+                "value": "={{ $('Webhook').item.json.body.filename }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        32
+      ],
+      "id": "4a56efc5-9317-4dd7-887f-5fb333175d8e",
+      "name": "Data Loader"
+    },
+    {
+      "parameters": {
+        "tableId": "documents_details",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "chatbot_user",
+              "fieldValue": "={{ $('Webhook').item.json.body.userid }}"
+            },
+            {
+              "fieldId": "filename",
+              "fieldValue": "={{ $('Webhook').item.json.body.filename }}"
+            },
+            {
+              "fieldId": "file_size",
+              "fieldValue": "={{ $('Webhook').item.json.body.filesize }}"
+            },
+            {
+              "fieldId": "chatbot_name",
+              "fieldValue": "={{ $('Webhook').item.json.body.chatbot }}"
+            },
+            {
+              "fieldId": "file_type",
+              "fieldValue": "={{ $('Webhook').item.json.body.filetype }}"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $json.pageContent }}"
+            },
+            {
+              "fieldId": "summary",
+              "fieldValue": "={{ $json.pageContent.length > 1024 ? $json.pageContent.substring(0, 1024) + ' (...)' : $json.pageContent }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "completed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -160
+      ],
+      "id": "a3fbbbaa-07cd-43d5-b4d2-43fd5ad75979",
+      "name": "Detalhes",
+      "credentials": {
+        "supabaseApi": {
+          "id": "f5TLCmBz5cfmwrxj",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "325ea21b-89f8-4426-9196-d8afe0aa914e",
+      "name": "Limit",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        -448,
+        -160
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Insert Documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Documents": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Documents",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Documents",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detalhes": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Detalhes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f9c559e1-5bc5-44f7-a119-8e82c961227a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b2fcf5f6499ba26fde7c82885ceac2969b502d4e87e7127430f7797f7ff853ae"
+  },
+  "id": "sAzgWyLf4fkk4Brb",
+  "tags": []
+}

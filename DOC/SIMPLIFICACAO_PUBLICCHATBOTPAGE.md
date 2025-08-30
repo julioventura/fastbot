@@ -7,6 +7,7 @@ A `PublicChatbotPage` foi completamente simplificada para usar **apenas webhooks
 ## 🔄 O que Foi Removido
 
 ### ❌ Funcionalidades Removidas
+
 - **Busca vetorial local**: `getChatbotContextForUser()`
 - **Processamento de embeddings**: Hook `useVectorStore`
 - **Chamadas diretas à OpenAI**: `generateAIResponse()`
@@ -15,6 +16,7 @@ A `PublicChatbotPage` foi completamente simplificada para usar **apenas webhooks
 - **Integração direta com Supabase** para busca de documentos
 
 ### 🧹 Código Simplificado
+
 - Removidas **~300 linhas** de código complexo
 - Eliminadas dependências desnecessárias
 - Reduzida complexidade de manutenção
@@ -24,6 +26,7 @@ A `PublicChatbotPage` foi completamente simplificada para usar **apenas webhooks
 ### ✅ Nova Arquitetura Simplificada
 
 #### 1. **Função Principal**: `sendToN8NWebhook()`
+
 ```typescript
 const sendToN8NWebhook = async (userMessage: string): Promise<string> => {
   // Envia payload estruturado para N8N
@@ -33,6 +36,7 @@ const sendToN8NWebhook = async (userMessage: string): Promise<string> => {
 ```
 
 #### 2. **Payload Estruturado** (conforme especificação)
+
 ```json
 {
   "message": "Pergunta do usuário",
@@ -57,6 +61,7 @@ const sendToN8NWebhook = async (userMessage: string): Promise<string> => {
 ```
 
 #### 3. **Fallback Inteligente**: `getFallbackResponse()`
+
 - Resposta local quando N8N não está disponível
 - Baseada na configuração do chatbot
 - Respostas contextuais (horário, endereço, etc.)
@@ -64,6 +69,7 @@ const sendToN8NWebhook = async (userMessage: string): Promise<string> => {
 ## 🔧 Como Funciona
 
 ### Fluxo Simplificado
+
 1. **Usuário envia mensagem** → `handleSendMessage()`
 2. **Chamada ao N8N** → `sendToN8NWebhook()`
 3. **N8N processa** (IA + busca vetorial + documentos)
@@ -71,6 +77,7 @@ const sendToN8NWebhook = async (userMessage: string): Promise<string> => {
 5. **Em caso de erro** → `getFallbackResponse()`
 
 ### Responsabilidades Transferidas para N8N
+
 - ✅ **Busca vetorial** nos documentos
 - ✅ **Processamento de embeddings**
 - ✅ **Chamadas à OpenAI**
@@ -81,6 +88,7 @@ const sendToN8NWebhook = async (userMessage: string): Promise<string> => {
 ## 📡 Webhooks Utilizados
 
 ### 1. Conversas do Chatbot
+
 ```bash
 URL: VITE_WEBHOOK_N8N_URL
 Endpoint: https://marte.cirurgia.com.br/webhook/FASTBOT
@@ -88,6 +96,7 @@ Uso: Processamento de todas as mensagens
 ```
 
 ### 2. Upload de Documentos (já existente)
+
 ```bash
 URL: VITE_WEBHOOK_N8N_INSERT_RAG_URL  
 Endpoint: https://marte.cirurgia.com.br/webhook/InserirRAG
@@ -97,21 +106,25 @@ Uso: Upload e processamento de documentos
 ## 🎯 Benefícios da Simplificação
 
 ### ✅ **Manutenibilidade**
+
 - Código mais limpo e fácil de entender
 - Menos dependências para gerenciar
 - Lógica centralizada no N8N
 
 ### ✅ **Performance**
+
 - Menor bundle size
 - Menos processamento no frontend
 - Carregamento mais rápido
 
 ### ✅ **Escalabilidade**
+
 - N8N pode ser escalado independentemente
 - Processamento distribuído
 - Melhor gestão de recursos
 
 ### ✅ **Configurabilidade**
+
 - Mudanças no comportamento via N8N
 - Sem necessidade de rebuild do frontend
 - A/B testing mais fácil
@@ -119,6 +132,7 @@ Uso: Upload e processamento de documentos
 ## 🔄 Compatibilidade
 
 ### ✅ **Mantido**
+
 - Interface visual idêntica
 - Funcionalidades do usuário inalteradas
 - Mesmo formato de resposta
@@ -126,19 +140,22 @@ Uso: Upload e processamento de documentos
 - Fallback em caso de erro
 
 ### ✅ **Melhorado**
+
 - Resposta mais consistente
 - Menor complexidade de debug
 - Logs mais simples e claros
 
 ## 🧪 Testes e Validação
 
-### Para Testar a Implementação:
+### Para Testar a Implementação
+
 1. Acesse um chatbot público: `/public-chatbot/[slug]`
 2. Envie mensagens e verifique respostas
 3. Monitore logs no console do navegador
 4. Teste com N8N offline (deve usar fallback)
 
-### Logs Importantes:
+### Logs Importantes
+
 ```
 🚀 [PublicChatbot] Enviando para N8N
 ✅ [PublicChatbot] Resposta do N8N recebida  

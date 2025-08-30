@@ -1,10 +1,23 @@
 // Script para debug de autenticação
 // Execute: node debug-auth.js
+// Configure as variáveis no .env antes de executar
 
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
-const supabaseUrl = 'https://supabase.cirurgia.com.br';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE';
+// Carregar variáveis de ambiente
+dotenv.config();
+
+const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://supabase.cirurgia.com.br';
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+// Verificar se as variáveis estão configuradas
+if (!supabaseKey) {
+  console.error('❌ ERRO: VITE_SUPABASE_ANON_KEY não configurada no arquivo .env');
+  console.log('📋 Configure o arquivo .env com:');
+  console.log('VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 

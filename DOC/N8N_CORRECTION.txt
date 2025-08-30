@@ -1,37 +1,190 @@
-CORREÇÃO URGENTE - N8N Upload Workflow
-==========================================
+# 🔧 Correção URGENTE do Fluxo N8N - Upload de Documentos
 
-PROBLEMA IDENTIFICADO:
-- N8N está criando 151 registros em documents_details (um por chunk)
-- Deveria criar apenas 1 registro em documents_details por documento
+## 🚨 **Problema Crítico Identificado**
 
-ESTRUTURA CORRETA:
+O fluxo N8N estava criando **151 registros** em `documents_details` (um por chunk) quando deveria criar **apenas 1 registro por documento**.
 
-documents_details (1 registro por documento):
+**Estado Atual**: N8N cria registros mas não salva `content` e `summary`
+**Resultado**: Preview mostra arquivo "vazio" com poucos caracteres
+
+## ✅ **Estrutura Correta**
+
+### **`documents_details` (1 registro por documento)**
+```sql
 - id: UUID único do documento
 - chatbot_user: UUID do usuário  
 - filename: Nome original do arquivo (NÃO timestamp)
-- content: Conteúdo completo do arquivo
+- content: Conteúdo completo do arquivo           -- ⚠️ OBRIGATÓRIO
+- summary: Resumo das primeiras 50 palavras      -- ⚠️ OBRIGATÓRIO
 - file_size: Tamanho em bytes
 - upload_date: Data do upload
-- status: processing -> completed
+- status: 'processing' -> 'completed'
+- chatbot_name: Nome do chatbot
+- file_type: Tipo MIME do arquivo
+```
 
-documents (N registros por chunk):
+### **`documents` (N registros por chunk)**
+```sql
 - id: ID sequencial do chunk
-- content: Texto do chunk
-- metadata: JSON com referências
-- embedding: Vetor de embeddings
+- chatbot_user: UUID do usuário
+- content: Texto do chunk (pedaço do documento)
+- metadata: JSON com referências ao arquivo
+- embedding: Vetor de embeddings do chunk
+```
 
-FLUXO CORRETO N8N:
+## 🔄 **Fluxo Correto N8N**
 
-1. Receber arquivo via FormData
-2. Extrair conteúdo completo
-3. Criar UM registro em documents_details com status 'processing'
-4. Dividir em chunks
-5. Para cada chunk: inserir APENAS em documents (NÃO em documents_details)
-6. Atualizar o mesmo registro em documents_details para 'completed'
+### **1. 📥 Receber Upload**
+```javascript
+// Payload recebido via FormData
+const formData = {
+  data: file,           // Arquivo binário
+  chatbot: "Dolesc",
+  userid: "uuid-do-usuario",
+  filename: "documento.txt",
+  filesize: "1024",
+  filetype: "text/plain"
+};
+```
 
-CRÍTICO:
-- documents_details = 1 registro POR DOCUMENTO
-- documents = N registros POR CHUNK
-- NÃO criar documento_details para cada chunk
+### **2. 📝 Processar Arquivo**
+```javascript
+// Ler conteúdo completo
+const fileContent = $input.binary.data.toString('utf8');
+const documentId = uuidv4();
+
+// Gerar summary
+function generateSummary(content) {
+  const cleanContent = content.replace(/\s+/g, " ").trim();
+  const words = cleanContent.split(" ").slice(0, 50);
+  let summary = words.join(" ");
+  if (cleanContent.split(" ").length > 50) {
+    summary += "...";
+  }
+  return summary || "Resumo não disponível";
+}
+
+const summary = generateSummary(fileContent);
+```
+
+### **3. 💾 Criar UM Registro em `documents_details`**
+```sql
+-- IMPORTANTE: APENAS 1 REGISTRO POR DOCUMENTO
+INSERT INTO documents_details (
+  id,
+  chatbot_user,
+  filename,
+  content,           -- ⚠️ SALVAR CONTEÚDO COMPLETO
+  summary,           -- ⚠️ SALVAR RESUMO GERADO
+  file_size,
+  upload_date,
+  status,
+  chatbot_name,
+  file_type
+) VALUES (
+  $documentId,       -- UUID único
+  $userid,
+  $filename,         -- Nome original (não timestamp)
+  $fileContent,      -- TEXTO COMPLETO DO ARQUIVO
+  $summary,          -- RESUMO DAS PRIMEIRAS 50 PALAVRAS
+  $filesize,
+  NOW(),
+  'processing',      -- Iniciar como processing
+  $chatbot,
+  $filetype
+);
+```
+
+### **4. 🧩 Criar Chunks em `documents`**
+```javascript
+// Dividir em chunks
+function createChunks(content, chunkSize = 1000) {
+  const chunks = [];
+  for (let i = 0; i < content.length; i += chunkSize) {
+    chunks.push(content.substring(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+const chunks = createChunks(fileContent);
+
+// Para cada chunk: inserir APENAS em documents (NÃO em documents_details)
+chunks.forEach(async (chunk, index) => {
+  const embedding = await generateEmbedding(chunk);
+  
+  await supabase
+    .from('documents')
+    .insert({
+      chatbot_user: userid,
+      content: chunk,
+      metadata: {
+        filename: filename,
+        chatbot_user: userid,
+        file_name: filename,
+        usuario: userid,
+        chunk_index: index,
+        total_chunks: chunks.length,
+        document_id: documentId  // Referência ao documento principal
+      },
+      embedding: embedding
+    });
+});
+```
+
+### **5. ✅ Finalizar Documento**
+```sql
+-- Atualizar o MESMO registro para completed
+UPDATE documents_details 
+SET status = 'completed'
+WHERE id = $documentId;
+```
+
+### **6. 📊 Resposta Final**
+```json
+{
+  "success": true,
+  "documentId": "uuid-do-documento",
+  "filename": "documento.txt",
+  "contentLength": 1524,
+  "summaryLength": 89,
+  "chunksCreated": 2,
+  "message": "Documento processado com sucesso"
+}
+```
+
+## 🧪 **Validação com Script de Teste**
+
+Use o script atualizado `debug-preview-webhook.js` que verifica especificamente:
+
+### **Antes da Correção**
+```
+📊 ESTATÍSTICAS:
+📄 Total de documentos: 4
+✅ Com content válido: 0 (0%)
+✅ Com summary válido: 0 (0%)
+❌ PROBLEMA: N8N não está salvando content corretamente!
+❌ PROBLEMA: N8N não está gerando summary!
+```
+
+### **Após a Correção**
+```
+📊 ESTATÍSTICAS:
+📄 Total de documentos: 4
+✅ Com content válido: 4 (100%)
+✅ Com summary válido: 4 (100%)
+🎉 N8N funcionando perfeitamente!
+```
+
+## ✅ **Checklist de Correção**
+
+- [ ] **Criar apenas 1 registro** em `documents_details` por documento
+- [ ] **Salvar content completo** em `documents_details.content`
+- [ ] **Gerar e salvar summary** em `documents_details.summary`
+- [ ] **Criar múltiplos chunks** apenas em `documents`
+- [ ] **Usar filename original** (não timestamp)
+- [ ] **Status: processing → completed**
+- [ ] **Preview funciona** sem mostrar "null"
+
+---
+
+**🎯 Esta correção resolverá definitivamente o problema do preview "null"!**

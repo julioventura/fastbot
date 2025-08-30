@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
+const dotenv = require('dotenv');
+
+// Carregar variáveis de ambiente
+dotenv.config();
 
 const app = express();
 const port = 3001;
@@ -10,10 +14,24 @@ app.use(cors());
 app.use(express.json());
 
 // Configurar variáveis de ambiente
-const OPENAI_API_KEY = "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";
-const SUPABASE_URL = "https://supabase.cirurgia.com.br";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE";
-const SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q";
+const OPENAI_API_KEY = process.env.VITE_OPENAI_API_KEY;
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://supabase.cirurgia.com.br";
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+
+// Verificar se as variáveis estão configuradas
+if (!OPENAI_API_KEY) {
+  console.error('❌ ERRO: VITE_OPENAI_API_KEY não configurada no arquivo .env');
+  process.exit(1);
+}
+if (!SUPABASE_ANON_KEY) {
+  console.error('❌ ERRO: VITE_SUPABASE_ANON_KEY não configurada no arquivo .env');
+  process.exit(1);
+}
+if (!SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('❌ ERRO: VITE_SUPABASE_SERVICE_ROLE_KEY não configurada no arquivo .env');
+  process.exit(1);
+}
 
 // Criar cliente Supabase
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
