@@ -358,7 +358,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => navigate("/configure")}
+                        onClick={() => navigate("/base-de-dados")}
                         disabled={!chatbotData?.chatbot_name}
                         className="w-full text-md px-4 py-6 border-red-600 text-red-400 hover:bg-red-950 hover-glow-red"
                       >

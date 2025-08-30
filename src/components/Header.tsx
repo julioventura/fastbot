@@ -364,18 +364,6 @@ const Header = () => {
                       Meu Chatbot
                     </NavLink>
                     <NavLink
-                      to="/configure"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={({ isActive }) =>
-                        `block py-2 px-4 rounded-lg transition-all duration-300 ${isActive
-                          ? "bg-primary/20 text-primary font-bold"
-                          : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-                        }`
-                      }
-                    >
-                      Configure
-                    </NavLink>
-                    <NavLink
                       to="/base-de-dados"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={({ isActive }) =>

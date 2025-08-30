@@ -173,7 +173,20 @@ const ConversationHistoryPage: React.FC = () => {
         </div> */}
 
         {/* Container Principal */}
-        {/* <div className="bg-gradient-to-br from-blue-950/90 to-black/40 backdrop-blur-sm rounded-2xl border border-blue-700/80 shadow-2xl overflow-hidden"> */}
+
+        {/* CORES DE FUNDO DA ANTIGA PAGINA CONFIGURE */}
+        {/* <div className="min-h-screen bg-gradient-to-br from-purple-900 via-slate-900 to-violet-800">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto bg-violet-950 border border-violet-900 rounded-lg p-6 ">
+
+              {/* Header da página */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white">
+            Configure seu Chatbot
+          </h1>
+        </div> */}
+
+
         <div className="bg-red-950/60 backdrop-blur-sm rounded-2xl border border-red-700/80 shadow-2xl overflow-hidden">
           <div className="p-6 pb-0">
             <div className="flex items-center">

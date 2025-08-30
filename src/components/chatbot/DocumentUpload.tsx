@@ -1106,31 +1106,14 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
           <CardTitle className="flex items-center gap-4 text-base md:text-lg">
             <Upload className="w-6 h-6" />
             Upload de Documentos
-            <span className={`px-3 py-1 text-xs font-medium rounded-full ${useLocalProcessing
-              ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-              : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-              }`}>
-              {useLocalProcessing ? 'LOCAL' : 'WEBHOOK'}
-            </span>
+            {useLocalProcessing && (
+              <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 ml-auto self-end">
+                PROCESSAMENTO LOCAL
+              </span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-3 md:p-6">
-          {/* Descrição do modo ativo */}
-          <div className="mb-4 p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-300">
-                {useLocalProcessing ? (
-                  <>
-                    <span className="text-blue-400 font-medium">Modo Local:</span> Arquivos processados localmente com embeddings salvos no Supabase.
-                  </>
-                ) : (
-                  <>
-                    <span className="text-purple-400 font-medium">Modo Webhook:</span> Arquivos enviados para N8N que processa e registra automaticamente nas tabelas.
-                  </>
-                )}
-              </p>
-            </div>
-          </div>
 
           <div
             {...getRootProps()}
@@ -1176,7 +1159,7 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2 ml-2">
                   <File className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="text-lg">Documentos Enviados &nbsp; ( {documents.length} )</span>
+                  <span className="text-lg text-white/90">Documentos Enviados &nbsp; ( {documents.length} )</span>
                 </div>
 
                 {/* Botão de recolher/expandir */}
@@ -1204,13 +1187,13 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
                     variant="ghost"
                     size="lg"
                     onClick={toggleDocumentsExpansion}
-                    className="h-12 w-12 p-0 hover:bg-green-800"
-                    title={isDocumentsExpanded ? "Recolher lista" : "Expandir lista"}
+                    className="h-14 w-14 p-2 hover:bg-green-800/50 border border-green-600/30 hover:border-green-500/60 rounded-xl transition-all duration-200 hover:scale-105"
+                    title={isDocumentsExpanded ? "Recolher lista de documentos" : "Expandir lista de documentos"}
                   >
                     {isDocumentsExpanded ? (
-                      <ChevronUp className="h-12 w-12" />
+                      <ChevronUp className="h-10 w-10 text-green-400" />
                     ) : (
-                      <ChevronDown className="h-12 w-12" />
+                      <ChevronDown className="h-10 w-10 text-green-400" />
                     )}
                   </Button>
                 </div>
@@ -1221,7 +1204,7 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
           </CardHeader>
 
           <CardContent>
-            {isDocumentsExpanded && (
+            {isDocumentsExpanded ? (
               <div className="space-y-3">
                 {documents.map((doc) => {
                   const statusInfo = getStatusLabel(doc.status);
@@ -1371,6 +1354,18 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
                     </div>
                   );
                 })}
+              </div>
+            ) : (
+              // Modo recolhido: mostrar apenas lista de nomes dos arquivos
+              <div className="bg-black/20 border rounded-lg p-4">
+                <div className="space-y-2">
+                  {documents.map((doc) => (
+                    <div key={doc.id} className="flex items-center gap-2 text-sm">
+                      {getStatusIcon(doc.status)}
+                      <span className="text-gray-200 truncate">{doc.filename}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>
