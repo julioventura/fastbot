@@ -175,7 +175,7 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
         .from("documents_details")
         .select("id, filename, status, file_size, upload_date, summary, chatbot_name, file_type")
         .eq("chatbot_user", user.id)
-        .order("upload_date", { ascending: false });
+        .order("filename", { ascending: true });
 
       if (error) {
         // Não jogue o erro, apenas logue. A interface mostrará a lista vazia.

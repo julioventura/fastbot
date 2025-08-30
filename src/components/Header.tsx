@@ -230,7 +230,8 @@ const Header = () => {
                     setAuthModalTab("login");
                     setIsAuthModalOpen(true);
                   }}
-                  className="text-muted-foreground hover:text-primary hover:bg-primary/10"
+                  className="hover-glow-green bg-green-700 hover:bg-green-500 text-white px-6 py-2 rounded-full font-medium shadow-sm"
+
                 >
                   Entrar
                 </Button>
@@ -239,7 +240,7 @@ const Header = () => {
                     setAuthModalTab("signup");
                     setIsAuthModalOpen(true);
                   }}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-full font-medium shadow-sm"
+                  className="hover-glow-blue bg-blue-700 hover:bg-blue-500 text-primary-foreground px-6 py-2 rounded-full font-medium shadow-sm"
                 >
                   Cadastre-se GRÁTIS
                 </Button>

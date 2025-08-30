@@ -179,7 +179,7 @@ const ConversationHistoryPage: React.FC = () => {
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-6xl mx-auto bg-violet-950 border border-violet-900 rounded-lg p-6 ">
 
-              {/* Header da página */}
+              {/* Header da página 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">
             Configure seu Chatbot
