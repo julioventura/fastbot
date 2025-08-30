@@ -79,15 +79,8 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [chatbotConfig, setChatbotConfig] = useState<ChatbotConfig | null>(null);
-  // Estado da expansão salvo no localStorage, padrão sempre expandido
-  const [isDocumentsExpanded, setIsDocumentsExpanded] = useState(() => {
-    try {
-      const saved = localStorage.getItem('documentsExpanded');
-      return saved !== null ? JSON.parse(saved) : true; // padrão expandido
-    } catch {
-      return true; // padrão expandido em caso de erro
-    }
-  });
+  // Estado da expansão - sempre inicia recolhido
+  const [isDocumentsExpanded, setIsDocumentsExpanded] = useState(false);
   const [processingDocuments, setProcessingDocuments] = useState<Set<string>>(
     new Set()
   );
@@ -109,17 +102,9 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
   const { toast } = useToast();
   const { processDocumentEmbeddings, isProcessing } = useVectorStore();
 
-  // Função para alternar o estado de expansão e salvar no localStorage
+  // Função para alternar o estado de expansão
   const toggleDocumentsExpansion = useCallback(() => {
-    setIsDocumentsExpanded(prev => {
-      const newState = !prev;
-      try {
-        localStorage.setItem('documentsExpanded', JSON.stringify(newState));
-      } catch (error) {
-        console.warn('Erro ao salvar estado de expansão no localStorage:', error);
-      }
-      return newState;
-    });
+    setIsDocumentsExpanded(prev => !prev);
   }, []);
 
   // 🔄 Carregar configuração do chatbot

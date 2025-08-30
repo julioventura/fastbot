@@ -57,8 +57,10 @@ const ConfigurationForm: React.FC = () => {
   }, []);
 
   const borderStyle = {
-    border: "1px solid rgba(255, 255, 255, 0.6)",
-    borderColor: "rgba(255, 255, 255, 0.5)"
+    border: "1px solid rgba(255, 255, 255, 0.3)",
+    borderColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backdropFilter: "blur(8px)"
   };
 
   const addTopic = (topic: string) => {
@@ -208,7 +210,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                   id="chatbot_name"
                   value={localChatbotData.chatbot_name}
                   onChange={(e) => handleChange("chatbot_name", e.target.value)}
-                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
+                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base bg-white/5 border-white/30 focus:border-white/50 focus:bg-white/10 transition-all duration-200 placeholder:text-gray-400"
                   style={borderStyle}
                   placeholder="Ex: Assistente Virtual Dr. Silva"
                   required
@@ -224,7 +226,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                   id="welcome_message"
                   value={localChatbotData.welcome_message}
                   onChange={(e) => handleChange("welcome_message", e.target.value)}
-                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
+                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base bg-white/5 border-white/30 focus:border-white/50 focus:bg-white/10 transition-all duration-200 placeholder:text-gray-400 resize-none"
                   style={borderStyle}
                   rows={6}
                   placeholder="Olá! Como posso ajudar?"
@@ -243,7 +245,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                   id="system_instructions"
                   value={localChatbotData.system_instructions}
                   onChange={(e) => handleChange("system_instructions", e.target.value)}
-                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base"
+                  className="mt-1 md:mt-2 edit-form-input text-sm md:text-base bg-white/5 border-white/30 focus:border-white/50 focus:bg-white/10 transition-all duration-200 placeholder:text-gray-400 resize-none"
                   style={borderStyle}
                   rows={10}
                   placeholder="Você é um assistente virtual e suas principais funções são..."
@@ -278,7 +280,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                             }
                           }
                         }}
-                        className="edit-form-input text-sm md:text-base"
+                        className="edit-form-input text-sm md:text-base bg-white/5 border-white/30 focus:border-white/50 focus:bg-white/10 transition-all duration-200 placeholder:text-gray-400"
                         style={borderStyle}
                       />
                       <Button

@@ -185,7 +185,8 @@ const Header = () => {
                 >
                   Meus Dados
                 </NavLink>
-                <NavLink
+
+                {/* <NavLink
                   to="/conversation-history"
                   className={({ isActive }) =>
                     `transition-all duration-300 text-base leading-none flex items-center ${isActive
@@ -198,7 +199,8 @@ const Header = () => {
                   }
                 >
                   Minhas Conversas
-                </NavLink>
+                </NavLink> */}
+
               </>
             )}
           </nav>
@@ -276,12 +278,17 @@ const Header = () => {
                     </NavLink>
                   </DropdownMenuItem> */}
 
+                  <DropdownMenuSeparator className="bg-border" />
+
+
                   <DropdownMenuItem asChild>
                     <NavLink to="/base-de-dados" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <Database className="h-4 w-4" />
                       <span>Meus Dados</span>
                     </NavLink>
                   </DropdownMenuItem>
+
+                  <DropdownMenuSeparator className="bg-border" />
 
                   <DropdownMenuItem asChild>
                     <NavLink to="/conversation-history" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
@@ -290,7 +297,8 @@ const Header = () => {
                     </NavLink>
                   </DropdownMenuItem>
 
-
+                  {/* <DropdownMenuSeparator className="bg-border" />
+                  <DropdownMenuSeparator className="bg-border" /> */}
                   <DropdownMenuSeparator className="bg-border" />
 
                   <DropdownMenuItem asChild>
