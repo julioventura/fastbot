@@ -194,7 +194,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
         }
       }} className="space-y-6">
 
-        <div className="space-y-4 md:space-y-6 bg-transparent border rounded-lg border-green-400/20 backdrop-blur-sm p-6">
+        <div >
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
 
@@ -204,7 +204,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
               {/* Nome do Chatbot */}
               <div>
                 <Label htmlFor="chatbot_name" className="text-sm md:text-base">
-                  Nome do Chatbot <span className="text-red-500">*</span>
+                  Nome do Chatbot <span className="text-red-500 ml-1 text-lg">*</span>
                 </Label>
                 <Input
                   id="chatbot_name"
@@ -252,13 +252,14 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
                 />
               </div>
             </div>
+
           </div>
 
-          <div className="border-1 border-gray-500">
+          {/* Temas Permitidos */}
+          <div>
 
-            {/* Temas Permitidos */}
-            <div className="space-y-2">
-              <Label className="text-sm md:text-base">Temas Permitidos</Label>
+            <div className="bg-green-900 border border-green-700 rounded-md mt-8 p-4 space-y-2">
+              <Label className="text-base">Temas Permitidos</Label>
 
               {/* Layout responsivo para mobile */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Upload, FileText } from "lucide-react";
+import { Settings, FileText } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 import ConfigurationForm from "@/components/chatbot/ConfigurationForm";
 
@@ -18,50 +18,50 @@ const BaseDeDados: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-green-950 to-emerald-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto border border-green-700 rounded-lg bg-green-900/30 p-6">
+        <div className="max-w-6xl mx-auto border border-slate-700 rounded-lg bg-slate-900/40 p-6">
 
           {/* Header da página */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-white/90">
-              Configuração do Sistema
+              Configuração do Chatbot
             </h1>
             <p className="text-white/60 mt-2">
-              Configure seu chatbot e gerencie a base de dados
+              Configure seu chatbot pelo formulário e adicione arquivos para as respostas
             </p>
           </div>
 
           {/* Tabs Container */}
           <Tabs defaultValue="configuration" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-green-800/30 border border-green-500/30 h-12">
+            <TabsList className="grid w-full grid-cols-2 bg-transparent border-0 h-16 p-0 gap-6">
+
               <TabsTrigger
                 value="configuration"
-                className="flex items-center gap-2 text-white/80 data-[state=active]:bg-green-600/50 data-[state=active]:text-white data-[state=active]:border-green-400"
+                className="relative bg-green-900 border border-green-950 rounded-md text-white/80 text-lg font-semibold px-6 py-4 data-[state=active]:bg-green-600/60 data-[state=active]:text-white data-[state=active]:border-green-900 data-[state=active]:border-b-transparent data-[state=active]:z-10 hover:bg-green-600/50 transition-all duration-200"
+                style={{
+                  clipPath: 'polygon(8px 0%, calc(100% - 8px) 0%, 100% 100%, 0% 100%)'
+                }}
               >
-                <Settings className="h-4 w-4" />
-                Configuração do Chatbot
+                Formulário
               </TabsTrigger>
+
               <TabsTrigger
                 value="documents"
-                className="flex items-center gap-2 text-white/80 data-[state=active]:bg-green-600/50 data-[state=active]:text-white data-[state=active]:border-green-400"
+                className="relative bg-violet-900 border border-violet-950 text-white/80 text-lg font-semibold px-6 py-4 data-[state=active]:bg-violet-600/60 data-[state=active]:text-white data-[state=active]:border-violet-400 data-[state=active]:border-b-transparent data-[state=active]:z-10 hover:bg-violet-600/50 transition-all duration-200"
+                style={{
+                  clipPath: 'polygon(8px 0%, calc(100% - 8px) 0%, 100% 100%, 0% 100%)'
+                }}
               >
-                <FileText className="h-4 w-4" />
-                Base de Dados
+                Adicione Arquivos
               </TabsTrigger>
+
             </TabsList>
 
             {/* Tab Content - Configuração */}
-            <TabsContent value="configuration" className="mt-6">
-              <Card className="bg-green-900/20 border border-green-400/30 backdrop-blur-sm">
+            <TabsContent value="configuration" className="mt-0">
+              <Card className="bg-green-900 border border-green-800 backdrop-blur-sm rounded-t-none border-t-0">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-xl text-white/90 flex items-center justify-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    Configurações do Chatbot
-                  </CardTitle>
-                  <CardDescription className="text-white/60">
-                    Configure o nome e as características do seu chatbot
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ConfigurationForm />
@@ -70,16 +70,9 @@ const BaseDeDados: React.FC = () => {
             </TabsContent>
 
             {/* Tab Content - Documentos */}
-            <TabsContent value="documents" className="mt-6">
-              <Card className="bg-green-900/20 border border-green-400/30 backdrop-blur-sm">
+            <TabsContent value="documents" className="mt-0">
+              <Card className="bg-violet-900 border border-violet-800 backdrop-blur-sm rounded-t-none border-t-0">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-xl text-white/90 flex items-center justify-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Gerenciar Base de Dados
-                  </CardTitle>
-                  <CardDescription className="text-white/60">
-                    Adicione arquivos à base de conhecimento do seu chatbot
-                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <DocumentUpload />

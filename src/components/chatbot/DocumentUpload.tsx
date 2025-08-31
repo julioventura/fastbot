@@ -1172,13 +1172,13 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
                     variant="ghost"
                     size="lg"
                     onClick={toggleDocumentsExpansion}
-                    className="h-14 w-14 p-2 hover:bg-green-800/50 border border-green-600/30 hover:border-green-500/60 rounded-xl transition-all duration-200 hover:scale-105"
+                    className="h-14 w-14 p-2 hover:bg-violet-800 border border-violet-700 hover:border-violet-400 rounded-xl transition-all duration-200 hover:scale-105"
                     title={isDocumentsExpanded ? "Recolher lista de documentos" : "Expandir lista de documentos"}
                   >
                     {isDocumentsExpanded ? (
-                      <ChevronUp className="h-10 w-10 text-green-400" />
+                      <ChevronUp className="h-14 w-14 text-violet-400" />
                     ) : (
-                      <ChevronDown className="h-10 w-10 text-green-400" />
+                      <ChevronDown className="h-14 w-14 text-violet-400" />
                     )}
                   </Button>
                 </div>
@@ -1400,9 +1400,6 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
             }`}>
             <div className="flex flex-col">
               <h2 className="text-lg font-semibold text-white">Preview do Documento</h2>
-              <p className="text-xs text-gray-300 mt-1">
-                💡 Clique no conteúdo e use as setas ↑↓ ou Page Up/Down para navegar
-              </p>
             </div>
             <div className="flex items-center gap-1">
               {/* Botão Maximizar/Restaurar */}
@@ -1454,11 +1451,7 @@ Para visualizar o arquivo original, use o botão "Baixar".`;
                   <span className="text-sm text-gray-200">
                     {previewContent.length} caracteres
                   </span>
-                  {previewContent.length > 500 && (
-                    <span className="text-xs text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded">
-                      ⬆️⬇️ Rolável
-                    </span>
-                  )}
+
                 </div>
               </div>
             </div>
