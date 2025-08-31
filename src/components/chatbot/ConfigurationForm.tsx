@@ -396,7 +396,6 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
               ) : (
                 <>
                   <span className="tracking-wide">Salvar Configurações</span>
-                  <div className="w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
                 </>
               )}
             </div>
