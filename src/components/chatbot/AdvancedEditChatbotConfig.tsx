@@ -284,7 +284,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
             {chatbotData?.chatbot_name && (
               <div className="p-6 border border-slate-600/50 rounded-xl bg-slate-900/60 backdrop-blur-sm shadow-2xl">
 
-                <h4 className="pl-2 text-sm font-medium text-white mb-3">URL do Chatbot</h4>
+                <h4 className="pl-2 text-sl font-medium text-white mb-3">LINK para acessar o seu Chatbot</h4>
 
                 <div className="relative">
                   <code className="mb-10 text-xs md:text-2xl lg:text-3xl bg-green-950 border border-gray-600 p-3 pr-10 rounded-md block w-full overflow-x-auto text-green-400 font-mono font-black">
@@ -315,8 +315,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     {!hideQRCode && (
                       <div className="pt-0 space-y-3">
 
-                        <div className="pl-2 text-md font-medium text-white">Este é o QR-Code do seu Chatbot</div>
-                        <div className="bg-blue-900 border border-gray-500/70 rounded-lg p-12">
+                        <div className="pl-2 text-sl font-medium text-white">QR-CODE para acessar seu Chatbot</div>
+                        <div className="bg-blue-900 border border-gray-500/70 rounded-lg p-10 pb-4">
 
                           {qrCodeDataUrl ? (
                             <div className="space-y-3">
