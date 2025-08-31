@@ -56,7 +56,11 @@ export const useChatbot = () => {
 
         const { data: newData, error: insertError } = await supabase
           .from('mychatbot')
-          .insert([{ ...newChatbot, chatbot_user: user.id }])
+          .insert([{ 
+            ...newChatbot, 
+            chatbot_user: user.id
+            // Removendo created_at e updated_at explícitos - deixar o banco gerenciar
+          }])
           .select()
           .single();
 

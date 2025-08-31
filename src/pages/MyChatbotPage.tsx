@@ -8,6 +8,14 @@ import LoadingScreen from "@/components/account/LoadingScreen";
 import AdvancedEditChatbotConfig from "@/components/chatbot/AdvancedEditChatbotConfig";
 import { ChatbotData } from "@/interfaces";
 import { generateSystemMessage, validateChatbotData } from "@/lib/chatbot-utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const MyChatbotPage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
@@ -56,6 +64,7 @@ const MyChatbotPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showSystemMessagePreview, setShowSystemMessagePreview] = useState(false);
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   // Efeito para garantir que a página inicie no topo
   useEffect(() => {
@@ -131,6 +140,18 @@ const MyChatbotPage: React.FC = () => {
       setIsLoading(false);
     }
   }, [user?.id, toast]);
+
+  // Verificar se o nome do chatbot foi preenchido após carregar os dados
+  useEffect(() => {
+    if (!isLoading && !chatbotData.chatbot_name?.trim()) {
+      setShowConfigModal(true);
+    }
+  }, [isLoading, chatbotData.chatbot_name]);
+
+  const handleNavigateToBaseDeDados = () => {
+    setShowConfigModal(false);
+    navigate("/base-de-dados");
+  };
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -225,9 +246,10 @@ const MyChatbotPage: React.FC = () => {
       } else {
         // INSERIR novo registro
         console.log('➕ [MyChatbotPage] Inserindo novo registro...');
+        // Removendo created_at explícito - deixar o banco gerenciar com DEFAULT NOW()
         const insertData = {
           ...dataToSave,
-          created_at: currentTimestamp,
+          // created_at será definido automaticamente pelo banco
         };
 
         const { data: insertResult, error: insertError } = await supabase
@@ -366,8 +388,35 @@ const MyChatbotPage: React.FC = () => {
           showSystemMessagePreview={showSystemMessagePreview}
           onPreviewSystemMessage={handlePreviewSystemMessage}
           systemMessagePreview={systemMessagePreview}
+          hideQRCode={!chatbotData.chatbot_name?.trim()} // Ocultar QR Code se o nome não estiver preenchido
         />
+
+
       </div>
+
+      {/* Modal de Configuração */}
+      <Dialog open={showConfigModal} onOpenChange={setShowConfigModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg font-semibold">
+              Configure seu Chatbot
+            </DialogTitle>
+            <DialogDescription className="text-center mt-4">
+              Configure os dados do seu chatbot na seção "Meus Dados"
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center mt-6">
+            <Button
+              onClick={handleNavigateToBaseDeDados}
+              className="px-8 py-2"
+            >
+              Configurar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+
 
     </div>
   );

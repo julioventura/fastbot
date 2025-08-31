@@ -87,6 +87,7 @@ export interface ChatbotConfigProps {
   showSystemMessagePreview?: boolean;
   onPreviewSystemMessage?: () => void;
   systemMessagePreview?: string;
+  hideQRCode?: boolean; // Ocultar seção do QR Code quando nome não estiver preenchido
 }
 
 /**

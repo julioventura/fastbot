@@ -6,6 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings, Upload, FileText } from "lucide-react";
 import DocumentUpload from "@/components/chatbot/DocumentUpload";
 import ConfigurationForm from "@/components/chatbot/ConfigurationForm";
 
@@ -23,75 +25,68 @@ const BaseDeDados: React.FC = () => {
           {/* Header da página */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-white/90">
-              Meus Dados
+              Configuração do Sistema
             </h1>
+            <p className="text-white/60 mt-2">
+              Configure seu chatbot e gerencie a base de dados
+            </p>
           </div>
 
-          {/* Seção de Configuração do Chatbot */}
-          <div className="mb-8">
-            <ConfigurationForm />
-          </div>
+          {/* Tabs Container */}
+          <Tabs defaultValue="configuration" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-green-800/30 border border-green-500/30 h-12">
+              <TabsTrigger
+                value="configuration"
+                className="flex items-center gap-2 text-white/80 data-[state=active]:bg-green-600/50 data-[state=active]:text-white data-[state=active]:border-green-400"
+              >
+                <Settings className="h-4 w-4" />
+                Configuração do Chatbot
+              </TabsTrigger>
+              <TabsTrigger
+                value="documents"
+                className="flex items-center gap-2 text-white/80 data-[state=active]:bg-green-600/50 data-[state=active]:text-white data-[state=active]:border-green-400"
+              >
+                <FileText className="h-4 w-4" />
+                Base de Dados
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Card principal da Base de Dados */}
-          <div className="border border-green-400/30 rounded-lg bg-green-900/20 backdrop-blur-sm p-6">
+            {/* Tab Content - Configuração */}
+            <TabsContent value="configuration" className="mt-6">
+              <Card className="bg-green-900/20 border border-green-400/30 backdrop-blur-sm">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-xl text-white/90 flex items-center justify-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Configurações do Chatbot
+                  </CardTitle>
+                  <CardDescription className="text-white/60">
+                    Configure o nome e as características do seu chatbot
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ConfigurationForm />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-            {/* Header da seção */}
-            <div className="mb-6 text-center">
-              <h2 className="text-2xl font-bold text-white/90">
-                Adicione arquivos
-              </h2>
-              <p className="text-white/50 mt-2">
-                Adicione arquivos à base de dados do seu chatbot.
-              </p>
-            </div>
-
-            <Card className="bg-transparent border border-green-400/20 backdrop-blur-sm">
-
-              <CardContent className="space-y-3 md:space-y-6 p-3 md:p-6">
-
-                {/* Upload de Documentos */}
-                <div>
+            {/* Tab Content - Documentos */}
+            <TabsContent value="documents" className="mt-6">
+              <Card className="bg-green-900/20 border border-green-400/30 backdrop-blur-sm">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-xl text-white/90 flex items-center justify-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Gerenciar Base de Dados
+                  </CardTitle>
+                  <CardDescription className="text-white/60">
+                    Adicione arquivos à base de conhecimento do seu chatbot
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
                   <DocumentUpload />
-                </div>
-
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Informações adicionais */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* Card de dicas */}
-            {/* <Card className="bg-green-800/30 border-green-600/40 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white text-lg">
-                  💡 Dicas para sua Base de Dados
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-green-100">
-                <ul className="space-y-4 text-sl">
-                  <li>• Inclua informações relevantes para o chatbot responder, como seus endereços, horários, telefones, emails, produtos e serviços que oferece.</li>
-                  <li>• Atualize regularmente o conteúdo</li>
-                </ul>
-              </CardContent>
-            </Card> */}
-
-            {/* Card de formatos suportados */}
-            {/* <Card className="bg-green-800/30 border-green-600/40 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white text-lg">
-                  📁 Formatos Suportados
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-green-100">
-                <ul className="space-y-4 text-sl">
-                  <li>• <strong>TXT:</strong> Arquivos de texto simples. Crie no Word ou Google Drive e salve/exporte como arquivo de texto (txt).</li>
-                  <li>• <strong>Em breve: </strong> PDF, .docx, áudio e imagens.</li>
-                </ul>
-              </CardContent>
-            </Card> */}
-
-          </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
 
         </div>
       </div>

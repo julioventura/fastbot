@@ -40,6 +40,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   showSystemMessagePreview,
   onPreviewSystemMessage,
   systemMessagePreview,
+  hideQRCode = false, // Nova propriedade com valor padrão false
 }) => {
   const [isDark, setIsDark] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -310,43 +311,66 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                   {/* Coluna 1 - URL e QR-Code */}
                   <div className="space-y-8">
 
+                    {/* QR-Code - Mostrar apenas se hideQRCode for false */}
+                    {!hideQRCode && (
+                      <div className="pt-0 space-y-3">
 
-                    {/* QR-Code */}
-                    <div className="pt-0 space-y-3">
+                        <div className="pl-2 text-md font-medium text-white">Este é o QR-Code do seu Chatbot</div>
+                        <div className="bg-blue-900 border border-gray-500/70 rounded-lg p-12">
 
-                      <h4 className="pl-2 text-sm font-medium text-white">QR-Code do Chatbot</h4>
-                      <div className="bg-blue-900 border border-gray-500/70 rounded-lg p-12">
-
-                        {qrCodeDataUrl ? (
-                          <div className="space-y-3">
-                            <div className="flex justify-center">
-                              <div
-                                className="bg-white rounded-xl p-2 shadow-2xl shadow-black/90 transition-all duration-300 hover:scale-95 hover:-rotate-[6deg] hover:shadow-[0_0_24px_8px_rgba(255,255,255,0.7)]"
-                                style={{
-                                  display: "inline-block",
-                                  transition: "transform 0.3s, box-shadow 0.3s",
-                                }}
-                              >
-                                <img
-                                  src={qrCodeDataUrl}
-                                  alt="QR-Code do Chatbot"
-                                  className="w-48 h-48 object-contain"
-                                />
+                          {qrCodeDataUrl ? (
+                            <div className="space-y-3">
+                              <div className="flex justify-center">
+                                <div
+                                  className="bg-white rounded-xl p-2 shadow-2xl shadow-black/90 transition-all duration-300 hover:scale-95 hover:-rotate-[6deg] hover:shadow-[0_0_24px_8px_rgba(255,255,255,0.7)]"
+                                  style={{
+                                    display: "inline-block",
+                                    transition: "transform 0.3s, box-shadow 0.3s",
+                                  }}
+                                >
+                                  <img
+                                    src={qrCodeDataUrl}
+                                    alt="Este é o QR-Code do seu Chatbot"
+                                    className="w-48 h-48 object-contain"
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ) : (
-                          <div className="text-center py-6">
-                            <QrCode className="w-8 h-8 mx-auto mb-2 text-slate-500" />
-                            <p className="text-xs text-slate-400">
-                              QR-Code será gerado automaticamente
-                            </p>
-                          </div>
-                        )}
+                          ) : (
+                            <div className="text-center py-6">
+                              <QrCode className="w-8 h-8 mx-auto mb-2 text-slate-500" />
+                              <p className="text-xs text-slate-400">
+                                QR-Code será gerado automaticamente
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Botão Baixar QR-Code - Mostrar apenas se hideQRCode for false */}
+                          {!hideQRCode && (
+                            <Button
+                              type="button"
+                              variant="link"
+                              onClick={downloadQRCode}
+                              className="w-full text-white text-lg mt-12 mb-0 pb-3 hover:border-violet-600 hover:bg-violet-950 hover-glow-violet flex items-center justify-center"
+                            >
+                              <Download
+                                className="mr-3 flex-shrink-0 text-white"
+                                size={24}
+                                style={{
+                                  width: '24px',
+                                  height: '24px',
+                                  minWidth: '24px',
+                                  minHeight: '24px'
+                                }}
+                              />
+                              Baixar QR-Code
+                            </Button>
+                          )}
+
+                        </div>
 
                       </div>
-
-                    </div>
+                    )}
 
                   </div>
 
@@ -355,7 +379,8 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                     <h4 className="pl-2 text-sm font-medium text-white">&nbsp;</h4>
                     <div className="space-y-6">
 
-                      <Button
+                      {/* Botão Configure seu Chatbot */}
+                      {/* <Button
                         type="button"
                         variant="outline"
                         onClick={() => navigate("/base-de-dados")}
@@ -364,26 +389,27 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                       >
                         <ExternalLink size={18} className="mr-2" />
                         Configure seu Chatbot
-                      </Button>
+                      </Button> */}
 
-
+                      {/* Botão Abrir Chatbot */}
                       <Button
                         type="button"
                         variant="outline"
                         onClick={handleOpenPublicChatbot}
                         disabled={!chatbotData?.chatbot_name}
-                        className="w-full text-md px-4 py-6 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
+                        className="w-full text-lg px-4 py-6 border-green-600 text-green-400 hover:bg-green-950 hover-glow-green"
                       >
                         <ExternalLink size={18} className="mr-2" />
                         Abrir Chatbot
                       </Button>
 
+                      {/* Botão Copiar Link */}
                       <Button
                         type="button"
                         variant="outline"
                         onClick={handleCopyPublicLink}
                         disabled={!chatbotData?.chatbot_name}
-                        className="w-full text-md px-4 py-6 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
+                        className="w-full text-lg px-4 py-6 border-blue-600 text-blue-400 hover:bg-blue-950 hover-glow-blue"
                       >
                         {publicLinkCopied ? (
                           <>
@@ -398,15 +424,6 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
                         )}
                       </Button>
 
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={downloadQRCode}
-                        className="w-full text-md py-6 border-violet-600 text-violet-600 hover:bg-violet-950 hover-glow-violet"
-                      >
-                        <Download className="w-4 h-4 mr-1" />
-                        Baixar QR-Code
-                      </Button>
                     </div>
                   </div>
 

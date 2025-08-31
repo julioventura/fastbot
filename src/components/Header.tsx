@@ -183,7 +183,7 @@ const Header = () => {
                     isActive ? { fontWeight: '950' } : {}
                   }
                 >
-                  Meus Dados
+                  Configuração
                 </NavLink>
 
                 {/* <NavLink
@@ -274,20 +274,12 @@ const Header = () => {
                     </NavLink>
                   </DropdownMenuItem>
 
-                  {/* <DropdownMenuItem asChild>
-                    <NavLink to="/configure" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
-                      <Settings className="h-4 w-4" />
-                      <span>Configure</span>
-                    </NavLink>
-                  </DropdownMenuItem> */}
-
                   <DropdownMenuSeparator className="bg-border" />
-
 
                   <DropdownMenuItem asChild>
                     <NavLink to="/base-de-dados" className="flex items-center space-x-2 px-3 py-2 text-muted-foreground hover:bg-primary/10 hover:text-primary">
                       <Database className="h-4 w-4" />
-                      <span>Meus Dados</span>
+                      <span>Configuração</span>
                     </NavLink>
                   </DropdownMenuItem>
 
@@ -384,7 +376,7 @@ const Header = () => {
                         }`
                       }
                     >
-                      Meus Dados
+                      Configuração
                     </NavLink>
                     <NavLink
                       to="/conversation-history"

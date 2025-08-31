@@ -340,24 +340,18 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
         </div>
 
         {/* Botões de ação */}
-        <div className="pb-0 flex flex-col md:flex-row justify-center items-center w-full gap-4 md:gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-center w-full gap-4 md:gap-6">
 
           <button
             type="button"
             onClick={handlePreviewSystemMessage}
             disabled={isSaving}
-            className={`group relative px-6 py-3 md:px-8 md:py-4 rounded-2xl transition-all duration-300 ease-in-out text-sm md:text-base font-bold min-w-[280px] md:min-w-[320px] overflow-hidden border ${showSystemMessagePreview
+            className={`group relative px-8 py-2 rounded-2xl transition-all duration-300 ease-in-out text-sm md:text-base font-bold min-w-[280px] md:min-w-[320px] overflow-hidden border ${showSystemMessagePreview
               ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 text-white shadow-2xl shadow-purple-500/30 transform hover:scale-105 hover:shadow-purple-500/40 border-purple-400/30 hover:border-purple-300/50'
               : 'bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 border-slate-500/50 text-slate-200 hover:text-white hover:from-slate-700 hover:via-slate-600 hover:to-slate-500 hover:border-slate-400/70 hover:shadow-xl hover:shadow-slate-500/20 hover:scale-105'
               } disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
           >
-            {/* Efeito de brilho animado */}
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className={`absolute inset-0 rounded-2xl ${showSystemMessagePreview
-                ? 'bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-red-400/20'
-                : 'bg-gradient-to-r from-slate-400/10 via-slate-300/10 to-slate-400/10'
-                } animate-pulse`} />
-            </div>
+
 
             {/* Conteúdo do botão */}
             <div className="relative flex items-center justify-center gap-3 z-10">
@@ -376,7 +370,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
           <Button
             type="submit"
             disabled={isSaving}
-            className="group relative w-full md:w-auto min-w-[280px] md:min-w-[320px] px-6 py-3 md:px-8 md:py-4 text-sm md:text-base font-bold rounded-2xl 
+            className="group relative w-full md:w-auto min-w-[280px] md:min-w-[320px] px-8 py-6 text-sm md:text-base font-bold rounded-2xl 
                      bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 
                      hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 
                      text-white shadow-xl shadow-green-500/25 
@@ -392,7 +386,7 @@ Mantenha sempre um tom profissional e prestativo em suas respostas.`;
             </div>
 
             {/* Conteúdo do botão */}
-            <div className="relative flex items-center justify-center gap-3 z-10">
+            <div className="relative flex items-center justify-center gap-3  z-10">
               {isSaving ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
