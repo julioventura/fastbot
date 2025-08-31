@@ -12,6 +12,13 @@ import { useChatbot } from "@/hooks/useChatbot";
 import { useToast } from "@/hooks/use-toast";
 import LoadingScreen from "@/components/account/LoadingScreen";
 
+// Extend window interface for QR Code cache function
+declare global {
+  interface Window {
+    clearQRCodeCacheOnSave?: (newName: string, oldName?: string) => void;
+  }
+}
+
 const ConfigurationForm: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -93,6 +100,10 @@ const ConfigurationForm: React.FC = () => {
     setIsSaving(true);
 
     try {
+      // Salvar nome anterior para limpar cache
+      const oldChatbotName = chatbotData?.chatbot_name || '';
+      const newChatbotName = localChatbotData.chatbot_name;
+
       // Usar o hook para atualizar os dados
       const result = await updateChatbotData({
         chatbot_name: localChatbotData.chatbot_name,
@@ -105,6 +116,13 @@ const ConfigurationForm: React.FC = () => {
       } as Partial<ChatbotData>);
 
       if (result?.success) {
+        // Limpar cache do QR-Code se o nome foi alterado
+        if (oldChatbotName !== newChatbotName && newChatbotName.trim()) {
+          if (window.clearQRCodeCacheOnSave) {
+            window.clearQRCodeCacheOnSave(newChatbotName, oldChatbotName);
+          }
+        }
+
         toast({
           variant: "success",
           title: "SUCESSO",

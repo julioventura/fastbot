@@ -30,6 +30,20 @@ import { useShortMemory } from "@/hooks/useShortMemory";
 import { useAuth } from "@/lib/auth/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import QRCode from "qrcode";
+import {
+  createSlug,
+  getQRCodeFromCache,
+  saveQRCodeToCache,
+  clearQRCodeCache,
+  onChatbotNameSaved
+} from "@/utils/qrCodeCache";
+
+// Extend window interface for QR Code cache function
+declare global {
+  interface Window {
+    clearQRCodeCacheOnSave?: (newName: string, oldName?: string) => void;
+  }
+}
 
 const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   chatbotData,
@@ -53,17 +67,17 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Função para criar slug a partir do nome do chatbot
-  const createSlug = (name: string): string => {
-    return name
-      .toLowerCase()
-      .normalize('NFD') // Decompor caracteres acentuados
-      .replace(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
-      .replace(/ç/g, 'c') // Substituir ç por c
-      .replace(/Ç/g, 'c') // Substituir Ç por c
-      .replace(/[^a-z0-9]/g, '') // Remover tudo que não for letra ou número
-      .trim();
-  };
+  // Função para criar slug a partir do nome do chatbot (removida - usando do utils)
+  // const createSlug = (name: string): string => {
+  //   return name
+  //     .toLowerCase()
+  //     .normalize('NFD') // Decompor caracteres acentuados
+  //     .replace(/[\u0300-\u036f]/g, '') // Remover diacríticos (acentos)
+  //     .replace(/ç/g, 'c') // Substituir ç por c
+  //     .replace(/Ç/g, 'c') // Substituir Ç por c
+  //     .replace(/[^a-z0-9]/g, '') // Remover tudo que não for letra ou número
+  //     .trim();
+  // };
 
   // Funções para link público
   const getPublicChatbotUrl = useCallback(() => {
@@ -107,7 +121,7 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
   };
 
   // Função para gerar QR-code
-  const generateQRCode = useCallback(async (url: string): Promise<string> => {
+  const generateQRCode = useCallback(async (url: string, forceRefresh: boolean = false): Promise<string> => {
     try {
       const qrCodeDataUrl = await QRCode.toDataURL(url, {
         width: 512,
@@ -117,24 +131,43 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
           light: '#FFFFFF'
         }
       });
+
+      // Salvar no cache se há um nome de chatbot
+      if (chatbotData?.chatbot_name && !forceRefresh) {
+        saveQRCodeToCache(chatbotData.chatbot_name, qrCodeDataUrl);
+      }
+
       return qrCodeDataUrl;
     } catch (error) {
       console.error('Erro ao gerar QR-code:', error);
       throw error;
     }
-  }, []);
+  }, [chatbotData?.chatbot_name]);
 
-  // Gerar QR-Code automaticamente quando a URL muda
+  // Gerar QR-Code automaticamente quando a URL muda (com cache)
   useEffect(() => {
     const generateQRCodeAuto = async () => {
       const url = getPublicChatbotUrl();
-      if (!url) return;
+      if (!url || !chatbotData?.chatbot_name) {
+        setQrCodeDataUrl('');
+        return;
+      }
 
       try {
+        // Primeiro, tentar obter do cache
+        const cachedQRCode = getQRCodeFromCache(chatbotData.chatbot_name);
+        if (cachedQRCode) {
+          setQrCodeDataUrl(cachedQRCode);
+          return;
+        }
+
+        // Se não houver cache, gerar novo
+        console.log('Gerando novo QR-Code...');
         const qrDataUrl = await generateQRCode(url);
         setQrCodeDataUrl(qrDataUrl);
       } catch (error) {
         console.error('Erro ao gerar QR-code:', error);
+        setQrCodeDataUrl('');
       }
     };
 
@@ -145,17 +178,55 @@ const AdvancedEditChatbotConfig: React.FC<ChatbotConfigProps> = ({
     }
   }, [chatbotData?.chatbot_name, getPublicChatbotUrl, generateQRCode]);
 
-  // Função para baixar o QR-code
-  const downloadQRCode = () => {
-    if (!qrCodeDataUrl) return;
+  // Função para baixar o QR-code (com refresh)
+  const downloadQRCode = async () => {
+    const url = getPublicChatbotUrl();
+    if (!url || !chatbotData?.chatbot_name) return;
 
-    const link = document.createElement('a');
-    link.download = `qrcode-${createSlug(chatbotData.chatbot_name || 'chatbot')}.png`;
-    link.href = qrCodeDataUrl;
-    link.click();
+    try {
+      // Força refresh do QR-Code ao baixar
+      console.log('Refreshing QR-Code para download...');
+      const freshQRCode = await generateQRCode(url, true);
+
+      // Atualiza o estado com o novo QR-Code
+      setQrCodeDataUrl(freshQRCode);
+
+      // Atualiza o cache com o novo QR-Code
+      saveQRCodeToCache(chatbotData.chatbot_name, freshQRCode);
+
+      // Realiza o download
+      const link = document.createElement('a');
+      link.download = `qrcode-${createSlug(chatbotData.chatbot_name)}.png`;
+      link.href = freshQRCode;
+      link.click();
+
+      console.log('QR-Code atualizado e download iniciado');
+    } catch (error) {
+      console.error('Erro ao refresh/download do QR-code:', error);
+      // Fallback: usar o QR-Code atual se houver erro
+      if (qrCodeDataUrl) {
+        const link = document.createElement('a');
+        link.download = `qrcode-${createSlug(chatbotData.chatbot_name)}.png`;
+        link.href = qrCodeDataUrl;
+        link.click();
+      }
+    }
   };
 
   // Hook para Short-Memory - removido pois agora está em página separada
+
+  // Expor função de limpeza de cache globalmente para uso quando salvar chatbot
+  useEffect(() => {
+    // Disponibilizar função global para limpar cache quando nome do chatbot for salvo
+    window.clearQRCodeCacheOnSave = (newName: string, oldName?: string) => {
+      onChatbotNameSaved(newName, oldName);
+    };
+
+    // Cleanup ao desmontar componente
+    return () => {
+      delete window.clearQRCodeCacheOnSave;
+    };
+  }, []);
 
   useEffect(() => {
     const checkTheme = () => {
