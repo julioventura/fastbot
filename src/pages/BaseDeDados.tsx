@@ -25,7 +25,7 @@ const BaseDeDados: React.FC = () => {
           {/* Header da página */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-white/90">
-              Configuração do Chatbot
+              Configuração do Assistente Online
             </h1>
             <p className="text-white/60 mt-2">
               Configure seu chatbot pelo formulário e adicione arquivos para as respostas
@@ -33,12 +33,12 @@ const BaseDeDados: React.FC = () => {
           </div>
 
           {/* Tabs Container */}
-          <Tabs defaultValue="configuration" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-transparent border-0 h-16 p-0 gap-6">
+          <Tabs defaultValue="configuration">
+            <TabsList className="grid w-full grid-cols-2 bg-transparent border-0 h-16 p-0 m-0 gap-0">
 
               <TabsTrigger
                 value="configuration"
-                className="relative bg-green-900 border border-green-950 rounded-md text-white/80 text-lg font-semibold px-6 py-4 data-[state=active]:bg-green-600/60 data-[state=active]:text-white data-[state=active]:border-green-900 data-[state=active]:border-b-transparent data-[state=active]:z-10 hover:bg-green-600/50 transition-all duration-200"
+                className="relative bg-green-900 text-white/80 text-sm md:text-lg font-semibold px-6 py-4 data-[state=active]:bg-green-800 data-[state=active]:text-white data-[state=active]:border-green-900 data-[state=active]:border-b-transparent data-[state=active]:z-10 hover:bg-green-600 transition-all duration-200"
                 style={{
                   clipPath: 'polygon(8px 0%, calc(100% - 8px) 0%, 100% 100%, 0% 100%)'
                 }}
@@ -48,7 +48,7 @@ const BaseDeDados: React.FC = () => {
 
               <TabsTrigger
                 value="documents"
-                className="relative bg-violet-900 border border-violet-950 text-white/80 text-lg font-semibold px-6 py-4 data-[state=active]:bg-violet-600/60 data-[state=active]:text-white data-[state=active]:border-violet-400 data-[state=active]:border-b-transparent data-[state=active]:z-10 hover:bg-violet-600/50 transition-all duration-200"
+                className="relative bg-violet-900 text-white/80 text-sm md:text-lg font-semibold px-6 py-4 data-[state=active]:bg-violet-800 data-[state=active]:text-white data-[state=active]:border-violet-400 data-[state=active]:border-b-transparent data-[state=active]:z-10 hover:bg-violet-600 transition-all duration-200"
                 style={{
                   clipPath: 'polygon(8px 0%, calc(100% - 8px) 0%, 100% 100%, 0% 100%)'
                 }}

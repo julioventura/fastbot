@@ -366,6 +366,7 @@ const Header = () => {
                     >
                       Meu Chatbot
                     </NavLink>
+
                     <NavLink
                       to="/base-de-dados"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -378,6 +379,7 @@ const Header = () => {
                     >
                       Configuração
                     </NavLink>
+
                     <NavLink
                       to="/conversation-history"
                       onClick={() => setIsMobileMenuOpen(false)}

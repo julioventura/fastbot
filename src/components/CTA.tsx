@@ -13,6 +13,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import faleonlineImg from '@/assets/images/faleonline.png';
 // import { ArrowRight } from 'lucide-react'; // Ícone ArrowRight importado mas não utilizado no JSX atual.
 
 
@@ -45,13 +46,26 @@ export default function CTA() {
                 É só configurar... e USAR !
               </p>
 
-              {/* Imagem GPT-5 - Badge de destaque */}
-              <div className="hover-glow-violet flex justify-center my-4 md:my-6">
-                <img
-                  src="https://dentistas.com.br/fastbot/GPT-5.png"
-                  alt="Powered by GPT-5"
-                  className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 auto-rotate-360 cursor-pointer"
-                />
+              {/* Container para as imagens - lado a lado em telas médias/grandes */}
+              <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 my-4 md:my-6">
+
+                {/* Imagem Fale Online - Badge de destaque */}
+                {/* <div className="hover-glow-violet flex justify-center">
+                  <img
+                    src={faleonlineImg}
+                    alt="Fale Online"
+                    className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 auto-rotate-360 cursor-pointer"
+                  />
+                </div> */}
+
+                {/* Imagem GPT-5 - Badge de destaque */}
+                <div className="hover-glow-violet flex justify-center">
+                  <img
+                    src="https://dentistas.com.br/fastbot/GPT-5.png"
+                    alt="Powered by GPT-5"
+                    className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 auto-rotate-360 cursor-pointer"
+                  />
+                </div>
               </div>
 
               {/* Botão de Chamada para Ação */}

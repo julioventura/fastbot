@@ -18,6 +18,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth/useAuth";
 import AuthModal from '@/components/auth/AuthModal';
 
+// Imagem Fale Online - defina o caminho correto da imagem
+const faleonlineImg = "https://dentistas.com.br/fastbot/faleonline.png";
+
 // Componente Hero
 // Define a estrutura e o layout da seção principal (Hero) da página inicial.
 const Hero = () => {
@@ -188,6 +191,15 @@ const Hero = () => {
             {/* Coluna do texto - lado esquerdo) */}
             <div className="lg:col-span-3 flex flex-col justify-center space-y-8 py-0">
 
+              {/* Imagem Fale Online - Badge de destaque */}
+              {/* <div className="hover-glow-violet flex">
+                <img
+                  src={faleonlineImg}
+                  alt="Fale Online"
+                  className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
+                />
+              </div> */}
+
               {/* Container flex para título e selo GPT-5 no mobile */}
               <div className="flex flex-col lg:block relative">
                 {/* Container flex horizontal para mobile - lado a lado */}
@@ -219,22 +231,34 @@ const Hero = () => {
                     </span>
                   </div>
 
+
                   {/* Selo GPT-5 - mobile: lado direito maior, desktop: centralizado depois */}
-                  <div className="hover-glow-violet flex justify-center items-start lg:justify-center mt-0 pt-0 lg:mt-6 mr-2 lg:mr-0">
+                  <div className="hover-glow-violet flex items-start mt-0 pt-0 lg:mt-6 mr-2 lg:mr-0">
                     <img
                       src="https://dentistas.com.br/fastbot/GPT-5.png"
                       alt="Powered by GPT-5"
-                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 hover:opacity-100 auto-rotate-360 cursor-pointer"
+                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 auto-rotate-360 hover:opacity-100 cursor-pointer"
                     />
                   </div>
+
                 </div>
               </div>
 
-              {/* Botão CTA */}
               <div>
 
+                {/* Botão de Chamada para Ação */}
+                <div className="mt-6 md:mt-10">
+                  <Button
+                    onClick={() => navigate('/base-de-dados')}
+                    className="hover-glow-blue bg-primary hover:bg-primary/90 text-primary-foreground px-6 md:px-8 py-4 md:py-6 text-2xl rounded-full w-full md:w-auto"
+                  >
+                    CRIE AGORA A SUA ASSISTENTE DE IA
+                  </Button>
+                </div>
+
+
                 {/* BADGE DE DESTAQUE 1 */}
-                <div className="flex flex-row gap-1 justify-center md:justify-start ml-0 md:ml-2 lg:ml-10 mb-2 md:mb-4">
+                {/* <div className="flex flex-row gap-1 justify-center md:justify-start ml-0 md:ml-2 lg:ml-10 mb-2 md:mb-4">
                   <Button
                     onClick={() => {
                       // Scroll suave até o componente Pricing
@@ -250,10 +274,10 @@ const Hero = () => {
                   >
                     <span>ATENDE NO WHATSAPP...</span>
                   </Button>
-                </div>
+                </div> */}
 
                 {/* BADGE DE DESTAQUE 2 */}
-                <div className="flex flex-row gap-1 justify-center md:justify-start ml-0 md:ml-2 lg:ml-10 mb-2 md:mb-4">
+                {/* <div className="flex flex-row gap-1 justify-center md:justify-start ml-0 md:ml-2 lg:ml-10 mb-2 md:mb-4">
                   <Button
                     onClick={() => {
                       // Scroll suave até o componente Pricing
@@ -269,7 +293,7 @@ const Hero = () => {
                   >
                     <span>ATENDE NO INSTAGRAM...</span>
                   </Button>
-                </div>
+                </div> */}
 
                 {/* <div className="ml-2 md:ml-10">
                   <span className="block md:inline">ATENDIMENTO 24H</span>{" "}
