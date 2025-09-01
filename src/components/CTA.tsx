@@ -53,7 +53,7 @@ export default function CTA() {
                 {/* <div className="hover-glow-violet flex justify-center">
                   <img
                     src={faleonlineImg}
-                    alt="Fale Online"
+                    alt="FaleOnline.com"
                     className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 auto-rotate-360 cursor-pointer"
                   />
                 </div> */}

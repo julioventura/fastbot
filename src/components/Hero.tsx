@@ -195,7 +195,7 @@ const Hero = () => {
               {/* <div className="hover-glow-violet flex">
                 <img
                   src={faleonlineImg}
-                  alt="Fale Online"
+                  alt="FaleOnline.com"
                   className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
                 />
               </div> */}
@@ -231,14 +231,28 @@ const Hero = () => {
                     </span>
                   </div>
 
+                  {/* Container para as imagens - lado a lado em telas médias/grandes */}
+                  {/* <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 my-4 md:my-6"> */}
+                  <div>
+                    {/* Imagem Fale Online - Badge de destaque */}
+                    {/* <div className="hover-glow-violet flex justify-center">
+                      <img
+                        src={faleonlineImg}
+                        alt="FaleOnline.com"
+                        className="h-[200px] md:h-[280px] w-[200px] md:w-[280px] object-contain opacity-90 hover:opacity-100 hover:scale-110 cursor-pointer"
+                      />
+                    </div> */}
 
-                  {/* Selo GPT-5 - mobile: lado direito maior, desktop: centralizado depois */}
-                  <div className="hover-glow-violet flex items-start mt-0 pt-0 lg:mt-6 mr-2 lg:mr-0">
-                    <img
-                      src="https://dentistas.com.br/fastbot/GPT-5.png"
-                      alt="Powered by GPT-5"
-                      className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 auto-rotate-360 hover:opacity-100 cursor-pointer"
-                    />
+
+                    {/* Selo GPT-5 - mobile: lado direito maior, desktop: centralizado depois */}
+                    <div className="hover-glow-violet flex items-start mt-0 pt-0 lg:mt-6 mr-2 lg:mr-0">
+                      <img
+                        src="https://dentistas.com.br/fastbot/GPT-5.png"
+                        alt="Powered by GPT-5"
+                        className="h-[140px] md:h-[160px] lg:h-[280px] w-[140px] md:w-[160px] lg:w-[280px] object-contain opacity-90 auto-rotate-360 hover:opacity-100 cursor-pointer"
+                      />
+                    </div>
+
                   </div>
 
                 </div>
